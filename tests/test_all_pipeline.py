@@ -17,40 +17,40 @@ from qlib.tests.config import CSI300_GBDT_TASK, CSI300_BENCH
 
 
 def train(uri_path: str = None):
-    """train model
+    """训练模型
 
-    Returns
+    返回
     -------
         pred_score: pandas.DataFrame
-            predict scores
+            预测分数
         performance: dict
-            model performance
+            模型性能
     """
 
-    # model initialization
+    # 模型初始化
     model = init_instance_by_config(CSI300_GBDT_TASK["model"])
     dataset = init_instance_by_config(CSI300_GBDT_TASK["dataset"])
-    # To test __repr__
+    # 测试 __repr__
     print(dataset)
     print(R)
 
-    # start exp
+    # 开始实验
     with R.start(experiment_name="workflow", uri=uri_path):
         R.log_params(**flatten_dict(CSI300_GBDT_TASK))
         model.fit(dataset)
         R.save_objects(trained_model=model)
-        # prediction
+        # 预测
         recorder = R.get_recorder()
-        # To test __repr__
+        # 测试 __repr__
         print(recorder)
-        # To test get_local_dir
+        # 测试 get_local_dir
         print(recorder.get_local_dir())
         rid = recorder.id
         sr = SignalRecord(model, dataset, recorder)
         sr.generate()
         pred_score = sr.load("pred.pkl")
 
-        # calculate ic and ric
+        # 计算 ic 和 ric
         sar = SigAnaRecord(recorder)
         sar.generate()
         ic = sar.load("ic.pkl")
@@ -61,16 +61,16 @@ def train(uri_path: str = None):
 
 
 def fake_experiment():
-    """A fake experiment workflow to test uri
+    """一个用于测试 uri 的虚假实验流程
 
-    Returns
+    返回
     -------
         pass_or_not_for_default_uri: bool
         pass_or_not_for_current_uri: bool
         temporary_exp_dir: str
     """
 
-    # start exp
+    # 开始实验
     default_uri = R.get_uri()
     current_uri = "file:./temp-test-exp-mag"
     with R.start(experiment_name="fake_workflow_for_expm", uri=current_uri):
@@ -82,19 +82,19 @@ def fake_experiment():
 
 
 def backtest_analysis(pred, rid, uri_path: str = None):
-    """backtest and analysis
+    """回测与分析
 
-    Parameters
+    参数
     ----------
     rid : str
-        the id of the recorder to be used in this function
+        本函数中要使用的 recorder 的 id
     uri_path: str
-        mlflow uri path
+        mlflow uri 路径
 
-    Returns
+    返回
     -------
     analysis : pandas.DataFrame
-        the analysis result
+        分析结果
 
     """
     with R.uri_context(uri=uri_path):
@@ -136,7 +136,7 @@ def backtest_analysis(pred, rid, uri_path: str = None):
             },
         },
     }
-    # backtest
+    # 回测
     par = PortAnaRecord(recorder, port_analysis_config, risk_analysis_freq="day")
     par.generate()
     analysis_df = par.load("port_analysis_1day.pkl")

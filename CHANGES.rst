@@ -1,179 +1,171 @@
-Changelog
+更新日志
 =========
-Here you can see the full list of changes between each QLib release.
+您可以在此处查看每个 QLib 版本之间的完整变更列表。
 
-Version 0.1.0
+版本 0.1.0
 -------------
-This is the initial release of QLib library.
+QLib 库的初始发布。
 
-Version 0.1.1
+版本 0.1.1
 -------------
-Performance optimize. Add more features and operators.
+性能优化，增加更多功能和算子。
 
-Version 0.1.2
+版本 0.1.2
 -------------
-- Support operator syntax. Now ``High() - Low()`` is equivalent to ``Sub(High(), Low())``.
-- Add more technical indicators.
+- 支持算子语法。现在 ``High() - Low()`` 等价于 ``Sub(High(), Low())``。
+- 增加更多技术指标。
 
-Version 0.1.3
+版本 0.1.3
 -------------
-Bug fix and add instruments filtering mechanism.
+修复 bug 并增加标的过滤机制。
 
-Version 0.2.0
+版本 0.2.0
 -------------
-- Redesign ``LocalProvider`` database format for performance improvement.
-- Support load features as string fields.
-- Add scripts for database construction.
-- More operators and technical indicators.
+- 重新设计 ``LocalProvider`` 数据库格式以提升性能。
+- 支持以字符串字段加载特征。
+- 增加数据库构建脚本。
+- 更多算子和技术指标。
 
-Version 0.2.1
+版本 0.2.1
 -------------
-- Support registering user-defined ``Provider``.
-- Support use operators in string format, e.g. ``['Ref($close, 1)']`` is valid field format.
-- Support dynamic fields in ``$some_field`` format. And existing fields like ``Close()`` may be deprecated in the future.
+- 支持注册用户自定义 ``Provider``。
+- 支持字符串格式的算子，例如 ``['Ref($close, 1)']`` 是有效的字段格式。
+- 支持 ``$some_field`` 格式的动态字段，现有如 ``Close()`` 的字段未来可能弃用。
 
-Version 0.2.2
+版本 0.2.2
 -------------
-- Add ``disk_cache`` for reusing features (enabled by default).
-- Add ``qlib.contrib`` for experimental model construction and evaluation.
+- 增加 ``disk_cache`` 用于复用特征（默认启用）。
+- 增加 ``qlib.contrib`` 用于实验性模型构建与评估。
 
 
-Version 0.2.3
+版本 0.2.3
 -------------
-- Add ``backtest`` module
-- Decoupling the Strategy, Account, Position, Exchange from the backtest module
+- 增加 ``backtest`` 回测模块
+- 将策略、账户、持仓、交易所与回测模块解耦
 
-Version 0.2.4
+版本 0.2.4
 -------------
-- Add ``profit attribution`` module
-- Add ``rick_control`` and ``cost_control`` strategies
+- 增加 ``profit attribution`` 收益归因模块
+- 增加 ``rick_control`` 和 ``cost_control`` 策略
 
-Version 0.3.0
+版本 0.3.0
 -------------
-- Add ``estimator`` module
+- 增加 ``estimator`` 模块
 
-Version 0.3.1
+版本 0.3.1
 -------------
-- Add ``filter`` module
+- 增加 ``filter`` 模块
 
-Version 0.3.2
+版本 0.3.2
 -------------
-- Add real price trading, if the ``factor`` field in the data set is incomplete, use ``adj_price`` trading
-- Refactor ``handler`` ``launcher`` ``trainer`` code
-- Support ``backtest`` configuration parameters in the configuration file
-- Fix bug in position ``amount`` is 0
-- Fix bug of ``filter`` module
+- 增加真实价格交易，若数据集中的 ``factor`` 字段不完整，则使用 ``adj_price`` 进行交易
+- 重构 ``handler``、``launcher``、``trainer`` 代码
+- 支持在配置文件中设置 ``backtest`` 回测参数
+- 修复持仓 ``amount`` 为 0 的 bug
+- 修复 ``filter`` 模块的 bug
 
-Version 0.3.3
+版本 0.3.3
 -------------
-- Fix bug of ``filter`` module
+- 修复 ``filter`` 模块的 bug
 
-Version 0.3.4
+版本 0.3.4
 -------------
-- Support for ``finetune model``
-- Refactor ``fetcher`` code
+- 支持 ``finetune model`` 微调模型
+- 重构 ``fetcher`` 代码
 
-Version 0.3.5
+版本 0.3.5
 -------------
-- Support multi-label training, you can provide multiple label in ``handler``. (But LightGBM doesn't support due to the algorithm itself)
-- Refactor ``handler`` code, dataset.py is no longer used, and you can deploy your own labels and features in ``feature_label_config``
-- Handler only offer DataFrame. Also, ``trainer`` and model.py only receive DataFrame
-- Change ``split_rolling_data``, we roll the data on market calendar now, not on normal date
-- Move some date config from ``handler`` to ``trainer``
+- 支持多标签训练，可在 ``handler`` 中提供多个标签（LightGBM 由于算法本身不支持）
+- 重构 ``handler`` 代码，不再使用 dataset.py，可在 ``feature_label_config`` 中自定义标签和特征
+- Handler 仅提供 DataFrame，``trainer`` 和 model.py 也只接收 DataFrame
+- 更改 ``split_rolling_data``，现在按市场日历滚动数据，而非普通日期
+- 将部分日期配置从 ``handler`` 移至 ``trainer``
 
-Version 0.4.0
+版本 0.4.0
 -------------
-- Add `data` package that holds all data-related codes
-- Reform the data provider structure
-- Create a server for data centralized management `qlib-server <https://amc-msra.visualstudio.com/trading-algo/_git/qlib-server>`_
-- Add a `ClientProvider` to work with server
-- Add a pluggable cache mechanism
-- Add a recursive backtracking algorithm to inspect the furthest reference date for an expression
+- 增加 `data` 包，包含所有与数据相关的代码
+- 重构数据提供者结构
+- 创建用于数据集中管理的服务器 `qlib-server <https://amc-msra.visualstudio.com/trading-algo/_git/qlib-server>`_
+- 增加与服务器配合使用的 `ClientProvider`
+- 增加可插拔缓存机制
+- 增加递归回溯算法以检查表达式最远引用日期
 
 .. note::
-    The ``D.instruments`` function does not support ``start_time``, ``end_time``, and ``as_list`` parameters, if you want to get the results of previous versions of ``D.instruments``, you can do this:
-
+    ``D.instruments`` 函数不支持 ``start_time``、``end_time`` 和 ``as_list`` 参数，若需获取旧版本 ``D.instruments`` 的结果，可如下操作：
 
     >>> from qlib.data import D
     >>> instruments = D.instruments(market='csi500')
     >>> D.list_instruments(instruments=instruments, start_time='2015-01-01', end_time='2016-02-15', as_list=True)
 
-
-Version 0.4.1
+版本 0.4.1
 -------------
-- Add support Windows
-- Fix ``instruments`` type bug
-- Fix ``features`` is empty bug(It will cause failure in updating)
-- Fix ``cache`` lock and update bug
-- Fix use the same cache for the same field (the original space will add a new cache)
-- Change "logger handler" from config
-- Change model load support 0.4.0 later
-- The default value of the ``method`` parameter of ``risk_analysis`` function is changed from **ci** to **si**
+- 增加对 Windows 的支持
+- 修复 ``instruments`` 类型 bug
+- 修复 ``features`` 为空导致更新失败的 bug
+- 修复 ``cache`` 锁和更新 bug
+- 修复同一字段使用相同缓存（原空间会新增缓存）
+- 日志处理器从配置中更改
+- 模型加载支持 0.4.0 及以后版本
+- ``risk_analysis`` 函数的 ``method`` 参数默认值由 **ci** 改为 **si**
 
 
-Version 0.4.2
+版本 0.4.2
 -------------
-- Refactor DataHandler
-- Add ``Alpha360`` DataHandler
+- 重构 DataHandler
+- 增加 ``Alpha360`` DataHandler
 
-
-Version 0.4.3
+版本 0.4.3
 -------------
-- Implementing Online Inference and Trading Framework
-- Refactoring The interfaces of backtest and strategy module.
+- 实现在线推理与交易框架
+- 重构回测与策略模块接口
 
-
-Version 0.4.4
+版本 0.4.4
 -------------
-- Optimize cache generation performance
-- Add report module
-- Fix bug when using ``ServerDatasetCache`` offline.
-- In the previous version of ``long_short_backtest``, there is a case of ``np.nan`` in long_short. The current version ``0.4.4`` has been fixed, so ``long_short_backtest`` will be different from the previous version.
-- In the ``0.4.2`` version of ``risk_analysis`` function, ``N`` is ``250``, and ``N`` is ``252`` from ``0.4.3``, so ``0.4.2`` is ``0.002122`` smaller than the ``0.4.3`` the backtest result is slightly different between ``0.4.2`` and ``0.4.3``.
-- refactor the argument of backtest function.
-    - **NOTE**:
-      - The default arguments of topk margin strategy is changed. Please pass the arguments explicitly if you want to get the same backtest result as previous version.
-      - The TopkWeightStrategy is changed slightly. It will try to sell the stocks more than ``topk``.  (The backtest result of TopkAmountStrategy remains the same)
-- The margin ratio mechanism is supported in the Topk Margin strategies.
+- 优化缓存生成性能
+- 增加报告模块
+- 修复离线使用 ``ServerDatasetCache`` 时的 bug
+- 之前版本 ``long_short_backtest`` 存在 long_short 为 ``np.nan`` 的情况，当前 ``0.4.4`` 版本已修复，因此 ``long_short_backtest`` 结果与之前版本不同
+- ``risk_analysis`` 函数在 ``0.4.2`` 版本中 ``N`` 为 ``250``，在 ``0.4.3`` 及以后为 ``252``，因此 ``0.4.2`` 比 ``0.4.3`` 回测结果小 ``0.002122``，两版本回测结果略有差异
+- 重构回测函数参数
+    - **注意**：
+      - topk margin 策略的默认参数已更改，如需获得与旧版本一致的回测结果，请显式传递参数
+      - TopkWeightStrategy 行为略有变化，会尝试卖出超过 ``topk`` 的股票（TopkAmountStrategy 回测结果保持不变）
+- Topk Margin 策略支持保证金比例机制
 
-
-Version 0.4.5
+版本 0.4.5
 -------------
-- Add multi-kernel implementation for both client and server.
-    - Support a new way to load data from client which skips dataset cache.
-    - Change the default dataset method from single kernel implementation to multi kernel implementation.
-- Accelerate the high frequency data reading by optimizing the relative modules.
-- Support a new method to write config file by using dict.
+- 客户端和服务器均支持多内核实现
+    - 支持客户端跳过数据集缓存的新数据加载方式
+    - 默认数据集方法由单内核实现改为多内核实现
+- 通过优化相关模块加速高频数据读取
+- 支持通过 dict 写配置文件的新方法
 
-Version 0.4.6
+版本 0.4.6
 -------------
-- Some bugs are fixed
-    - The default config in `Version 0.4.5` is not friendly to daily frequency data.
-    - Backtest error in TopkWeightStrategy when `WithInteract=True`.
+- 修复部分 bug
+    - `Version 0.4.5` 的默认配置对日频数据不友好
+    - TopkWeightStrategy 在 `WithInteract=True` 时回测报错
 
-
-Version 0.5.0
+版本 0.5.0
 -------------
-- First opensource version
-    - Refine the docs, code
-    - Add baselines
-    - public data crawler
+- 首个开源版本
+    - 优化文档和代码
+    - 增加基线模型
+    - 公共数据爬虫
 
-
-Version 0.8.0
+版本 0.8.0
 -------------
-- The backtest is greatly refactored.
-    - Nested decision execution framework is supported
-    - There are lots of changes for daily trading, it is hard to list all of them. But a few important changes could be noticed
-        - The trading limitation is more accurate;
-            - In `previous version <https://github.com/microsoft/qlib/blob/v0.7.2/qlib/contrib/backtest/exchange.py#L160>`__, longing and shorting actions share the same action.
-            - In `current version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/backtest/exchange.py#L304>`__, the trading limitation is different between logging and shorting action.
-        - The constant is different when calculating annualized metrics.
-            - `Current version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/contrib/evaluate.py#L42>`_ uses more accurate constant than `previous version <https://github.com/microsoft/qlib/blob/v0.7.2/qlib/contrib/evaluate.py#L22>`__
-        - `A new version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/tests/data.py#L17>`__ of data is released. Due to the unstability of Yahoo data source, the data may be different after downloading data again.
-        - Users could check out the backtesting results between  `Current version <https://github.com/microsoft/qlib/tree/7c31012b507a3823117bddcc693fc64899460b2a/examples/benchmarks>`__ and `previous version <https://github.com/microsoft/qlib/tree/v0.7.2/examples/benchmarks>`__
+- 回测模块大幅重构
+    - 支持嵌套决策执行框架
+    - 日内交易有大量变更，难以一一列举，主要变化包括：
+        - 交易限制更为精确：
+            - `previous version <https://github.com/microsoft/qlib/blob/v0.7.2/qlib/contrib/backtest/exchange.py#L160>`__，多空操作共用同一动作
+            - `current version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/backtest/exchange.py#L304>`__，多空操作的交易限制不同
+        - 年化指标计算常数不同：
+            - `Current version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/contrib/evaluate.py#L42>`_ 使用更精确常数，优于 `previous version <https://github.com/microsoft/qlib/blob/v0.7.2/qlib/contrib/evaluate.py#L22>`__
+        - 发布了 `A new version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/tests/data.py#L17>`__ 的数据。由于 Yahoo 数据源不稳定，重新下载数据后可能不同
+        - 用户可对比 `Current version <https://github.com/microsoft/qlib/tree/7c31012b507a3823117bddcc693fc64899460b2a/examples/benchmarks>`__ 与 `previous version <https://github.com/microsoft/qlib/tree/v0.7.2/examples/benchmarks>`__ 的回测结果
 
-
-Other Versions
+其它版本
 --------------
-Please refer to `Github release Notes <https://github.com/microsoft/qlib/releases>`_
+请参考 `Github release Notes <https://github.com/microsoft/qlib/releases>`_

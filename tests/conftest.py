@@ -1,7 +1,7 @@
 import os
 import sys
 
-"""Ignore RL tests on non-linux platform."""
+"""在非 Linux 平台上忽略 RL 测试。"""
 collect_ignore = []
 
 if sys.platform != "linux":

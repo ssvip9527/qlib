@@ -10,15 +10,15 @@ from qlib.tests import TestAutoData
 
 
 class Diff(ElemOperator):
-    """Feature First Difference
-    Parameters
+    """特征一阶差分
+    参数
     ----------
     feature : Expression
-        feature instance
-    Returns
+        特征实例
+    返回
     ----------
     Expression
-        a feature instance with first difference
+        一阶差分后的特征实例
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -31,15 +31,15 @@ class Diff(ElemOperator):
 
 
 class Distance(PairOperator):
-    """Feature Distance
-    Parameters
+    """特征距离
+    参数
     ----------
     feature : Expression
-        feature instance
-    Returns
+        特征实例
+    返回
     ----------
     Expression
-        a feature instance with distance
+        距离特征实例
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):

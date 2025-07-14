@@ -13,8 +13,8 @@ DIRNAME = Path(__file__).absolute().resolve().parent
 
 
 class FileStrTest(TestAutoData):
-    # Assumption to ensure the correctness of the test
-    # - No price adjustment in these several trading days.
+    # 保证测试正确性的假设
+    # - 这些交易日内没有价格复权。
     TEST_INST = "SH600519"
 
     EXAMPLE_FILE = DIRNAME / "order_example.csv"
@@ -27,26 +27,26 @@ class FileStrTest(TestAutoData):
             "direction",
         ]
         orders = [
-            # test cash limit for buying
+            # 测试买入时现金限制
             ["20200103", self.TEST_INST, "1000", "buy"],
-            # test min_cost for buying
+            # 测试买入时最小费用
             ["20200106", self.TEST_INST, "1", "buy"],
-            # test held stock limit for selling
+            # 测试卖出时持仓股票限制
             ["20200107", self.TEST_INST, "1000", "sell"],
-            # test cash limit for buying
+            # 测试买入时现金限制
             ["20200108", self.TEST_INST, "1000", "buy"],
-            # test min_cost for selling
+            # 测试卖出时最小费用
             ["20200109", self.TEST_INST, "1", "sell"],
-            # test selling all stocks
+            # 测试全部卖出股票
             ["20200110", self.TEST_INST, str(dealt_num_for_1000), "sell"],
         ]
         return pd.DataFrame(orders, columns=headers).set_index(["datetime", "instrument"])
 
     def test_file_str(self):
-        # 0) basic settings
+        # 0) 基本设置
         account_money = 150000
 
-        # 1) get information
+        # 1) 获取信息
         df = D.features([self.TEST_INST], ["$close", "$factor"], start_time="20200103", end_time="20200103")
         price = df["$close"].item()
         factor = df["$factor"].item()
@@ -54,12 +54,12 @@ class FileStrTest(TestAutoData):
         dealt_num_for_1000 = (account_money // price_unit) * (100 / factor)
         print(price, factor, price_unit, dealt_num_for_1000)
 
-        # 2) generate orders
+        # 2) 生成订单
         orders = self._gen_orders(dealt_num_for_1000)
         orders.to_csv(self.EXAMPLE_FILE)
         print(orders)
 
-        # 3) run the strategy
+        # 3) 执行策略
         strategy_config = {
             "class": "FileOrderStrategy",
             "module_path": "qlib.contrib.strategy.rule_strategy",
@@ -75,7 +75,7 @@ class FileStrTest(TestAutoData):
             "start_time": start_time,
             "end_time": end_time,
             "account": account_money,
-            "benchmark": None,  # benchmark is not required here for trading
+            "benchmark": None,  # 这里交易不需要基准
             "exchange_kwargs": {
                 "freq": freq,
                 "limit_threshold": 0.095,
@@ -86,7 +86,7 @@ class FileStrTest(TestAutoData):
                 "codes": codes,
                 "trade_unit": 100,
             },
-            # "pos_type": "InfPosition"  # Position with infinitive position
+            # "pos_type": "InfPosition"  # 无限持仓类型
         }
         executor_config = {
             "class": "SimulatorExecutor",
@@ -106,7 +106,7 @@ class FileStrTest(TestAutoData):
             **backtest_config,
         )
 
-        # ffr valid
+        # ffr 校验
         ffr_dict = indicator_dict["1day"][0]["ffr"].to_dict()
         ffr_dict = {str(date).split()[0]: ffr_dict[date] for date in ffr_dict}
         assert np.isclose(ffr_dict["2020-01-03"], dealt_num_for_1000 / 1000)

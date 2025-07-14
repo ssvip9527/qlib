@@ -10,7 +10,7 @@ from qlib.model.riskmodel import StructuredCovEstimator
 
 class TestStructuredCovEstimator(unittest.TestCase):
     def test_random_covariance(self):
-        # Try to estimate the covariance from a randomly generated matrix.
+        # 尝试从随机生成的矩阵估计协方差。
         NUM_VARIABLE = 10
         NUM_OBSERVATION = 200
         EPS = 1e-6
@@ -20,7 +20,7 @@ class TestStructuredCovEstimator(unittest.TestCase):
         X = np.random.rand(NUM_OBSERVATION, NUM_VARIABLE)
 
         est_cov = estimator.predict(X, is_price=False)
-        np_cov = np.cov(X.T)  # While numpy assume row means variable, qlib assume the other wise.
+        np_cov = np.cov(X.T)  # numpy 假设行表示变量，qlib 假设相反。
 
         delta = abs(est_cov - np_cov)
         if_identical = (delta < EPS).all()
@@ -28,7 +28,7 @@ class TestStructuredCovEstimator(unittest.TestCase):
         self.assertTrue(if_identical)
 
     def test_nan_option_covariance(self):
-        # Test if nan_option is correctly passed.
+        # 测试 nan_option 是否被正确传递。
         NUM_VARIABLE = 10
         NUM_OBSERVATION = 200
         EPS = 1e-6
@@ -38,7 +38,7 @@ class TestStructuredCovEstimator(unittest.TestCase):
         X = np.random.rand(NUM_OBSERVATION, NUM_VARIABLE)
 
         est_cov = estimator.predict(X, is_price=False)
-        np_cov = np.cov(X.T)  # While numpy assume row means variable, qlib assume the other wise.
+        np_cov = np.cov(X.T)  # numpy 假设行表示变量，qlib 假设相反。
 
         delta = abs(est_cov - np_cov)
         if_identical = (delta < EPS).all()
@@ -46,7 +46,7 @@ class TestStructuredCovEstimator(unittest.TestCase):
         self.assertTrue(if_identical)
 
     def test_decompose_covariance(self):
-        # Test if return_decomposed_components is correctly passed.
+        # 测试 return_decomposed_components 是否被正确传递。
         NUM_VARIABLE = 10
         NUM_OBSERVATION = 200
 
@@ -59,8 +59,8 @@ class TestStructuredCovEstimator(unittest.TestCase):
         self.assertTrue(F is not None and cov_b is not None and var_u is not None)
 
     def test_constructed_covariance(self):
-        # Try to estimate the covariance from a specially crafted matrix.
-        # There should be some significant correlation since X is specially crafted.
+        # 尝试从特殊构造的矩阵估计协方差。
+        # 由于 X 是特殊构造的，应该存在显著相关性。
         NUM_VARIABLE = 7
         NUM_OBSERVATION = 500
         EPS = 0.1
@@ -76,7 +76,7 @@ class TestStructuredCovEstimator(unittest.TestCase):
         X = np.random.rand(NUM_OBSERVATION, NUM_VARIABLE) @ sqrt_cov
 
         est_cov = estimator.predict(X, is_price=False)
-        np_cov = np.cov(X.T)  # While numpy assume row means variable, qlib assume the other wise.
+        np_cov = np.cov(X.T)  # numpy 假设行表示变量，qlib 假设相反。
 
         delta = abs(est_cov - np_cov)
         if_identical = (delta < EPS).all()
@@ -84,8 +84,8 @@ class TestStructuredCovEstimator(unittest.TestCase):
         self.assertTrue(if_identical)
 
     def test_decomposition(self):
-        # Try to estimate the covariance from a specially crafted matrix.
-        # The matrix is generated in the assumption that observations can be predicted by multiple factors.
+        # 尝试从特殊构造的矩阵估计协方差。
+        # 该矩阵假设观测值可由多个因子预测生成。
         NUM_VARIABLE = 30
         NUM_OBSERVATION = 100
         NUM_FACTOR = 10
@@ -99,7 +99,7 @@ class TestStructuredCovEstimator(unittest.TestCase):
         X = (F @ B).T + U
 
         est_cov = estimator.predict(X, is_price=False)
-        np_cov = np.cov(X.T)  # While numpy assume row means variable, qlib assume the other wise.
+        np_cov = np.cov(X.T)  # numpy 假设行表示变量，qlib 假设相反。
 
         delta = abs(est_cov - np_cov)
         if_identical = (delta < EPS).all()

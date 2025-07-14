@@ -1,5 +1,5 @@
 [TYPECHECK]
 # https://stackoverflow.com/a/53572939 
-# List of members which are set dynamically and missed by Pylint inference
-# system, and so shouldn't trigger E1101 when accessed.
+# 动态设置且 Pylint 推断系统无法识别的成员列表，访问时不应触发 E1101。
+# 这些成员不会被 Pylint 推断出来，因此访问时不应报错。
 generated-members=numpy.*, torch.*

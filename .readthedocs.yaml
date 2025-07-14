@@ -1,24 +1,24 @@
 # .readthedocs.yml
-# Read the Docs configuration file
-# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+# Read the Docs 配置文件
+# 详情见：https://docs.readthedocs.io/en/stable/config-file/v2.html
 
-# Required
+# 必需项
 version: 2
 
-# Set the version of Python and other tools you might need
+# 设置 Python 及其他工具的版本
 build:
   os: ubuntu-22.04
   tools:
     python: "3.8"
 
-# Build documentation in the docs/ directory with Sphinx
+# 使用 Sphinx 在 docs/ 目录构建文档
 sphinx:
   configuration: docs/conf.py
 
-# Build all formats
+# 构建所有格式
 formats: all
 
-# Optionally set the version of Python and requirements required to build your docs
+# 可选：设置构建文档所需的 Python 版本和依赖
 python:
   install:
     - requirements: docs/requirements.txt

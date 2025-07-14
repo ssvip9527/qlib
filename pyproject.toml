@@ -27,9 +27,9 @@ dependencies = [
   "pyyaml",
   "numpy",
   "pandas>=0.24",
-  # I encoutered an Error that the set_uri does not work when downloading artifacts in mlflow 3.1.1;
-  # But earlier versions of mlflow does not have this problem.
-  # But when I switch to 2.*.* version, another error occurs, which is even more strange...
+  # 我遇到了一个错误，在 mlflow 3.1.1 下载 artifacts 时 set_uri 不起作用；
+  # 但较早版本的 mlflow 没有这个问题。
+  # 但当我切换到 2.*.* 版本时，又出现了另一个更奇怪的错误……
   "mlflow",
   "filelock>=3.16.0",
   "redis",
@@ -56,9 +56,9 @@ dev = [
   "pytest",
   "statsmodels",
 ]
-# On macos-13 system, when using python version greater than or equal to 3.10,
-# pytorch can't fully support Numpy version above 2.0, so, when you want to install torch,
-# it will limit the version of Numpy less than 2.0.
+# 在 macos-13 系统上，当 Python 版本大于等于 3.10 时，
+# pytorch 无法完全支持 Numpy 2.0 以上版本，因此安装 torch 时，
+# 会限制 Numpy 版本低于 2.0。
 rl = [
   "tianshou<=0.4.10",
   "torch",
@@ -71,12 +71,12 @@ lint = [
   "flake8",
   "nbqa",
 ]
-# snowballstemmer, a dependency of sphinx, was released on 2025-05-08 with version 3.0.0,
-# which causes errors in the build process. So we've limited the version for now.
+# snowballstemmer 是 sphinx 的依赖包，于 2025-05-08 发布了 3.0.0 版本，
+# 导致构建过程出错，因此目前限制了其版本。
 docs = [
-  # After upgrading scipy to version 1.16.0,
-  # we encountered ImportError: cannot import name '_lazywhere', in the build documentation,
-  # so we restricted the version of scipy to: 1.15.3
+  # 升级 scipy 到 1.16.0 后，
+  # 构建文档时遇到 ImportError: cannot import name '_lazywhere'，
+  # 所以我们将 scipy 版本限制为：1.15.3
   "scipy<=1.15.3",
   "sphinx",
   "sphinx_rtd_theme",
@@ -87,8 +87,8 @@ package = [
   "twine",
   "build",
 ]
-# test_pit dependency packages
-test = [
+# test_pit 依赖包
+ test = [
   "yahooquery",
   "baostock",
 ]

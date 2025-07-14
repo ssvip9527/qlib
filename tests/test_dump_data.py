@@ -30,7 +30,7 @@ class TestDumpData(unittest.TestCase):
     DUMP_DATA = None
     STOCK_NAMES = None
 
-    # simpe data
+    # 简单数据
     SIMPLE_DATA = None
 
     @classmethod

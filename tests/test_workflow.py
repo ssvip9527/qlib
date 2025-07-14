@@ -9,8 +9,8 @@ from qlib.tests import TestAutoData
 
 
 class WorkflowTest(TestAutoData):
-    # Creating the directory manually doesn't work with mlflow,
-    # so we add a subfolder named .trash when we create the directory.
+    # 手动创建目录对 mlflow 无效，
+    # 因此我们在创建目录时添加一个名为 .trash 的子文件夹。
     TMP_PATH = Path("./.mlruns_tmp/.trash")
 
     def tearDown(self) -> None:

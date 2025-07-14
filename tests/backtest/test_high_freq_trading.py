@@ -35,7 +35,7 @@ class TestHFBacktest(TestAutoData):
         market = [inst]
 
         start_time = f"{date}"
-        end_time = f"{date} 15:00"  # include the high-freq data on the end day
+        end_time = f"{date} 15:00"  # 包含结束日的高频数据
         freq_l0 = "day"
         freq_l1 = "30min"
         freq_l2 = "1min"
@@ -57,9 +57,9 @@ class TestHFBacktest(TestAutoData):
                 "cash": 0,
                 inst: pos,
             },
-            "benchmark": None,  # benchmark is not required here for trading
+            "benchmark": None,  # 此处交易不需要基准
             "exchange_kwargs": {
-                "freq": freq_l2,  # use the most fine-grained data as the exchange
+                "freq": freq_l2,  # 使用最细粒度的数据作为交易所
                 "limit_threshold": 0.095,
                 "deal_price": "close",
                 "open_cost": 0.0005,
@@ -68,15 +68,15 @@ class TestHFBacktest(TestAutoData):
                 "codes": market,
                 "trade_unit": 100,
             },
-            # "pos_type": "InfPosition"  # Position with infinitive position
+            # "pos_type": "InfPosition"  # 无限仓位类型
         }
         executor_config = {
-            "class": "NestedExecutor",  # Level 1 Order execution
+            "class": "NestedExecutor",  # 一级订单执行
             "module_path": "qlib.backtest.executor",
             "kwargs": {
                 "time_per_step": freq_l0,
                 "inner_executor": {
-                    "class": "NestedExecutor",  # Leve 2 Order Execution
+                    "class": "NestedExecutor",  # 二级订单执行
                     "module_path": "qlib.backtest.executor",
                     "kwargs": {
                         "time_per_step": freq_l1,
@@ -121,8 +121,8 @@ class TestHFBacktest(TestAutoData):
             collect_data(executor=executor_config, strategy=strategy_config, **backtest_config, return_value=ret_val)
         )
         report, indicator = ret_val["report"], ret_val["indicator"]
-        # NOTE: please refer to the docs of format_decisions
-        # NOTE: `"track_data": True,`  is very NECESSARY for collecting the decision!!!!!
+        # 注意：请参考 format_decisions 的文档
+        # 注意："track_data": True, 对于收集决策非常必要!!!!!
         f_dec = format_decisions(decisions)
         print(indicator["1day"][0])
 
