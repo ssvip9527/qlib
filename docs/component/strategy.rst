@@ -16,100 +16,97 @@
 
 用户指定模型（预测信号）和策略后，运行回测可以帮助用户检查自定义模型（预测信号）/策略的性能。
 
-Base Class & Interface
+基类与接口
 ======================
 
 BaseStrategy
 ------------
 
-Qlib provides a base class ``qlib.strategy.base.BaseStrategy``. All strategy classes need to inherit the base class and implement its interface.
+Qlib提供了一个基类 ``qlib.strategy.base.BaseStrategy``。所有策略类都需要继承该基类并实现其接口。
 
 - `generate_trade_decision`
-    generate_trade_decision is a key interface that generates trade decisions in each trading bar.
-    The frequency to call this method depends on the executor frequency("time_per_step"="day" by default). But the trading frequency can be decided by users' implementation.
-    For example, if the user wants to trading in weekly while the `time_per_step` is "day" in executor, user can return non-empty TradeDecision weekly(otherwise return empty like `this <https://github.com/microsoft/qlib/blob/main/qlib/contrib/strategy/signal_strategy.py#L132>`_ ).
+    generate_trade_decision是一个关键接口，用于在每个交易周期生成交易决策。
+    调用此方法的频率取决于执行器频率（默认"time_per_step"="day"）。但交易频率可由用户实现决定。
+    例如，如果用户希望以周为单位进行交易，而执行器中的`time_per_step`为"day"，用户可以每周返回非空的TradeDecision（否则返回空值，如`此处 <https://github.com/microsoft/qlib/blob/main/qlib/contrib/strategy/signal_strategy.py#L132>`_ 所示）。
 
-Users can inherit `BaseStrategy` to customize their strategy class.
+用户可以继承`BaseStrategy`来自定义自己的策略类。
 
 WeightStrategyBase
 ------------------
 
-Qlib also provides a class ``qlib.contrib.strategy.WeightStrategyBase`` that is a subclass of `BaseStrategy`.
+Qlib还提供了一个类 ``qlib.contrib.strategy.WeightStrategyBase``，它是`BaseStrategy`的子类。
 
-`WeightStrategyBase` only focuses on the target positions, and automatically generates an order list based on positions. It provides the `generate_target_weight_position` interface.
+`WeightStrategyBase`仅关注目标仓位，并根据仓位自动生成订单列表。它提供了`generate_target_weight_position`接口。
 
 - `generate_target_weight_position`
-    - According to the current position and trading date to generate the target position. The cash is not considered in
-      the output weight distribution.
-    - Return the target position.
+    - 根据当前仓位和交易日期生成目标仓位。输出的权重分布中不考虑现金。
+    - 返回目标仓位。
 
     .. note::
-        Here the `target position` means the target percentage of total assets.
+        这里的`target position`指的是总资产的目标百分比。
 
-`WeightStrategyBase` implements the interface `generate_order_list`, whose processions is as follows.
+`WeightStrategyBase`实现了`generate_order_list`接口，其流程如下：
 
-- Call `generate_target_weight_position` method to generate the target position.
-- Generate the target amount of stocks from the target position.
-- Generate the order list from the target amount
+- 调用`generate_target_weight_position`方法生成目标仓位。
+- 根据目标仓位生成股票的目标数量。
+- 根据目标数量生成订单列表。
 
-Users can inherit `WeightStrategyBase` and implement the interface `generate_target_weight_position` to customize their strategy class, which only focuses on the target positions.
+用户可以继承`WeightStrategyBase`并实现`generate_target_weight_position`接口来自定义仅关注目标仓位的策略类。
 
-Implemented Strategy
+已实现的策略
 ====================
 
 Qlib provides a implemented strategy classes named `TopkDropoutStrategy`.
 
 TopkDropoutStrategy
 -------------------
-`TopkDropoutStrategy` is a subclass of `BaseStrategy` and implement the interface `generate_order_list` whose process is as follows.
+`TopkDropoutStrategy`是`BaseStrategy`的子类，并实现了`generate_order_list`接口，其流程如下：
 
-- Adopt the ``Topk-Drop`` algorithm to calculate the target amount of each stock
+- 采用``Topk-Drop``算法计算每只股票的目标数量
 
     .. note::
-        There are two parameters for the ``Topk-Drop`` algorithm:
+        ``Topk-Drop``算法有两个参数：
 
-        - `Topk`: The number of stocks held
-        - `Drop`: The number of stocks sold on each trading day
+        - `Topk`：持有的股票数量
+        - `Drop`：每个交易日卖出的股票数量
 
-        In general, the number of stocks currently held is `Topk`, with the exception of being zero at the beginning period of trading.
-        For each trading day, let $d$ be the number of the instruments currently held and with a rank $\gt K$ when ranked by the prediction scores from high to low.
-        Then `d` number of stocks currently held with the worst `prediction score` will be sold, and the same number of unheld stocks with the best `prediction score` will be bought.
+        一般来说，当前持有的股票数量为`Topk`，但在交易初期可能为零。
+        每个交易日，将当前持有的证券按预测分数从高到低排序，令$d$为排名$\gt K$的证券数量。
+        然后，卖出当前持有的`d`只预测分数最差的股票，并买入相同数量的未持有的预测分数最好的股票。
 
-        In general, $d=$`Drop`, especially when the pool of the candidate instruments is large, $K$ is large, and `Drop` is small.
+        通常情况下，$d=$`Drop`，特别是当候选证券池较大、$K$较大且`Drop`较小时。
 
-        In most cases, ``TopkDrop`` algorithm sells and buys `Drop` stocks every trading day, which yields a turnover rate of 2$\times$`Drop`/$K$.
+        在大多数情况下，``TopkDrop``算法每个交易日卖出和买入`Drop`只股票，换手率为2$\times$`Drop`/$K$。
 
-        The following images illustrate a typical scenario.
+        下图展示了一个典型场景：
 
         .. image:: ../_static/img/topk_drop.png
             :alt: Topk-Drop
 
 
 
-- Generate the order list from the target amount
+- 根据目标数量生成订单列表
 
 EnhancedIndexingStrategy
 ------------------------
-`EnhancedIndexingStrategy` Enhanced indexing combines the arts of active management and passive management,
-with the aim of outperforming a benchmark index (e.g., S&P 500) in terms of portfolio return while controlling
-the risk exposure (a.k.a. tracking error).
+`EnhancedIndexingStrategy`（增强型指数策略）结合了主动管理和被动管理的特点，
+旨在在控制风险暴露（也称为跟踪误差）的同时，使投资组合收益优于基准指数（如标准普尔500指数）。
 
-For more information, please refer to `qlib.contrib.strategy.signal_strategy.EnhancedIndexingStrategy`
-and `qlib.contrib.strategy.optimizer.enhanced_indexing.EnhancedIndexingOptimizer`.
+有关更多信息，请参考`qlib.contrib.strategy.signal_strategy.EnhancedIndexingStrategy`
+和`qlib.contrib.strategy.optimizer.enhanced_indexing.EnhancedIndexingOptimizer`。
 
 
-Usage & Example
+使用方法与示例
 ===============
 
 First, user can create a model to get trading signals(the variable name is ``pred_score`` in following cases).
 
-Prediction Score
+预测分数
 ----------------
 
-The `prediction score` is a pandas DataFrame. Its index is <datetime(pd.Timestamp), instrument(str)> and it must
-contains a `score` column.
+`prediction score`（预测分数）是一个pandas DataFrame。其索引为<datetime(pd.Timestamp), instrument(str)>，并且必须包含一个`score`列。
 
-A prediction sample is shown as follows.
+预测样本如下所示：
 
 .. code-block:: python
 
@@ -126,18 +123,18 @@ A prediction sample is shown as follows.
     2019-04-30   SH603133 -0.302460
     2019-04-30   SZ300760 -0.126383
 
-``Forecast Model`` module can make predictions, please refer to `Forecast Model: Model Training & Prediction <model.html>`_.
+``Forecast Model``（预测模型）模块可以进行预测，详情请参考`预测模型：模型训练与预测 <model.html>`_。
 
-Normally, the prediction score is the output of the models. But some models are learned from a label with a different scale. So the scale of the prediction score may be different from your expectation(e.g. the return of instruments).
+通常，预测分数是模型的输出。但有些模型是从不同尺度的标签中学习的，因此预测分数的尺度可能与您的期望不同（例如证券的回报率）。
 
-Qlib didn't add a step to scale the prediction score to a unified scale due to the following reasons.
-- Because not every trading strategy cares about the scale(e.g. TopkDropoutStrategy only cares about the order).  So the strategy is responsible for rescaling the prediction score(e.g. some portfolio-optimization-based strategies may require a meaningful scale).
-- The model has the flexibility to define the target, loss, and data processing. So we don't think there is a silver bullet to rescale it back directly barely based on the model's outputs. If you want to scale it back to some meaningful values(e.g. stock returns.), an intuitive solution is to create a regression model for the model's recent outputs and your recent target values.
+Qlib没有添加将预测分数缩放到统一尺度的步骤，原因如下：
+- 并非所有交易策略都关心尺度（例如TopkDropoutStrategy只关心顺序）。因此，策略负责重新缩放预测分数（例如某些基于投资组合优化的策略可能需要有意义的尺度）。
+- 模型可以灵活定义目标、损失和数据处理。因此，我们认为仅基于模型输出直接将其缩放到有意义的值并没有万能的方法。如果您想将其缩放到有意义的值（例如股票回报率），一个直观的解决方案是为模型最近的输出和您最近的目标值创建一个回归模型。
 
-Running backtest
+运行回测
 ----------------
 
-- In most cases, users could backtest their portfolio management strategy  with ``backtest_daily``.
+- 在大多数情况下，用户可以使用``backtest_daily``对其投资组合管理策略进行回测。
 
     .. code-block:: python
 
@@ -151,8 +148,8 @@ Running backtest
         from qlib.contrib.evaluate import risk_analysis
         from qlib.contrib.strategy import TopkDropoutStrategy
 
-        # init qlib
-        qlib.init(provider_uri=<qlib data dir>)
+        # 初始化qlib
+        qlib.init(provider_uri=<qlib数据目录>)
 
         CSI300_BENCH = "SH000300"
         STRATEGY_CONFIG = {
@@ -168,7 +165,7 @@ Running backtest
             start_time="2017-01-01", end_time="2020-08-01", strategy=strategy_obj
         )
         analysis = dict()
-        # default frequency will be daily (i.e. "day")
+        # 默认频率为每日（即"day"）
         analysis["excess_return_without_cost"] = risk_analysis(report_normal["return"] - report_normal["bench"])
         analysis["excess_return_with_cost"] = risk_analysis(report_normal["return"] - report_normal["bench"] - report_normal["cost"])
 
@@ -177,7 +174,7 @@ Running backtest
 
 
 
-- If users would like to control their strategies in a more detailed(e.g. users have a more advanced version of executor), user could follow this example.
+- 如果用户希望更详细地控制其策略（例如用户有更高级版本的执行器），可以按照以下示例操作：
 
     .. code-block:: python
 
@@ -191,16 +188,16 @@ Running backtest
         from qlib.contrib.evaluate import risk_analysis
         from qlib.contrib.strategy import TopkDropoutStrategy
 
-        # init qlib
-        qlib.init(provider_uri=<qlib data dir>)
+        # 初始化qlib
+        qlib.init(provider_uri=<qlib数据目录>)
 
         CSI300_BENCH = "SH000300"
-        # Benchmark is for calculating the excess return of your strategy.
-        # Its data format will be like **ONE normal instrument**.
-        # For example, you can query its data with the code below
+        # 基准用于计算策略的超额收益。
+        # 其数据格式类似于**一个普通的证券**。
+        # 例如，您可以使用以下代码查询其数据
         # `D.features(["SH000300"], ["$close"], start_time='2010-01-01', end_time='2017-12-31', freq='day')`
-        # It is different from the argument `market`, which indicates a universe of stocks (e.g. **A SET** of stocks like csi300)
-        # For example, you can query all data from a stock market with the code below.
+        # 它与参数`market`不同，`market`表示股票的集合（例如**一组**像沪深300这样的股票）
+        # 例如，您可以使用以下代码查询股票市场的所有数据：
         # ` D.features(D.instruments(market='csi300'), ["$close"], start_time='2010-01-01', end_time='2017-12-31', freq='day')`
 
         FREQ = "day"
@@ -231,17 +228,17 @@ Running backtest
             },
         }
 
-        # strategy object
+        # 策略对象
         strategy_obj = TopkDropoutStrategy(**STRATEGY_CONFIG)
-        # executor object
+        # 执行器对象
         executor_obj = executor.SimulatorExecutor(**EXECUTOR_CONFIG)
-        # backtest
+        # 回测
         portfolio_metric_dict, indicator_dict = backtest(executor=executor_obj, strategy=strategy_obj, **backtest_config)
         analysis_freq = "{0}{1}".format(*Freq.parse(FREQ))
-        # backtest info
+        # 回测信息
         report_normal, positions_normal = portfolio_metric_dict.get(analysis_freq)
 
-        # analysis
+        # 分析
         analysis = dict()
         analysis["excess_return_without_cost"] = risk_analysis(
             report_normal["return"] - report_normal["bench"], freq=analysis_freq
@@ -251,14 +248,14 @@ Running backtest
         )
 
         analysis_df = pd.concat(analysis)  # type: pd.DataFrame
-        # log metrics
+        # 记录指标
         analysis_dict = flatten_dict(analysis_df["risk"].unstack().T.to_dict())
-        # print out results
-        pprint(f"The following are analysis results of benchmark return({analysis_freq}).")
+        # 打印结果
+        pprint(f"以下是基准收益的分析结果({analysis_freq})。")
         pprint(risk_analysis(report_normal["bench"], freq=analysis_freq))
-        pprint(f"The following are analysis results of the excess return without cost({analysis_freq}).")
+        pprint(f"以下是无成本超额收益的分析结果({analysis_freq})。")
         pprint(analysis["excess_return_without_cost"])
-        pprint(f"The following are analysis results of the excess return with cost({analysis_freq}).")
+        pprint(f"以下是有成本超额收益的分析结果({analysis_freq})。")
         pprint(analysis["excess_return_with_cost"])
 
 

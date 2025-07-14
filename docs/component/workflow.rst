@@ -1,18 +1,18 @@
 .. _workflow:
 
 =============================
-Workflow: Workflow Management
+工作流：工作流管理
 =============================
 .. currentmodule:: qlib
 
-Introduction
+简介
 ============
 
-The components in `Qlib Framework <../introduction/introduction.html#framework>`_ are designed in a loosely-coupled way. Users could build their own Quant research workflow with these components like `Example <https://github.com/microsoft/qlib/blob/main/examples/workflow_by_code.py>`_.
+`Qlib框架 <../introduction/introduction.html#framework>`_ 中的组件采用松耦合设计。用户可以使用这些组件构建自己的量化研究工作流，例如`示例 <https://github.com/microsoft/qlib/blob/main/examples/workflow_by_code.py>`_。
 
 
-Besides, ``Qlib`` provides more user-friendly interfaces named ``qrun`` to automatically run the whole workflow defined by configuration. Running the whole workflow is called an `execution`.
-With ``qrun``, user can easily start an `execution`, which includes the following steps:
+此外，``Qlib``提供了更友好的接口``qrun``来自动运行通过配置定义的整个工作流。运行整个工作流称为一次`执行`。
+使用``qrun``，用户可以轻松启动一次`执行`，包括以下步骤：
 
 - Data
     - Loading
@@ -25,13 +25,13 @@ With ``qrun``, user can easily start an `execution`, which includes the followin
     - Forecast signal analysis
     - Backtest
 
-For each `execution`, ``Qlib`` has a complete system to tracking all the information as well as artifacts generated during training, inference and evaluation phase. For more information about how ``Qlib`` handles this, please refer to the related document: `Recorder: Experiment Management <../component/recorder.html>`_.
+对于每次`执行`，``Qlib``有一个完整的系统来跟踪训练、推理和评估阶段生成的所有信息和工件。有关``Qlib``如何处理此问题的更多信息，请参考相关文档：`Recorder：实验管理 <../component/recorder.html>`_。
 
-Complete Example
+完整示例
 ================
 
-Before getting into details, here is a complete example of ``qrun``, which defines the workflow in typical Quant research.
-Below is a typical config file of ``qrun``.
+在深入细节之前，这里有一个``qrun``的完整示例，定义了典型量化研究中的工作流。
+以下是``qrun``的典型配置文件。
 
 .. code-block:: YAML
 
@@ -100,13 +100,13 @@ Below is a typical config file of ``qrun``.
               kwargs:
                   config: *port_analysis_config
 
-After saving the config into `configuration.yaml`, users could start the workflow and test their ideas with a single command below.
+将配置保存到`configuration.yaml`后，用户可以通过以下单个命令启动工作流并测试他们的想法。
 
 .. code-block:: bash
 
     qrun configuration.yaml
 
-If users want to use ``qrun`` under debug mode, please use the following command:
+如果用户想在调试模式下使用``qrun``，请使用以下命令：
 
 .. code-block:: bash
 
@@ -114,23 +114,23 @@ If users want to use ``qrun`` under debug mode, please use the following command
 
 .. note::
 
-    `qrun` will be placed in your $PATH directory when installing ``Qlib``.
+    安装``Qlib``时，`qrun`将被放置在您的$PATH目录中。
 
 .. note::
 
-    The symbol `&` in `yaml` file stands for an anchor of a field, which is useful when another fields include this parameter as part of the value. Taking the configuration file above as an example, users can directly change the value of `market` and `benchmark` without traversing the entire configuration file.
+    `yaml`文件中的符号`&`表示字段的锚点，当其他字段将此参数作为值的一部分包含时非常有用。以上述配置文件为例，用户可以直接更改`market`和`benchmark`的值，而无需遍历整个配置文件。
 
 
-Configuration File
+配置文件
 ==================
 
-Let's get into details of ``qrun`` in this section.
-Before using ``qrun``, users need to prepare a configuration file. The following content shows how to prepare each part of the configuration file.
+在本节中，我们将详细介绍``qrun``。
+使用``qrun``之前，用户需要准备一个配置文件。以下内容展示了如何准备配置文件的各个部分。
 
-The design logic of the configuration file is very simple. It predefines fixed workflows and provide this yaml interface to users to define how to initialize each component.
-It follow the design of `init_instance_by_config <https://github.com/microsoft/qlib/blob/2aee9e0145decc3e71def70909639b5e5a6f4b58/qlib/utils/__init__.py#L264>`_ .  It defines the initialization of each component of Qlib, which typically include the class and the initialization arguments.
+配置文件的设计逻辑非常简单。它预定义了固定的工作流，并提供此yaml接口让用户定义如何初始化每个组件。
+它遵循`init_instance_by_config <https://github.com/microsoft/qlib/blob/2aee9e0145decc3e71def70909639b5e5a6f4b58/qlib/utils/__init__.py#L264>`_ 的设计。它定义了Qlib每个组件的初始化，通常包括类和初始化参数。
 
-For example, the following yaml and code are equivalent.
+例如，以下yaml和代码是等效的。
 
 .. code-block:: YAML
 
@@ -166,36 +166,36 @@ For example, the following yaml and code are equivalent.
         LGBModel(kwargs)
 
 
-Qlib Init Section
+Qlib初始化部分
 -----------------
 
-At first, the configuration file needs to contain several basic parameters which will be used for qlib initialization.
+首先，配置文件需要包含几个用于qlib初始化的基本参数。
 
 .. code-block:: YAML
 
     provider_uri: "~/.qlib/qlib_data/cn_data"
     region: cn
 
-The meaning of each field is as follows:
+每个字段的含义如下：
 
 - `provider_uri`
-    Type: str. The URI of the Qlib data. For example, it could be the location where the data loaded by ``get_data.py`` are stored.
+    类型：str。Qlib数据的URI。例如，它可以是``get_data.py``加载的数据存储的位置。
 
 - `region`
-    - If `region` == "us", ``Qlib`` will be initialized in US-stock mode.
-    - If `region` == "cn", ``Qlib`` will be initialized in China-stock mode.
+    - 如果`region` == "us"，``Qlib``将在美股模式下初始化。
+    - 如果`region` == "cn"，``Qlib``将在A股模式下初始化。
 
     .. note::
 
-        The value of `region` should be aligned with the data stored in `provider_uri`.
+        `region`的值应与`provider_uri`中存储的数据一致。
 
 
-Task Section
+任务部分
 ------------
 
-The `task` field in the configuration corresponds to a `task`, which contains the parameters of three different subsections: `Model`, `Dataset` and `Record`.
+配置中的`task`字段对应一个`任务`，包含三个不同子部分的参数：`Model`（模型）、`Dataset`（数据集）和`Record`（记录）。
 
-Model Section
+模型部分
 ~~~~~~~~~~~~~
 
 In the `task` field, the `model` section describes the parameters of the model to be used for training and inference. For more information about the base ``Model`` class, please refer to `Qlib Model <../component/model.html>`_.
@@ -216,27 +216,27 @@ In the `task` field, the `model` section describes the parameters of the model t
             num_leaves: 210
             num_threads: 20
 
-The meaning of each field is as follows:
+每个字段的含义如下：
 
 - `class`
-    Type: str. The name for the model class.
+    类型：str。模型类的名称。
 
 - `module_path`
-    Type: str. The path for the model in qlib.
+    类型：str。模型在qlib中的路径。
 
 - `kwargs`
-    The keywords arguments for the model. Please refer to the specific model implementation for more information: `models <https://github.com/microsoft/qlib/blob/main/qlib/contrib/model>`_.
+    模型的关键字参数。有关更多信息，请参考具体的模型实现：`models <https://github.com/microsoft/qlib/blob/main/qlib/contrib/model>`_。
 
 .. note::
 
-    ``Qlib`` provides a util named: ``init_instance_by_config`` to initialize any class inside ``Qlib`` with the configuration includes the fields: `class`, `module_path` and `kwargs`.
+    ``Qlib``提供了一个名为``init_instance_by_config``的工具，用于初始化``Qlib``内部的任何类，配置包括字段：`class`、`module_path`和`kwargs`。
 
-Dataset Section
+数据集部分
 ~~~~~~~~~~~~~~~
 
-The `dataset` field describes the parameters for the ``Dataset`` module in ``Qlib`` as well those for the module ``DataHandler``. For more information about the ``Dataset`` module, please refer to `Qlib Data <../component/data.html#dataset>`_.
+`dataset`字段描述了``Qlib``中``Dataset``模块以及``DataHandler``模块的参数。有关``Dataset``模块的更多信息，请参考`Qlib数据 <../component/data.html#dataset>`_。
 
-The keywords arguments configuration of the ``DataHandler`` is as follows:
+``DataHandler``的关键字参数配置如下：
 
 .. code-block:: YAML
 
@@ -247,9 +247,9 @@ The keywords arguments configuration of the ``DataHandler`` is as follows:
         fit_end_time: 2014-12-31
         instruments: *market
 
-Users can refer to the document of `DataHandler <../component/data.html#datahandler>`_ for more information about the meaning of each field in the configuration.
+用户可以参考`DataHandler <../component/data.html#datahandler>`_文档了解配置中每个字段的含义。
 
-Here is the configuration for the ``Dataset`` module which will take care of data preprocessing and slicing during the training and testing phase.
+以下是``Dataset``模块的配置，负责训练和测试阶段的数据预处理和切片。
 
 .. code-block:: YAML
 
@@ -266,12 +266,12 @@ Here is the configuration for the ``Dataset`` module which will take care of dat
                 valid: [2015-01-01, 2016-12-31]
                 test: [2017-01-01, 2020-08-01]
 
-Record Section
+记录部分
 ~~~~~~~~~~~~~~
 
-The `record` field is about the parameters the ``Record`` module in ``Qlib``. ``Record`` is responsible for tracking training process and results such as `information Coefficient (IC)` and `backtest` in a standard format.
+`record`字段涉及``Qlib``中``Record``模块的参数。``Record``负责以标准格式跟踪训练过程和结果，如`信息系数（IC）`和`回测`。
 
-The following script is the configuration of `backtest` and the `strategy` used in `backtest`:
+以下是`回测`的配置以及`回测`中使用的`策略`：
 
 .. code-block:: YAML
 
@@ -292,9 +292,9 @@ The following script is the configuration of `backtest` and the `strategy` used 
             close_cost: 0.0015
             min_cost: 5
 
-For more information about the meaning of each field in configuration of `strategy` and `backtest`, users can look up the documents: `Strategy <../component/strategy.html>`_ and `Backtest <../component/backtest.html>`_.
+有关`strategy`和`backtest`配置中每个字段的含义的更多信息，用户可以查阅文档：`策略 <../component/strategy.html>`_和`回测 <../component/backtest.html>`_。
 
-Here is the configuration details of different `Record Template` such as ``SignalRecord`` and ``PortAnaRecord``:
+以下是不同`记录模板`（如``SignalRecord``和``PortAnaRecord``）的配置详情：
 
 .. code-block:: YAML
 
@@ -307,4 +307,4 @@ Here is the configuration details of different `Record Template` such as ``Signa
           kwargs:
             config: *port_analysis_config
 
-For more information about the ``Record`` module in ``Qlib``, user can refer to the related document: `Record <../component/recorder.html#record-template>`_.
+有关``Qlib``中``Record``模块的更多信息，用户可以参考相关文档：`记录 <../component/recorder.html#record-template>`_。

@@ -1,17 +1,17 @@
 .. _client:
 
-Qlib Client-Server Framework
+Qlib 客户端-服务器框架
 ============================
 
 .. currentmodule:: qlib
 
-Introduction
+简介
 ------------
-Client-Server is designed to solve following  problems
+客户端-服务器框架旨在解决以下问题
 
-- Manage the data in a centralized way. Users don't have to manage data of different versions.
-- Reduce the amount of cache to be generated.
-- Make the data can be accessed in a remote way.
+- 集中管理数据。用户无需管理不同版本的数据。
+- 减少需要生成的缓存量。
+- 支持远程访问数据。
 
 Therefore, we designed the client-server framework to solve these problems.
 We will maintain a server and provide the data.
@@ -152,19 +152,19 @@ You can created such a config. `client_config_local.yml`
                2008-01-07  24.880930
                2008-01-08  24.277143
 
-Limitations
+限制条件
 -----------
-1. The following API under the client-server module may not be as fast as the older off-line  API.
+1. 客户端-服务器模块下的以下API可能不如旧版离线API速度快。
     - Cal.calendar
     - Inst.list_instruments
-2. The rolling operation expression with parameter `0` can not be updated rightly under mechanism of the client-server framework.
+2. 在客户端-服务器框架机制下，参数为`0`的滚动操作表达式可能无法正确更新。
 
 API
 ***
 
-The client is based on `python-socketio <https://python-socketio.readthedocs.io>`_ which is a framework that supports WebSocket client for Python language. The client can only propose requests and receive results, which do not include any calculating procedure.
+客户端基于 `python-socketio <https://python-socketio.readthedocs.io>`_ 构建，这是一个支持Python语言WebSocket客户端的框架。客户端只能提出请求并接收结果，不包含任何计算过程。
 
-Class
+类
 -----
 
 .. automodule:: qlib.data.client

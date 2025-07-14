@@ -113,27 +113,27 @@ API
 .. image:: ../_static/img/analysis/score_ic.png
 
 
-.. Usage of `analysis_position.cumulative_return`
+.. `analysis_position.cumulative_return` 的用法
 .. ----------------------------------------------
 ..
-.. API
+.. API接口
 .. ~~~~~~~~~~~~~~~~
 ..
 .. .. automodule:: qlib.contrib.report.analysis_position.cumulative_return
 ..     :members:
 ..
-.. Graphical Result
+.. 图形结果
 .. ~~~~~~~~~~~~~~~~~
 ..
 .. .. note::
 ..
-..     - Axis X: Trading day
-..     - Axis Y:
-..         - Above axis Y: `(((Ref($close, -1)/$close - 1) * weight).sum() / weight.sum()).cumsum()`
-..         - Below axis Y: Daily weight sum
-..     - In the **sell** graph, `y < 0` stands for profit; in other cases, `y > 0` stands for profit.
-..     - In the **buy_minus_sell** graph, the **y** value of the **weight** graph at the bottom is `buy_weight + sell_weight`.
-..     - In each graph, the **red line** in the histogram on the right represents the average.
+..     - X轴：交易日
+..     - Y轴：
+..         - Y轴上方：`(((Ref($close, -1)/$close - 1) * weight).sum() / weight.sum()).cumsum()`
+..         - Y轴下方：每日权重总和
+..     - 在**卖出**图表中，`y < 0`表示盈利；在其他情况下，`y > 0`表示盈利。
+..     - 在**买入减卖出**图表中，底部**权重**图表的**y**值为`buy_weight + sell_weight`。
+..     - 在每个图表中，右侧直方图中的**红线**代表平均值。
 ..
 .. .. image:: ../_static/img/analysis/cumulative_return_buy.png
 ..

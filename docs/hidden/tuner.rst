@@ -1,38 +1,38 @@
 .. _tuner:
 
-Tuner
+参数调优工具 (Tuner)
 =====
 .. currentmodule:: qlib
 
-Introduction
+简介
 ------------
 
-Welcome to use Tuner, this document is based on that you can use Estimator proficiently and correctly.
+欢迎使用参数调优工具 (Tuner)，本文档假设您已经能够熟练且正确地使用 Estimator。
 
-You can find the optimal hyper-parameters and combinations of models, trainers, strategies and data labels.
+您可以通过 Tuner 找到模型、训练器、策略和数据标签的最佳超参数及其组合。
 
-The usage of program `tuner` is similar with `estimator`, you need provide the URL of the configuration file.
-The `tuner` will do the following things:
+`tuner` 程序的使用方法与 `estimator` 类似，您需要提供配置文件的路径。
+`tuner` 将执行以下操作：
 
-- Construct tuner pipeline
-- Search and save best hyper-parameters of one tuner
-- Search next tuner in pipeline
-- Save the global best hyper-parameters and combination
+- 构建调优管道 (tuner pipeline)
+- 搜索并保存单个调优器的最佳超参数
+- 搜索管道中的下一个调优器
+- 保存全局最佳超参数和组合
 
-Each tuner is consisted with a kind of combination of modules, and its goal is searching the optimal hyper-parameters of this combination.
-The pipeline is consisted with different tuners, it is aim at finding the optimal combination of modules.
+每个调优器由一种模块组合构成，其目标是搜索该组合的最优超参数。
+管道由不同的调优器组成，旨在找到模块的最佳组合。
 
-The result will be printed on screen and saved in file, you can check the result in your experiment saving files.
+结果将在屏幕上打印并保存到文件中，您可以在实验保存文件中查看结果。
 
-Example
+示例
 ~~~~~~~
 
-Let's see an example,
+让我们看一个示例：
 
-First make sure you have the latest version of `qlib` installed.
+首先确保您已安装最新版本的 `qlib`。
 
-Then, you need to provide a configuration to setup the experiment.
-We write a simple configuration example as following,
+然后，您需要提供一个配置来设置实验。
+我们编写了一个简单的配置示例如下：
 
 .. code-block:: YAML
 
@@ -100,7 +100,7 @@ We write a simple configuration example as following,
         long_short_backtest_args:
             topk: 50
 
-Next, we run the following command, and you can see:
+接下来，我们运行以下命令，您将看到：
 
 .. code-block:: bash
 
@@ -134,19 +134,19 @@ Next, we run the following command, and you can see:
     You can check the best parameters at tuner_experiment/global_best_params.json.
 
 
-Finally, you can check the results of your experiment in the given path.
+最后，您可以在指定路径中查看实验结果。
 
-Configuration file
+配置文件
 ------------------
 
-Before using `tuner`, you need to prepare a configuration file. Next we will show you how to prepare each part of the configuration file.
+使用 `tuner` 之前，您需要准备一个配置文件。接下来我们将介绍如何准备配置文件的各个部分。
 
-About the experiment
+关于实验
 ~~~~~~~~~~~~~~~~~~~~
 
-First, your configuration file needs to have a field about the experiment, whose key is `experiment`, this field and its contents determine the saving path and tuner class.
+首先，您的配置文件需要包含一个关于实验的字段，其键为 `experiment`，该字段及其内容决定保存路径和调优器类。
 
-Usually it should contain the following content:
+通常它应包含以下内容：
 
 .. code-block:: YAML
 
@@ -154,27 +154,27 @@ Usually it should contain the following content:
         name: tuner_experiment
         tuner_class: QLibTuner
 
-Also, there are some optional fields. The meaning of each field is as follows:
+此外，还有一些可选字段。各字段的含义如下：
 
 - `name`
-    The experiment name, str type, the program will use this experiment name to construct a directory to save the process of the whole experiment and the results. The default value is `tuner_experiment`.
+    实验名称，字符串类型，程序将使用该实验名称创建目录以保存整个实验过程和结果。默认值为 `tuner_experiment`。
 
 - `dir`
-    The saving path, str type, the program will construct the experiment directory in this path. The default value is the path where configuration locate.
+    保存路径，字符串类型，程序将在此路径下创建实验目录。默认值为配置文件所在路径。
 
 - `tuner_class`
-    The class of tuner, str type, must be an already implemented model, such as `QLibTuner` in `qlib`, or a custom tuner, but it must be a subclass of `qlib.contrib.tuner.Tuner`, the default value is `QLibTuner`.
+    调优器类，字符串类型，必须是已实现的模型，例如 `qlib` 中的 `QLibTuner`，或自定义调优器，但必须是 `qlib.contrib.tuner.Tuner` 的子类，默认值为 `QLibTuner`。
 
 - `tuner_module_path`
-    The module path, str type, absolute url is also supported, indicates the path of the implementation of tuner. The default value is `qlib.contrib.tuner.tuner`
+    模块路径，字符串类型，支持绝对路径，表示调优器实现的路径。默认值为 `qlib.contrib.tuner.tuner`
 
-About the optimization criteria
+关于优化标准
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You need to designate a factor to optimize, for tuner need a factor to decide which case is better than other cases.
-Usually, we use the result of `estimator`, such as backtest results and the score of model.
+您需要指定一个优化因子，因为调优器需要一个因子来判断哪个情况比其他情况更好。
+通常，我们使用 `estimator` 的结果，例如回测结果和模型分数。
 
-This part needs contain these fields:
+此部分需要包含以下字段：
 
 .. code-block:: YAML
 
@@ -184,18 +184,18 @@ This part needs contain these fields:
         optim_type: max
 
 - `report_type`
-    The type of the report, str type, determines which kind of report you want to use. If you want to use the backtest result type, you can choose `pred_long`, `pred_long_short`, `pred_short`, `excess_return_without_cost` and `excess_return_with_cost`. If you want to use the model result type, you can only choose `model`.
+    报告类型，字符串类型，决定您要使用哪种报告。如果要使用回测结果类型，可选择 `pred_long`、`pred_long_short`、`pred_short`、`excess_return_without_cost` 和 `excess_return_with_cost`。如果要使用模型结果类型，只能选择 `model`。
 
 - `report_factor`
-    The factor you want to use in the report, str type, determines which factor you want to optimize. If your `report_type` is backtest result type, you can choose `annualized_return`, `information_ratio`, `max_drawdown`, `mean` and `std`. If your `report_type` is model result type, you can choose `model_score` and `model_pearsonr`.
+    报告中要使用的因子，字符串类型，决定您要优化哪个因子。如果 `report_type` 是回测结果类型，可选择 `annualized_return`、`information_ratio`、`max_drawdown`、`mean` 和 `std`。如果 `report_type` 是模型结果类型，可选择 `model_score` 和 `model_pearsonr`。
 
 - `optim_type`
-    The optimization type, str type, determines what kind of optimization you want to do. you can minimize the factor or maximize the factor, so you can choose `max`, `min` or `correlation` at this field.
-    Note: `correlation` means the factor's best value is 1, such as `model_pearsonr` (a corraltion coefficient).
+    优化类型，字符串类型，决定您要进行哪种优化。您可以最小化或最大化因子，因此可在此字段选择 `max`、`min` 或 `correlation`。
+    注意：`correlation` 表示因子的最佳值为 1，例如 `model_pearsonr`（相关系数）。
 
-If you want to process the factor or you want fetch other kinds of factor, you can override the `objective` method in your own tuner.
+如果您想处理因子或获取其他类型的因子，可以在自定义调优器中重写 `objective` 方法。
 
-About the tuner pipeline
+关于调优管道
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The tuner pipeline contains different tuners, and the `tuner` program will process each tuner in pipeline. Each tuner will get an optimal hyper-parameters of its specific combination of modules. The pipeline will contrast the results of each tuner, and get the best combination and its optimal hyper-parameters. So, you need to configurate the pipeline and each tuner, here is an example:

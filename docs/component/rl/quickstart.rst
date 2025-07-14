@@ -8,33 +8,33 @@ QlibRL提供了一个单资产订单执行任务的实现示例，以下是使�
 .. code-block:: yaml
 
     simulator:
-        # Each step contains 30mins
+        # 每步包含30分钟
         time_per_step: 30
-        # Upper bound of volume, should be null or a float between 0 and 1, if it is a float, represent upper bound is calculated by the percentage of the market volume
+        # 交易量上限，应为null或0到1之间的浮点数，如果是浮点数，表示上限按市场交易量的百分比计算
         vol_limit: null
     env:
-        # Concurrent environment workers.
+        # 并发环境工作器数量.
         concurrency: 1
-        # dummy or subproc or shmem. Corresponding to `parallelism in tianshou <https://tianshou.readthedocs.io/en/master/api/tianshou.env.html#vectorenv>`_.
+        # dummy或subproc或shmem。对应`tianshou中的并行模式 <https://tianshou.readthedocs.io/en/master/api/tianshou.env.html#vectorenv>`_。
         parallel_mode: dummy
     action_interpreter:
         class: CategoricalActionInterpreter
         kwargs:
-            # Candidate actions, it can be a list with length L: [a_1, a_2,..., a_L] or an integer n, in which case the list of length n+1 is auto-generated, i.e., [0, 1/n, 2/n,..., n/n].
+            # 候选动作，可以是长度为L的列表：[a_1, a_2,..., a_L]或整数n，此时会自动生成长度为n+1的列表，即[0, 1/n, 2/n,..., n/n]。
             values: 14
-            # Total number of steps (an upper-bound estimation)
+            # 总步数（上限估计）
             max_step: 8
         module_path: qlib.rl.order_execution.interpreter
     state_interpreter:
         class: FullHistoryStateInterpreter
         kwargs:
-            # Number of dimensions in data.
+            # 数据维度数量。
             data_dim: 6
-            # Equal to the total number of records. For example, in SAOE per minute, data_ticks is the length of the day in minutes.
+            # 等于记录总数。例如，在SAOE每分钟数据中，data_ticks是一天的分钟数。
             data_ticks: 240
-            # The total number of steps (an upper-bound estimation). For example, 390min / 30min-per-step = 13 steps.
+            # 总步数（上限估计）。例如，390分钟 / 每步30分钟 = 13步。
             max_step: 8
-            # Provider of the processed data.
+            # 处理后数据的提供器。
             processed_data_provider:
                 class: PickleProcessedDataProvider
                 module_path: qlib.rl.data.pickle_styled
@@ -44,18 +44,18 @@ QlibRL提供了一个单资产订单执行任务的实现示例，以下是使�
     reward:
         class: PAPenaltyReward
         kwargs:
-            # The penalty for a large volume in a short time.
+            # 短时间内大量交易的惩罚值。
             penalty: 100.0
         module_path: qlib.rl.order_execution.reward
     data:
         source:
             order_dir: ./data/training_order_split
             data_dir: ./data/pickle_dataframe/backtest
-            # number of time indexes
+            # 时间索引数量
             total_time: 240
-            # start time index
+            # 开始时间索引
             default_start_time: 0
-            # end time index
+            # 结束时间索引
             default_end_time: 240
             proc_data_dim: 6
         num_workers: 0
@@ -73,13 +73,13 @@ QlibRL提供了一个单资产订单执行任务的实现示例，以下是使�
         use_cuda: false
     trainer:
         max_epoch: 2
-        # Number of episodes collected in each training iteration
+        # 每次训练迭代收集的 episodes 数量
         repeat_per_collect: 5
         earlystop_patience: 2
-        # Episodes per collect at training.
+        # 训练时每次收集的 episodes 数量。
         episode_per_collect: 20
         batch_size: 16
-        # Perform validation every n iterations
+        # 每n次迭代执行一次验证
         val_every_n_epoch: 1
         checkpoint_path: ./checkpoints
         checkpoint_every_n_iters: 1
@@ -104,16 +104,16 @@ And the config file for backtesting:
             "$open_v1", "$high_v1", "$low_v1", "$close_v1", "$vwap_v1", "$volume_v1",
         ]
     exchange:
-        # the expression for buying and selling stock limitation
+        # 买卖股票限制的表达式
         limit_threshold: ['$close == 0', '$close == 0']
-        # deal price for buying and selling
+        # 买卖交易价格
         deal_price: ["If($close == 0, $vwap, $close)", "If($close == 0, $vwap, $close)"]
     volume_threshold:
-        # volume limits are both buying and selling, "cum" means that this is a cumulative value over time
+        # 买卖双方的交易量限制，"cum"表示这是随时间累积的值
         all: ["cum", "0.2 * DayCumsum($volume, '9:45', '14:44')"]
-        # the volume limits of buying
+        # 买入的交易量限制
         buy: ["current", "$close"]
-        # the volume limits of selling, "current" means that this is a real-time value and will not accumulate over time
+        # 卖出的交易量限制，"current"表示这是实时值，不会随时间累积
         sell: ["current", "$close"]
     strategies: 
         30min: 
@@ -151,9 +151,9 @@ And the config file for backtesting:
                 module_path: qlib.rl.order_execution.policy
                 kwargs: 
                     lr: 1.0e-4
-                    # Local path to the latest model. The model is generated during training, so please run training first if you want to run backtest with a trained policy. You could also remove this parameter file to run backtest with a randomly initialized policy.
+                    # 最新模型的本地路径。模型在训练过程中生成，因此如果要使用训练好的策略进行回测，请先运行训练。也可以删除此参数文件，使用随机初始化的策略进行回测。
                     weight_file: ./checkpoints/latest.pth
-    # Concurrent environment workers.
+    # 并发环境工作器数量。
     concurrency: 5
 
 使用上述配置文件，您可以通过以下命令开始训练智能体：

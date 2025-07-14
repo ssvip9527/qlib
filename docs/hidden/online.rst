@@ -2,12 +2,13 @@
 
 Online
 ======
-.. currentmodule:: qlib
+.. currentmodule:: qlib在线服务
+======
 
-Introduction
+简介
 ------------
 
-Welcome to use Online, this module simulates what will be like if we do the real trading use our model and strategy.
+欢迎使用在线服务模块，该模块模拟了使用我们的模型和策略进行实际交易的场景。
 
 Just like Estimator and other modules in Qlib, you need to determine parameters through the configuration file,
 and in this module, you need to add an account in a folder to do the simulation. Then in each coming day,
@@ -30,12 +31,12 @@ and the position and report will be saved as excel.
 The file structure can be viewed at fileStruct_.
 
 
-Example
+示例
 -------
 
-Let's take an example,
+让我们通过一个示例来说明，
 
-.. note:: Make sure you have the latest version of `qlib` installed.
+.. note:: 请确保您已安装最新版本的 `qlib`。
 
 If you want to use the models and data provided by `qlib`, you only need to do as follows.
 
@@ -92,11 +93,10 @@ If Your account was saved in "./user_data/", you can see the performance of your
 
 Here 'SH000905' represents csi500 and 'SH000300' represents csi300
 
-Manage your account
+账户管理
 -------------------
 
-Any account processed by `online` should be saved in a folder. you can use commands
-defined to manage your accounts.
+所有通过 `online` 模块处理的账户都应保存在文件夹中。您可以使用定义的命令来管理账户。
 
 - add an new account
     This will add an new account with user_id='v-test', add_date='2019-10-15' in ./user_data.
@@ -163,17 +163,17 @@ be called at each trading date.
 API
 ---
 
-All those operations are based on defined in `qlib.contrib.online.operator`
+所有这些操作都基于 `qlib.contrib.online.operator` 中定义的接口
 
 .. automodule:: qlib.contrib.online.operator
 
 .. _fileStruct:
 
-File structure
+文件结构
 --------------
 
-'user_data' indicates the root of folder.
-Name that bold indicates it’s a folder, otherwise it’s a document.
+'user_data' 表示文件夹的根目录。
+粗体名称表示文件夹，否则为文档。
 
 .. code-block:: yaml
 

@@ -1,16 +1,16 @@
 .. _code_standard:
 
 =============
-Code Standard
+代码规范
 =============
 
-Docstring
+文档字符串
 =========
-Please use the `Numpydoc Style <https://stackoverflow.com/a/24385103>`_.
+请使用 `Numpydoc 风格 <https://stackoverflow.com/a/24385103>`_。
 
-Continuous Integration
+持续集成
 ======================
-Continuous Integration (CI) tools help you stick to the quality standards by running tests every time you push a new commit and reporting the results to a pull request.
+持续集成（CI）工具通过在每次推送新提交时运行测试并向拉取请求报告结果，帮助您遵守质量标准。
 
 When you submit a PR request, you can check whether your code passes the CI tests in the "check" section at the bottom of the web page.
 
@@ -52,10 +52,10 @@ When you submit a PR request, you can check whether your code passes the CI test
 
 
 =================================
-Development Guidance
+开发指南
 =================================
 
-As a developer, you often want make changes to `Qlib` and hope it would reflect directly in your environment without reinstalling it. You can install `Qlib` in editable mode with following command.
+作为开发者，您可能希望修改 `Qlib` 后无需重新安装就能直接在环境中生效。您可以通过以下命令以可编辑模式安装 `Qlib`。
 The `[dev]` option will help you to install some related packages when developing `Qlib` (e.g. pytest, sphinx)
 
 .. code-block:: bash
