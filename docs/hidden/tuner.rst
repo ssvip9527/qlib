@@ -198,7 +198,7 @@
 关于调优管道
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The tuner pipeline contains different tuners, and the `tuner` program will process each tuner in pipeline. Each tuner will get an optimal hyper-parameters of its specific combination of modules. The pipeline will contrast the results of each tuner, and get the best combination and its optimal hyper-parameters. So, you need to configurate the pipeline and each tuner, here is an example:
+调参管道包含不同的调参器，`tuner`程序将按顺序处理管道中的每个调参器。每个调参器会为其特定的模块组合找到最优超参数。管道会对比各个调参器的结果，从而获得最佳组合及其最优超参数。因此，您需要配置管道和每个调参器，以下是示例：
 
 .. code-block:: YAML
 
@@ -214,29 +214,29 @@ The tuner pipeline contains different tuners, and the `tuner` program will proce
             space: TopkAmountStrategySpace
         max_evals: 2
 
-Each part represents a tuner, and its modules which are to be tuned. Space in each part is the hyper-parameters' space of a certain module, you need to create your searching space and modify it in `/qlib/contrib/tuner/space.py`. We use `hyperopt` package to help us to construct the space, you can see the detail of how to use it in https://github.com/hyperopt/hyperopt/wiki/FMin .
+每个部分代表一个调参器及其需要调优的模块。每个部分中的Space是特定模块的超参数空间，您需要创建自己的搜索空间并在`/qlib/contrib/tuner/space.py`中修改。我们使用`hyperopt`包来帮助构建空间，您可以在https://github.com/hyperopt/hyperopt/wiki/FMin查看详细使用方法。
 
 - model
-    You need to provide the `class` and the `space` of the model. If the model is user's own implementation, you need to provide the `module_path`.
+    您需要提供模型的`class`和`space`。如果模型是用户自己实现的，还需要提供`module_path`。
 
 - trainer
-    You need to provide the `class` of the trainer. If the trainer is user's own implementation, you need to provide the `module_path`.
+    您需要提供训练器的`class`。如果训练器是用户自己实现的，还需要提供`module_path`。
 
 - strategy
-    You need to provide the `class` and the `space` of the strategy. If the strategy is user's own implementation, you need to provide the `module_path`.
+    您需要提供策略的`class`和`space`。如果策略是用户自己实现的，还需要提供`module_path`。
 
 - data_label
-    The label of the data, you can search which kinds of labels will lead to a better result. This part is optional, and you only need to provide `space`.
+    数据的标签，您可以搜索哪种标签能带来更好的结果。这部分是可选的，只需提供`space`。
 
 - max_evals
-    Allow up to this many function evaluations in this tuner. The default value is 10.
+    允许此调参器进行的函数评估次数上限。默认值为10。
 
-If you don't want to search some modules, you can fix their spaces in `space.py`. We will not give the default module.
+如果您不想搜索某些模块，可以在`space.py`中固定它们的空间。我们不会提供默认模块。
 
-About the time period
+关于时间周期
 ~~~~~~~~~~~~~~~~~~~~~
 
-You need to use the same dataset to evaluate your different `estimator` experiments in `tuner` experiment. Two experiments using different dataset are uncomparable. You can specify `time_period` through the configuration file:
+在`tuner`实验中，您需要使用相同的数据集来评估不同的`estimator`实验。使用不同数据集的两个实验是不可比的。您可以通过配置文件指定`time_period`：
 
 .. code-block:: YAML
 
@@ -250,30 +250,30 @@ You need to use the same dataset to evaluate your different `estimator` experime
         test_end_date: 2018-04-30
 
 - `rolling_period`
-    The rolling period, integer type, indicates how many time steps need rolling when rolling the data. The default value is `60`. If you use `RollingTrainer`, this config will be used, or it will be ignored.
+    滚动周期，整数类型，表示滚动数据时需要滚动的时间步数。默认值为`60`。如果使用`RollingTrainer`，将使用此配置，否则将被忽略。
 
 - `train_start_date`
-    Training start time, str type.
+    训练开始时间，字符串类型。
 
 - `train_end_date`
-    Training end time, str type.
+    训练结束时间，字符串类型。
 
 - `validate_start_date`
-    Validation start time, str type.
+    验证开始时间，字符串类型。
 
 - `validate_end_date`
-    Validation end time, str type.
+    验证结束时间，字符串类型。
 
 - `test_start_date`
-    Test start time, str type.
+    测试开始时间，字符串类型。
 
 - `test_end_date`
-    Test end time, str type. If `test_end_date` is `-1` or greater than the last date of the data, the last date of the data will be used as `test_end_date`.
+    测试结束时间，字符串类型。如果`test_end_date`为`-1`或大于数据的最后日期，则使用数据的最后日期作为`test_end_date`。
 
-About the data and backtest
+关于数据和回测
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`data` and `backtest` are all same in the whole `tuner` experiment. Different `estimator` experiments must use the same data and backtest method. So, these two parts of config are same with that in `estimator` configuration. You can see the precise definition of these parts in `estimator` introduction. We only provide an example here.
+在整个`tuner`实验中，`data`和`backtest`都是相同的。不同的`estimator`实验必须使用相同的数据和回测方法。因此，这两部分配置与`estimator`配置中的相同。您可以在`estimator`介绍中查看这些部分的精确定义。这里仅提供示例。
 
 .. code-block:: YAML
 
@@ -312,13 +312,13 @@ About the data and backtest
         long_short_backtest_args:
             topk: 50
 
-Experiment Result
+实验结果
 -----------------
 
-All the results are stored in experiment file directly, you can check them directly in the corresponding files.
-What we save are as following:
+所有结果直接存储在实验文件中，您可以直接在相应文件中查看。
+我们保存的内容如下：
 
-- Global optimal parameters
-- Local optimal parameters of each tuner
-- Config file of this `tuner` experiment
-- Every `estimator` experiments result in the process
+- 全局最优参数
+- 每个调参器的局部最优参数
+- 此`tuner`实验的配置文件
+- 过程中每个`estimator`实验的结果
