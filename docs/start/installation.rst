@@ -11,19 +11,19 @@ Installation
 =====================
 .. note::
 
-   `Qlib` supports both `Windows` and `Linux`. It's recommended to use `Qlib` in `Linux`. ``Qlib`` supports Python3, which is up to Python3.8.
+   `Qlib支持`Windows`和`Linux`系统。建议在`Linux`环境中使用Qlib。Qlib支持Python3，最高兼容Python3.8版本。
 
-Users can easily install ``Qlib`` by pip according to the following command:
+用户可以通过以下命令使用pip轻松安装Qlib：
 
 .. code-block:: bash
 
    pip install pyqlib
 
 
-Also, Users can install ``Qlib`` by the source code according to the following steps:
+此外，用户还可以按照以下步骤通过源代码安装Qlib：
 
-- Enter the root directory of ``Qlib``, in which the file ``setup.py`` exists.
-- Then, please execute the following command to install the environment dependencies and install ``Qlib``:
+- 进入Qlib的根目录，该目录下应包含``setup.py``文件。
+- 然后执行以下命令安装环境依赖并安装Qlib：
 
    .. code-block:: bash
 
@@ -33,11 +33,11 @@ Also, Users can install ``Qlib`` by the source code according to the following s
       $ python setup.py install
 
 .. note::
-   It's recommended to use anaconda/miniconda to setup the environment. ``Qlib`` needs lightgbm and pytorch packages, use pip to install them.
+   建议使用anaconda/miniconda来设置环境。Qlib需要lightgbm和pytorch包，请使用pip安装它们。
 
 
 
-Use the following code to make sure the installation successful:
+使用以下代码验证安装是否成功：
 
 .. code-block:: python
 
