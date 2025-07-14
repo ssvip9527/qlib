@@ -92,14 +92,14 @@ def fill_test_na(test_df):
 
 
 def process_qlib_data(df, dataset, fillna=False):
-    """Prepare data to fit the TFT model.
+    """准备数据以适应TFT模型。
 
-    Args:
-      df: Original DataFrame.
-      fillna: Whether to fill the data with the mean values.
+    参数:
+      df: 原始DataFrame。
+      fillna: 是否用均值填充数据。
 
-    Returns:
-      Transformed DataFrame.
+    返回:
+      转换后的DataFrame。
 
     """
     # Several features selected manually
@@ -121,14 +121,14 @@ def process_qlib_data(df, dataset, fillna=False):
 
 
 def process_predicted(df, col_name):
-    """Transform the TFT predicted data into Qlib format.
+    """将TFT预测数据转换为Qlib格式。
 
-    Args:
-      df: Original DataFrame.
-      fillna: New column name.
+    参数:
+      df: 原始DataFrame。
+      fillna: 新列名。
 
-    Returns:
-      Transformed DataFrame.
+    返回:
+      转换后的DataFrame。
 
     """
     df_res = df.copy()
