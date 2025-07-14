@@ -1,21 +1,20 @@
-# Minimal makefile for Sphinx documentation
+# Sphinx 文档的最小 makefile
 #
 
-# You can set these variables from the command line.
+# 你可以从命令行设置这些变量。
 SPHINXOPTS    =
 SPHINXBUILD   = python3 -msphinx
 SPHINXPROJ    = Quantlab
 SOURCEDIR     = .
 BUILDDIR      = _build
 
-# Put it first so that "make" without argument is like "make help".
+# 把它放在最前面，这样没有参数的 "make" 就像 "make help" 一样。
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+# 通用目标：将所有未知目标路由到 Sphinx，使用新的 "make mode" 选项。$(O) 作为 $(SPHINXOPTS) 的快捷方式。
 %: Makefile
 	pip install -r requirements.txt
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

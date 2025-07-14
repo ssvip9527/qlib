@@ -41,23 +41,23 @@
 
             def fit(self, dataset: DatasetH, num_boost_round = 1000, **kwargs):
 
-                # prepare dataset for lgb training and evaluation
+                # 为 lgb 训练和评估准备数据集
                 df_train, df_valid = dataset.prepare(
                     ["train", "valid"], col_set=["feature", "label"], data_key=DataHandlerLP.DK_L
                 )
                 x_train, y_train = df_train["feature"], df_train["label"]
                 x_valid, y_valid = df_valid["feature"], df_valid["label"]
 
-                # Lightgbm need 1D array as its label
+                # Lightgbm 需要 1D 数组作为标签
                 if y_train.values.ndim == 2 and y_train.values.shape[1] == 1:
                     y_train, y_valid = np.squeeze(y_train.values), np.squeeze(y_valid.values)
                 else:
-                    raise ValueError("LightGBM doesn't support multi-label training")
+                    raise ValueError("LightGBM 不支持多标签训练")
 
                 dtrain = lgb.Dataset(x_train.values, label=y_train)
                 dvalid = lgb.Dataset(x_valid.values, label=y_valid)
 
-                # fit the model
+                # 拟合模型
                 self.model = lgb.train(
                     self.params,
                     dtrain,
@@ -92,7 +92,7 @@
         .. code-block:: Python
 
             def finetune(self, dataset: DatasetH, num_boost_round=10, verbose_eval=20):
-                # Based on existing model and finetune by train more rounds
+                # 基于已有模型继续训练更多轮次进行微调
                 dtrain, _ = self._prepare_data(dataset)
                 self.model = lgb.train(
                     self.params,
@@ -109,7 +109,7 @@
 
 配置文件在 `工作流 <../component/workflow.html#complete-example>`_ 文档中有详细描述。为了将自定义模型集成到 ``Qlib`` 中，用户需要修改配置文件中的 “model” 字段。该配置描述了要使用的模型以及如何初始化它。
 
-- 示例：以下示例描述了上述自定义 LightGBM 模型的配置文件中的 `model` 字段，其中 `module_path` 是模块路径，`class` 是类名，`args` 是传递给 `__init__` 方法的超参数。除 `loss = mse` 外，该字段中的所有参数都通过 `\*\*kwargs` 传递给 `self._params`。
+- 示例：以下示例描述了上述自定义 LightGBM 模型的配置文件中的 `model` 字段，其中 `module_path` 是模块路径，`class` 是类名，`args` 是传递给 `__init__` 方法的超参数。除 `loss = mse` 外，该字段中的所有参数都通过 `**kwargs` 传递给 `self._params`。
 
     .. code-block:: YAML
 
@@ -135,7 +135,7 @@
 
 .. code-block:: bash
 
-    cd examples  # Avoid running program under the directory contains `qlib`
+    cd examples  # 避免在包含`qlib`的目录下运行程序
     qrun benchmarks/LightGBM/workflow_config_lightgbm.yaml
 
 .. note:: ``qrun`` 是 ``Qlib`` 的内置命令。

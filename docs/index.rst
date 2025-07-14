@@ -12,56 +12,56 @@
 .. toctree::
    :hidden:
 
-   Home <self>
+   主页 <self>
 
 .. toctree::
    :maxdepth: 3
    :caption: 快速开始:
 
-   Introduction <introduction/introduction.rst>
-   Quick Start <introduction/quick.rst>
+   入门介绍 <introduction/introduction.rst>
+   快速上手 <introduction/quick.rst>
 
 .. toctree::
    :maxdepth: 3
    :caption: 入门指南:
 
-   Installation <start/installation.rst>
-   Initialization <start/initialization.rst>
-   Data Retrieval <start/getdata.rst>
-   Custom Model Integration <start/integration.rst>
+   安装指南 <start/installation.rst>
+   初始化 <start/initialization.rst>
+   数据获取 <start/getdata.rst>
+   自定义模型集成 <start/integration.rst>
 
 
 .. toctree::
    :maxdepth: 3
    :caption: 核心组件:
 
-   Workflow: Workflow Management <component/workflow.rst>
-   Data Layer: Data Framework & Usage <component/data.rst>
-   Forecast Model: Model Training & Prediction <component/model.rst>
-   Portfolio Management and Backtest <component/strategy.rst>
-   Nested Decision Execution: High-Frequency Trading <component/highfreq.rst>
-   Meta Controller: Meta-Task & Meta-Dataset & Meta-Model <component/meta.rst>
-   Qlib Recorder: Experiment Management <component/recorder.rst>
-   Analysis: Evaluation & Results Analysis <component/report.rst>
-   Online Serving: Online Management & Strategy & Tool <component/online.rst>
-   Reinforcement Learning <component/rl/toctree>
+   工作流：工作流管理 <component/workflow.rst>
+   数据层：数据框架与使用 <component/data.rst>
+   预测模型：模型训练与预测 <component/model.rst>
+   组合管理与回测 <component/strategy.rst>
+   嵌套决策执行：高频交易 <component/highfreq.rst>
+   元控制器：元任务、元数据集与元模型 <component/meta.rst>
+   Qlib 记录器：实验管理 <component/recorder.rst>
+   分析：评估与结果分析 <component/report.rst>
+   在线服务：在线管理、策略与工具 <component/online.rst>
+   强化学习 <component/rl/toctree>
 
 .. toctree::
    :maxdepth: 3
    :caption: 其他组件/功能/主题:
 
-   Building Formulaic Alphas <advanced/alpha.rst>
-   Online & Offline mode <advanced/server.rst>
-   Serialization <advanced/serial.rst>
-   Task Management <advanced/task_management.rst>
-   Point-In-Time database <advanced/PIT.rst>
+   构建公式化 Alpha <advanced/alpha.rst>
+   在线与离线模式 <advanced/server.rst>
+   序列化 <advanced/serial.rst>
+   任务管理 <advanced/task_management.rst>
+   时点数据库 <advanced/PIT.rst>
 
 .. toctree::
    :maxdepth: 3
    :caption: 开发者指南:
 
-   Code Standard & Development Guidance <developer/code_standard_and_dev_guide.rst>
-   How to build image <developer/how_to_build_image.rst>
+   代码规范与开发指南 <developer/code_standard_and_dev_guide.rst>
+   镜像构建方法 <developer/how_to_build_image.rst>
 
 .. toctree::
    :maxdepth: 3
@@ -72,10 +72,10 @@
 .. toctree::
    :maxdepth: 3
 
-   FAQ <FAQ/FAQ.rst>
+   常见问题 <FAQ/FAQ.rst>
 
 .. toctree::
    :maxdepth: 3
    :caption: 更新日志:
 
-   Change Log <changelog/changelog.rst>
+   更新日志 <changelog/changelog.rst>
