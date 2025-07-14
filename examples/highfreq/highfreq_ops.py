@@ -9,17 +9,17 @@ from qlib.contrib.ops.high_freq import get_calendar_day
 
 
 class DayLast(ElemOperator):
-    """DayLast Operator
+    """DayLast操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a series of that each value equals the last value of its day
+        每个值等于其所在交易日最后一个值的序列
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -29,17 +29,17 @@ class DayLast(ElemOperator):
 
 
 class FFillNan(ElemOperator):
-    """FFillNan Operator
+    """FFillNan操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a forward fill nan feature
+        前向填充缺失值的特征
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -48,17 +48,17 @@ class FFillNan(ElemOperator):
 
 
 class BFillNan(ElemOperator):
-    """BFillNan Operator
+    """BFillNan操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a backfoward fill nan feature
+        后向填充缺失值的特征
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -67,17 +67,17 @@ class BFillNan(ElemOperator):
 
 
 class Date(ElemOperator):
-    """Date Operator
+    """Date操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a series of that each value is the date corresponding to feature.index
+        每个值为特征索引对应日期的序列
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -87,19 +87,19 @@ class Date(ElemOperator):
 
 
 class Select(PairOperator):
-    """Select Operator
+    """Select操作符
 
-    Parameters
+    参数
     ----------
     feature_left : Expression
-        feature instance, select condition
+        特征实例，选择条件
     feature_right : Expression
-        feature instance, select value
+        特征实例，选择值
 
-    Returns
+    返回
     ----------
     feature:
-        value(feature_right) that meets the condition(feature_left)
+        满足条件(feature_left)的特征值(feature_right)
 
     """
 
@@ -110,17 +110,17 @@ class Select(PairOperator):
 
 
 class IsNull(ElemOperator):
-    """IsNull Operator
+    """IsNull操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        A series indicating whether the feature is nan
+        指示特征是否为缺失值的序列
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -129,21 +129,21 @@ class IsNull(ElemOperator):
 
 
 class Cut(ElemOperator):
-    """Cut Operator
+    """Cut操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
     l : int
-        l > 0, delete the first l elements of feature (default is None, which means 0)
+        l > 0，删除特征的前l个元素（默认为None，表示0）
     r : int
-        r < 0, delete the last -r elements of feature (default is None, which means 0)
-    Returns
+        r < 0，删除特征的后-r个元素（默认为None，表示0）
+    返回
     ----------
     feature:
-        A series with the first l and last -r elements deleted from the feature.
-        Note: It is deleted from the raw data, not the sliced data
+        从特征中删除前l个和后-r个元素后的序列。
+        注意：是从原始数据中删除，而不是从切片数据中删除
     """
 
     def __init__(self, feature, l=None, r=None):

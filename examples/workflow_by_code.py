@@ -1,11 +1,11 @@
 #  Copyright (c) Microsoft Corporation.
 #  Licensed under the MIT License.
 """
-Qlib provides two kinds of interfaces.
-(1) Users could define the Quant research workflow by a simple configuration.
-(2) Qlib is designed in a modularized way and supports creating research workflow by code just like building blocks.
+Qlib提供两种类型的接口。
+(1) 用户可以通过简单的配置定义量化研究工作流。
+(2) Qlib采用模块化设计，支持像搭建积木一样通过代码创建研究工作流。
 
-The interface of (1) is `qrun XXX.yaml`.  The interface of (2) is script like this, which nearly does the same thing as `qrun XXX.yaml`
+接口(1)的使用方式是`qrun XXX.yaml`。接口(2)则是像本脚本一样，其功能与`qrun XXX.yaml`基本相同。
 """
 import qlib
 from qlib.constant import REG_CN
@@ -59,8 +59,8 @@ if __name__ == "__main__":
         },
     }
 
-    # NOTE: This line is optional
-    # It demonstrates that the dataset can be used standalone.
+    # 注意：此行是可选的
+    # 这演示了数据集可以单独使用。
     example_df = dataset.prepare("train")
     print(example_df.head())
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         sar = SigAnaRecord(recorder)
         sar.generate()
 
-        # backtest. If users want to use backtest based on their own prediction,
-        # please refer to https://qlib.readthedocs.io/en/latest/component/recorder.html#record-template.
+        # 回测。如果用户希望基于自己的预测进行回测，
+        # 请参考https://qlib.readthedocs.io/en/latest/component/recorder.html#record-template。
         par = PortAnaRecord(recorder, port_analysis_config, "day")
         par.generate()

@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# 根据 MIT 许可证授权。
 import os
 from pathlib import Path
 from typing import Union
@@ -15,16 +15,16 @@ BENCH_DIR = DIRNAME.parent / "baseline"
 
 
 class DDGDABench(DDGDA):
-    # The config in the README.md
+    # README.md 中的配置文件
     CONF_LIST = [
         BENCH_DIR / "workflow_config_linear_Alpha158.yaml",
         BENCH_DIR / "workflow_config_lightgbm_Alpha158.yaml",
     ]
 
-    DEFAULT_CONF = CONF_LIST[0]  # Linear by default due to efficiency
+    DEFAULT_CONF = CONF_LIST[0]  # 默认使用线性模型以提高效率
 
     def __init__(self, conf_path: Union[str, Path] = DEFAULT_CONF, horizon=20, **kwargs) -> None:
-        # This code is for being compatible with the previous old code
+        # 此代码用于兼容早期旧版本代码
         conf_path = Path(conf_path)
         super().__init__(conf_path=conf_path, horizon=horizon, working_dir=DIRNAME, **kwargs)
 
@@ -32,7 +32,7 @@ class DDGDABench(DDGDA):
             if conf_path.samefile(f):
                 break
         else:
-            self.logger.warning("Model type is not in the benchmark!")
+            self.logger.warning("模型类型不在基准测试范围内！")
 
 
 if __name__ == "__main__":

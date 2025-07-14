@@ -1,14 +1,14 @@
-# Temporal Fusion Transformers Benchmark
-## Source
-**Reference**: Lim, Bryan, et al. "Temporal fusion transformers for interpretable multi-horizon time series forecasting." arXiv preprint arXiv:1912.09363 (2019).
+# 时间融合Transformer基准测试
+## 来源
+**参考文献**：Lim, Bryan, 等. "Temporal fusion transformers for interpretable multi-horizon time series forecasting." arXiv预印本 arXiv:1912.09363 (2019).
 
-**GitHub**: https://github.com/google-research/google-research/tree/master/tft
+**GitHub**：https://github.com/google-research/google-research/tree/master/tft
 
-## Run the Workflow
-Users can follow the ``workflow_by_code_tft.py`` to run the benchmark. 
+## 运行工作流
+用户可以按照``workflow_by_code_tft.py``来运行基准测试。
 
-### Notes
-1. Please be **aware** that this script can only support `Python 3.6 - 3.7`.
-2. If the CUDA version on your machine is not 10.0, please remember to run the following commands `conda install anaconda cudatoolkit=10.0` and `conda install cudnn` on your machine.
-3. The model must run in GPU, or an error will be raised.
-4. New datasets should be registered in ``data_formatters``, for detail please visit the source.
+### 注意事项
+1. 请注意，此脚本仅支持`Python 3.6 - 3.7`。
+2. 如果您机器上的CUDA版本不是10.0，请记得在您的机器上运行以下命令：`conda install anaconda cudatoolkit=10.0` 和 `conda install cudnn`。
+3. 模型必须在GPU上运行，否则会引发错误。
+4. 新数据集应在``data_formatters``中注册，详细信息请访问来源。

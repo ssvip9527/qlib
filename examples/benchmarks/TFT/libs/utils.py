@@ -26,11 +26,11 @@ from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoi
 
 # Generic.
 def get_single_col_by_input_type(input_type, column_definition):
-    """Returns name of single column.
+    """返回单个列的名称。
 
-    Args:
-      input_type: Input type of column to extract
-      column_definition: Column definition list for experiment
+    参数:
+      input_type: 要提取的列的输入类型
+      column_definition: 实验的列定义列表
     """
 
     l = [tup[0] for tup in column_definition if tup[2] == input_type]
@@ -42,33 +42,32 @@ def get_single_col_by_input_type(input_type, column_definition):
 
 
 def extract_cols_from_data_type(data_type, column_definition, excluded_input_types):
-    """Extracts the names of columns that correspond to a define data_type.
+    """提取与指定数据类型对应列的名称。
 
-    Args:
-      data_type: DataType of columns to extract.
-      column_definition: Column definition to use.
-      excluded_input_types: Set of input types to exclude
+    参数:
+      data_type: 要提取的列的数据类型。
+      column_definition: 要使用的列定义。
+      excluded_input_types: 要排除的输入类型集合
 
-    Returns:
-      List of names for columns with data type specified.
+    返回:
+      指定数据类型的列名称列表。
     """
     return [tup[0] for tup in column_definition if tup[1] == data_type and tup[2] not in excluded_input_types]
 
 
 # Loss functions.
 def tensorflow_quantile_loss(y, y_pred, quantile):
-    """Computes quantile loss for tensorflow.
+    """为TensorFlow计算分位数损失。
 
-    Standard quantile loss as defined in the "Training Procedure" section of
-    the main TFT paper
+    标准分位数损失，定义于TFT主论文的"训练过程"部分
 
-    Args:
-      y: Targets
-      y_pred: Predictions
-      quantile: Quantile to use for loss calculations (between 0 & 1)
+    参数:
+      y: 目标值
+      y_pred: 预测值
+      quantile: 用于损失计算的分位数（介于0和1之间）
 
-    Returns:
-      Tensor for quantile loss.
+    返回:
+      分位数损失的张量。
     """
 
     # Checks quantile
@@ -84,18 +83,17 @@ def tensorflow_quantile_loss(y, y_pred, quantile):
 
 
 def numpy_normalised_quantile_loss(y, y_pred, quantile):
-    """Computes normalised quantile loss for numpy arrays.
+    """为numpy数组计算归一化分位数损失。
 
-    Uses the q-Risk metric as defined in the "Training Procedure" section of the
-    main TFT paper.
+    使用TFT主论文"训练过程"部分定义的q-Risk指标。
 
-    Args:
-      y: Targets
-      y_pred: Predictions
-      quantile: Quantile to use for loss calculations (between 0 & 1)
+    参数:
+      y: 目标值
+      y_pred: 预测值
+      quantile: 用于损失计算的分位数（介于0和1之间）
 
-    Returns:
-      Float for normalised quantile loss.
+    返回:
+      归一化分位数损失的浮点值。
     """
     prediction_underflow = y - y_pred
     weighted_errors = quantile * np.maximum(prediction_underflow, 0.0) + (1.0 - quantile) * np.maximum(

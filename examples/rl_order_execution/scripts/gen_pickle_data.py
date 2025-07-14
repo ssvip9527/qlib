@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# 根据 MIT 许可证授权。
 
 import yaml
 import argparse
@@ -25,7 +25,7 @@ if __name__ == "__main__":
             v["path"] = os.path.join(args.dest, v["path"])
     provider = HighFreqProvider(**conf)
 
-    # Gen dataframe
+    # 生成数据框
     if "feature_conf" in conf:
         feature = provider._gen_dataframe(deepcopy(provider.feature_conf))
     if "backtest_conf" in conf:
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     provider.feature_conf["path"] = os.path.splitext(provider.feature_conf["path"])[0] + "/"
     provider.backtest_conf["path"] = os.path.splitext(provider.backtest_conf["path"])[0] + "/"
-    # Split by date
+    # 按日期分割
     if args.split == "date" or args.split == "both":
         provider._gen_day_dataset(deepcopy(provider.feature_conf), "feature")
         provider._gen_day_dataset(deepcopy(provider.backtest_conf), "backtest")

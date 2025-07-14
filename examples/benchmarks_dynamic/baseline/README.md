@@ -1,15 +1,15 @@
-# Introduction
+# 介绍
 
-This is the framework of periodically Rolling Retrain (RR) forecasting models. RR adapts to market dynamics by utilizing the up-to-date data periodically.
+这是周期性滚动再训练（RR）预测模型的框架。RR通过定期利用最新数据来适应市场动态。
 
-## Run the Code
-Users can try RR by running the following command:
+## 运行代码
+用户可以通过运行以下命令尝试RR：
 ```bash
     python rolling_benchmark.py run
 ```
 
-The default forecasting models are `Linear`. Users can choose other forecasting models by changing the `model_type` parameter.
-For example, users can try `LightGBM` forecasting models by running the following command:
+默认的预测模型是`Linear`。用户可以通过更改`model_type`参数选择其他预测模型。
+例如，用户可以通过运行以下命令尝试`LightGBM`预测模型：
 ```bash
     python rolling_benchmark.py --conf_path=workflow_config_lightgbm_Alpha158.yaml run
 

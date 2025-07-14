@@ -14,10 +14,9 @@
 # limitations under the License.
 
 # Lint as: python3
-"""Default configs for TFT experiments.
+"""TFT实验的默认配置。
 
-Contains the default output paths for data, serialised models and predictions
-for the main experiments used in the publication.
+包含数据、序列化模型和预测的默认输出路径，用于出版物中的主要实验。
 """
 
 import os
@@ -26,27 +25,26 @@ import data_formatters.qlib_Alpha158
 
 
 class ExperimentConfig:
-    """Defines experiment configs and paths to outputs.
+    """定义实验配置和输出路径。
 
-    Attributes:
-      root_folder: Root folder to contain all experimental outputs.
-      experiment: Name of experiment to run.
-      data_folder: Folder to store data for experiment.
-      model_folder: Folder to store serialised models.
-      results_folder: Folder to store results.
-      data_csv_path: Path to primary data csv file used in experiment.
-      hyperparam_iterations: Default number of random search iterations for
-        experiment.
+    属性：
+        root_folder: 包含所有实验输出的根文件夹。
+        experiment: 要运行的实验名称。
+        data_folder: 存储实验数据的文件夹。
+        model_folder: 存储序列化模型的文件夹。
+        results_folder: 存储结果的文件夹。
+        data_csv_path: 实验中使用的主要数据CSV文件路径。
+        hyperparam_iterations: 实验的默认随机搜索迭代次数。
     """
 
     default_experiments = ["Alpha158"]
 
     def __init__(self, experiment="volatility", root_folder=None):
-        """Creates configs based on default experiment chosen.
+        """基于选择的默认实验创建配置。
 
-        Args:
-          experiment: Name of experiment.
-          root_folder: Root folder to save all outputs of training.
+        参数：
+            experiment: 实验名称。
+            root_folder: 保存所有训练输出的根文件夹。
         """
 
         if experiment not in self.default_experiments:
@@ -81,10 +79,10 @@ class ExperimentConfig:
         return 240 if self.experiment == "volatility" else 60
 
     def make_data_formatter(self):
-        """Gets a data formatter object for experiment.
+        """获取实验的数据格式化器对象。
 
-        Returns:
-          Default DataFormatter per experiment.
+        返回：
+            每个实验的默认DataFormatter。
         """
 
         data_formatter_class = {

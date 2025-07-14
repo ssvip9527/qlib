@@ -1,10 +1,10 @@
-# Requirements
+# 要求
 
-Here is the minimal hardware requirements to run the `workflow_by_code` example.
-- Memory: 16G
-- Free Disk: 5G
+以下是运行`workflow_by_code`示例的最低硬件要求。
+- 内存：16G
+- 可用磁盘空间：5G
 
 
-# NOTE
-The results will slightly vary on different OSs(the variance of annualized return will be less than 2%).
-The evaluation results in the `README.md` page are from Linux OS.
+# 注意事项
+在不同操作系统上，结果会略有差异（年化收益率的方差将小于2%）。
+`README.md`页面中的评估结果来自Linux操作系统。

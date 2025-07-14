@@ -14,9 +14,9 @@
 # limitations under the License.
 
 # Lint as: python3
-"""Custom formatting functions for Alpha158 dataset.
+"""Alpha158数据集的自定义格式化函数。
 
-Defines dataset specific column definitions and data transformations.
+定义数据集特定的列定义和数据转换。
 """
 
 import data_formatters.base
@@ -29,13 +29,12 @@ InputTypes = data_formatters.base.InputTypes
 
 
 class Alpha158Formatter(GenericDataFormatter):
-    """Defines and formats data for the Alpha158 dataset.
+    """为Alpha158数据集定义和格式化数据。
 
-    Attributes:
-      column_definition: Defines input and data type of column used in the
-        experiment.
-      identifiers: Entity identifiers used in experiments.
-    """
+    属性：
+        column_definition: 定义实验中使用的列的输入和数据类型。
+        identifiers: 实验中使用的实体标识符。
+"""
 
     _column_definition = [
         ("instrument", DataTypes.CATEGORICAL, InputTypes.ID),
@@ -68,7 +67,7 @@ class Alpha158Formatter(GenericDataFormatter):
     ]
 
     def __init__(self):
-        """Initialises formatter."""
+        """初始化格式化器。"""
 
         self.identifiers = None
         self._real_scalers = None
@@ -77,17 +76,17 @@ class Alpha158Formatter(GenericDataFormatter):
         self._num_classes_per_cat_input = None
 
     def split_data(self, df, valid_boundary=2016, test_boundary=2018):
-        """Splits data frame into training-validation-test data frames.
+        """将数据框拆分为训练-验证-测试数据框。
 
-        This also calibrates scaling object, and transforms data for each split.
+        这也会校准缩放对象，并为每个拆分转换数据。
 
-        Args:
-          df: Source data frame to split.
-          valid_boundary: Starting year for validation data
-          test_boundary: Starting year for test data
+        参数：
+            df: 要拆分的源数据框。
+            valid_boundary: 验证数据的起始年份
+            test_boundary: 测试数据的起始年份
 
-        Returns:
-          Tuple of transformed (train, valid, test) data.
+        返回：
+            转换后的（训练、验证、测试）数据元组。
         """
 
         print("Formatting train-valid-test splits.")
@@ -102,10 +101,10 @@ class Alpha158Formatter(GenericDataFormatter):
         return (self.transform_inputs(data) for data in [train, valid, test])
 
     def set_scalers(self, df):
-        """Calibrates scalers using the data supplied.
+        """使用提供的数据校准缩放器。
 
-        Args:
-          df: Data to use to calibrate scalers.
+        参数：
+            df: 用于校准缩放器的数据。
         """
         print("Setting scalers with training data...")
 
@@ -145,15 +144,15 @@ class Alpha158Formatter(GenericDataFormatter):
         self._num_classes_per_cat_input = num_classes
 
     def transform_inputs(self, df):
-        """Performs feature transformations.
+        """执行特征转换。
 
-        This includes both feature engineering, preprocessing and normalisation.
+        这包括特征工程、预处理和归一化。
 
-        Args:
-          df: Data frame to transform.
+        参数：
+            df: 要转换的数据框。
 
-        Returns:
-          Transformed data frame.
+        返回：
+            转换后的数据框。
 
         """
         output = df.copy()
@@ -181,13 +180,13 @@ class Alpha158Formatter(GenericDataFormatter):
         return output
 
     def format_predictions(self, predictions):
-        """Reverts any normalisation to give predictions in original scale.
+        """还原任何归一化，使预测结果恢复原始尺度。
 
-        Args:
-          predictions: Dataframe of model predictions.
+        参数：
+            predictions: 模型预测的数据框。
 
-        Returns:
-          Data frame of unnormalised predictions.
+        返回：
+            未归一化预测的数据框。
         """
         output = predictions.copy()
 
@@ -202,7 +201,7 @@ class Alpha158Formatter(GenericDataFormatter):
 
     # Default params
     def get_fixed_params(self):
-        """Returns fixed model parameters for experiments."""
+        """返回实验的固定模型参数。"""
 
         fixed_params = {
             "total_time_steps": 6 + 6,
@@ -215,7 +214,7 @@ class Alpha158Formatter(GenericDataFormatter):
         return fixed_params
 
     def get_default_model_params(self):
-        """Returns default optimised model parameters."""
+        """返回默认优化的模型参数。"""
 
         model_params = {
             "dropout_rate": 0.4,

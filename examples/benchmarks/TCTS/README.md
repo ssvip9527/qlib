@@ -1,38 +1,38 @@
-# Temporally Correlated Task Scheduling for Sequence Learning
-### Background
-Sequence learning has attracted much research attention from the machine learning community in recent years. In many applications, a sequence learning task is usually associated with multiple temporally correlated auxiliary tasks, which are different in terms of how much input information to use or which future step to predict. In stock trend forecasting, as demonstrated in Figure1, one can predict the price of a stock in different future days (e.g., tomorrow, the day after tomorrow). In this paper, we propose a framework to make use of those temporally correlated tasks to help each other. 
+# 时间相关任务调度序列学习
+### 背景
+近年来，序列学习引起了机器学习社区的广泛研究关注。在许多应用中，一个序列学习任务通常与多个时间相关的辅助任务相关联，这些辅助任务在使用多少输入信息或预测哪个未来步骤方面有所不同。在股票趋势预测中，如图1所示，可以预测股票在不同未来天数（例如明天、后天）的价格。本文提出了一个利用这些时间相关任务相互帮助的框架。
 
-### Method
-Given that there are usually multiple temporally correlated tasks, the key challenge lies in which tasks to use and when to use them in the training process. This work introduces a learnable task scheduler for sequence learning, which adaptively selects temporally correlated tasks during the training process. The scheduler accesses the model status and the current training data (e.g., in the current minibatch) and selects the best auxiliary task to help the training of the main task. The scheduler and the model for the main task are jointly trained through bi-level optimization: the scheduler is trained to maximize the validation performance of the model, and the model is trained to minimize the training loss guided by the scheduler. The process is demonstrated in Figure2.
+### 方法
+鉴于通常存在多个时间相关任务，关键挑战在于在训练过程中选择哪些任务以及何时使用这些任务。本工作为序列学习引入了一个可学习的任务调度器，该调度器在训练过程中自适应地选择时间相关任务。调度器访问模型状态和当前训练数据（例如当前小批量数据），并选择最佳辅助任务来帮助主任务的训练。调度器和主任务模型通过双层优化联合训练：调度器的训练目标是最大化模型的验证性能，而模型的训练目标是在调度器的指导下最小化训练损失。该过程如图2所示。
 
 <p align="center"> 
 <img src="workflow.png"/>
 </p>
 
-At step <img src="https://latex.codecogs.com/png.latex?s" title="s" />, with training data <img src="https://latex.codecogs.com/png.latex?x_s,y_s" title="x_s,y_s" />, the scheduler <img src="https://latex.codecogs.com/png.latex?\varphi" title="\varphi" /> chooses a suitable task <img src="https://latex.codecogs.com/png.latex?T_{i_s}" title="T_{i_s}" /> (green solid lines) to update the model <img src="https://latex.codecogs.com/png.latex?f" title="f" /> (blue solid lines). After <img src="https://latex.codecogs.com/png.latex?S" title="S" /> steps, we evaluate the model <img src="https://latex.codecogs.com/png.latex?f" title="f" /> on the validation set and update the scheduler <img src="https://latex.codecogs.com/png.latex?\varphi" title="\varphi" /> (green dashed lines).
+在步骤<img src="https://latex.codecogs.com/png.latex?s" title="s" />，给定训练数据<img src="https://latex.codecogs.com/png.latex?x_s,y_s" title="x_s,y_s" />，调度器<img src="https://latex.codecogs.com/png.latex?\varphi" title="\varphi" />选择合适的任务<img src="https://latex.codecogs.com/png.latex?T_{i_s}" title="T_{i_s}" />（绿色实线）来更新模型<img src="https://latex.codecogs.com/png.latex?f" title="f" />（蓝色实线）。经过<img src="https://latex.codecogs.com/png.latex?S" title="S" />步后，我们在验证集上评估模型<img src="https://latex.codecogs.com/png.latex?f" title="f" />并更新调度器<img src="https://latex.codecogs.com/png.latex?\varphi" title="\varphi" />（绿色虚线）。
 
-### Experiments
-Due to different data versions and different Qlib versions, the original data and data preprocessing methods of the experimental settings in the paper are different from those experimental settings in the existing Qlib version. Therefore, we provide two versions of the code according to the two kinds of settings, 1) the [code](https://github.com/lwwang1995/tcts) that can be used to reproduce the experimental results and 2) the [code](https://github.com/microsoft/qlib/blob/main/qlib/contrib/model/pytorch_tcts.py) in the current Qlib baseline.
+### 实验
+由于数据版本和Qlib版本不同，论文中实验设置的原始数据和数据预处理方法与现有Qlib版本中的实验设置有所不同。因此，我们根据两种设置提供了两个版本的代码：1）可用于复现实验结果的[代码](https://github.com/lwwang1995/tcts)；2）当前Qlib基线中的[代码](https://github.com/microsoft/qlib/blob/main/qlib/contrib/model/pytorch_tcts.py)。
 
-#### Setting1
-* Dataset: We use the historical transaction data for 300 stocks on [CSI300](http://www.csindex.com.cn/en/indices/index-detail/000300) from 01/01/2008 to 08/01/2020. We split the data into training (01/01/2008-12/31/2013), validation (01/01/2014-12/31/2015), and test sets (01/01/2016-08/01/2020) based on the transaction time. 
+#### 设置1
+* 数据集：我们使用[沪深300](http://www.csindex.com.cn/en/indices/index-detail/000300) 300只股票2008年1月1日至2020年8月1日的历史交易数据。根据交易时间将数据分为训练集（2008/01/01-2013/12/31）、验证集（2014/01/01-2015/12/31）和测试集（2016/01/01-2020/08/01）。
 
-* The main tasks <img src="https://latex.codecogs.com/png.latex?T_k" title="T_k" /> refers to forecasting return of stock <img src="https://latex.codecogs.com/png.latex?i" title="i" /> as following,
+* 主任务<img src="https://latex.codecogs.com/png.latex?T_k" title="T_k" />指预测股票<img src="https://latex.codecogs.com/png.latex?i" title="i" />的收益，定义如下：
 <div align=center>
 <img src="https://latex.codecogs.com/png.image?\dpi{110}&space;r_{i}^{t,k}&space;=&space;\frac{price_i^{t&plus;k}}{price_i^{t&plus;k-1}}-1" title="r_{i}^{t,k} = \frac{price_i^{t+k}}{price_i^{t+k-1}}-1" />
 </div>
 
-* Temporally correlated task sets <img src="https://latex.codecogs.com/png.latex?\mathcal{T}_k&space;=&space;\{T_1,&space;T_2,&space;...&space;,&space;T_k\}" title="\mathcal{T}_k = \{T_1, T_2, ... , T_k\}" />, in this paper, <img src="https://latex.codecogs.com/png.latex?\mathcal{T}_3" title="\mathcal{T}_3" />, <img src="https://latex.codecogs.com/png.latex?\mathcal{T}_5" title="\mathcal{T}_5" /> and <img src="https://latex.codecogs.com/png.latex?\mathcal{T}_{10}" title="\mathcal{T}_{10}" /> are used in <img src="https://latex.codecogs.com/png.latex?T_1" title="T_1" />, <img src="https://latex.codecogs.com/png.latex?T_2" title="T_2" />, and <img src="https://latex.codecogs.com/png.latex?T_3" title="T_3" />.
+* 时间相关任务集<img src="https://latex.codecogs.com/png.latex?\mathcal{T}_k&space;=&space;\{T_1,&space;T_2,&space;...&space;,&space;T_k\}" title="\mathcal{T}_k = \{T_1, T_2, ... , T_k\}" />，本文中，<img src="https://latex.codecogs.com/png.latex?\mathcal{T}_3" title="\mathcal{T}_3" />、<img src="https://latex.codecogs.com/png.latex?\mathcal{T}_5" title="\mathcal{T}_5" />和<img src="https://latex.codecogs.com/png.latex?\mathcal{T}_{10}" title="\mathcal{T}_{10}" />分别用于<img src="https://latex.codecogs.com/png.latex?T_1" title="T_1" />、<img src="https://latex.codecogs.com/png.latex?T_2" title="T_2" />和<img src="https://latex.codecogs.com/png.latex?T_3" title="T_3" />。
 
-#### Setting2
-* Dataset: We use the historical transaction data for 300 stocks on [CSI300](http://www.csindex.com.cn/en/indices/index-detail/000300) from 01/01/2008 to 08/01/2020. We split the data into training (01/01/2008-12/31/2014), validation (01/01/2015-12/31/2016), and test sets (01/01/2017-08/01/2020) based on the transaction time. 
+#### 设置2
+* 数据集：我们使用[沪深300](http://www.csindex.com.cn/en/indices/index-detail/000300) 300只股票2008年1月1日至2020年8月1日的历史交易数据。根据交易时间将数据分为训练集（2008/01/01-2014/12/31）、验证集（2015/01/01-2016/12/31）和测试集（2017/01/01-2020/08/01）。
 
-* The main tasks <img src="https://latex.codecogs.com/png.latex?T_k" title="T_k" /> refers to forecasting return of stock <img src="https://latex.codecogs.com/png.latex?i" title="i" /> as following,
+* 主任务<img src="https://latex.codecogs.com/png.latex?T_k" title="T_k" />指预测股票<img src="https://latex.codecogs.com/png.latex?i" title="i" />的收益，定义如下：
 <div align=center>
 <img src="https://latex.codecogs.com/png.image?\dpi{110}&space;r_{i}^{t,k}&space;=&space;\frac{price_i^{t&plus;1&plus;k}}{price_i^{t&plus;1}}-1" title="r_{i}^{t,k} = \frac{price_i^{t+1+k}}{price_i^{t+1}}-1" />
 </div>
 
-* In Qlib baseline, <img src="https://latex.codecogs.com/png.latex?\mathcal{T}_3" title="\mathcal{T}_3" />, is used in  <img src="https://latex.codecogs.com/png.latex?T_1" title="T_1" />.
+* 在Qlib基线中，<img src="https://latex.codecogs.com/png.latex?\mathcal{T}_3" title="\mathcal{T}_3" />用于<img src="https://latex.codecogs.com/png.latex?T_1" title="T_1" />。
 
-### Experimental Result
-You can find the experimental result of setting1 in the [paper](http://proceedings.mlr.press/v139/wu21e/wu21e.pdf) and the experimental result of setting2 in this [page](https://github.com/microsoft/qlib/tree/main/examples/benchmarks).
+### 实验结果
+设置1的实验结果可在[论文](http://proceedings.mlr.press/v139/wu21e/wu21e.pdf)中找到，设置2的实验结果可在本[页面](https://github.com/microsoft/qlib/tree/main/examples/benchmarks)中找到。

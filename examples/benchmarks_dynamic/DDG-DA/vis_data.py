@@ -9,12 +9,12 @@ plt.rcParams["font.sans-serif"] = "SimHei"
 plt.rcParams["axes.unicode_minus"] = False
 from tqdm.auto import tqdm
 
-# tqdm.pandas()  # for progress_apply
-# %matplotlib inline
-# %load_ext autoreload
+# tqdm.pandas()  # 用于progress_apply进度条显示
+# %matplotlib inline  # 在Notebook中内联显示图表
+# %load_ext autoreload  # 加载自动重载扩展
 
 
-# # Meta Input
+# # 元输入
 
 # +
 with open("./internal_data_s20.pkl", "rb") as f:
@@ -33,7 +33,7 @@ sns.heatmap(data_sim)
 plt.figure(figsize=(40, 20))
 sns.heatmap(data_sim.rolling(20).mean())
 
-# # Meta Model
+# # 元模型
 
 from qlib import auto_init
 
@@ -48,7 +48,7 @@ pd.DataFrame(meta_m.tn.twm.linear.weight.detach().numpy()).T[0].plot()
 
 pd.DataFrame(meta_m.tn.twm.linear.weight.detach().numpy()).T[0].rolling(5).mean().plot()
 
-# # Meta Output
+# # 元输出
 
 # +
 with open("./tasks_s20.pkl", "rb") as f:
@@ -58,7 +58,7 @@ task_df = {}
 for t in tasks:
     test_seg = t["dataset"]["kwargs"]["segments"]["test"]
     if None not in test_seg:
-        # The last rolling is skipped.
+        # 跳过最后一次滚动窗口
         task_df[test_seg] = t["reweighter"].time_weight
 task_df = pd.concat(task_df)
 
@@ -73,11 +73,11 @@ sns.heatmap(task_df.T)
 plt.figure(figsize=(40, 20))
 sns.heatmap(task_df.rolling(10).mean().T)
 
-# # Sub Models
+# # 子模型
 #
-# NOTE:
-# - this section assumes that the model is Linear model!!
-# - Other models does not support this analysis
+# 注意：
+# - 本节假设模型为线性模型！！
+# - 其他模型不支持此分析
 
 exp = R.get_exp(experiment_name="rolling_ds")
 

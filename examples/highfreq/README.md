@@ -1,41 +1,40 @@
-# Introduction
-This folder contains 2 examples
-- A high-frequency dataset example
-- An example of predicting the price trend in high-frequency data
+# 简介
+本文件夹包含两个示例
+- 高频数据集示例
+- 高频数据价格趋势预测示例
 
-## High-Frequency Dataset
+## 高频数据集
 
-This dataset is an example for RL high frequency trading.
+该数据集是用于强化学习高频交易的示例。
 
-### Get High-Frequency Data
+### 获取高频数据
 
-Get high-frequency data by running the following command:
+通过运行以下命令获取高频数据：
 ```bash
     python workflow.py get_data
 ```
 
-### Dump & Reload & Reinitialize the Dataset
+### 转储、重新加载和重新初始化数据集
 
+高频数据集在`workflow.py`中实现为`qlib.data.dataset.DatasetH`。`DatatsetH`是[`qlib.utils.serial.Serializable`](https://qlib.readthedocs.io/en/latest/advanced/serial.html)的子类，其状态可以以`pickle`格式转储到磁盘或从磁盘加载。
 
-The High-Frequency Dataset is implemented as `qlib.data.dataset.DatasetH` in the `workflow.py`. `DatatsetH` is the subclass of [`qlib.utils.serial.Serializable`](https://qlib.readthedocs.io/en/latest/advanced/serial.html), whose state can be dumped in or loaded from disk in `pickle` format.
+### 关于重新初始化
 
-### About Reinitialization
+从磁盘重新加载`Dataset`后，`Qlib`还支持重新初始化数据集。这意味着用户可以重置`Dataset`或`DataHandler`的某些状态，如`instruments`、`start_time`、`end_time`和`segments`等，并根据这些状态生成新数据。
 
-After reloading `Dataset` from disk, `Qlib` also support reinitializing the dataset. It means that users can reset some states of `Dataset` or `DataHandler` such as `instruments`, `start_time`, `end_time` and `segments`, etc.,  and generate new data according to the states.
+示例在`workflow.py`中给出，用户可以按以下方式运行代码。
 
-The example is given in `workflow.py`, users can run the code as follows.
+### 运行代码
 
-### Run the Code
-
-Run the example by running the following command:
+通过运行以下命令运行示例：
 ```bash
     python workflow.py dump_and_load_dataset
 ```
 
-## Benchmarks Performance (predicting the price trend in high-frequency data)
+## 基准模型性能（高频数据价格趋势预测）
 
-Here are the results of models for predicting the price trend in high-frequency data. We will keep updating benchmark models in future.
+以下是用于高频数据价格趋势预测的模型结果。我们将在未来持续更新基准模型。
 
-| Model Name | Dataset | IC | ICIR | Rank IC | Rank ICIR | Long precision| Short Precision | Long-Short Average Return | Long-Short Average Sharpe |
+| 模型名称 | 数据集 | IC | ICIR | Rank IC | Rank ICIR | 多头准确率 | 空头准确率 | 多空平均收益率 | 多空平均夏普比率 |
 |---|---|---|---|---|---|---|---|---|---|
 | LightGBM | Alpha158 | 0.0349±0.00 | 0.3805±0.00| 0.0435±0.00 | 0.4724±0.00 | 0.5111±0.00 | 0.5428±0.00 | 0.000074±0.00 | 0.2677±0.00 |

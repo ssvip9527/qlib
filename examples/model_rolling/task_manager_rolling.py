@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 
 """
-This example shows how a TrainerRM works based on TaskManager with rolling tasks.
-After training, how to collect the rolling results will be shown in task_collecting.
-Based on the ability of TaskManager, `worker` method offer a simple way for multiprocessing.
+本示例展示了如何基于TaskManager使用滚动任务的TrainerRM。
+训练后，如何在task_collecting中收集滚动结果将被展示。
+基于TaskManager的能力，`worker`方法提供了一种简单的多处理方式。
 """
 
 from pprint import pprint
@@ -51,7 +51,7 @@ class RollingTaskExample:
         self.task_config = task_config
         self.rolling_gen = RollingGen(step=rolling_step, rtype=rolling_type)
 
-    # Reset all things to the first status, be careful to save important data
+    # 将所有内容重置到初始状态，注意保存重要数据
     def reset(self):
         print("========== reset ==========")
         if isinstance(self.trainer, TrainerRM):
@@ -74,8 +74,8 @@ class RollingTaskExample:
         self.trainer.train(tasks)
 
     def worker(self):
-        # NOTE: this is only used for TrainerRM
-        # train tasks by other progress or machines for multiprocessing. It is same as TrainerRM.worker.
+        # 注意：这仅用于TrainerRM
+        # 通过其他进程或机器训练任务以实现多处理。与TrainerRM.worker相同。
         print("========== worker ==========")
         run_task(task_train, self.task_pool, experiment_name=self.experiment_name)
 
@@ -89,7 +89,7 @@ class RollingTaskExample:
             return model_key, rolling_key
 
         def my_filter(recorder):
-            # only choose the results of "LGBModel"
+            # 仅选择"LGBModel"的结果
             model_key, rolling_key = rec_key(recorder)
             if model_key == "LGBModel":
                 return True

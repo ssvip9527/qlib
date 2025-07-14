@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# 根据 MIT 许可证授权。
 import os
 import numpy as np
 import pandas as pd
@@ -15,7 +15,7 @@ def prepare_data(riskdata_root="./riskdata", T=240, start_time="2016-01-01"):
         D.features(D.instruments("all"), ["$close"], start_time=start_time).squeeze().unstack(level="instrument")
     )
 
-    # StructuredCovEstimator is a statistical risk model
+    # StructuredCovEstimator 是一个统计风险模型
     riskmodel = StructuredCovEstimator()
 
     for i in range(T - 1, len(price_all)):
@@ -27,14 +27,14 @@ def prepare_data(riskdata_root="./riskdata", T=240, start_time="2016-01-01"):
         codes = universe.loc[date].index
         price = price_all.loc[ref_date:date, codes]
 
-        # calculate return and remove extreme return
+        # 计算收益率并移除极端收益
         ret = price.pct_change()
         ret.clip(ret.quantile(0.025), ret.quantile(0.975), axis=1, inplace=True)
 
-        # run risk model
+        # 运行风险模型
         F, cov_b, var_u = riskmodel.predict(ret, is_price=False, return_decomposed_components=True)
 
-        # save risk data
+        # 保存风险数据
         root = riskdata_root + "/" + date.strftime("%Y%m%d")
         os.makedirs(root, exist_ok=True)
 

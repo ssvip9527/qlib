@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-This example is about how can simulate the OnlineManager based on rolling tasks.
+本示例展示如何基于滚动任务模拟OnlineManager。
 """
 
 from pprint import pprint
@@ -37,19 +37,19 @@ class OnlineSimulationExample:
         trainer="TrainerR",
     ):
         """
-        Init OnlineManagerExample.
+        初始化OnlineManagerExample。
 
         Args:
-            provider_uri (str, optional): the provider uri. Defaults to "~/.qlib/qlib_data/cn_data".
-            region (str, optional): the stock region. Defaults to "cn".
-            exp_name (str, optional): the experiment name. Defaults to "rolling_exp".
-            task_url (str, optional): your MongoDB url. Defaults to "mongodb://10.0.0.4:27017/".
-            task_db_name (str, optional): database name. Defaults to "rolling_db".
-            task_pool (str, optional): the task pool name (a task pool is a collection in MongoDB). Defaults to "rolling_task".
-            rolling_step (int, optional): the step for rolling. Defaults to 80.
-            start_time (str, optional): the start time of simulating. Defaults to "2018-09-10".
-            end_time (str, optional): the end time of simulating. Defaults to "2018-10-31".
-            tasks (dict or list[dict]): a set of the task config waiting for rolling and training
+            provider_uri (str, optional): 数据提供器URI。默认为 "~/.qlib/qlib_data/cn_data".
+            region (str, optional): 股票市场区域。默认为 "cn".
+            exp_name (str, optional): 实验名称。默认为 "rolling_exp".
+            task_url (str, optional): MongoDB连接URL。默认为 "mongodb://10.0.0.4:27017/".
+            task_db_name (str, optional): 数据库名称。默认为 "rolling_db".
+            task_pool (str, optional): 任务池名称（任务池是MongoDB中的一个集合）。默认为 "rolling_task".
+            rolling_step (int, optional): 滚动窗口步长。默认为80.
+            start_time (str, optional): 模拟开始时间。默认为 "2018-09-10".
+            end_time (str, optional): 模拟结束时间。默认为 "2018-10-31".
+            tasks (dict or list[dict]): 等待滚动训练的任务配置集合
         """
         if tasks is None:
             tasks = [CSI100_RECORD_XGBOOST_TASK_CONFIG_ONLINE, CSI100_RECORD_LGB_TASK_CONFIG_ONLINE]

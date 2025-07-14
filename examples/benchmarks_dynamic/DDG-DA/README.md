@@ -1,35 +1,35 @@
-# Introduction
-This is the implementation of `DDG-DA` based on `Meta Controller` component provided by `Qlib`.
+# 简介
+本文基于Qlib提供的`Meta Controller`（元控制器）组件实现了`DDG-DA`算法。
 
-Please refer to the paper for more details: *DDG-DA: Data Distribution Generation for Predictable Concept Drift Adaptation* [[arXiv](https://arxiv.org/abs/2201.04038)]
+更多细节请参考论文：*DDG-DA: Data Distribution Generation for Predictable Concept Drift Adaptation* [[arXiv](https://arxiv.org/abs/2201.04038)]
 
 
-# Background
-In many real-world scenarios, we often deal with streaming data that is sequentially collected over time. Due to the non-stationary nature of the environment, the streaming data distribution may change in unpredictable ways, which is known as concept drift. To handle concept drift, previous methods first detect when/where the concept drift happens and then adapt models to fit the distribution of the latest data. However, there are still many cases that some underlying factors of environment evolution are predictable, making it possible to model the future concept drift trend of the streaming data, while such cases are not fully explored in previous work.
+# 背景
+在许多实际场景中，我们经常处理随时间顺序收集的流数据。由于环境的非平稳性，流数据分布可能以不可预测的方式变化，这被称为概念漂移。为了处理概念漂移，以往的方法首先检测概念漂移发生的时间和位置，然后调整模型以适应最新数据的分布。然而，在许多情况下，环境演变的一些潜在因素是可预测的，这使得对流数据未来的概念漂移趋势进行建模成为可能，而这些情况在以往的研究中尚未得到充分探索。
 
-Therefore, we propose a novel method `DDG-DA`, that can effectively forecast the evolution of data distribution and improve the performance of models. Specifically, we first train a predictor to estimate the future data distribution, then leverage it to generate training samples, and finally train models on the generated data.
+因此，我们提出了一种新的方法`DDG-DA`，能够有效预测数据分布的演变并提高模型性能。具体来说，我们首先训练一个预测器来估计未来的数据分布，然后利用它生成训练样本，最后在生成的数据上训练模型。
 
-# Dataset
-The data in the paper are private. So we conduct experiments on Qlib's public dataset.
-Though the dataset is different, the conclusion remains the same. By applying `DDG-DA`, users can see rising trends at the test phase both in the proxy models' ICs and the performances of the forecasting models.
+# 数据集
+论文中使用的数据为私有数据。因此，我们在Qlib的公开数据集上进行实验。
+尽管数据集不同，但结论保持一致。通过应用`DDG-DA`，用户可以在测试阶段看到代理模型的IC值和预测模型性能均呈上升趋势。
 
-# Run the Code
-Users can try `DDG-DA` by running the following command:
+# 运行代码
+用户可以通过以下命令尝试`DDG-DA`：
 ```bash
     python workflow.py run
 ```
 
-The default forecasting models are `Linear`. Users can choose other forecasting models by changing the `forecast_model` parameter when `DDG-DA` initializes. For example, users can try `LightGBM` forecasting models by running the following command:
+默认的预测模型是`Linear`（线性模型）。用户可以在初始化`DDG-DA`时通过修改`forecast_model`参数选择其他预测模型。例如，用户可以通过以下命令尝试`LightGBM`预测模型：
 ```bash
     python workflow.py --conf_path=../workflow_config_lightgbm_Alpha158.yaml run
 ```
 
-# Results
-The results of related methods in Qlib's public dataset can be found [here](../)
+# 结果
+Qlib公开数据集上相关方法的结果可以在[这里](../)找到
 
-# Requirements
-Here are the minimal hardware requirements to run the ``workflow.py`` of DDG-DA.
-* Memory: 45G
-* Disk: 4G
+# 要求
+以下是运行DDG-DA的`workflow.py`所需的最低硬件要求：
+* 内存：45G
+* 磁盘：4G
 
-Pytorch with CPU & RAM will be enough for this example.
+本示例只需配备CPU和足够RAM的Pytorch环境即可运行。

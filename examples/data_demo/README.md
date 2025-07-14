@@ -1,2 +1,2 @@
-# Introduction
-The examples in this folder try to demonstrate some common usage of data-related modules of Qlib
+# 简介
+本文件夹中的示例尝试展示Qlib数据相关模块的一些常见用法

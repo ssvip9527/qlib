@@ -1,17 +1,16 @@
-# Rolling Process Data
+# 滚动处理数据
 
-This workflow is an example for `Rolling Process Data`.
+此工作流是`滚动处理数据`的示例。
 
-## Background
+## 背景
 
-When rolling train the models, data also needs to be generated in the different rolling windows. When the rolling window moves, the training data will change, and the processor's learnable state (such as standard deviation, mean, etc.) will also change. 
+当滚动训练模型时，也需要在不同的滚动窗口中生成数据。当滚动窗口移动时，训练数据会发生变化，处理器的可学习状态（如标准差、均值等）也会随之改变。
 
-In order to avoid regenerating data, this example uses the `DataHandler-based DataLoader` to load the raw features that are not related to the rolling window, and then used Processors to generate processed-features related to the rolling window.
+为避免重复生成数据，本示例使用`基于DataHandler的数据加载器`加载与滚动窗口无关的原始特征，然后使用处理器生成与滚动窗口相关的处理后特征。
 
+## 运行代码
 
-## Run the Code
-
-Run the example by running the following command:
+通过运行以下命令来运行示例：
 ```bash
     python workflow.py rolling_process
 ```

@@ -116,7 +116,7 @@ def get_all_folders(models, exclude) -> dict:
     return folders
 
 
-# function to get all the files under the model folder
+# 函数用于获取模型文件夹下的所有文件
 def get_all_files(folder_path, dataset, universe="") -> (str, str):
     if universe != "":
         universe = f"_{universe}"
@@ -130,7 +130,7 @@ def get_all_files(folder_path, dataset, universe="") -> (str, str):
         return yaml_file[0], req_file[0]
 
 
-# function to retrieve all the results
+# 函数用于检索所有结果
 def get_all_results(folders) -> dict:
     results = dict()
     for fn in folders:

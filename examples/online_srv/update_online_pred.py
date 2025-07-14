@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 
 """
-This example shows how OnlineTool works when we need update prediction.
-There are two parts including first_train and update_online_pred.
-Firstly, we will finish the training and set the trained models to the `online` models.
-Next, we will finish updating online predictions.
+本示例展示了当需要更新预测时OnlineTool的工作方式。
+包含两部分：首次训练和更新在线预测。
+首先，我们将完成训练并将训练好的模型设置为`在线`模型。
+接下来，我们将完成在线预测的更新。
 """
 import copy
 import fire
@@ -45,10 +45,10 @@ class UpdatePredExample:
 
 
 if __name__ == "__main__":
-    ## to train a model and set it to online model, use the command below
+    ## 要训练模型并将其设置为在线模型，请使用以下命令
     # python update_online_pred.py first_train
-    ## to update online predictions once a day, use the command below
+    ## 要每天更新一次在线预测，请使用以下命令
     # python update_online_pred.py update_online_pred
-    ## to see the whole process with your own parameters, use the command below
+    ## 要使用自定义参数查看整个流程，请使用以下命令
     # python update_online_pred.py main --experiment_name="your_exp_name"
     fire.Fire(UpdatePredExample)

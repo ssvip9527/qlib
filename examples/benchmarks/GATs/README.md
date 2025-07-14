@@ -1,5 +1,4 @@
-# GATs
-* Graph Attention Networks(GATs) leverage masked self-attentional layers on graph-structured data. The nodes in stacked layers have different weights and they are able to attend over their
-neighborhoods’ features, without requiring any kind of costly matrix operation (such as inversion) or depending on knowing the graph structure upfront.
-* This code used in Qlib is implemented with PyTorch by ourselves.
-* Paper: Graph Attention Networks https://arxiv.org/pdf/1710.10903.pdf
+# 图注意力网络（GATs）
+* 图注意力网络（GATs）在图结构数据上利用掩码自注意力层。堆叠层中的节点具有不同的权重，它们能够关注其邻域的特征，而不需要任何昂贵的矩阵运算（如求逆）或预先知道图结构。
+* 本代码在Qlib中的实现由我们使用PyTorch自行完成。
+* 论文：图注意力网络 https://arxiv.org/pdf/1710.10903.pdf

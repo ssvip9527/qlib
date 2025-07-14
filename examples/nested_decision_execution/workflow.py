@@ -1,40 +1,38 @@
 #  Copyright (c) Microsoft Corporation.
 #  Licensed under the MIT License.
 """
-The expect result of `backtest` is following in current version
+当前版本中`backtest`的预期结果如下
 
-'The following are analysis results of benchmark return(1day).'
+'以下是基准收益(1天)的分析结果。'
                        risk
 mean               0.000651
 std                0.012472
 annualized_return  0.154967
 information_ratio  0.805422
 max_drawdown      -0.160445
-'The following are analysis results of the excess return without cost(1day).'
+'以下是无成本超额收益(1天)的分析结果。'
                        risk
 mean               0.001258
 std                0.007575
 annualized_return  0.299303
 information_ratio  2.561219
 max_drawdown      -0.068386
-'The following are analysis results of the excess return with cost(1day).'
+'以下是有成本超额收益(1天)的分析结果。'
                        risk
 mean               0.001110
 std                0.007575
 annualized_return  0.264280
 information_ratio  2.261392
 max_drawdown      -0.071842
-[1706497:MainThread](2021-12-07 14:08:30,263) INFO - qlib.workflow - [record_temp.py:441] - Portfolio analysis record 'port_analysis_30minute.
-pkl' has been saved as the artifact of the Experiment 2
-'The following are analysis results of benchmark return(30minute).'
+[1706497:MainThread](2021-12-07 14:08:30,263) INFO - qlib.workflow - [record_temp.py:441] - 投资组合分析记录'port_analysis_30minute.pkl'已保存为实验2的工件
+'以下是基准收益(30分钟)的分析结果。'
                        risk
 mean               0.000078
 std                0.003646
 annualized_return  0.148787
 information_ratio  0.935252
 max_drawdown      -0.142830
-('The following are analysis results of the excess return without '
- 'cost(30minute).')
+('以下是无成本超额收益(30分钟)的分析结果。')
                        risk
 mean               0.000174
 std                0.003343

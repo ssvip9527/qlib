@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# 根据 MIT 许可证授权。
 
 from arctic.arctic import Arctic
 import qlib
@@ -9,14 +9,14 @@ import unittest
 
 class TestClass(unittest.TestCase):
     """
-    Useful commands
-    - run all tests: pytest examples/orderbook_data/example.py
-    - run a single test:  pytest -s --pdb --disable-warnings examples/orderbook_data/example.py::TestClass::test_basic01
+    有用的命令
+    - 运行所有测试: pytest examples/orderbook_data/example.py
+    - 运行单个测试: pytest -s --pdb --disable-warnings examples/orderbook_data/example.py::TestClass::test_basic01
     """
 
     def setUp(self):
         """
-        Configure for arctic
+        为arctic进行配置
         """
         provider_uri = "~/.qlib/qlib_data/yahoo_cn_1min"
         qlib.init(

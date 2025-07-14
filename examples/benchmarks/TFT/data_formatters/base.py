@@ -14,16 +14,15 @@
 # limitations under the License.
 
 # Lint as: python3
-"""Default data formatting functions for experiments.
+"""实验的默认数据格式化函数。
 
-For new datasets, inherit form GenericDataFormatter and implement
-all abstract functions.
+对于新数据集，继承GenericDataFormatter并实现所有抽象函数。
 
-These dataset-specific methods:
-1) Define the column and input types for tabular dataframes used by model
-2) Perform the necessary input feature engineering & normalisation steps
-3) Reverts the normalisation for predictions
-4) Are responsible for train, validation and test splits
+这些数据集特定的方法：
+1) 定义模型使用的表格数据的列和输入类型
+2) 执行必要的输入特征工程和归一化步骤
+3) 还原预测的归一化
+4) 负责训练、验证和测试集的拆分
 
 
 """
@@ -34,7 +33,7 @@ import enum
 
 # Type definitions
 class DataTypes(enum.IntEnum):
-    """Defines numerical types of each column."""
+    """定义每列的数值类型。"""
 
     REAL_VALUED = 0
     CATEGORICAL = 1
@@ -42,7 +41,7 @@ class DataTypes(enum.IntEnum):
 
 
 class InputTypes(enum.IntEnum):
-    """Defines input types of each column."""
+    """定义每列的输入类型。"""
 
     TARGET = 0
     OBSERVED_INPUT = 1
@@ -53,61 +52,60 @@ class InputTypes(enum.IntEnum):
 
 
 class GenericDataFormatter(abc.ABC):
-    """Abstract base class for all data formatters.
+    """所有数据格式化器的抽象基类。
 
-    User can implement the abstract methods below to perform dataset-specific
-    manipulations.
+    用户可以实现以下抽象方法来执行特定于数据集的操作。
 
     """
 
     @abc.abstractmethod
     def set_scalers(self, df):
-        """Calibrates scalers using the data supplied."""
+        """使用提供的数据校准缩放器。"""
         raise NotImplementedError()
 
     @abc.abstractmethod
     def transform_inputs(self, df):
-        """Performs feature transformation."""
+        """执行特征转换。"""
         raise NotImplementedError()
 
     @abc.abstractmethod
     def format_predictions(self, df):
-        """Reverts any normalisation to give predictions in original scale."""
+        """还原任何归一化，使预测结果恢复原始尺度。"""
         raise NotImplementedError()
 
     @abc.abstractmethod
     def split_data(self, df):
-        """Performs the default train, validation and test splits."""
+        """执行默认的训练、验证和测试集拆分。"""
         raise NotImplementedError()
 
     @property
     @abc.abstractmethod
     def _column_definition(self):
-        """Defines order, input type and data type of each column."""
+        """定义每列的顺序、输入类型和数据类型。"""
         raise NotImplementedError()
 
     @abc.abstractmethod
     def get_fixed_params(self):
-        """Defines the fixed parameters used by the model for training.
+        """定义模型训练时使用的固定参数。
 
-        Requires the following keys:
-          'total_time_steps': Defines the total number of time steps used by TFT
-          'num_encoder_steps': Determines length of LSTM encoder (i.e. history)
-          'num_epochs': Maximum number of epochs for training
-          'early_stopping_patience': Early stopping param for keras
-          'multiprocessing_workers': # of cpus for data processing
+        需要包含以下键：
+        'total_time_steps': 定义TFT使用的总时间步数
+        'num_encoder_steps': 确定LSTM编码器的长度（即历史数据长度）
+        'num_epochs': 训练的最大轮数
+        'early_stopping_patience': Keras的早停参数
+        'multiprocessing_workers': 数据处理使用的CPU数量
 
 
-        Returns:
-          A dictionary of fixed parameters, e.g.:
+        返回：
+            固定参数的字典，例如：
 
-          fixed_params = {
-              'total_time_steps': 252 + 5,
-              'num_encoder_steps': 252,
-              'num_epochs': 100,
-              'early_stopping_patience': 5,
-              'multiprocessing_workers': 5,
-          }
+            fixed_params = {
+                'total_time_steps': 252 + 5,
+                'num_encoder_steps': 252,
+                'num_epochs': 100,
+                'early_stopping_patience': 5,
+                'multiprocessing_workers': 5,
+            }
         """
         raise NotImplementedError
 

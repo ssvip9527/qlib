@@ -14,11 +14,11 @@
 # limitations under the License.
 
 # Lint as: python3
-"""Classes used for hyperparameter optimisation.
+"""用于超参数优化的类。
 
-Two main classes exist:
-1) HyperparamOptManager used for optimisation on a single machine/GPU.
-2) DistributedHyperparamOptManager for multiple GPUs on different machines.
+存在两个主要类：
+1) HyperparamOptManager：用于单台机器/GPU上的优化。
+2) DistributedHyperparamOptManager：用于不同机器上的多个GPU。
 """
 
 from __future__ import absolute_import
@@ -36,27 +36,26 @@ Deque = collections.deque
 
 
 class HyperparamOptManager:
-    """Manages hyperparameter optimisation using random search for a single GPU.
+    """使用随机搜索在单个GPU上管理超参数优化。
 
-    Attributes:
-      param_ranges: Discrete hyperparameter range for random search.
-      results: Dataframe of validation results.
-      fixed_params: Fixed model parameters per experiment.
-      saved_params: Dataframe of parameters trained.
-      best_score: Minimum validation loss observed thus far.
-      optimal_name: Key to best configuration.
-      hyperparam_folder: Where to save optimisation outputs.
+    属性：
+        param_ranges: 随机搜索的离散超参数范围。
+        results: 验证结果的数据框。
+        fixed_params: 每个实验的固定模型参数。
+        saved_params: 已训练参数的数据框。
+        best_score: 迄今为止观察到的最小验证损失。
+        optimal_name: 最佳配置的键。
+        hyperparam_folder: 保存优化输出的位置。
     """
 
     def __init__(self, param_ranges, fixed_params, model_folder, override_w_fixed_params=True):
-        """Instantiates model.
+        """实例化模型。
 
-        Args:
-          param_ranges: Discrete hyperparameter range for random search.
-          fixed_params: Fixed model parameters per experiment.
-          model_folder: Folder to store optimisation artifacts.
-          override_w_fixed_params: Whether to override serialsed fixed model
-            parameters with new supplied values.
+        参数：
+            param_ranges: 随机搜索的离散超参数范围。
+            fixed_params: 每个实验的固定模型参数。
+            model_folder: 存储优化工件的文件夹。
+            override_w_fixed_params: 是否用新提供的值覆盖序列化的固定模型参数。
         """
 
         self.param_ranges = param_ranges
@@ -77,10 +76,10 @@ class HyperparamOptManager:
         self._override_w_fixed_params = override_w_fixed_params
 
     def load_results(self):
-        """Loads results from previous hyperparameter optimisation.
+        """加载先前超参数优化的结果。
 
-        Returns:
-          A boolean indicating if previous results can be loaded.
+        返回：
+            一个布尔值，表示是否可以加载先前的结果。
         """
         print("Loading results from", self.hyperparam_folder)
 
@@ -103,7 +102,7 @@ class HyperparamOptManager:
         return False
 
     def _get_params_from_name(self, name):
-        """Returns previously saved parameters given a key."""
+        """根据键返回先前保存的参数。"""
         params = self.saved_params
 
         selected_params = dict(params[name])
@@ -115,21 +114,21 @@ class HyperparamOptManager:
         return selected_params
 
     def get_best_params(self):
-        """Returns the optimal hyperparameters thus far."""
+        """返回迄今为止的最佳超参数。"""
 
         optimal_name = self.optimal_name
 
         return self._get_params_from_name(optimal_name)
 
     def clear(self):
-        """Clears all previous results and saved parameters."""
+        """清除所有先前的结果和保存的参数。"""
         shutil.rmtree(self.hyperparam_folder)
         os.makedirs(self.hyperparam_folder)
         self.results = pd.DataFrame()
         self.saved_params = pd.DataFrame()
 
     def _check_params(self, params):
-        """Checks that parameter map is properly defined."""
+        """检查参数映射是否正确定义。"""
 
         valid_fields = list(self.param_ranges.keys()) + list(self.fixed_params.keys())
         invalid_fields = [k for k in params if k not in valid_fields]
@@ -141,7 +140,7 @@ class HyperparamOptManager:
             raise ValueError("Missing Fields Found {} - Valid ones are {}".format(missing_fields, valid_fields))
 
     def _get_name(self, params):
-        """Returns a unique key for the supplied set of params."""
+        """为提供的参数集返回唯一键。"""
 
         self._check_params(params)
 
@@ -151,10 +150,10 @@ class HyperparamOptManager:
         return "_".join([str(params[k]) for k in fields])
 
     def get_next_parameters(self, ranges_to_skip=None):
-        """Returns the next set of parameters to optimise.
+        """返回下一组要优化的参数。
 
-        Args:
-          ranges_to_skip: Explicitly defines a set of keys to skip.
+        参数：
+            ranges_to_skip: 显式定义要跳过的键集。
         """
         if ranges_to_skip is None:
             ranges_to_skip = set(self.results.index)
@@ -186,16 +185,16 @@ class HyperparamOptManager:
         raise ValueError("Exceeded max number of hyperparameter searches!!")
 
     def update_score(self, parameters, loss, model, info=""):
-        """Updates the results from last optimisation run.
+        """更新上次优化运行的结果。
 
-        Args:
-          parameters: Hyperparameters used in optimisation.
-          loss: Validation loss obtained.
-          model: Model to serialised if required.
-          info: Any ancillary information to tag on to results.
+        参数：
+            parameters: 优化中使用的超参数。
+            loss: 获得的验证损失。
+            model: 需要时序列化的模型。
+            info: 附加到结果的任何辅助信息。
 
-        Returns:
-          Boolean flag indicating if the model is the best seen so far.
+        返回：
+            一个布尔标志，表示该模型是否是迄今为止最好的。
         """
 
         if np.isnan(loss):
@@ -227,7 +226,7 @@ class HyperparamOptManager:
 
 
 class DistributedHyperparamOptManager(HyperparamOptManager):
-    """Manages distributed hyperparameter optimisation across many gpus."""
+    """跨多个GPU管理分布式超参数优化。"""
 
     def __init__(
         self,
@@ -239,25 +238,18 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         num_iterations_per_worker=5,
         clear_serialised_params=False,
     ):
-        """Instantiates optimisation manager.
+        """实例化优化管理器。
 
-        This hyperparameter optimisation pre-generates #search_iterations
-        hyperparameter combinations and serialises them
-        at the start. At runtime, each worker goes through their own set of
-        parameter ranges. The pregeneration
-        allows for multiple workers to run in parallel on different machines without
-        resulting in parameter overlaps.
+        此超参数优化在开始时预生成#search_iterations个超参数组合并序列化它们。在运行时，每个工作器遍历自己的参数范围集。预生成允许多个工作器在不同机器上并行运行，而不会导致参数重叠。
 
-        Args:
-          param_ranges: Discrete hyperparameter range for random search.
-          fixed_params: Fixed model parameters per experiment.
-          root_model_folder: Folder to store optimisation artifacts.
-          worker_number: Worker index defining which set of hyperparameters to
-            test.
-          search_iterations: Maximum number of random search iterations.
-          num_iterations_per_worker: How many iterations are handled per worker.
-          clear_serialised_params: Whether to regenerate hyperparameter
-            combinations.
+        参数：
+            param_ranges: 随机搜索的离散超参数范围。
+            fixed_params: 每个实验的固定模型参数。
+            root_model_folder: 存储优化工件的文件夹。
+            worker_number: 定义要测试的超参数集的工作器索引。
+            search_iterations: 随机搜索的最大迭代次数。
+            num_iterations_per_worker: 每个工作器处理的迭代次数。
+            clear_serialised_params: 是否重新生成超参数组合。
         """
 
         max_workers = int(np.ceil(search_iterations / num_iterations_per_worker))
@@ -314,10 +306,10 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         return params
 
     def load_serialised_hyperparam_df(self):
-        """Loads serialsed hyperparameter ranges from file.
+        """从文件加载序列化的超参数范围。
 
-        Returns:
-          DataFrame containing hyperparameter combinations.
+        返回：
+          包含超参数组合的DataFrame。
         """
         print(
             "Loading params for {} search iterations form {}".format(
@@ -334,10 +326,10 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         return df
 
     def update_serialised_hyperparam_df(self):
-        """Regenerates hyperparameter combinations and saves to file.
+        """重新生成超参数组合并保存到文件。
 
-        Returns:
-          DataFrame containing hyperparameter combinations.
+        返回：
+          包含超参数组合的DataFrame。
         """
         search_df = self._generate_full_hyperparam_df()
 
@@ -352,10 +344,10 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         return search_df
 
     def _generate_full_hyperparam_df(self):
-        """Generates actual hyperparameter combinations.
+        """生成实际的超参数组合。
 
-        Returns:
-          DataFrame containing hyperparameter combinations.
+        返回：
+          包含超参数组合的DataFrame。
         """
 
         np.random.seed(131)  # for reproducibility of hyperparam list
@@ -375,15 +367,15 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         return full_search_df
 
     def clear(self):  # reset when cleared
-        """Clears results for hyperparameter manager and resets."""
+        """清除超参数管理器的结果并重置。"""
         super().clear()
         self.worker_search_queue = self._get_worker_search_queue()
 
     def load_results(self):
-        """Load results from file and queue parameter combinations to try.
+        """从文件加载结果并排队要尝试的参数组合。
 
-        Returns:
-          Boolean indicating if results were successfully loaded.
+        返回：
+          指示结果是否成功加载的布尔值。
         """
         success = super().load_results()
 
@@ -393,10 +385,10 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         return success
 
     def _get_worker_search_queue(self):
-        """Generates the queue of param combinations for current worker.
+        """为当前工作器生成参数组合队列。
 
-        Returns:
-          Queue of hyperparameter combinations outstanding.
+        返回：
+          未完成的超参数组合队列。
         """
         global_df = self.assign_worker_numbers(self.global_hyperparam_df)
         worker_df = global_df[global_df["worker"] == self.worker_num]
@@ -406,13 +398,13 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         return Deque(left_overs)
 
     def assign_worker_numbers(self, df):
-        """Updates parameter combinations with the index of the worker used.
+        """使用工作器索引更新参数组合。
 
-        Args:
-          df: DataFrame of parameter combinations.
+        参数：
+          df: 参数组合的DataFrame。
 
-        Returns:
-          Updated DataFrame with worker number.
+        返回：
+          带工作器编号的更新后的DataFrame。
         """
         output = df.copy()
 

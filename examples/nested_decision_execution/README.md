@@ -1,30 +1,30 @@
-# Nested Decision Execution
+# 嵌套决策执行
 
-This workflow is an example for nested decision execution in backtesting. Qlib supports nested decision execution in backtesting. It means that users can use different strategies to make trade decision in different frequencies.
+本工作流是回测中嵌套决策执行的示例。Qlib支持在回测中进行嵌套决策执行，这意味着用户可以在不同频率下使用不同策略进行交易决策。
 
-## Weekly Portfolio Generation and Daily Order Execution
+## 周度投资组合生成与日线级订单执行
 
-This workflow provides an example that uses a DropoutTopkStrategy (a strategy based on the daily frequency Lightgbm model) in weekly frequency for portfolio generation and uses SBBStrategyEMA (a rule-based strategy that uses EMA for decision-making) to execute orders in daily frequency. 
+本工作流提供了一个示例，使用周频的DropoutTopkStrategy（基于日线频率Lightgbm模型的策略）生成投资组合，并使用日线级的SBBStrategyEMA（基于EMA规则的策略）执行订单。
 
-### Usage
+### 使用方法
 
-Start backtesting by running the following command:
+运行以下命令开始回测：
 ```bash
     python workflow.py backtest
 ```
 
-Start collecting data by running the following command:
+运行以下命令开始收集数据：
 ```bash
     python workflow.py collect_data
 ```
 
-## Daily Portfolio Generation and Minutely Order Execution
+## 日线级投资组合生成与分钟级订单执行
 
-This workflow also provides a high-frequency example that uses a DropoutTopkStrategy for portfolio generation in daily frequency and uses SBBStrategyEMA to execute orders in minutely frequency. 
+本工作流还提供了一个高频示例，使用日线频率的DropoutTopkStrategy生成投资组合，并使用分钟级的SBBStrategyEMA执行订单。
 
-### Usage
+### 使用方法
 
-Start backtesting by running the following command:
+运行以下命令开始回测：
 ```bash
     python workflow.py backtest_highfreq
 ```

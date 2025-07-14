@@ -2,12 +2,12 @@
 # Licensed under the MIT License.
 
 """
-This example shows how OnlineManager works with rolling tasks.
-There are four parts including first train, routine 1, add strategy and routine 2.
-Firstly, the OnlineManager will finish the first training and set trained models to `online` models.
-Next, the OnlineManager will finish a routine process, including update online prediction -> prepare tasks -> prepare new models -> prepare signals
-Then, we will add some new strategies to the OnlineManager. This will finish first training of new strategies.
-Finally, the OnlineManager will finish second routine and update all strategies.
+本示例展示了OnlineManager如何与滚动任务配合工作。
+包含四个部分：首次训练、常规流程1、添加策略和常规流程2。
+首先，OnlineManager将完成首次训练并将训练好的模型设置为`在线`模型。
+接下来，OnlineManager将完成常规流程，包括更新在线预测 -> 准备任务 -> 准备新模型 -> 准备信号
+然后，我们将向OnlineManager添加一些新策略。这将完成新策略的首次训练。
+最后，OnlineManager将完成第二次常规流程并更新所有策略。
 """
 
 import os
@@ -64,7 +64,7 @@ class RollingOnlineExample:
     )
 
     def worker(self):
-        # train tasks by other progress or machines for multiprocessing
+        # 通过其他进程或机器训练任务以实现多进程处理
         print("========== worker ==========")
         if isinstance(self.trainer, TrainerRM):
             for task in self.tasks + self.add_tasks:
@@ -73,7 +73,7 @@ class RollingOnlineExample:
         else:
             print(f"{type(self.trainer)} is not supported for worker.")
 
-    # Reset all things to the first status, be careful to save important data
+    # 将所有内容重置为初始状态，保存重要数据时需谨慎
     def reset(self):
         for task in self.tasks + self.add_tasks:
             name_id = task["model"]["class"]
@@ -133,12 +133,12 @@ class RollingOnlineExample:
 
 
 if __name__ == "__main__":
-    ####### to train the first version's models, use the command below
+    ####### 要训练第一版模型，请使用以下命令
     # python rolling_online_management.py first_run
 
-    ####### to update the models and predictions after the trading time, use the command below
+    ####### 要在交易时间后更新模型和预测，请使用以下命令
     # python rolling_online_management.py routine
 
-    ####### to define your own parameters, use `--`
+    ####### 要定义自己的参数，请使用`--`
     # python rolling_online_management.py first_run --exp_name='your_exp_name' --rolling_step=40
     fire.Fire(RollingOnlineExample)

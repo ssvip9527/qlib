@@ -42,11 +42,11 @@ class HighFreqHandler(DataHandlerLP):
         template_if = "If(IsNull({1}), {0}, {1})"
         template_paused = "Select(Or(IsNull($paused), Eq($paused, 0.0)), {0})"
         template_fillnan = "BFillNan(FFillNan({0}))"
-        # Because there is no vwap field in the yahoo data, a method similar to Simpson integration is used to approximate vwap
+        # 由于雅虎数据中没有vwap字段，因此使用类似辛普森积分的方法来近似vwap
         simpson_vwap = "($open + 2*$high + 2*$low + $close)/6"
 
         def get_normalized_price_feature(price_field, shift=0):
-            """Get normalized price feature ops"""
+            """获取归一化价格特征操作"""
             if shift == 0:
                 template_norm = "Cut({0}/Ref(DayLast({1}), 240), 240, None)"
             else:
@@ -130,7 +130,7 @@ class HighFreqBacktestHandler(DataHandler):
         template_if = "If(IsNull({1}), {0}, {1})"
         template_paused = "Select(Or(IsNull($paused), Eq($paused, 0.0)), {0})"
         template_fillnan = "BFillNan(FFillNan({0}))"
-        # Because there is no vwap field in the yahoo data, a method similar to Simpson integration is used to approximate vwap
+        # 由于雅虎数据中没有vwap字段，因此使用类似辛普森积分的方法来近似vwap
         simpson_vwap = "($open + 2*$high + 2*$low + $close)/6"
         fields += [
             "Cut({0}, 240, None)".format(template_fillnan.format(template_paused.format("$close"))),

@@ -1,10 +1,10 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# 根据 MIT 许可证授权。
 """
-NOTE:
-- This scripts is a demo to import example data import Qlib
-- !!!!!!!!!!!!!!!TODO!!!!!!!!!!!!!!!!!!!:
-    - Its structure is not well designed and very ugly, your contribution is welcome to make importing dataset easier
+注意：
+- 此脚本是将示例数据导入Qlib的演示
+- !!!!!!!!!!!!!!!待办事项!!!!!!!!!!!!!!!!!!!:
+    - 其结构设计不够完善且较为粗糙，欢迎您贡献代码以简化数据集导入过程
 """
 from datetime import date, datetime as dt
 import os

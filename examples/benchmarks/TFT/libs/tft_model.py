@@ -14,10 +14,9 @@
 # limitations under the License.
 
 # Lint as: python3
-"""Temporal Fusion Transformer Model.
+"""时间融合Transformer模型。
 
-Contains the full TFT architecture and associated components. Defines functions
-for training, evaluation and prediction using simple Pandas Dataframe inputs.
+包含完整的TFT架构和相关组件。定义了使用简单Pandas Dataframe输入进行训练、评估和预测的函数。
 """
 
 from __future__ import absolute_import
@@ -53,13 +52,13 @@ InputTypes = data_formatters.base.InputTypes
 
 # Layer utility functions.
 def linear_layer(size, activation=None, use_time_distributed=False, use_bias=True):
-    """Returns simple Keras linear layer.
+    """返回简单的Keras线性层。
 
-    Args:
-      size: Output size
-      activation: Activation function to apply if required
-      use_time_distributed: Whether to apply layer across time
-      use_bias: Whether bias should be included in layer
+    参数：
+        size: 输出大小
+        activation: 需要时应用的激活函数
+        use_time_distributed: 是否跨时间应用层
+        use_bias: 层中是否包含偏置
     """
     linear = tf.keras.layers.Dense(size, activation=activation, use_bias=use_bias)
     if use_time_distributed:
@@ -70,18 +69,18 @@ def linear_layer(size, activation=None, use_time_distributed=False, use_bias=Tru
 def apply_mlp(
     inputs, hidden_size, output_size, output_activation=None, hidden_activation="tanh", use_time_distributed=False
 ):
-    """Applies simple feed-forward network to an input.
+    """对输入应用简单的前馈网络。
 
-    Args:
-      inputs: MLP inputs
-      hidden_size: Hidden state size
-      output_size: Output size of MLP
-      output_activation: Activation function to apply on output
-      hidden_activation: Activation function to apply on input
-      use_time_distributed: Whether to apply across time
+    参数：
+        inputs: MLP输入
+        hidden_size: 隐藏状态大小
+        output_size: MLP的输出大小
+        output_activation: 应用于输出的激活函数
+        hidden_activation: 应用于输入的激活函数
+        use_time_distributed: 是否跨时间应用
 
-    Returns:
-      Tensor for MLP outputs.
+    返回：
+      MLP输出的张量。
     """
     if use_time_distributed:
         hidden = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(hidden_size, activation=hidden_activation))(
@@ -94,18 +93,17 @@ def apply_mlp(
 
 
 def apply_gating_layer(x, hidden_layer_size, dropout_rate=None, use_time_distributed=True, activation=None):
-    """Applies a Gated Linear Unit (GLU) to an input.
+    """对输入应用门控线性单元（GLU）。
 
-    Args:
-      x: Input to gating layer
-      hidden_layer_size: Dimension of GLU
-      dropout_rate: Dropout rate to apply if any
-      use_time_distributed: Whether to apply across time
-      activation: Activation function to apply to the linear feature transform if
-        necessary
+    参数：
+        x: 门控层的输入
+        hidden_layer_size: GLU的维度
+        dropout_rate: 应用的dropout率（如果有）
+        use_time_distributed: 是否跨时间应用
+        activation: 必要时应用于线性特征变换的激活函数
 
-    Returns:
-      Tuple of tensors for: (GLU output, gate)
+    返回：
+        张量元组：(GLU输出, 门控)
     """
 
     if dropout_rate is not None:
@@ -124,13 +122,13 @@ def apply_gating_layer(x, hidden_layer_size, dropout_rate=None, use_time_distrib
 
 
 def add_and_norm(x_list):
-    """Applies skip connection followed by layer normalisation.
+    """应用跳跃连接后进行层归一化。
 
-    Args:
-      x_list: List of inputs to sum for skip connection
+    参数：
+      x_list: 用于跳跃连接求和的输入列表
 
-    Returns:
-      Tensor output from layer.
+    返回：
+      层的张量输出。
     """
     tmp = Add()(x_list)
     tmp = LayerNorm()(tmp)
@@ -146,19 +144,19 @@ def gated_residual_network(
     additional_context=None,
     return_gate=False,
 ):
-    """Applies the gated residual network (GRN) as defined in paper.
+    """应用论文中定义的门控残差网络（GRN）。
 
-    Args:
-      x: Network inputs
-      hidden_layer_size: Internal state size
-      output_size: Size of output layer
-      dropout_rate: Dropout rate if dropout is applied
-      use_time_distributed: Whether to apply network across time dimension
-      additional_context: Additional context vector to use if relevant
-      return_gate: Whether to return GLU gate for diagnostic purposes
+    参数：
+      x: 网络输入
+      hidden_layer_size: 内部状态大小
+      output_size: 输出层大小
+      dropout_rate: 应用dropout时的dropout率
+      use_time_distributed: 是否跨时间维度应用网络
+      additional_context: 相关时使用的附加上下文向量
+      return_gate: 是否返回GLU门控用于诊断
 
-    Returns:
-      Tuple of tensors for: (GRN output, GLU gate)
+    返回：
+      张量元组：(GRN输出, GLU门控)
     """
 
     # Setup skip connection
@@ -192,10 +190,10 @@ def gated_residual_network(
 
 # Attention Components.
 def get_decoder_mask(self_attn_inputs):
-    """Returns causal mask to apply for self-attention layer.
+    """返回应用于自注意力层的因果掩码。
 
-    Args:
-      self_attn_inputs: Inputs to self attention layer to determine mask shape
+    参数：
+      self_attn_inputs: 自注意力层的输入，用于确定掩码形状
     """
     len_s = tf.shape(self_attn_inputs)[1]
     bs = tf.shape(self_attn_inputs)[:1]
@@ -204,12 +202,11 @@ def get_decoder_mask(self_attn_inputs):
 
 
 class ScaledDotProductAttention:
-    """Defines scaled dot product attention layer.
+    """定义缩放点积注意力层。
 
-    Attributes:
-      dropout: Dropout rate to use
-      activation: Normalisation function for scaled dot product attention (e.g.
-        softmax by default)
+    属性：
+      dropout: 使用的dropout率
+      activation: 缩放点积注意力的归一化函数（例如默认使用softmax）
     """
 
     def __init__(self, attn_dropout=0.0):
@@ -217,16 +214,16 @@ class ScaledDotProductAttention:
         self.activation = Activation("softmax")
 
     def __call__(self, q, k, v, mask):
-        """Applies scaled dot product attention.
+        """应用缩放点积注意力。
 
-        Args:
-          q: Queries
-          k: Keys
-          v: Values
-          mask: Masking if required -- sets softmax to very large value
+        参数：
+          q: 查询（Queries）
+          k: 键（Keys）
+          v: 值（Values）
+          mask: 需要时的掩码 -- 将softmax设置为非常大的值
 
-        Returns:
-          Tuple of (layer outputs, attention weights)
+        返回：
+          元组 (层输出, 注意力权重)
         """
         temper = tf.sqrt(tf.cast(tf.shape(k)[-1], dtype="float32"))
         attn = Lambda(lambda x: K.batch_dot(x[0], x[1], axes=[2, 2]) / temper)([q, k])  # shape=(batch, q, k)
@@ -240,28 +237,27 @@ class ScaledDotProductAttention:
 
 
 class InterpretableMultiHeadAttention:
-    """Defines interpretable multi-head attention layer.
+    """定义可解释的多头注意力层。
 
-    Attributes:
-      n_head: Number of heads
-      d_k: Key/query dimensionality per head
-      d_v: Value dimensionality
-      dropout: Dropout rate to apply
-      qs_layers: List of queries across heads
-      ks_layers: List of keys across heads
-      vs_layers: List of values across heads
-      attention: Scaled dot product attention layer
-      w_o: Output weight matrix to project internal state to the original TFT
-        state size
+    属性：
+      n_head: 头数
+      d_k: 每头的键/查询维度
+      d_v: 值维度
+      dropout: 应用的dropout率
+      qs_layers: 跨头的查询列表
+      ks_layers: 跨头的键列表
+      vs_layers: 跨头的值列表
+      attention: 缩放点积注意力层
+      w_o: 将内部状态投影到原始TFT状态大小的输出权重矩阵
     """
 
     def __init__(self, n_head, d_model, dropout):
-        """Initialises layer.
+        """初始化层。
 
-        Args:
-          n_head: Number of heads
-          d_model: TFT state dimensionality
-          dropout: Dropout discard rate
+        参数：
+          n_head: 头数
+          d_model: TFT状态维度
+          dropout: Dropout丢弃率
         """
 
         self.n_head = n_head
@@ -284,18 +280,18 @@ class InterpretableMultiHeadAttention:
         self.w_o = Dense(d_model, use_bias=False)
 
     def __call__(self, q, k, v, mask=None):
-        """Applies interpretable multihead attention.
+        """应用可解释的多头注意力。
 
-        Using T to denote the number of time steps fed into the transformer.
+        使用T表示输入到Transformer的时间步数。
 
-        Args:
-          q: Query tensor of shape=(?, T, d_model)
-          k: Key of shape=(?, T, d_model)
-          v: Values of shape=(?, T, d_model)
-          mask: Masking if required with shape=(?, T, T)
+        参数：
+          q: 查询张量，形状=(?, T, d_model)
+          k: 键张量，形状=(?, T, d_model)
+          v: 值张量，形状=(?, T, d_model)
+          mask: 需要时的掩码，形状=(?, T, T)
 
-        Returns:
-          Tuple of (layer outputs, attention weights)
+        返回：
+          元组 (层输出, 注意力权重)
         """
         n_head = self.n_head
 
@@ -321,71 +317,65 @@ class InterpretableMultiHeadAttention:
 
 
 class TFTDataCache:
-    """Caches data for the TFT."""
+    """为TFT缓存数据。"""
 
     _data_cache = {}
 
     @classmethod
     def update(cls, data, key):
-        """Updates cached data.
+        """更新缓存数据。
 
-        Args:
-          data: Source to update
-          key: Key to dictionary location
+        参数：
+          data: 要更新的源数据
+          key: 字典位置的键
         """
         cls._data_cache[key] = data
 
     @classmethod
     def get(cls, key):
-        """Returns data stored at key location."""
+        """返回存储在键位置的数据。"""
         return cls._data_cache[key].copy()
 
     @classmethod
     def contains(cls, key):
-        """Returns boolean indicating whether key is present in cache."""
+        """返回指示键是否存在于缓存中的布尔值。"""
 
         return key in cls._data_cache
 
 
 # TFT model definitions.
 class TemporalFusionTransformer:
-    """Defines Temporal Fusion Transformer.
+    """定义时间融合Transformer。
 
-    Attributes:
-      name: Name of model
-      time_steps: Total number of input time steps per forecast date (i.e. Width
-        of Temporal fusion decoder N)
-      input_size: Total number of inputs
-      output_size: Total number of outputs
-      category_counts: Number of categories per categorical variable
-      n_multiprocessing_workers: Number of workers to use for parallel
-        computations
-      column_definition: List of tuples of (string, DataType, InputType) that
-        define each column
-      quantiles: Quantiles to forecast for TFT
-      use_cudnn: Whether to use Keras CuDNNLSTM or standard LSTM layers
-      hidden_layer_size: Internal state size of TFT
-      dropout_rate: Dropout discard rate
-      max_gradient_norm: Maximum norm for gradient clipping
-      learning_rate: Initial learning rate of ADAM optimizer
-      minibatch_size: Size of minibatches for training
-      num_epochs: Maximum number of epochs for training
-      early_stopping_patience: Maximum number of iterations of non-improvement
-        before early stopping kicks in
-      num_encoder_steps: Size of LSTM encoder -- i.e. number of past time steps
-        before forecast date to use
-      num_stacks: Number of self-attention layers to apply (default is 1 for basic
-        TFT)
-      num_heads: Number of heads for interpretable mulit-head attention
-      model: Keras model for TFT
+    属性：
+      name: 模型名称
+      time_steps: 每个预测日期的输入时间步数（即时间融合解码器N的宽度）
+      input_size: 输入总数
+      output_size: 输出总数
+      category_counts: 每个分类变量的类别数量
+      n_multiprocessing_workers: 用于并行计算的工作进程数
+      column_definition: 定义每列的(字符串, DataType, InputType)元组列表
+      quantiles: TFT要预测的分位数
+      use_cudnn: 是否使用Keras CuDNNLSTM或标准LSTM层
+      hidden_layer_size: TFT的内部状态大小
+      dropout_rate: Dropout丢弃率
+      max_gradient_norm: 梯度裁剪的最大范数
+      learning_rate: ADAM优化器的初始学习率
+      minibatch_size: 训练的小批量大小
+      num_epochs: 训练的最大轮数
+      early_stopping_patience: 早停前非改进迭代的最大次数
+      num_encoder_steps: LSTM编码器的大小——即使用预测日期前的过去时间步数
+      num_stacks: 应用的自注意力层数（基础TFT默认为1）
+      num_heads: 可解释多头注意力的头数
+      model: TFT的Keras模型
     """
 
     def __init__(self, raw_params, use_cudnn=False):
-        """Builds TFT from parameters.
+        """从参数构建TFT。
 
-        Args:
-          raw_params: Parameters to define TFT
-          use_cudnn: Whether to use CUDNN GPU optimised LSTM
+        参数：
+          raw_params: 定义TFT的参数
+          use_cudnn: 是否使用CUDNN GPU优化的LSTM
         """
 
         self.name = self.__class__.__name__
@@ -439,16 +429,15 @@ class TemporalFusionTransformer:
         self.model = self.build_model()
 
     def get_tft_embeddings(self, all_inputs):
-        """Transforms raw inputs to embeddings.
+        """将原始输入转换为嵌入向量。
 
-        Applies linear transformation onto continuous variables and uses embeddings
-        for categorical variables.
+        对连续变量应用线性变换，并对分类变量使用嵌入。
 
-        Args:
-          all_inputs: Inputs to transform
+        参数：
+          all_inputs: 要转换的输入
 
-        Returns:
-          Tensors for transformed inputs.
+        返回：
+          转换后输入的张量。
         """
 
         time_steps = self.time_steps
@@ -509,7 +498,7 @@ class TemporalFusionTransformer:
             static_inputs = None
 
         def convert_real_to_embedding(x):
-            """Applies linear transformation for time-varying inputs."""
+            """对时变输入应用线性变换。"""
             return tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(self.hidden_layer_size))(x)
 
         # Targets
@@ -552,22 +541,22 @@ class TemporalFusionTransformer:
         return unknown_inputs, known_combined_layer, obs_inputs, static_inputs
 
     def _get_single_col_by_type(self, input_type):
-        """Returns name of single column for input type."""
+        """返回输入类型对应的单列名称。"""
 
         return utils.get_single_col_by_input_type(input_type, self.column_definition)
 
     def training_data_cached(self):
-        """Returns boolean indicating if training data has been cached."""
+        """返回指示训练数据是否已缓存的布尔值。"""
 
         return TFTDataCache.contains("train") and TFTDataCache.contains("valid")
 
     def cache_batched_data(self, data, cache_key, num_samples=-1):
-        """Batches and caches data once for using during training.
+        """对数据进行批处理并缓存一次，供训练时使用。
 
-        Args:
-          data: Data to batch and cache
-          cache_key: Key used for cache
-          num_samples: Maximum number of samples to extract (-1 to use all data)
+        参数：
+          data: 要批处理和缓存的数据
+          cache_key: 用于缓存的键
+          num_samples: 要提取的最大样本数（-1表示使用所有数据）
         """
 
         if num_samples > 0:
@@ -578,14 +567,14 @@ class TemporalFusionTransformer:
         print('Cached data "{}" updated'.format(cache_key))
 
     def _batch_sampled_data(self, data, max_samples):
-        """Samples segments into a compatible format.
+        """将数据段采样为兼容格式。
 
-        Args:
-          data: Sources data to sample and batch
-          max_samples: Maximum number of samples in batch
+        参数：
+          data: 要采样和批处理的源数据
+          max_samples: 批处理中的最大样本数
 
-        Returns:
-          Dictionary of batched data with the maximum samples specified.
+        返回：
+          指定最大样本数的批处理数据字典。
         """
 
         if max_samples < 1:
@@ -649,16 +638,15 @@ class TemporalFusionTransformer:
         return sampled_data
 
     def _batch_data(self, data):
-        """Batches data for training.
+        """为训练批处理数据。
 
-        Converts raw dataframe from a 2-D tabular format to a batched 3-D array
-        to feed into Keras model.
+        将原始数据框从二维表格格式转换为批处理的三维数组，以输入到Keras模型。
 
-        Args:
-          data: DataFrame to batch
+        参数：
+          data: 要批处理的数据框
 
-        Returns:
-          Batched Numpy array with shape=(?, self.time_steps, self.input_size)
+        返回：
+          批处理的Numpy数组，形状为=(?, self.time_steps, self.input_size)
         """
 
         # Functions.
@@ -707,11 +695,11 @@ class TemporalFusionTransformer:
         return data_map
 
     def _get_active_locations(self, x):
-        """Formats sample weights for Keras training."""
+        """为Keras训练格式化样本权重。"""
         return (np.sum(x, axis=-1) > 0.0) * 1.0
 
     def _build_base_graph(self):
-        """Returns graph defining layers of the TFT."""
+        """返回定义TFT各层的图结构。"""
 
         # Size definitions.
         time_steps = self.time_steps
@@ -747,13 +735,13 @@ class TemporalFusionTransformer:
         future_inputs = known_combined_layer[:, encoder_steps:, :]
 
         def static_combine_and_mask(embedding):
-            """Applies variable selection network to static inputs.
+            """对静态输入应用变量选择网络。
 
-            Args:
-              embedding: Transformed static inputs
+            参数：
+              embedding: 转换后的静态输入
 
-            Returns:
-              Tensor output for variable selection network
+            返回：
+              变量选择网络的张量输出
             """
 
             # Add temporal features
@@ -808,13 +796,12 @@ class TemporalFusionTransformer:
         )
 
         def lstm_combine_and_mask(embedding):
-            """Apply temporal variable selection networks.
+            """应用时间变量选择网络。
+            参数：
+              embedding: 转换后的输入。
 
-            Args:
-              embedding: Transformed inputs.
-
-            Returns:
-              Processed tensor outputs.
+            返回：
+              处理后的张量输出。
             """
 
             # Add temporal features
@@ -861,7 +848,7 @@ class TemporalFusionTransformer:
 
         # LSTM layer
         def get_lstm(return_state):
-            """Returns LSTM cell initialized with default parameters."""
+            """返回使用默认参数初始化的LSTM单元。"""
             if self.use_cudnn:
                 lstm = tf.keras.layers.CuDNNLSTM(
                     self.hidden_layer_size,
@@ -1012,11 +999,11 @@ class TemporalFusionTransformer:
         return model
 
     def fit(self, train_df=None, valid_df=None):
-        """Fits deep neural network for given training and validation data.
+        """为给定的训练和验证数据拟合深度神经网络。
 
-        Args:
-          train_df: DataFrame for training data
-          valid_df: DataFrame for validation data
+        参数:
+          train_df: 训练数据的DataFrame
+          valid_df: 验证数据的DataFrame
         """
 
         print("*** Fitting {} ***".format(self.name))
@@ -1079,14 +1066,14 @@ class TemporalFusionTransformer:
             print("Cannot load from {}, skipping ...".format(self._temp_folder))
 
     def evaluate(self, data=None, eval_metric="loss"):
-        """Applies evaluation metric to the training data.
+        """将评估指标应用于训练数据。
 
-        Args:
-          data: Dataframe for evaluation
-          eval_metric: Evaluation metic to return, based on model definition.
+        参数:
+          data: 用于评估的DataFrame
+          eval_metric: 基于模型定义返回的评估指标
 
-        Returns:
-          Computed evaluation loss.
+        返回:
+          计算得到的评估损失。
         """
 
         if data is None:
@@ -1112,15 +1099,14 @@ class TemporalFusionTransformer:
         return metrics[eval_metric]
 
     def predict(self, df, return_targets=False):
-        """Computes predictions for a given input dataset.
+        """为给定的输入数据集计算预测结果。
 
-        Args:
-          df: Input dataframe
-          return_targets: Whether to also return outputs aligned with predictions to
-            facilitate evaluation
+        参数:
+          df: 输入数据框
+          return_targets: 是否同时返回与预测结果对齐的输出以方便评估
 
-        Returns:
-          Input dataframe or tuple of (input dataframe, aligned output dataframe).
+        返回:
+          输入数据框或(input dataframe, aligned output dataframe)的元组。
         """
 
         data = self._batch_data(df)
@@ -1137,7 +1123,7 @@ class TemporalFusionTransformer:
             raise NotImplementedError("Current version only supports 1D targets!")
 
         def format_outputs(prediction):
-            """Returns formatted dataframes for prediction."""
+            """返回格式化的预测结果数据框。"""
 
             flat_prediction = pd.DataFrame(
                 prediction[:, :, 0], columns=["t+{}".format(i) for i in range(self.time_steps - self.num_encoder_steps)]
@@ -1162,14 +1148,13 @@ class TemporalFusionTransformer:
         return {k: format_outputs(process_map[k]) for k in process_map}
 
     def get_attention(self, df):
-        """Computes TFT attention weights for a given dataset.
+        """为给定数据集计算TFT注意力权重。
 
-        Args:
-          df: Input dataframe
+        参数:
+          df: 输入数据框
 
-        Returns:
-            Dictionary of numpy arrays for temporal attention weights and variable
-              selection weights, along with their identifiers and time indices
+        返回:
+            包含时间注意力权重和变量选择权重的numpy数组字典，以及它们的标识符和时间索引
         """
 
         data = self._batch_data(df)
@@ -1178,7 +1163,7 @@ class TemporalFusionTransformer:
         time = data["time"]
 
         def get_batch_attention_weights(input_batch):
-            """Returns weights for a given minibatch of data."""
+            """返回给定数据小批量的权重。"""
             input_placeholder = self._input_placeholder
             attention_weights = {}
             for k in self._attention_components:
@@ -1222,21 +1207,21 @@ class TemporalFusionTransformer:
 
     # Serialisation.
     def reset_temp_folder(self):
-        """Deletes and recreates folder with temporary Keras training outputs."""
+        """删除并重新创建包含临时Keras训练输出的文件夹。"""
         print("Resetting temp folder...")
         utils.create_folder_if_not_exist(self._temp_folder)
         shutil.rmtree(self._temp_folder)
         os.makedirs(self._temp_folder)
 
     def get_keras_saved_path(self, model_folder):
-        """Returns path to keras checkpoint."""
+        """返回Keras检查点的路径。"""
         return os.path.join(model_folder, "{}.check".format(self.name))
 
     def save(self, model_folder):
-        """Saves optimal TFT weights.
+        """保存优化的TFT权重。
 
-        Args:
-          model_folder: Location to serialze model.
+        参数:
+          model_folder: 模型序列化的位置。
         """
         # Allows for direct serialisation of tensorflow variables to avoid spurious
         # issue with Keras that leads to different performance evaluation results
@@ -1245,13 +1230,13 @@ class TemporalFusionTransformer:
         utils.save(tf.keras.backend.get_session(), model_folder, cp_name=self.name, scope=self.name)
 
     def load(self, model_folder, use_keras_loadings=False):
-        """Loads TFT weights.
+        """加载TFT权重。
 
-        Args:
-          model_folder: Folder containing serialized models.
-          use_keras_loadings: Whether to load from Keras checkpoint.
+        参数:
+          model_folder: 包含序列化模型的文件夹。
+          use_keras_loadings: 是否从Keras检查点加载。
 
-        Returns:
+        返回:
 
         """
         if use_keras_loadings:
@@ -1265,7 +1250,7 @@ class TemporalFusionTransformer:
 
     @classmethod
     def get_hyperparm_choices(cls):
-        """Returns hyperparameter ranges for random search."""
+        """返回随机搜索的超参数范围。"""
         return {
             "dropout_rate": [0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.9],
             "hidden_layer_size": [10, 20, 40, 80, 160, 240, 320],

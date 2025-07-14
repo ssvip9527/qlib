@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# 根据 MIT 许可证授权。
 import os
 from pathlib import Path
 from typing import Union
@@ -14,13 +14,13 @@ DIRNAME = Path(__file__).absolute().resolve().parent
 
 
 class RollingBenchmark(Rolling):
-    # The config in the README.md
+    # README.md 中的配置
     CONF_LIST = [DIRNAME / "workflow_config_linear_Alpha158.yaml", DIRNAME / "workflow_config_lightgbm_Alpha158.yaml"]
 
     DEFAULT_CONF = CONF_LIST[0]
 
     def __init__(self, conf_path: Union[str, Path] = DEFAULT_CONF, horizon=20, **kwargs) -> None:
-        # This code is for being compatible with the previous old code
+        # 此代码用于与之前的旧代码兼容
         conf_path = Path(conf_path)
         super().__init__(conf_path=conf_path, horizon=horizon, **kwargs)
 

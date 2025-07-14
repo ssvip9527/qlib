@@ -1,3 +1,3 @@
-# HIST
-* Code: [https://github.com/Wentao-Xu/HIST](https://github.com/Wentao-Xu/HIST)
-* Paper: [HIST: A Graph-based Framework for Stock Trend Forecasting via Mining Concept-Oriented Shared InformationAdaRNN: Adaptive Learning and Forecasting for Time Series](https://arxiv.org/abs/2110.13716).
+# HIST模型
+* 代码：[https://github.com/Wentao-Xu/HIST](https://github.com/Wentao-Xu/HIST)
+* 论文：[HIST：一种基于图的股票趋势预测框架，通过挖掘面向概念的共享信息](https://arxiv.org/abs/2110.13716)。

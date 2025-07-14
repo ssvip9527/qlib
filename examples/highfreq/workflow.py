@@ -81,7 +81,7 @@ class HighfreqWorkflow:
     }
 
     def _init_qlib(self):
-        """initialize qlib"""
+        """初始化qlib"""
         # use cn_data_1min data
         QLIB_INIT_CONFIG = {**HIGH_FREQ_CONFIG, **self.SPEC_CONF}
         provider_uri = QLIB_INIT_CONFIG.get("provider_uri")
@@ -89,15 +89,15 @@ class HighfreqWorkflow:
         qlib.init(**QLIB_INIT_CONFIG)
 
     def _prepare_calender_cache(self):
-        """preload the calendar for cache"""
+        """预加载日历以缓存"""
 
-        # This code used the copy-on-write feature of Linux to avoid calculating the calendar multiple times in the subprocess
-        # This code may accelerate, but may be not useful on Windows and Mac Os
+        # 此代码利用Linux的写时复制特性，避免在子进程中多次计算日历
+        # 此代码可能会加速运行，但在Windows和Mac OS上可能无效
         Cal.calendar(freq="1min")
         get_calendar_day(freq="1min")
 
     def get_data(self):
-        """use dataset to get highreq data"""
+        """使用数据集获取高频数据"""
         self._init_qlib()
         self._prepare_calender_cache()
 
@@ -112,7 +112,7 @@ class HighfreqWorkflow:
         return
 
     def dump_and_load_dataset(self):
-        """dump and load dataset state on disk"""
+        """在磁盘上转储和加载数据集状态"""
         self._init_qlib()
         self._prepare_calender_cache()
         dataset = init_instance_by_config(self.task["dataset"])

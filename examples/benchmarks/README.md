@@ -1,54 +1,54 @@
-# Benchmarks Performance
-This page lists a batch of methods designed for alpha seeking. Each method tries to give scores/predictions for all stocks each day(e.g. forecasting the future excess return of stocks). The scores/predictions of the models will be used as the mined alpha. Investing in stocks with higher scores is expected to yield more profit.  
+# 基准模型性能
+本页面列出了一系列用于alpha选股的方法。每种方法尝试每天为所有股票给出评分/预测（例如预测股票未来的超额收益）。模型的评分/预测将作为挖掘出的alpha因子。投资评分较高的股票有望获得更高的收益。
 
-The alpha is evaluated in two ways.
-1. The correlation between the alpha and future return.
-1. Constructing portfolio based on the alpha and evaluating the final total return.
-   - The explanation of metrics can be found [here](https://qlib.readthedocs.io/en/latest/component/report.html#id4)
+alpha因子通过两种方式进行评估：
+1. alpha因子与未来收益之间的相关性。
+2. 基于alpha因子构建投资组合并评估最终的总收益。
+   - 指标解释可参见[此处](https://qlib.readthedocs.io/en/latest/component/report.html#id4)
 
-Here are the results of each benchmark model running on Qlib's `Alpha360` and `Alpha158` dataset with China's A shared-stock & CSI300 data respectively. The values of each metric are the mean and std calculated based on 20 runs with different random seeds.
+以下是各基准模型在Qlib的`Alpha360`和`Alpha158`数据集上分别使用中国A股和沪深300数据的运行结果。每个指标的值是基于20次不同随机种子运行计算的均值和标准差。
 
-The numbers shown below demonstrate the performance of the entire `workflow` of each model. We will update the `workflow` as well as models in the near future for better results.
+下方显示的数字展示了每个模型整个`工作流程`的性能。我们将在近期更新`工作流程`和模型以获得更好的结果。
 <!-- 
-> If you need to reproduce the results below, please use the **v1** dataset: `python scripts/get_data.py qlib_data --target_dir ~/.qlib/qlib_data/cn_data --region cn --version v1`
+> 如需复现以下结果，请使用**v1**数据集：`python scripts/get_data.py qlib_data --target_dir ~/.qlib/qlib_data/cn_data --region cn --version v1`
 >
-> In the new version of qlib, the default dataset is **v2**. Since the data is collected from the YahooFinance API (which is not very stable), the results of *v2* and *v1* may differ -->
+> 在新版本的qlib中，默认数据集为**v2**。由于数据来自YahooFinance API（稳定性欠佳），*v2*和*v1*的结果可能存在差异 -->
 
-> NOTE:
-> The backtest start from 0.8.0 is quite different from previous version. Please check out the changelog for the difference.
+> 注意：
+> 从0.8.0版本开始的回测与之前版本有较大差异。请查看更新日志了解具体区别。
 
-> NOTE:
-> We have very limited resources to implement and finetune the models. We tried our best effort to fairly compare these models.  But some models may have greater potential than what it looks like in the table below.  Your contribution is highly welcomed to explore their potential.
+> 注意：
+> 我们用于实现和微调模型的资源非常有限。我们已尽最大努力公平比较这些模型。但有些模型的潜力可能比下表所示的更大。非常欢迎您的贡献来探索它们的潜力。
 
-## Results on CSI300
+## 沪深300指数上的结果
 
-### Alpha158 dataset
+### Alpha158数据集
 
-| Model Name                               | Dataset                             | IC          | ICIR        | Rank IC     | Rank ICIR   | Annualized Return | Information Ratio | Max Drawdown |
+| 模型名称                                 | 数据集                               | IC          | ICIR        | Rank IC     | Rank ICIR   | 年化收益率         | 信息比率           | 最大回撤      |
 |------------------------------------------|-------------------------------------|-------------|-------------|-------------|-------------|-------------------|-------------------|--------------|
 | TCN(Shaojie Bai, et al.)                 | Alpha158                            | 0.0279±0.00 | 0.2181±0.01 | 0.0421±0.00 | 0.3429±0.01 | 0.0262±0.02       | 0.4133±0.25       | -0.1090±0.03 |
 | TabNet(Sercan O. Arik, et al.)           | Alpha158                            | 0.0204±0.01 | 0.1554±0.07 | 0.0333±0.00 | 0.2552±0.05 | 0.0227±0.04       | 0.3676±0.54       | -0.1089±0.08 |
 | Transformer(Ashish Vaswani, et al.)      | Alpha158                            | 0.0264±0.00 | 0.2053±0.02 | 0.0407±0.00 | 0.3273±0.02 | 0.0273±0.02       | 0.3970±0.26       | -0.1101±0.02 |
-| GRU(Kyunghyun Cho, et al.)               | Alpha158(with selected 20 features) | 0.0315±0.00 | 0.2450±0.04 | 0.0428±0.00 | 0.3440±0.03 | 0.0344±0.02       | 0.5160±0.25       | -0.1017±0.02 |
-| LSTM(Sepp Hochreiter, et al.)            | Alpha158(with selected 20 features) | 0.0318±0.00 | 0.2367±0.04 | 0.0435±0.00 | 0.3389±0.03 | 0.0381±0.03       | 0.5561±0.46       | -0.1207±0.04 |
+| GRU(Kyunghyun Cho, et al.)               | Alpha158(使用选定的20个特征)        | 0.0315±0.00 | 0.2450±0.04 | 0.0428±0.00 | 0.3440±0.03 | 0.0344±0.02       | 0.5160±0.25       | -0.1017±0.02 |
+| LSTM(Sepp Hochreiter, et al.)            | Alpha158(使用选定的20个特征)        | 0.0318±0.00 | 0.2367±0.04 | 0.0435±0.00 | 0.3389±0.03 | 0.0381±0.03       | 0.5561±0.46       | -0.1207±0.04 |
 | Localformer(Juyong Jiang, et al.)        | Alpha158                            | 0.0356±0.00 | 0.2756±0.03 | 0.0468±0.00 | 0.3784±0.03 | 0.0438±0.02       | 0.6600±0.33       | -0.0952±0.02 |
 | SFM(Liheng Zhang, et al.)                | Alpha158                            | 0.0379±0.00 | 0.2959±0.04 | 0.0464±0.00 | 0.3825±0.04 | 0.0465±0.02       | 0.5672±0.29       | -0.1282±0.03 |
-| ALSTM (Yao Qin, et al.)                  | Alpha158(with selected 20 features) | 0.0362±0.01 | 0.2789±0.06 | 0.0463±0.01 | 0.3661±0.05 | 0.0470±0.03       | 0.6992±0.47       | -0.1072±0.03 |
-| GATs (Petar Velickovic, et al.)          | Alpha158(with selected 20 features) | 0.0349±0.00 | 0.2511±0.01 | 0.0462±0.00 | 0.3564±0.01 | 0.0497±0.01       | 0.7338±0.19       | -0.0777±0.02 |
-| TRA(Hengxu Lin, et al.)                  | Alpha158(with selected 20 features) | 0.0404±0.00 | 0.3197±0.05 | 0.0490±0.00 | 0.4047±0.04 | 0.0649±0.02       | 1.0091±0.30       | -0.0860±0.02 |
+| ALSTM (Yao Qin, et al.)                  | Alpha158(使用选定的20个特征)        | 0.0362±0.01 | 0.2789±0.06 | 0.0463±0.01 | 0.3661±0.05 | 0.0470±0.03       | 0.6992±0.47       | -0.1072±0.03 |
+| GATs (Petar Velickovic, et al.)          | Alpha158(使用选定的20个特征)        | 0.0349±0.00 | 0.2511±0.01 | 0.0462±0.00 | 0.3564±0.01 | 0.0497±0.01       | 0.7338±0.19       | -0.0777±0.02 |
+| TRA(Hengxu Lin, et al.)                  | Alpha158(使用选定的20个特征)        | 0.0404±0.00 | 0.3197±0.05 | 0.0490±0.00 | 0.4047±0.04 | 0.0649±0.02       | 1.0091±0.30       | -0.0860±0.02 |
 | Linear                                   | Alpha158                            | 0.0397±0.00 | 0.3000±0.00 | 0.0472±0.00 | 0.3531±0.00 | 0.0692±0.00       | 0.9209±0.00       | -0.1509±0.00 |
 | TRA(Hengxu Lin, et al.)                  | Alpha158                            | 0.0440±0.00 | 0.3535±0.05 | 0.0540±0.00 | 0.4451±0.03 | 0.0718±0.02       | 1.0835±0.35       | -0.0760±0.02 |
 | CatBoost(Liudmila Prokhorenkova, et al.) | Alpha158                            | 0.0481±0.00 | 0.3366±0.00 | 0.0454±0.00 | 0.3311±0.00 | 0.0765±0.00       | 0.8032±0.01       | -0.1092±0.00 |
 | XGBoost(Tianqi Chen, et al.)             | Alpha158                            | 0.0498±0.00 | 0.3779±0.00 | 0.0505±0.00 | 0.4131±0.00 | 0.0780±0.00       | 0.9070±0.00       | -0.1168±0.00 |
-| TFT (Bryan Lim, et al.)                  | Alpha158(with selected 20 features) | 0.0358±0.00 | 0.2160±0.03 | 0.0116±0.01 | 0.0720±0.03 | 0.0847±0.02       | 0.8131±0.19       | -0.1824±0.03 |
+| TFT (Bryan Lim, et al.)                  | Alpha158(使用选定的20个特征)        | 0.0358±0.00 | 0.2160±0.03 | 0.0116±0.01 | 0.0720±0.03 | 0.0847±0.02       | 0.8131±0.19       | -0.1824±0.03 |
 | MLP                                      | Alpha158                            | 0.0376±0.00 | 0.2846±0.02 | 0.0429±0.00 | 0.3220±0.01 | 0.0895±0.02       | 1.1408±0.23       | -0.1103±0.02 |
 | LightGBM(Guolin Ke, et al.)              | Alpha158                            | 0.0448±0.00 | 0.3660±0.00 | 0.0469±0.00 | 0.3877±0.00 | 0.0901±0.00       | 1.0164±0.00       | -0.1038±0.00 |
 | DoubleEnsemble(Chuheng Zhang, et al.)    | Alpha158                            | 0.0521±0.00 | 0.4223±0.01 | 0.0502±0.00 | 0.4117±0.01 | 0.1158±0.01       | 1.3432±0.11       | -0.0920±0.01 |
 
-### Alpha360 dataset
+### Alpha360数据集
 
-| Model Name                                | Dataset  | IC          | ICIR        | Rank IC     | Rank ICIR   | Annualized Return | Information Ratio | Max Drawdown |
-|-------------------------------------------|----------|-------------|-------------|-------------|-------------|-------------------|-------------------|--------------|
+| 模型名称                                 | 数据集   | IC          | ICIR        | Rank IC     | Rank ICIR   | 年化收益率         | 信息比率           | 最大回撤      |
+|------------------------------------------|----------|-------------|-------------|-------------|-------------|-------------------|-------------------|--------------|
 | Transformer(Ashish Vaswani, et al.)       | Alpha360 | 0.0114±0.00 | 0.0716±0.03 | 0.0327±0.00 | 0.2248±0.02 | -0.0270±0.03      | -0.3378±0.37      | -0.1653±0.05 |
 | TabNet(Sercan O. Arik, et al.)            | Alpha360 | 0.0099±0.00 | 0.0593±0.00 | 0.0290±0.00 | 0.1887±0.00 | -0.0369±0.00      | -0.3892±0.00      | -0.2145±0.00 |
 | MLP                                       | Alpha360 | 0.0273±0.00 | 0.1870±0.02 | 0.0396±0.00 | 0.2910±0.02 | 0.0029±0.02       | 0.0274±0.23       | -0.1385±0.03 |
@@ -72,44 +72,44 @@ The numbers shown below demonstrate the performance of the entire `workflow` of 
 | Sandwich                                  | Alpha360 | 0.0258±0.00 | 0.1924±0.04 | 0.0337±0.00 | 0.2624±0.03 | 0.0005±0.03       | 0.0001±0.33       | -0.1752±0.05 |
 
 
-- The selected 20 features are based on the feature importance of a lightgbm-based model.
-- The base model of DoubleEnsemble is LGBM.
-- The base model of TCTS is GRU.
-- About the datasets
-  - Alpha158 is a tabular dataset. There are less spatial relationships between different features. Each feature are carefully designed by human (a.k.a feature engineering)
-  - Alpha360 contains raw price and volue data without much feature engineering. There are strong strong spatial relationships between the features in the time dimension.
-- The metrics can be categorized into two
-   - Signal-based evaluation:  IC, ICIR, Rank IC, Rank ICIR
+- 选定的20个特征基于lightgbm模型的特征重要性。
+- DoubleEnsemble的基础模型是LGBM。
+- TCTS的基础模型是GRU。
+- 关于数据集
+  - Alpha158是表格型数据集。不同特征之间的空间关系较少。每个特征都是人工精心设计的（即特征工程）
+  - Alpha360包含原始价格和交易量数据，没有过多的特征工程。特征在时间维度上存在很强的空间关系。
+- 指标可分为两类
+   - 基于信号的评估：IC、ICIR、Rank IC、Rank ICIR
       - ![equation](https://latex.codecogs.com/gif.latex?%5Ctext%7Bcorr%7D%28%5Ctextbf%7Bx%7D%2C%5Ctextbf%7By%7D%29%3D%5Cfrac%7B%5Csum_i%20%28x_i-%5Cbar%7Bx%7D%29%28y_i-%5Cbar%7By%7D%29%7D%7B%5Csqrt%7B%5Csum_i%28x_i-%5Cbar%7Bx%7D%29%5E2%5Csum_i%28y_i-%5Cbar%7By%7D%29%5E2%7D%7D)
       - ![equation](https://latex.codecogs.com/gif.latex?%5Ctext%7BIC%7D%5E%7B%28t%29%7D%20%3D%20%5Ctext%7Bcorr%7D%28%5Chat%7B%5Ctextbf%7By%7D%7D%5E%7B%28t%29%7D%2C%20%5Ctextbf%7Bret%7D%5E%7B%28t%29%7D%29)
       - ![equation](https://latex.codecogs.com/gif.latex?%5Ctext%7BICIR%7D%20%3D%20%5Cfrac%20%7B%5Ctext%7Bmean%7D%28%5Ctextbf%7BIC%7D%29%7D%20%7B%5Ctext%7Bstd%7D%28%5Ctextbf%7BIC%7D%29%7D)
       - ![equation](https://latex.codecogs.com/gif.latex?%5Ctext%7BRank%20IC%7D%5E%7B%28t%29%7D%20%3D%20%5Ctext%7Bcorr%7D%28%5Ctext%7Brank%7D%28%5Chat%7B%5Ctextbf%7By%7D%7D%5E%7B%28t%29%7D%29%2C%20%5Ctext%7Brank%7D%28%5Ctextbf%7Bret%7D%5E%7B%28t%29%7D%29%29)
       - ![equation](https://latex.codecogs.com/gif.latex?%5Ctext%7BRank%20ICIR%7D%20%3D%20%5Cfrac%20%7B%5Ctext%7Bmean%7D%28%5Ctextbf%7BRank%20IC%7D%29%7D%20%7B%5Ctext%7Bstd%7D%28%5Ctextbf%7BRankIC%7D%29%7D)
-   - Portfolio-based metrics:  Annualized Return, Information Ratio, Max Drawdown
+   - 基于投资组合的指标：年化收益率、信息比率、最大回撤
 
-## Results on CSI500
-The results on CSI500 is not complete. PR's for models on csi500 are welcome!
+## 中证500指数上的结果
+中证500指数上的结果尚未完整。非常欢迎提交中证500模型的PR！
 
-Transfer previous models in CSI300 to CSI500 is quite easy.  You can try models with just a few commands below.
+将之前沪深300的模型迁移到中证500非常简单。您可以通过以下几个命令尝试模型：
 ```
 cd examples/benchmarks/LightGBM
 pip install -r requirements.txt
 
-# create new config and set the benchmark to csi500
+# 创建新配置并将基准设置为csi500
 cp workflow_config_lightgbm_Alpha158.yaml workflow_config_lightgbm_Alpha158_csi500.yaml
 sed -i "s/csi300/csi500/g"  workflow_config_lightgbm_Alpha158_csi500.yaml
 sed -i "s/SH000300/SH000905/g"  workflow_config_lightgbm_Alpha158_csi500.yaml
 
-# you can either run the model once
+# 您可以运行模型一次
 qrun workflow_config_lightgbm_Alpha158_csi500.yaml
 
-# or run it for multiple times automatically and get the summarized results.
+# 或者自动运行多次并获取汇总结果。
 cd  ../../
-python run_all_model.py run 3 lightgbm Alpha158 csi500  # for models with randomness.  please run it for 20 times.
+python run_all_model.py run 3 lightgbm Alpha158 csi500  # 对于有随机性的模型，请运行20次。
 ```
 
-### Alpha158 dataset
-| Model Name | Dataset  | IC          | ICIR        | Rank IC     | Rank ICIR   | Annualized Return | Information Ratio | Max Drawdown |
+### Alpha158数据集
+| 模型名称 | 数据集   | IC          | ICIR        | Rank IC     | Rank ICIR   | 年化收益率         | 信息比率           | 最大回撤      |
 |------------|----------|-------------|-------------|-------------|-------------|-------------------|-------------------|--------------|
 | Linear     | Alpha158 | 0.0332±0.00 | 0.3044±0.00 | 0.0462±0.00 | 0.4326±0.00 | 0.0382±0.00       | 0.1723±0.00       | -0.4876±0.00 |
 | MLP        | Alpha158 | 0.0229±0.01 | 0.2181±0.05 | 0.0360±0.00 | 0.3409±0.02 | 0.0043±0.02       | 0.0602±0.27       | -0.2184±0.04 |
@@ -117,33 +117,33 @@ python run_all_model.py run 3 lightgbm Alpha158 csi500  # for models with random
 | CatBoost   | Alpha158 | 0.0345±0.00 | 0.2855±0.00 | 0.0417±0.00 | 0.3740±0.00 | 0.0496±0.00       | 0.5977±0.00       | -0.1496±0.00 |
 | DoubleEnsemble  | Alpha158 | 0.0380±0.00 | 0.3659±0.00 | 0.0442±0.00 | 0.4324±0.00 | 0.0382±0.00       | 0.1723±0.00       | -0.4876±0.00 |
 
-### Alpha360 dataset
-| Model Name | Dataset  | IC          | ICIR        | Rank IC     | Rank ICIR   | Annualized Return | Information Ratio | Max Drawdown |
+### Alpha360数据集
+| 模型名称 | 数据集   | IC          | ICIR        | Rank IC     | Rank ICIR   | 年化收益率         | 信息比率           | 最大回撤      |
 |------------|----------|-------------|-------------|-------------|-------------|-------------------|-------------------|--------------|
 | MLP        | Alpha360 | 0.0258±0.00 | 0.2021±0.02 | 0.0426±0.00 | 0.3840±0.02 | 0.0022±0.02       | 0.0301±0.26       | -0.2064±0.02 |
 | LightGBM   | Alpha360 | 0.0400±0.00 | 0.3605±0.00 | 0.0536±0.00 | 0.5431±0.00 | 0.0505±0.00       | 0.7658±0.02       | -0.1880±0.00 |
 | CatBoost   | Alpha360 | 0.0382±0.00 | 0.3229±0.00 | 0.0489±0.00 | 0.4649±0.00 | 0.0297±0.00       | 0.4227±0.02       | -0.1499±0.01 |
 | DoubleEnsemble  | Alpha360 | 0.0361±0.00 | 0.3092±0.00 | 0.0499±0.00 | 0.4793±0.00 | 0.0382±0.00       | 0.1723±0.02       | -0.4876±0.00 |
 
-# Contributing
+# 贡献指南
 
-Your contributions to new models are highly welcome!
+非常欢迎您对新模型做出贡献！
 
-If you want to contribute your new models, you can follow the steps below.
-1. Create a folder for your model
-2. The folder contains following items(you can refer to [this example](https://github.com/microsoft/qlib/tree/main/examples/benchmarks/TCTS)).
-    - `requirements.txt`: required dependencies.
-    - `README.md`: a brief introduction to your models
-    - `workflow_config_<model name>_<dataset>.yaml`: a configuration which can read by `qrun`. You are encouraged to run your model in all datasets.
-3. You can integrate your model as a module [in this folder](https://github.com/microsoft/qlib/tree/main/qlib/contrib/model).
-4. Please update your results in the above **Benchmark Tables**, e.g. [Alpha360](#alpha158-dataset), [Alpha158](#alpha158-dataset)(the values of each metric are the mean and std calculated based on **20 Runs** with different random seeds. You can accomplish the above operations through the automated [script](https://github.com/microsoft/qlib/blob/main/examples/run_all_model.py) provided by Qlib, and get the final result in the .md file. if you don't have enough computational resource, you can ask for help in the PR).
-5. Update the info in the index page in the [news list](https://github.com/microsoft/qlib#newspaper-whats-new----sparkling_heart) and [model list](https://github.com/microsoft/qlib#quant-model-paper-zoo).
+如果您想贡献新模型，可以按照以下步骤操作：
+1. 为您的模型创建一个文件夹
+2. 该文件夹包含以下项目（您可以参考[此示例](https://github.com/microsoft/qlib/tree/main/examples/benchmarks/TCTS)）。
+    - `requirements.txt`：所需依赖。
+    - `README.md`：模型的简要介绍
+    - `workflow_config_<model name>_<dataset>.yaml`：可被`qrun`读取的配置文件。建议在所有数据集上运行您的模型。
+3. 您可以将模型集成为[此文件夹](https://github.com/microsoft/qlib/tree/main/qlib/contrib/model)中的一个模块。
+4. 请更新上述**基准表格**中的结果，例如[Alpha360](#alpha158-dataset)、[Alpha158](#alpha158-dataset)（每个指标的值是基于**20次**不同随机种子运行计算的均值和标准差。您可以通过Qlib提供的自动化[脚本](https://github.com/microsoft/qlib/blob/main/examples/run_all_model.py)完成上述操作，并在.md文件中获取最终结果。如果您没有足够的计算资源，可以在PR中寻求帮助）。
+5. 在[新闻列表](https://github.com/microsoft/qlib#newspaper-whats-new----sparkling_heart)和[模型列表](https://github.com/microsoft/qlib#quant-model-paper-zoo)的索引页面更新信息。
 
-Finally, you can send PR for review. ([here is an example](https://github.com/microsoft/qlib/pull/1040))
+最后，您可以提交PR进行审核。（[此处是一个示例](https://github.com/microsoft/qlib/pull/1040)）
 
 
-# FAQ
+# 常见问题
 
-Q: What's the difference between models with name `*.py` and `*_ts.py`?
+问：名称为`*.py`和`*_ts.py`的模型有什么区别？
 
-A: Models with name `*_ts.py` are designed for `TSDatasetH` (`TSDatasetH` will create time-series automatically from tabular data).  Models with name `*.py` are designed for `DatasetH` (`DatasetH` is usually used in tabular data.  But users still can apply time-series models on tabular datasets if the columns has time-series relationships). 
+答：名称为`*_ts.py`的模型是为`TSDatasetH`设计的（`TSDatasetH`会从表格数据自动创建时间序列）。名称为`*.py`的模型是为`DatasetH`设计的（`DatasetH`通常用于表格数据。但如果列具有时间序列关系，用户仍然可以在表格数据集上应用时间序列模型）。
