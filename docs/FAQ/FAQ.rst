@@ -1,8 +1,8 @@
 
-Qlib FAQ
+Qlib常见问题
 ############
 
-Qlib Frequently Asked Questions
+Qlib常见问题解答
 ===============================
 .. contents::
     :depth: 1
@@ -12,17 +12,14 @@ Qlib Frequently Asked Questions
 ------
 
 
-1. RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase...
+1. RuntimeError: 尝试在当前进程完成引导阶段之前启动新进程...
 -----------------------------------------------------------------------------------------------------------------------------------
 
 .. code-block:: console
 
     RuntimeError:
-            An attempt has been made to start a new process before the
-            current process has finished its bootstrapping phase.
-
-            This probably means that you are not using fork to start your
-            child processes and you have forgotten to use the proper idiom
+            尝试在当前进程完成引导阶段之前启动新进程。
+            这可能意味着您没有使用 fork 来启动子进程，并且您忘记使用正确的语法。
             in the main module:
 
                 if __name__ == '__main__':
@@ -32,9 +29,9 @@ Qlib Frequently Asked Questions
             The "freeze_support()" line can be omitted if the program
             is not going to be frozen to produce an executable.
 
-This is caused by the limitation of multiprocessing under windows OS. Please refer to `here <https://stackoverflow.com/a/24374798>`_ for more info.
+这是由于Windows操作系统下多进程的限制造成的。更多信息请参考 `这里 <https://stackoverflow.com/a/24374798>`_。
 
-**Solution**: To select a start method you use the ``D.features`` in the if __name__ == '__main__' clause of the main module. For example:
+**解决方案**：在主模块的if __name__ == '__main__'子句中使用``D.features``来选择启动方法。例如：
 
 .. code-block:: python
 
@@ -51,10 +48,10 @@ This is caused by the limitation of multiprocessing under windows OS. Please ref
 
 
 
-2. qlib.data.cache.QlibCacheException: It sees the key(...) of the redis lock has existed in your redis db now.
+2. qlib.data.cache.QlibCacheException: 发现Redis数据库中已存在Redis锁的key(...)。
 ---------------------------------------------------------------------------------------------------------------
 
-It sees the key of the redis lock has existed in your redis db now. You can use the following command to clear your redis keys and rerun your commands
+发现Redis数据库中已存在Redis锁的key。您可以使用以下命令清除Redis键并重新运行命令
 
 .. code-block:: console
 
@@ -62,21 +59,21 @@ It sees the key of the redis lock has existed in your redis db now. You can use 
     > select 1
     > flushdb
 
-If the issue is not resolved, use ``keys *`` to find if multiple keys exist. If so, try using ``flushall`` to clear all the keys.
+如果问题未解决，使用``keys *``查看是否存在多个键。如果存在，请尝试使用``flushall``清除所有键。
 
 .. note::
 
-    ``qlib.config.redis_task_db`` defaults is ``1``, users can use ``qlib.init(redis_task_db=<other_db>)`` settings.
+    ``qlib.config.redis_task_db``的默认值为``1``，用户可以使用``qlib.init(redis_task_db=<other_db>)``进行设置。
 
 
-Also, feel free to post a new issue in our GitHub repository. We always check each issue carefully and try our best to solve them.
+另外，欢迎在我们的GitHub仓库中提交新的issue。我们会认真检查每个issue并尽力解决。
 
-3. ModuleNotFoundError: No module named 'qlib.data._libs.rolling'
+3. ModuleNotFoundError: 没有名为'qlib.data._libs.rolling'的模块
 -----------------------------------------------------------------
 
 .. code-block:: python
 
-    #### Do not import qlib package in the repository directory in case of importing qlib from . without compiling #####
+    #### 不要在仓库目录中导入qlib包，以避免未编译就从当前目录导入qlib #####
     Traceback (most recent call last):
     File "<stdin>", line 1, in <module>
     File "qlib/qlib/__init__.py", line 19, in init
@@ -91,16 +88,16 @@ Also, feel free to post a new issue in our GitHub repository. We always check ea
         from ._libs.rolling import rolling_slope, rolling_rsquare, rolling_resi
     ModuleNotFoundError: No module named 'qlib.data._libs.rolling'
 
-- If the error occurs when importing ``qlib`` package with ``PyCharm`` IDE, users can execute the following command in the project root folder to compile Cython files and generate executable files:
+- 如果在使用``PyCharm`` IDE导入``qlib``包时出现此错误，用户可以在项目根目录执行以下命令编译Cython文件并生成可执行文件：
 
     .. code-block:: bash
 
         python setup.py build_ext --inplace
 
-- If the error occurs when importing ``qlib`` package with command ``python`` , users need to change the running directory to ensure that the script does not run in the project directory.
+- 如果在使用``python``命令导入``qlib``包时出现此错误，用户需要更改运行目录，确保脚本不在项目目录中运行。
 
 
-4. BadNamespaceError: / is not a connected namespace
+4. BadNamespaceError: /不是已连接的命名空间
 ----------------------------------------------------
 
 .. code-block:: python
@@ -117,14 +114,14 @@ Also, feel free to post a new issue in our GitHub repository. We always check ea
         raise exceptions.BadNamespaceError(
       BadNamespaceError: / is not a connected namespace.
 
-- The version of ``python-socketio`` in qlib needs to be the same as the version of ``python-socketio`` in qlib-server:
+- qlib中的``python-socketio``版本需要与qlib-server中的``python-socketio``版本相同：
 
     .. code-block:: bash
 
         pip install -U python-socketio==<qlib-server python-socketio version>
 
 
-5. TypeError: send() got an unexpected keyword argument 'binary'
+5. TypeError: send()收到意外的关键字参数'binary'
 ----------------------------------------------------------------
 
 .. code-block:: python
@@ -144,7 +141,7 @@ Also, feel free to post a new issue in our GitHub repository. We always check ea
       TypeError: send() got an unexpected keyword argument 'binary'
 
 
-- The ``python-engineio`` version needs to be compatible with the ``python-socketio`` version, reference: https://github.com/miguelgrinberg/python-socketio#version-compatibility
+- ``python-engineio``版本需要与``python-socketio``版本兼容，参考：https://github.com/miguelgrinberg/python-socketio#version-compatibility
 
     .. code-block:: bash
 

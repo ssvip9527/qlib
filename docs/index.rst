@@ -1,12 +1,12 @@
 ======================
-``Qlib`` Documentation
+``Qlib`` 文档
 ======================
 
-``Qlib`` is an AI-oriented quantitative investment platform, which aims to realize the potential, empower the research, and create the value of AI technologies in quantitative investment.
+``Qlib`` 是一个面向人工智能的量化投资平台，旨在发挥人工智能技术在量化投资中的潜力，赋能研究并创造价值。
 
 .. _user_guide:
 
-Document Structure
+文档结构
 ====================
 
 .. toctree::
@@ -16,14 +16,14 @@ Document Structure
 
 .. toctree::
    :maxdepth: 3
-   :caption: GETTING STARTED:
+   :caption: 快速开始:
 
    Introduction <introduction/introduction.rst>
    Quick Start <introduction/quick.rst>
 
 .. toctree::
    :maxdepth: 3
-   :caption: FIRST STEPS:
+   :caption: 入门指南:
 
    Installation <start/installation.rst>
    Initialization <start/initialization.rst>
@@ -33,7 +33,7 @@ Document Structure
 
 .. toctree::
    :maxdepth: 3
-   :caption: MAIN COMPONENTS:
+   :caption: 核心组件:
 
    Workflow: Workflow Management <component/workflow.rst>
    Data Layer: Data Framework & Usage <component/data.rst>
@@ -48,7 +48,7 @@ Document Structure
 
 .. toctree::
    :maxdepth: 3
-   :caption: OTHER COMPONENTS/FEATURES/TOPICS:
+   :caption: 其他组件/功能/主题:
 
    Building Formulaic Alphas <advanced/alpha.rst>
    Online & Offline mode <advanced/server.rst>
@@ -58,14 +58,14 @@ Document Structure
 
 .. toctree::
    :maxdepth: 3
-   :caption: FOR DEVELOPERS:
+   :caption: 开发者指南:
 
    Code Standard & Development Guidance <developer/code_standard_and_dev_guide.rst>
    How to build image <developer/how_to_build_image.rst>
 
 .. toctree::
    :maxdepth: 3
-   :caption: REFERENCE:
+   :caption: 参考文档:
 
    API <reference/api.rst>
 
@@ -76,6 +76,6 @@ Document Structure
 
 .. toctree::
    :maxdepth: 3
-   :caption: Change Log:
+   :caption: 更新日志:
 
    Change Log <changelog/changelog.rst>

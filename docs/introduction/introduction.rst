@@ -1,18 +1,18 @@
 ===============================
-``Qlib``: Quantitative Platform
+``Qlib``: 量化投资平台
 ===============================
 
-Introduction
+简介
 ============
 
 .. image:: ../_static/img/logo/white_bg_rec+word.png
     :align: center
 
-``Qlib`` is an AI-oriented quantitative investment platform, which aims to realize the potential, empower the research, and create the value of AI technologies in quantitative investment.
+``Qlib``是一个面向人工智能的量化投资平台，旨在发掘AI技术在量化投资中的潜力，赋能量化研究，创造AI技术的量化投资价值。
 
-With ``Qlib``, users can easily try their ideas to create better Quant investment strategies.
+借助``Qlib``，用户可以轻松尝试各种想法，创建更优的量化投资策略。
 
-Framework
+框架
 =========
 
 
@@ -20,51 +20,30 @@ Framework
     :align: center
 
 
-At the module level, Qlib is a platform that consists of above components. The components are designed as loose-coupled modules and each component could be used stand-alone.
+在模块层面，Qlib是一个由上述组件构成的平台。这些组件被设计为松耦合模块，每个组件都可以独立使用。
 
-This framework may be intimidating for new users to Qlib. It tries to accurately include a lot of details of Qlib's design.
-For users new to Qlib, you can skip it first and read it later.
+对于Qlib的新用户来说，这个框架可能有些复杂。它试图准确包含Qlib设计的许多细节。
+新用户可以先跳过本节，稍后再阅读。
 
 
 
 ===========================  ==============================================================================
-Name                         Description
+名称                         描述
 ===========================  ==============================================================================
-`Infrastructure` layer       `Infrastructure` layer provides underlying support for Quant research.
-                             `DataServer` provides high-performance infrastructure for users to manage
-                             and retrieve raw data. `Trainer` provides flexible interface to control
-                             the training process of models which enable algorithms controlling the
-                             training process.
+`基础设施`层                 `基础设施`层为量化研究提供底层支持。
+                             `DataServer`为用户提供高性能的基础设施，用于管理和检索原始数据。`Trainer`提供灵活的接口来控制模型的训练过程，使算法能够控制训练流程。
 
-`Learning Framework` layer   The `Forecast Model` and `Trading Agent` are trainable. They are trained
-                             based on the `Learning Framework` layer and then applied to multiple scenarios
-                             in `Workflow` layer. The supported learning paradigms can be categorized into
-                             reinforcement learning and supervised learning.  The learning framework
-                             leverages the `Workflow` layer as well(e.g. sharing `Information Extractor`,
-                             creating environments based on `Execution Env`).
+`学习框架`层                 `预测模型`和`交易智能体`是可训练的。它们基于`学习框架`层进行训练，然后应用于`工作流`层的多个场景。支持的学习范式可分为强化学习和监督学习。学习框架也利用`工作流`层（例如共享`信息提取器`，基于`执行环境`创建环境）。
 
-`Workflow` layer             `Workflow` layer covers the whole workflow of quantitative investment.
-                             Both supervised-learning-based strategies and RL-based Strategies
-                             are supported.
-                             `Information Extractor` extracts data for models. `Forecast Model` focuses
-                             on producing all kinds of forecast signals (e.g. *alpha*, risk) for other
-                             modules.  With these signals `Decision Generator` will generate the target
-                             trading decisions(i.e. portfolio, orders)
-                             If RL-based Strategies are adopted, the `Policy` is learned in a end-to-end way,
-                             the trading decisions are generated directly.
-                             Decisions will be executed by `Execution Env`
-                             (i.e. the trading market).  There may be multiple levels of `Strategy`
-                             and `Executor` (e.g. an *order executor trading strategy and intraday order executor*
-                             could behave like an interday trading loop and be nested in
-                             *daily portfolio management trading strategy and interday trading executor*
-                             trading loop)
+`工作流`层                   `工作流`层涵盖量化投资的整个工作流程。支持基于监督学习的策略和基于强化学习的策略。
+                             `信息提取器`为模型提取数据。`预测模型`专注于为其他模块生成各种预测信号（例如*alpha*、风险）。利用这些信号，`决策生成器`将生成目标交易决策（即投资组合、订单）。
+                             如果采用基于强化学习的策略，`策略`将以端到端的方式学习，直接生成交易决策。
+                             决策将由`执行环境`（即交易市场）执行。可能存在多个级别的`策略`和`执行器`（例如，*订单执行交易策略和日内订单执行器*可以表现为日间交易循环，并嵌套在*日度组合管理交易策略和日间交易执行器*交易循环中）
 
-`Interface` layer            `Interface` layer tries to present a user-friendly interface for the underlying
-                             system. `Analyser` module will provide users detailed analysis reports of
-                             forecasting signals, portfolios and execution results
+`接口`层                     `接口`层试图为底层系统提供用户友好的界面。`分析器`模块将为用户提供关于预测信号、投资组合和执行结果的详细分析报告
 ===========================  ==============================================================================
 
-- The modules with hand-drawn style are under development and will be released in the future.
-- The modules with dashed borders are highly user-customizable and extendible.
+- 手绘风格的模块正在开发中，将在未来发布。
+- 虚线边框的模块具有高度的用户可定制性和可扩展性。
 
-(p.s. framework image is created with https://draw.io/)
+（注：框架图使用https://draw.io/创建）

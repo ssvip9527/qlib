@@ -1,68 +1,68 @@
 .. _meta:
 
 ======================================================
-Meta Controller: Meta-Task & Meta-Dataset & Meta-Model
+元控制器：元任务 & 元数据集 & 元模型
 ======================================================
 .. currentmodule:: qlib
 
 
-Introduction
+介绍
 ============
-``Meta Controller`` provides guidance to ``Forecast Model``, which aims to learn regular patterns among a series of forecasting tasks and use learned patterns to guide forthcoming forecasting tasks. Users can implement their own meta-model instance based on ``Meta Controller`` module.
+``Meta Controller``为``Forecast Model``提供指导，旨在学习一系列预测任务中的规律模式，并使用学习到的模式来指导即将到来的预测任务。用户可以基于``Meta Controller``模块实现自己的元模型实例。
 
-Meta Task
+元任务
 =========
 
-A `Meta Task` instance is the basic element in the meta-learning framework. It saves the data that can be used for the `Meta Model`. Multiple `Meta Task` instances may share the same `Data Handler`, controlled by `Meta Dataset`. Users should use `prepare_task_data()` to obtain the data that can be directly fed into the `Meta Model`.
+`Meta Task`实例是元学习框架中的基本元素。它保存了可用于`Meta Model`的数据。多个`Meta Task`实例可能共享同一个`Data Handler`，由`Meta Dataset`控制。用户应使用`prepare_task_data()`获取可以直接输入`Meta Model`的数据。
 
 .. autoclass:: qlib.model.meta.task.MetaTask
     :members:
 
-Meta Dataset
+元数据集
 ============
 
-`Meta Dataset` controls the meta-information generating process. It is on the duty of providing data for training the `Meta Model`. Users should use `prepare_tasks` to retrieve a list of `Meta Task` instances.
+`Meta Dataset`控制元信息生成过程。它负责为训练`Meta Model`提供数据。用户应使用`prepare_tasks`获取`Meta Task`实例列表。
 
 .. autoclass:: qlib.model.meta.dataset.MetaTaskDataset
     :members:
 
-Meta Model
+元模型
 ==========
 
-General Meta Model
+通用元模型
 ------------------
-`Meta Model` instance is the part that controls the workflow. The usage of the `Meta Model` includes:
-1. Users train their `Meta Model` with the `fit` function.
-2. The `Meta Model` instance guides the workflow by giving useful information via the `inference` function.
+`Meta Model`实例是控制工作流程的部分。`Meta Model`的用法包括：
+1. 用户使用`fit`函数训练他们的`Meta Model`。
+2. `Meta Model`实例通过`inference`函数提供有用信息来指导工作流程。
 
 .. autoclass:: qlib.model.meta.model.MetaModel
     :members:
 
-Meta Task Model
+元任务模型
 ---------------
-This type of meta-model may interact with task definitions directly. Then, the `Meta Task Model` is the class for them to inherit from. They guide the base tasks by modifying the base task definitions. The function `prepare_tasks` can be used to obtain the modified base task definitions.
+这类元模型可以直接与任务定义交互。`Meta Task Model`是它们继承的类。它们通过修改基础任务定义来指导基础任务。函数`prepare_tasks`可用于获取修改后的基础任务定义。
 
 .. autoclass:: qlib.model.meta.model.MetaTaskModel
     :members:
 
-Meta Guide Model
+元指导模型
 ----------------
-This type of meta-model participates in the training process of the base forecasting model. The meta-model may guide the base forecasting models during their training to improve their performances.
+这类元模型参与基础预测模型的训练过程。元模型可以在基础预测模型训练期间指导它们以提高性能。
 
 .. autoclass:: qlib.model.meta.model.MetaGuideModel
     :members:
 
 
-Example
+示例
 =======
-``Qlib`` provides an implementation of ``Meta Model`` module, ``DDG-DA``,
-which adapts to the market dynamics.
+``Qlib``提供了``Meta Model``模块的实现``DDG-DA``，
+它适应市场动态。
 
-``DDG-DA`` includes four steps:
+``DDG-DA``包括四个步骤：
 
-1. Calculate meta-information and encapsulate it into ``Meta Task`` instances. All the meta-tasks form a ``Meta Dataset`` instance.
-2. Train ``DDG-DA`` based on the training data of the meta-dataset.
-3. Do the inference of the ``DDG-DA`` to get guide information.
-4. Apply guide information to the forecasting models to improve their performances.
+1. 计算元信息并将其封装到``Meta Task``实例中。所有元任务形成一个``Meta Dataset``实例。
+2. 基于元数据集的训练数据训练``DDG-DA``。
+3. 对``DDG-DA``进行推理以获取指导信息。
+4. 将指导信息应用于预测模型以提高其性能。
 
-The `above example <https://github.com/microsoft/qlib/tree/main/examples/benchmarks_dynamic/DDG-DA>`_ can be found in ``examples/benchmarks_dynamic/DDG-DA/workflow.py``.
+上述示例可以在``examples/benchmarks_dynamic/DDG-DA/workflow.py``中找到。`这里 <https://github.com/microsoft/qlib/tree/main/examples/benchmarks_dynamic/DDG-DA>`_。

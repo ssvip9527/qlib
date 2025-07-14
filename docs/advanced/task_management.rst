@@ -1,100 +1,100 @@
 .. _task_management:
 
 ===============
-Task Management
+任务管理
 ===============
 .. currentmodule:: qlib
 
 
-Introduction
+简介
 ============
 
-The `Workflow <../component/introduction.html>`_ part introduces how to run research workflow in a loosely-coupled way. But it can only execute one ``task`` when you use ``qrun``.
-To automatically generate and execute different tasks, ``Task Management`` provides a whole process including `Task Generating`_, `Task Storing`_, `Task Training`_ and `Task Collecting`_. 
-With this module, users can run their ``task`` automatically at different periods, in different losses, or even by different models.The processes of task generation, model training and combine and collect data are shown in the following figure.
+`工作流 <../component/introduction.html>`_ 部分介绍了如何以松耦合方式运行研究工作流。但使用 ``qrun`` 时只能执行一个 ``任务``。
+为了自动生成和执行不同的任务，``任务管理`` 提供了包括 `任务生成`_、`任务存储`_、`任务训练`_ 和 `任务收集`_ 的完整流程。
+通过此模块，用户可以在不同时间段、使用不同损失函数甚至不同模型自动运行其 ``任务``。任务生成、模型训练以及数据合并和收集的流程如下图所示。
 
 .. image:: ../_static/img/Task-Gen-Recorder-Collector.svg
     :align: center
 
-This whole process can be used in `Online Serving <../component/online.html>`_.
+整个流程可用于 `在线服务 <../component/online.html>`_。
 
-An example of the entire process is shown `here <https://github.com/microsoft/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`__.
+完整流程的示例见 `此处 <https://github.com/microsoft/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`__。
 
-Task Generating
+任务生成
 ===============
-A ``task`` consists of `Model`, `Dataset`, `Record`, or anything added by users. 
-The specific task template can be viewed in 
-`Task Section <../component/workflow.html#task-section>`_.
-Even though the task template is fixed, users can customize their ``TaskGen`` to generate different ``task`` by task template.
+一个 ``任务`` 由 `模型`、`数据集`、`记录器` 或用户添加的任何内容组成。
+具体的任务模板可在
+`任务部分 <../component/workflow.html#task-section>`_ 中查看。
+尽管任务模板是固定的，用户仍可以自定义 ``TaskGen``（任务生成器），通过任务模板生成不同的 ``任务``。
 
-Here is the base class of ``TaskGen``:
+以下是 ``TaskGen`` 的基类：
 
 .. autoclass:: qlib.workflow.task.gen.TaskGen
     :members:
     :noindex:
 
-``Qlib`` provides a class `RollingGen <https://github.com/microsoft/qlib/tree/main/qlib/workflow/task/gen.py>`_ to generate a list of ``task`` of the dataset in different date segments.
-This class allows users to verify the effect of data from different periods on the model in one experiment. More information is `here <../reference/api.html#TaskGen>`__.
+``Qlib`` 提供了一个 `RollingGen <https://github.com/microsoft/qlib/tree/main/qlib/workflow/task/gen.py>`_ 类，用于生成数据集在不同日期段的 ``任务`` 列表。
+此类允许用户在一个实验中验证不同时期数据对模型的影响。更多信息见 `此处 <../reference/api.html#TaskGen>`__。
 
-Task Storing
+任务存储
 ============
-To achieve higher efficiency and the possibility of cluster operation, ``Task Manager`` will store all tasks in `MongoDB <https://www.mongodb.com/>`_.
-``TaskManager`` can fetch undone tasks automatically and manage the lifecycle of a set of tasks with error handling.
-Users **MUST** finish the configuration of `MongoDB <https://www.mongodb.com/>`_ when using this module.
+为了提高效率并支持集群操作，``任务管理器`` 会将所有任务存储在 `MongoDB <https://www.mongodb.com/>`_ 中。
+``TaskManager``（任务管理器）可以自动获取未完成的任务，并通过错误处理管理一组任务的生命周期。
+使用此模块时，用户 **必须** 完成 `MongoDB <https://www.mongodb.com/>`_ 的配置。
 
-Users need to provide the MongoDB URL and database name for using ``TaskManager`` in `initialization <../start/initialization.html#Parameters>`_ or make a statement like this.
+用户需要在 `初始化 <../start/initialization.html#Parameters>`_ 中提供 MongoDB URL 和数据库名称以使用 ``TaskManager``，或进行如下配置：
 
     .. code-block:: python
 
         from qlib.config import C
         C["mongo"] = {
-            "task_url" : "mongodb://localhost:27017/", # your MongoDB url
-            "task_db_name" : "rolling_db" # database name
+            "task_url" : "mongodb://localhost:27017/", # 你的 MongoDB URL
+            "task_db_name" : "rolling_db" # 数据库名称
         }
 
 .. autoclass:: qlib.workflow.task.manage.TaskManager
     :members:
     :noindex:
 
-More information of ``Task Manager`` can be found in `here <../reference/api.html#TaskManager>`__.
+``任务管理器`` 的更多信息见 `此处 <../reference/api.html#TaskManager>`__。
 
-Task Training
+任务训练
 =============
-After generating and storing those ``task``, it's time to run the ``task`` which is in the *WAITING* status.
-``Qlib`` provides a method called ``run_task`` to run those ``task`` in task pool, however, users can also customize how tasks are executed.
-An easy way to get the ``task_func`` is using ``qlib.model.trainer.task_train`` directly.
-It will run the whole workflow defined by ``task``, which includes *Model*, *Dataset*, *Record*.
+生成并存储这些 ``任务`` 后，就可以运行处于 *WAITING*（等待）状态的 ``任务`` 了。
+``Qlib`` 提供了 ``run_task`` 方法来运行任务池中的 ``任务``，不过用户也可以自定义任务的执行方式。
+获取 ``task_func``（任务函数）的简单方法是直接使用 ``qlib.model.trainer.task_train``。
+它将运行由 ``任务`` 定义的整个工作流，包括 *模型*、*数据集*、*记录器*。
 
 .. autofunction:: qlib.workflow.task.manage.run_task
     :noindex:
 
-Meanwhile, ``Qlib`` provides a module called ``Trainer``. 
+同时，``Qlib`` 提供了一个名为 ``Trainer``（训练器）的模块。 
 
 .. autoclass:: qlib.model.trainer.Trainer
     :members:
     :noindex:
 
-``Trainer`` will train a list of tasks and return a list of model recorders.
-``Qlib`` offer two kinds of Trainer, TrainerR is the simplest way and TrainerRM is based on TaskManager to help manager tasks lifecycle automatically. 
-If you do not want to use ``Task Manager`` to manage tasks, then use TrainerR to train a list of tasks generated by ``TaskGen`` is enough.
-`Here <../reference/api.html#Trainer>`_ are the details about different ``Trainer``.
+``Trainer`` 会训练一系列任务并返回一系列模型记录器。
+``Qlib`` 提供两种训练器：TrainerR 是最简单的方式，而 TrainerRM 基于 TaskManager，可帮助自动管理任务生命周期。
+如果不想使用 ``任务管理器`` 管理任务，使用 TrainerR 训练由 ``TaskGen`` 生成的任务列表即可。
+不同 ``Trainer`` 的详细信息见 `此处 <../reference/api.html#Trainer>`_。
 
-Task Collecting
+任务收集
 ===============
-Before collecting model training results, you need to use the ``qlib.init`` to specify the path of mlruns.
+收集模型训练结果前，需要使用 ``qlib.init`` 指定 mlruns 的路径。
 
-To collect the results of ``task`` after training, ``Qlib`` provides `Collector <../reference/api.html#Collector>`_, `Group <../reference/api.html#Group>`_ and `Ensemble <../reference/api.html#Ensemble>`_ to collect the results in a readable, expandable and loosely-coupled way.
+为了收集训练后的 ``任务`` 结果，``Qlib`` 提供了 `Collector（收集器） <../reference/api.html#Collector>`_、`Group（分组器） <../reference/api.html#Group>`_ 和 `Ensemble（集成器） <../reference/api.html#Ensemble>`_，以可读、可扩展且松耦合的方式收集结果。
 
-`Collector <../reference/api.html#Collector>`_ can collect objects from everywhere and process them such as merging, grouping, averaging and so on. It has 2 step action including ``collect`` (collect anything in a dict) and ``process_collect`` (process collected dict).
+`Collector <../reference/api.html#Collector>`_ 可以从任何地方收集对象并对其进行合并、分组、平均等处理。它包含两个步骤：``collect``（将任何内容收集到字典中）和 ``process_collect``（处理收集到的字典）。
 
-`Group <../reference/api.html#Group>`_ also has 2 steps including ``group`` (can group a set of object based on `group_func` and change them to a dict) and ``reduce`` (can make a dict become an ensemble based on some rule).
-For example: {(A,B,C1): object, (A,B,C2): object} ---``group``---> {(A,B): {C1: object, C2: object}} ---``reduce``---> {(A,B): object}
+`Group <../reference/api.html#Group>`_ 也有两个步骤：``group``（可基于 `group_func` 对一组对象进行分组并转换为字典）和 ``reduce``（可基于某些规则将字典转换为集成结果）。
+例如：{(A,B,C1): 对象, (A,B,C2): 对象} ---``group``---> {(A,B): {C1: 对象, C2: 对象}} ---``reduce``---> {(A,B): 对象}
 
-`Ensemble <../reference/api.html#Ensemble>`_ can merge the objects in an ensemble. 
-For example: {C1: object, C2: object} ---``Ensemble``---> object.
-You can set the ensembles you want in the ``Collector``'s process_list.
-Common ensembles include ``AverageEnsemble`` and ``RollingEnsemble``. Average ensemble is used to ensemble the results of different models in the same time period. Rollingensemble is used to ensemble the results of different models in the same time period
+`Ensemble <../reference/api.html#Ensemble>`_ 可以合并集成中的对象。
+例如：{C1: 对象, C2: 对象} ---``Ensemble``---> 对象。
+你可以在 ``Collector`` 的 process_list 中设置所需的集成器。
+常见的集成器包括 ``AverageEnsemble``（平均集成器）和 ``RollingEnsemble``（滚动集成器）。平均集成器用于集成同一时间段内不同模型的结果，滚动集成器用于集成同一时间段内不同模型的结果。
 
-So the hierarchy is ``Collector``'s second step corresponds to ``Group``. And ``Group``'s second step correspond to ``Ensemble``.
+因此，层次结构为：``Collector`` 的第二步对应 ``Group``，而 ``Group`` 的第二步对应 ``Ensemble``。
 
-For more information, please see `Collector <../reference/api.html#Collector>`_, `Group <../reference/api.html#Group>`_ and `Ensemble <../reference/api.html#Ensemble>`_, or the `example <https://github.com/microsoft/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`_.
+更多信息，请参见 `Collector <../reference/api.html#Collector>`_、`Group <../reference/api.html#Group>`_ 和 `Ensemble <../reference/api.html#Ensemble>`_，或 `示例 <https://github.com/microsoft/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`_。

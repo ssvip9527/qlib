@@ -1,11 +1,11 @@
 .. _rl:
 
 ========================================================================
-Reinforcement Learning in Quantitative Trading
+量化交易中的强化学习
 ========================================================================
 
 .. toctree::
-    Guidance <guidance>
-    Overall <overall>
-    Quick Start <quickstart>
-    Framework <framework>
+    指南 <guidance>
+    概述 <overall>
+    快速开始 <quickstart>
+    框架 <framework>

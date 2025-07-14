@@ -3,7 +3,7 @@ git clone https://github.com/microsoft/qlib.git
 cd qlib
 ls
 pip install pyqlib
-# or
+# 或者
 # pip install numpy
 # pip install --upgrade cython
 # python setup.py install

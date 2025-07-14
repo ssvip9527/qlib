@@ -1,32 +1,32 @@
 .. _report:
 
 =======================================
-Analysis: Evaluation & Results Analysis
+分析：评估与结果分析
 =======================================
 
-Introduction
+简介
 ============
 
-``Analysis`` is designed to show the graphical reports of ``Intraday Trading`` , which helps users to evaluate and analyse investment portfolios visually. The following are some graphics to view:
+``Analysis`` 模块用于展示日内交易的图形化报告，帮助用户直观地评估和分析投资组合。以下是可查看的图表类型：
 
 - analysis_position
-    - report_graph
-    - score_ic_graph
-    - cumulative_return_graph
-    - risk_analysis_graph
-    - rank_label_graph
+    - report_graph（报告图表）
+    - score_ic_graph（IC值图表）
+    - cumulative_return_graph（累计收益图表）
+    - risk_analysis_graph（风险分析图表）
+    - rank_label_graph（排名标签图表）
 
 - analysis_model
-    - model_performance_graph
+    - model_performance_graph（模型性能图表）
 
 
-All of the accumulated profit metrics(e.g. return, max drawdown) in Qlib are calculated by summation.
-This avoids the metrics or the plots being skewed exponentially over time.
+Qlib中所有累积收益指标（如收益率、最大回撤）均通过求和方式计算。
+这避免了指标或图表随时间呈指数级扭曲。
 
-Graphical Reports
+图形化报告
 =================
 
-Users can run the following code to get all supported reports.
+用户可以运行以下代码获取所有支持的报告：
 
 .. code-block:: python
 
@@ -36,7 +36,7 @@ Users can run the following code to get all supported reports.
 
 .. note::
 
-    For more details, please refer to the function document: similar to ``help(qcr.analysis_position.report_graph)``
+    有关更多详细信息，请参考函数文档：类似 ``help(qcr.analysis_position.report_graph)`` 的用法
 
 
 
@@ -58,30 +58,30 @@ Graphical Result
 
 .. note::
 
-    - Axis X: Trading day
-    - Axis Y:
+    - 横轴 X：交易日
+    - 纵轴 Y：
         - `cum bench`
-            Cumulative returns series of benchmark
+            基准的累计收益序列
         - `cum return wo cost`
-            Cumulative returns series of portfolio without cost
+            无成本的投资组合累计收益序列
         - `cum return w cost`
-            Cumulative returns series of portfolio with cost
+            有成本的投资组合累计收益序列
         - `return wo mdd`
-            Maximum drawdown series of cumulative return without cost
+            无成本累计收益的最大回撤序列
         - `return w cost mdd`:
-            Maximum drawdown series of cumulative return with cost
+            有成本累计收益的最大回撤序列
         - `cum ex return wo cost`
-            The `CAR` (cumulative abnormal return) series of the portfolio compared to the benchmark without cost.
+            无成本的投资组合相对基准的累计超额收益（CAR）序列
         - `cum ex return w cost`
-            The `CAR` (cumulative abnormal return) series of the portfolio compared to the benchmark with cost.
+            有成本的投资组合相对基准的累计超额收益（CAR）序列
         - `turnover`
-            Turnover rate series
+            换手率序列
         - `cum ex return wo cost mdd`
-            Drawdown series of `CAR` (cumulative abnormal return) without cost
+            无成本累计超额收益（CAR）的回撤序列
         - `cum ex return w cost mdd`
-            Drawdown series of `CAR` (cumulative abnormal return) with cost
-    - The shaded part above: Maximum drawdown corresponding to `cum return wo cost`
-    - The shaded part below: Maximum drawdown corresponding to `cum ex return wo cost`
+            有成本累计超额收益（CAR）的回撤序列
+    - 上方阴影部分：对应 `cum return wo cost` 的最大回撤
+    - 下方阴影部分：对应 `cum ex return wo cost` 的最大回撤
 
 .. image:: ../_static/img/analysis/report.png
 
@@ -102,14 +102,14 @@ Graphical Result
 
 .. note::
 
-    - Axis X: Trading day
-    - Axis Y:
+    - 横轴 X：交易日
+    - 纵轴 Y：
         - `ic`
-            The `Pearson correlation coefficient` series between `label` and `prediction score`.
-            In the above example, the `label` is formulated as `Ref($close, -2)/Ref($close, -1)-1`. Please refer to `Data Feature <data.html#feature>`_ for more details.
+            `label` 与 `prediction score` 之间的皮尔逊相关系数序列。
+            在上述示例中，`label` 的计算公式为 `Ref($close, -2)/Ref($close, -1)-1`。更多详情请参考 `数据特征 <data.html#feature>`_。
 
         - `rank_ic`
-            The `Spearman's rank correlation coefficient` series between `label` and `prediction score`.
+            `label` 与 `prediction score` 之间的斯皮尔曼等级相关系数序列。
 
 .. image:: ../_static/img/analysis/score_ic.png
 
@@ -162,28 +162,28 @@ Graphical Result
 .. note::
 
     - general graphics
-        - `std`
+        - `std`（标准差）
             - `excess_return_without_cost`
-                The `Standard Deviation` of `CAR` (cumulative abnormal return) without cost.
+                无成本的累计超额收益（CAR）的标准差。
             - `excess_return_with_cost`
-                The `Standard Deviation` of `CAR` (cumulative abnormal return) with cost.
-        - `annualized_return`
+                有成本的累计超额收益（CAR）的标准差。
+        - `annualized_return`（年化收益率）
             - `excess_return_without_cost`
-                The `Annualized Rate` of `CAR` (cumulative abnormal return) without cost.
+                无成本的累计超额收益（CAR）的年化收益率。
             - `excess_return_with_cost`
-                The `Annualized Rate` of `CAR` (cumulative abnormal return) with cost.
-        -  `information_ratio`
+                有成本的累计超额收益（CAR）的年化收益率。
+        -  `information_ratio`（信息比率）
             - `excess_return_without_cost`
-                The `Information Ratio` without cost.
+                无成本的信息比率。
             - `excess_return_with_cost`
-                The `Information Ratio` with cost.
+                有成本的信息比率。
 
-            To know more about `Information Ratio`, please refer to `Information Ratio – IR <https://www.investopedia.com/terms/i/informationratio.asp>`_.
-        -  `max_drawdown`
+            有关信息比率的更多信息，请参考 `信息比率 - IR <https://www.investopedia.com/terms/i/informationratio.asp>`_。
+        -  `max_drawdown`（最大回撤）
             - `excess_return_without_cost`
-                The `Maximum Drawdown` of `CAR` (cumulative abnormal return) without cost.
+                无成本的累计超额收益（CAR）的最大回撤。
             - `excess_return_with_cost`
-                The `Maximum Drawdown` of `CAR` (cumulative abnormal return) with cost.
+                有成本的累计超额收益（CAR）的最大回撤。
 
 
 .. image:: ../_static/img/analysis/risk_analysis_bar.png
@@ -191,29 +191,29 @@ Graphical Result
 
 .. note::
 
-    - annualized_return/max_drawdown/information_ratio/std graphics
-        - Axis X: Trading days grouped by month
-        - Axis Y:
-            - annualized_return graphics
+    - annualized_return/max_drawdown/information_ratio/std 图表
+        - 横轴 X：按月份分组的交易日
+        - 纵轴 Y：
+            - annualized_return 图表
                 - `excess_return_without_cost_annualized_return`
-                    The `Annualized Rate` series of monthly `CAR` (cumulative abnormal return) without cost.
+                    无成本的月度累计超额收益（CAR）的年化收益率序列。
                 - `excess_return_with_cost_annualized_return`
-                    The `Annualized Rate` series of monthly `CAR` (cumulative abnormal return) with cost.
-            - max_drawdown graphics
+                    有成本的月度累计超额收益（CAR）的年化收益率序列。
+            - max_drawdown 图表
                 - `excess_return_without_cost_max_drawdown`
-                    The `Maximum Drawdown` series of monthly `CAR` (cumulative abnormal return) without cost.
+                    无成本的月度累计超额收益（CAR）的最大回撤序列。
                 - `excess_return_with_cost_max_drawdown`
-                    The `Maximum Drawdown` series of monthly `CAR` (cumulative abnormal return) with cost.
-            - information_ratio graphics
+                    有成本的月度累计超额收益（CAR）的最大回撤序列。
+            - information_ratio 图表
                 - `excess_return_without_cost_information_ratio`
-                    The `Information Ratio` series of monthly `CAR` (cumulative abnormal return) without cost.
+                    无成本的月度累计超额收益（CAR）的信息比率序列。
                 - `excess_return_with_cost_information_ratio`
-                    The `Information Ratio` series of monthly `CAR` (cumulative abnormal return) with cost.
-            - std graphics
+                    有成本的月度累计超额收益（CAR）的信息比率序列。
+            - std 图表
                 - `excess_return_without_cost_max_drawdown`
-                    The `Standard Deviation` series of monthly `CAR` (cumulative abnormal return) without cost.
+                    无成本的月度累计超额收益（CAR）的标准差序列。
                 - `excess_return_with_cost_max_drawdown`
-                    The `Standard Deviation` series of monthly `CAR` (cumulative abnormal return) with cost.
+                    有成本的月度累计超额收益（CAR）的标准差序列。
 
 
 .. image:: ../_static/img/analysis/risk_analysis_annualized_return.png
@@ -244,15 +244,15 @@ Graphical Result
 ..
 .. .. note::
 ..
-..     - hold/sell/buy graphics:
-..         - Axis X: Trading day
-..         - Axis Y:
-..             Average `ranking ratio`of `label` for stocks that is held/sold/bought on the trading day.
-..
-..             In the above example, the `label` is formulated as `Ref($close, -1)/$close - 1`. The `ranking ratio` can be formulated as follows.
-..             .. math::
-..
-..                 ranking\ ratio = \frac{Ascending\ Ranking\ of\ label}{Number\ of\ Stocks\ in\ the\ Portfolio}
+    - hold/sell/buy 图表:
+        - 横轴 X：交易日
+        - 纵轴 Y：
+            交易日内持有/卖出/买入股票的`label`的平均`排名比率`。
+
+            在上述示例中，`label`的计算公式为`Ref($close, -1)/$close - 1`。`排名比率`的计算公式如下。
+            .. math::
+
+                ranking\ ratio = \frac{Ascending\ Ranking\ of\ label}{Number\ of\ Stocks\ in\ the\ Portfolio}
 ..
 .. .. image:: ../_static/img/analysis/rank_label_hold.png
 ..     :align: center

@@ -1,55 +1,50 @@
 .. _pit:
 
 ============================
-(P)oint-(I)n-(T)ime Database
+时点数据库 (PIT数据库)
 ============================
 .. currentmodule:: qlib
 
 
-Introduction
+简介
 ------------
-Point-in-time data is a very important consideration when performing any sort of historical market analysis.
+在进行任何类型的历史市场分析时，时点数据都是一个非常重要的考虑因素。
 
-For example, let’s say we are backtesting a trading strategy and we are using the past five years of historical data as our input.
-Our model is assumed to trade once a day, at the market close, and we’ll say we are calculating the trading signal for 1 January 2020 in our backtest. At that point, we should only have data for 1 January 2020, 31 December 2019, 30 December 2019 etc.
+例如，假设我们正在回测一个交易策略，并使用过去五年的历史数据作为输入。我们的模型假设每天在收盘时交易一次，并且我们要在回测中计算2020年1月1日的交易信号。在这种情况下，我们应该只拥有2020年1月1日、2019年12月31日、2019年12月30日等的数据。
 
-In financial data (especially financial reports), the same piece of data may be amended for multiple times overtime.  If we only use the latest version for historical backtesting, data leakage will happen.
-Point-in-time database is designed for solving this problem to make sure user get the right version of data at any historical timestamp. It will keep the performance of online trading and historical backtesting the same.
+在金融数据（尤其是财务报告）中，同一份数据可能会随着时间的推移被多次修订。如果我们在历史回测中只使用最新版本的数据，就会发生数据泄露。时点数据库旨在解决这个问题，确保用户在任何历史时间戳都能获得正确版本的数据，从而保证在线交易和历史回测的表现一致。
 
 
 
-Data Preparation
+数据准备
 ----------------
 
-Qlib provides a crawler to help users to download financial data and then a converter to dump the data in Qlib format.
-Please follow `scripts/data_collector/pit/README.md <https://github.com/microsoft/qlib/tree/main/scripts/data_collector/pit/>`_ to download and convert data.
-Besides, you can find some additional usage examples there.
+Qlib提供了一个爬虫帮助用户下载金融数据，以及一个转换器将数据转换为Qlib格式。请按照`scripts/data_collector/pit/README.md <https://github.com/microsoft/qlib/tree/main/scripts/data_collector/pit/>`_下载和转换数据。此外，你可以在该文档中找到一些额外的使用示例。
 
 
-File-based design for PIT data
+PIT数据的基于文件的设计
 ------------------------------
 
-Qlib provides a file-based storage for PIT data.
+Qlib为PIT数据提供了基于文件的存储方式。
 
-For each feature, it contains 4 columns, i.e. date, period, value, _next.
-Each row corresponds to a statement.
+每个特征包含4列，即date（日期）、period（期间）、value（值）和_next（下一条记录）。每一行对应一条报表记录。
 
-The meaning of each feature with filename like `XXX_a.data`:
+文件名如`XXX_a.data`的特征文件中各字段含义如下：
 
-- `date`: the statement's date of publication.
-- `period`: the period of the statement. (e.g. it will be quarterly frequency in most of the markets)
-    - If it is an annual period, it will be an integer corresponding to the year
-    - If it is an quarterly  periods, it will be an integer like `<year><index of quarter>`.  The last two decimal digits represents the index of quarter. Others represent the year.
-- `value`: the described value
-- `_next`: the byte index of the next occurance of the field.
+- `date`：报表发布日期。
+- `period`：报表期间。（例如，在大多数市场中为季度频率）
+    - 如果是年度期间，它将是对应年份的整数
+    - 如果是季度期间，它将是类似`<年份><季度索引>`的整数。最后两位数字表示季度索引，其余数字表示年份。
+- `value`：描述的值
+- `_next`：该字段下一次出现的字节索引。
 
-Besides the feature data, an index `XXX_a.index` is included to speed up the querying performance
+除特征数据外，还包含一个索引文件`XXX_a.index`以加快查询性能。
 
-The statements are soted by the `date` in ascending order from the beginning of the file.
+报表记录从文件开头按`date`（日期）升序排列。
 
 .. code-block:: python
 
-    # the data format from XXXX.data
+    # XXXX.data 文件的数据格式
     array([(20070428, 200701, 0.090219  , 4294967295),
            (20070817, 200702, 0.13933   , 4294967295),
            (20071023, 200703, 0.24586301, 4294967295),
@@ -108,12 +103,12 @@ The statements are soted by the `date` in ascending order from the beginning of 
     # - each row contains 20 byte
 
 
-    # The data format from XXXX.index.  It consists of two parts
-    # 1) the start index of the data. So the first part of the info will be like
+    # XXXX.index 文件的数据格式。它包含两部分
+# 1) 数据的起始索引。因此信息的第一部分将如下所示
     2007
-    # 2) the remain index data will be like information below
-    #    - The data indicate the **byte index** of first data update of a period.
-    #    - e.g. Because the info at both byte 80 and 100 corresponds to 200704. The byte index of first occurance (i.e. 100) is recorded in the data.
+    # 2) 其余索引数据将如下所示
+#    - 数据表示一个期间内第一次数据更新的**字节索引**。
+#    - 例如：因为字节80和100处的信息都对应200704期间，所以第一次出现的字节索引（即100）被记录在数据中。
     array([         0,         20,         40,         60,        100,
                   120,        140,        160,        180,        200,
                   220,        240,        260,        280,        300,
@@ -129,8 +124,8 @@ The statements are soted by the `date` in ascending order from the beginning of 
 
 
 
-Known limitations:
+已知限制：
 
-- Currently, the PIT database is designed for quarterly or annually factors, which can handle fundamental data of financial reports in most markets.
-- Qlib leverage the file name to identify the type of the data. File with name like `XXX_q.data` corresponds to quarterly data. File with name like `XXX_a.data` corresponds to annual data.
-- The caclulation of PIT is not performed in the optimal way. There is great potential to boost the performance of PIT data calcuation.
+- 目前，PIT数据库设计用于季度或年度因子，可以处理大多数市场的财务报告基本面数据。
+- Qlib利用文件名来识别数据类型。名称如`XXX_q.data`的文件对应季度数据，名称如`XXX_a.data`的文件对应年度数据。
+- PIT的计算方式并非最优，PIT数据计算性能有很大提升潜力。

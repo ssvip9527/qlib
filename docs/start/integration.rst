@@ -1,26 +1,26 @@
 ========================
-Custom Model Integration
+自定义模型集成
 ========================
 
-Introduction
+简介
 ============
 
-``Qlib``'s `Model Zoo` includes models such as ``LightGBM``, ``MLP``, ``LSTM``, etc.. These models are examples of ``Forecast Model``. In addition to the default models ``Qlib`` provide, users can integrate their own custom models into ``Qlib``.
+``Qlib`` 的 `模型库` 包含 ``LightGBM``、``MLP``、``LSTM`` 等模型。这些模型是 ``预测模型`` 的示例。除了 ``Qlib`` 提供的默认模型外，用户还可以将自己的自定义模型集成到 ``Qlib`` 中。
 
-Users can integrate their own custom models according to the following steps.
+用户可以按照以下步骤集成自己的自定义模型。
 
-- Define a custom model class, which should be a subclass of the `qlib.model.base.Model <../reference/api.html#module-qlib.model.base>`_.
-- Write a configuration file that describes the path and parameters of the custom model.
-- Test the custom model.
+- 定义一个自定义模型类，该类应该是 `qlib.model.base.Model <../reference/api.html#module-qlib.model.base>`_ 的子类。
+- 编写一个配置文件，描述自定义模型的路径和参数。
+- 测试自定义模型。
 
-Custom Model Class
+自定义模型类
 ==================
-The Custom models need to inherit `qlib.model.base.Model <../reference/api.html#module-qlib.model.base>`_ and override the methods in it.
+自定义模型需要继承 `qlib.model.base.Model <../reference/api.html#module-qlib.model.base>`_ 并重写其中的方法。
 
-- Override the `__init__` method
-    - ``Qlib`` passes the initialized parameters to the \_\_init\_\_ method.
-    - The hyperparameters of model in the configuration must be consistent with those defined in the `__init__` method.
-    - Code Example: In the following example, the hyperparameters of model in the configuration file should contain parameters such as `loss:mse`.
+- 重写 `__init__` 方法
+    - ``Qlib`` 将初始化参数传递给 \_\_init\_\_ 方法。
+    - 配置文件中模型的超参数必须与 `__init__` 方法中定义的参数一致。
+    - 代码示例：在以下示例中，配置文件中模型的超参数应包含 `loss:mse` 等参数。
 
         .. code-block:: Python
 
@@ -31,11 +31,11 @@ The Custom models need to inherit `qlib.model.base.Model <../reference/api.html#
                 self._params.update(objective=loss, **kwargs)
                 self._model = None
 
-- Override the `fit` method
-    - ``Qlib`` calls the fit method to train the model.
-    - The parameters must include training feature `dataset`, which is designed in the interface.
-    - The parameters could include some `optional` parameters with default values, such as `num_boost_round = 1000` for `GBDT`.
-    - Code Example: In the following example, `num_boost_round = 1000` is an optional parameter.
+- 重写 `fit` 方法
+    - ``Qlib`` 调用 fit 方法来训练模型。
+    - 参数必须包含训练特征 `dataset`，这是接口中设计的。
+    - 参数可以包含一些带有默认值的 `可选` 参数，例如 `GBDT` 的 `num_boost_round = 1000`。
+    - 代码示例：在以下示例中，`num_boost_round = 1000` 是一个可选参数。
 
         .. code-block:: Python
 
@@ -70,11 +70,11 @@ The Custom models need to inherit `qlib.model.base.Model <../reference/api.html#
                     **kwargs
                 )
 
-- Override the `predict` method
-    - The parameters must include the parameter `dataset`, which will be userd to get the test dataset.
-    - Return the `prediction score`.
-    - Please refer to `Model API <../reference/api.html#module-qlib.model.base>`_ for the parameter types of the fit method.
-    - Code Example: In the following example, users need to use `LightGBM` to predict the label(such as `preds`) of test data `x_test` and return it.
+- 重写 `predict` 方法
+    - 参数必须包含 `dataset` 参数，该参数将用于获取测试数据集。
+    - 返回 `预测分数`。
+    - 请参考 `模型 API <../reference/api.html#module-qlib.model.base>`_ 了解 fit 方法的参数类型。
+    - 代码示例：在以下示例中，用户需要使用 `LightGBM` 预测测试数据 `x_test` 的标签（例如 `preds`）并返回它。
 
         .. code-block:: Python
 
@@ -84,10 +84,10 @@ The Custom models need to inherit `qlib.model.base.Model <../reference/api.html#
                 x_test = dataset.prepare("test", col_set="feature", data_key=DataHandlerLP.DK_I)
                 return pd.Series(self.model.predict(x_test.values), index=x_test.index)
 
-- Override the `finetune` method (Optional)
-    - This method is optional to the users. When users want to use this method on their own models, they should inherit the ``ModelFT`` base class, which includes the interface of `finetune`.
-    - The parameters must include the parameter `dataset`.
-    - Code Example: In the following example, users will use `LightGBM` as the model and finetune it.
+- 重写 `finetune` 方法（可选）
+    - 此方法对用户来说是可选的。当用户想在自己的模型上使用此方法时，他们应该继承 ``ModelFT`` 基类，该类包含 `finetune` 接口。
+    - 参数必须包含 `dataset` 参数。
+    - 代码示例：在以下示例中，用户将使用 `LightGBM` 作为模型并对其进行微调。
 
         .. code-block:: Python
 
@@ -104,12 +104,12 @@ The Custom models need to inherit `qlib.model.base.Model <../reference/api.html#
                     verbose_eval=verbose_eval,
                 )
 
-Configuration File
+配置文件
 ==================
 
-The configuration file is described in detail in the `Workflow <../component/workflow.html#complete-example>`_ document. In order to integrate the custom model into ``Qlib``, users need to modify the "model" field in the configuration file. The configuration describes which models to use and how we can initialize it.
+配置文件在 `工作流 <../component/workflow.html#complete-example>`_ 文档中有详细描述。为了将自定义模型集成到 ``Qlib`` 中，用户需要修改配置文件中的 “model” 字段。该配置描述了要使用的模型以及如何初始化它。
 
-- Example: The following example describes the `model` field of configuration file about the custom lightgbm model mentioned above, where `module_path` is the module path, `class` is the class name, and `args` is the hyperparameter passed into the __init__ method. All parameters in the field is passed to `self._params` by `\*\*kwargs` in `__init__` except `loss = mse`.
+- 示例：以下示例描述了上述自定义 LightGBM 模型的配置文件中的 `model` 字段，其中 `module_path` 是模块路径，`class` 是类名，`args` 是传递给 `__init__` 方法的超参数。除 `loss = mse` 外，该字段中的所有参数都通过 `\*\*kwargs` 传递给 `self._params`。
 
     .. code-block:: YAML
 
@@ -127,23 +127,21 @@ The configuration file is described in detail in the `Workflow <../component/wor
                 num_leaves: 210
                 num_threads: 20
 
-Users could find configuration file of the baselines of the ``Model`` in ``examples/benchmarks``. All the configurations of different models are listed under the corresponding model folder.
+用户可以在 ``examples/benchmarks`` 中找到 ``模型`` 基线的配置文件。不同模型的所有配置都列在相应的模型文件夹下。
 
-Model Testing
+模型测试
 =============
-Assuming that the configuration file is ``examples/benchmarks/LightGBM/workflow_config_lightgbm.yaml``, users can run the following command to test the custom model:
+假设配置文件为 ``examples/benchmarks/LightGBM/workflow_config_lightgbm.yaml``，用户可以运行以下命令来测试自定义模型：
 
 .. code-block:: bash
 
     cd examples  # Avoid running program under the directory contains `qlib`
     qrun benchmarks/LightGBM/workflow_config_lightgbm.yaml
 
-.. note:: ``qrun`` is a built-in command of ``Qlib``.
+.. note:: ``qrun`` 是 ``Qlib`` 的内置命令。
 
-Also, ``Model`` can also be tested as a single module. An example has been given in ``examples/workflow_by_code.ipynb``.
+此外，``模型`` 也可以作为单个模块进行测试。``examples/workflow_by_code.ipynb`` 中给出了一个示例。
 
-
-Reference
+参考资料
 =========
-
-To know more about ``Forecast Model``, please refer to `Forecast Model: Model Training & Prediction <../component/model.html>`_ and `Model API <../reference/api.html#module-qlib.model.base>`_.
+要了解有关 ``预测模型`` 的更多信息，请参考 `预测模型：模型训练与预测 <../component/model.html>`_ 和 `模型 API <../reference/api.html#module-qlib.model.base>`_。

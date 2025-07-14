@@ -1,30 +1,30 @@
 .. _alpha:
 
 =========================
-Building Formulaic Alphas
+构建公式化Alpha因子
 =========================
 .. currentmodule:: qlib
 
-Introduction
+简介
 ============
 
-In quantitative trading practice, designing novel factors that can explain and predict future asset returns are of vital importance to the profitability of a strategy. Such factors are usually called alpha factors, or alphas in short.
+在量化交易实践中，设计能够解释和预测未来资产收益的新型因子对策略的盈利能力至关重要。这类因子通常被称为alpha因子，简称alpha。
 
 
-A formulaic alpha, as the name suggests, is a kind of alpha that can be presented as a formula or a mathematical expression.
+公式化alpha，顾名思义，是一种可以表示为公式或数学表达式的alpha因子。
 
 
-Building Formulaic Alphas in ``Qlib``
+在``Qlib``中构建公式化Alpha因子
 =====================================
 
 In ``Qlib``, users can easily build formulaic alphas.
 
-Example
+示例
 -------
 
-`MACD`, short for moving average convergence/divergence, is a formulaic alpha used in technical analysis of stock prices. It is designed to reveal changes in the strength, direction, momentum, and duration of a trend in a stock's price.
+`MACD`（移动平均收敛散度）是股票价格技术分析中使用的一种公式化alpha因子，旨在揭示股票价格趋势的强度、方向、动量和持续时间的变化。
 
-`MACD` can be presented as the following formula:
+`MACD`可以表示为以下公式：
 
 .. math::
 
@@ -32,21 +32,21 @@ Example
 
 .. note::
 
-    `DIF` means Differential value, which is 12-period EMA minus 26-period EMA.
+    `DIF`表示差离值，即12期指数移动平均线(EMA)减去26期指数移动平均线。
 
     .. math::
 
         DIF = \frac{EMA(CLOSE, 12) - EMA(CLOSE, 26)}{CLOSE}
 
-    `DEA` means a 9-period EMA of the DIF.
+    `DEA`表示DIF的9期指数移动平均线。
 
     .. math::
 
         DEA = \frac{EMA(DIF, 9)}{CLOSE}
 
-Users can use ``Data Handler`` to build formulaic alphas `MACD` in qlib:
+用户可以使用``Data Handler``在Qlib中构建公式化alpha因子`MACD`：
 
-.. note:: Users need to initialize ``Qlib`` with `qlib.init` first.  Please refer to `initialization <../start/initialization.html>`_.
+.. note:: 用户需要先使用`qlib.init`初始化``Qlib``。请参考`初始化 <../start/initialization.html>`_。
 
 .. code-block:: python
 
@@ -78,9 +78,9 @@ Users can use ``Data Handler`` to build formulaic alphas `MACD` in qlib:
                SZ300251    0.004383  0.021739
                SZ300315   -0.030557  0.012455
 
-Reference
+参考
 =========
 
-To learn more about ``Data Loader``, please refer to `Data Loader <../component/data.html#data-loader>`_
+要了解有关``Data Loader``的更多信息，请参考`数据加载器 <../component/data.html#data-loader>`_
 
-To learn more about ``Data API``, please refer to `Data API <../component/data.html>`_
+要了解有关``Data API``的更多信息，请参考`数据API <../component/data.html>`_

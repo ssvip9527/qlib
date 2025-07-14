@@ -1,54 +1,54 @@
 .. _online_serving:
 
 ==============
-Online Serving
+在线服务
 ==============
 .. currentmodule:: qlib
 
 
-Introduction
+介绍
 ============
 
 .. image:: ../_static/img/online_serving.png
     :align: center
 
 
-In addition to backtesting, one way to test a model is effective is to make predictions in real market conditions or even do real trading based on those predictions.
-``Online Serving`` is a set of modules for online models using the latest data,
-which including `Online Manager <#Online Manager>`_, `Online Strategy <#Online Strategy>`_, `Online Tool <#Online Tool>`_, `Updater <#Updater>`_.
+除了回测之外，测试模型有效性的一种方法是在真实市场条件下进行预测，甚至基于这些预测进行真实交易。
+``Online Serving``是一组使用最新数据的在线模型模块，
+包括`在线管理器 <#Online Manager>`_、`在线策略 <#Online Strategy>`_、`在线工具 <#Online Tool>`_和`更新器 <#Updater>`_。
 
-`Here <https://github.com/microsoft/qlib/tree/main/examples/online_srv>`_ are several examples for reference, which demonstrate different features of ``Online Serving``.
-If you have many models or `task` needs to be managed, please consider `Task Management <../advanced/task_management.html>`_.
-The `examples <https://github.com/microsoft/qlib/tree/main/examples/online_srv>`_ are based on some components in `Task Management <../advanced/task_management.html>`_ such as ``TrainerRM`` or ``Collector``.
+`这里 <https://github.com/microsoft/qlib/tree/main/examples/online_srv>`_ 有几个参考示例，展示了``Online Serving``的不同功能。
+如果您有许多模型或`任务`需要管理，请考虑使用`任务管理 <../advanced/task_management.html>`_。
+这些`示例 <https://github.com/microsoft/qlib/tree/main/examples/online_srv>`_基于`任务管理 <../advanced/task_management.html>`_中的一些组件，如``TrainerRM``或``Collector``。
 
-**NOTE**: User should keep his data source updated to support online serving. For example, Qlib provides `a batch of scripts <https://github.com/microsoft/qlib/blob/main/scripts/data_collector/yahoo/README.md#automatic-update-of-daily-frequency-datafrom-yahoo-finance>`_ to help users update Yahoo daily data.
+**注意**：用户应保持数据源更新以支持在线服务。例如，Qlib提供了`一组脚本 <https://github.com/microsoft/qlib/blob/main/scripts/data_collector/yahoo/README.md#automatic-update-of-daily-frequency-datafrom-yahoo-finance>`_来帮助用户更新Yahoo的每日数据。
 
-Known limitations currently
-- Currently, the daily updating prediction for the next trading day is supported. But generating orders for the next trading day is not supported due to the `limitations of public data <https://github.com/microsoft/qlib/issues/215#issuecomment-766293563>_`
+当前已知限制
+- 目前支持对下一个交易日的每日更新预测。但由于`公开数据的限制 <https://github.com/microsoft/qlib/issues/215#issuecomment-766293563>_`，不支持为下一个交易日生成订单。
 
 
-Online Manager
+在线管理器
 ==============
 
 .. automodule:: qlib.workflow.online.manager
     :members:
     :noindex:
 
-Online Strategy
+在线策略
 ===============
 
 .. automodule:: qlib.workflow.online.strategy
     :members:
     :noindex:
 
-Online Tool
+在线工具
 ===========
 
 .. automodule:: qlib.workflow.online.utils
     :members:
     :noindex:
 
-Updater
+更新器
 =======
 
 .. automodule:: qlib.workflow.online.update

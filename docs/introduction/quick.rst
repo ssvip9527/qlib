@@ -1,68 +1,68 @@
 
 ===========
-Quick Start
+快速入门
 ===========
 
-Introduction
+简介
 ============
 
-This ``Quick Start`` guide tries to demonstrate
+本``快速入门``指南旨在展示
 
-- It's very easy to build a complete Quant research workflow and try users' ideas with ``Qlib``.
-- Though with public data and simple models, machine learning technologies work very well in practical Quant investment.
+- 使用``Qlib``可以轻松构建完整的量化研究工作流并尝试用户的各种想法。
+- 即使使用公开数据和简单模型，机器学习技术在实际量化投资中也能表现出色。
 
 
 
-Installation
+安装
 ============
 
-Users can easily install ``Qlib`` according to the following steps:
+用户可以按照以下步骤轻松安装``Qlib``：
 
-- Before installing ``Qlib`` from source, users need to install some dependencies:
+- 从源代码安装``Qlib``之前，用户需要安装一些依赖项：
 
     .. code-block::
 
         pip install numpy
         pip install --upgrade  cython
 
-- Clone the repository and install ``Qlib``
+- 克隆仓库并安装``Qlib``
 
     .. code-block::
 
         git clone https://github.com/microsoft/qlib.git && cd qlib
         python setup.py install
 
-To known more about `installation`, please refer to `Qlib Installation <../start/installation.html>`_.
+要了解更多关于`安装`的信息，请参考`Qlib安装指南 <../start/installation.html>`_。
 
-Prepare Data
+准备数据
 ============
 
-Load and prepare data by running the following code:
+运行以下代码加载并准备数据：
 
 .. code-block::
 
     python scripts/get_data.py qlib_data --target_dir ~/.qlib/qlib_data/cn_data --region cn
 
-This dataset is created by public data collected by crawler scripts in ``scripts/data_collector/``, which have been released in the same repository. Users could create the same dataset with it.
+该数据集由``scripts/data_collector/``目录中的爬虫脚本收集的公开数据创建，这些脚本已随仓库一同发布。用户可以使用这些脚本创建相同的数据集。
 
-To known more about `prepare data`, please refer to `Data Preparation <../component/data.html#data-preparation>`_.
+要了解更多关于`数据准备`的信息，请参考`数据准备 <../component/data.html#data-preparation>`_。
 
-Auto Quant Research Workflow
+自动化量化研究工作流
 ============================
 
-``Qlib`` provides a tool named ``qrun`` to run the whole workflow automatically (including building dataset, training models, backtest and evaluation). Users can start an auto quant research workflow and have a graphical reports analysis according to the following steps:
+``Qlib``提供了一个名为``qrun``的工具，可以自动运行整个工作流（包括构建数据集、训练模型、回测和评估）。用户可以按照以下步骤启动自动化量化研究工作流并进行图形化报告分析：
 
-- Quant Research Workflow:
-    - Run  ``qrun`` with a config file of the LightGBM model `workflow_config_lightgbm.yaml` as following.
+- 量化研究工作流：
+    - 使用LightGBM模型的配置文件`workflow_config_lightgbm.yaml`运行``qrun``，如下所示。
 
         .. code-block::
 
-            cd examples  # Avoid running program under the directory contains `qlib`
+            cd examples  # 避免在包含`qlib`的目录下运行程序
             qrun benchmarks/LightGBM/workflow_config_lightgbm.yaml
 
 
-    - Workflow result
-        The result of ``qrun`` is as follows, which is also the typical result of ``Forecast model(alpha)``. Please refer to  `Intraday Trading <../component/backtest.html>`_. for more details about the result.
+    - 工作流结果
+        ``qrun``的结果如下，这也是``预测模型(alpha)``的典型结果。有关结果的更多详细信息，请参考`日内交易 <../component/backtest.html>`_。
 
         .. code-block:: python
 
@@ -79,17 +79,17 @@ Auto Quant Research Workflow
                                        max_drawdown      -0.075024
 
 
-    To know more about `workflow` and `qrun`, please refer to `Workflow: Workflow Management <../component/workflow.html>`_.
+    要了解更多关于`工作流`和`qrun`的信息，请参考`工作流：工作流管理 <../component/workflow.html>`_。
 
-- Graphical Reports Analysis:
-    - Run ``examples/workflow_by_code.ipynb`` with jupyter notebook
-        Users can have portfolio analysis or prediction score (model prediction) analysis by run ``examples/workflow_by_code.ipynb``.
-    - Graphical Reports
-        Users can get graphical reports about the analysis, please refer to `Analysis: Evaluation & Results Analysis <../component/report.html>`_ for more details.
+- 图形化报告分析：
+    - 使用Jupyter Notebook运行``examples/workflow_by_code.ipynb``
+        用户可以通过运行``examples/workflow_by_code.ipynb``进行投资组合分析或预测分数（模型预测）分析。
+    - 图形化报告
+        用户可以获得关于分析的图形化报告，详情请参考`分析：评估与结果分析 <../component/report.html>`_。
 
 
 
-Custom Model Integration
+自定义模型集成
 ========================
 
-``Qlib`` provides a batch of models (such as ``lightGBM`` and ``MLP`` models) as examples of ``Forecast Model``. In addition to the default model, users can integrate their own custom models into ``Qlib``. If users are interested in the custom model, please refer to `Custom Model Integration <../start/integration.html>`_.
+``Qlib``提供了一批模型（如``lightGBM``和``MLP``模型）作为``预测模型``的示例。除了默认模型外，用户还可以将自己的自定义模型集成到``Qlib``中。如果用户对自定义模型感兴趣，请参考`自定义模型集成 <../start/integration.html>`_。

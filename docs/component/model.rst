@@ -1,37 +1,37 @@
 .. _model:
 
 ===========================================
-Forecast Model: Model Training & Prediction
+预测模型：模型训练与预测
 ===========================================
 
-Introduction
+介绍
 ============
 
-``Forecast Model`` is designed to make the `prediction score` about stocks. Users can use the ``Forecast Model`` in an automatic workflow by ``qrun``, please refer to `Workflow: Workflow Management <workflow.html>`_.
+``Forecast Model``旨在生成股票的`预测分数`。用户可以通过``qrun``在自动化工作流中使用``Forecast Model``，详情请参考`工作流：工作流管理 <workflow.html>`_。
 
-Because the components in ``Qlib`` are designed in a loosely-coupled way, ``Forecast Model`` can be used as an independent module also.
+由于``Qlib``中的组件采用松耦合设计，``Forecast Model``也可以作为独立模块使用。
 
-Base Class & Interface
+基类与接口
 ======================
 
-``Qlib`` provides a base class `qlib.model.base.Model <../reference/api.html#module-qlib.model.base>`_ from which all models should inherit.
+``Qlib``提供了一个基类`qlib.model.base.Model <../reference/api.html#module-qlib.model.base>`_，所有模型都应继承自该基类。
 
-The base class provides the following interfaces:
+基类提供以下接口：
 
 .. autoclass:: qlib.model.base.Model
     :members:
     :noindex:
 
-``Qlib`` also provides a base class `qlib.model.base.ModelFT <../reference/api.html#qlib.model.base.ModelFT>`_, which includes the method for finetuning the model.
+``Qlib``还提供了一个基类`qlib.model.base.ModelFT <../reference/api.html#qlib.model.base.ModelFT>`_，包含模型微调的方法。
 
-For other interfaces such as `finetune`, please refer to `Model API <../reference/api.html#module-qlib.model.base>`_.
+关于其他接口如`finetune`，请参考`模型API <../reference/api.html#module-qlib.model.base>`_。
 
-Example
+示例
 =======
 
-``Qlib``'s `Model Zoo` includes models such as ``LightGBM``, ``MLP``, ``LSTM``, etc.. These models are treated as the baselines of ``Forecast Model``. The following steps show how to run`` LightGBM`` as an independent module.
+``Qlib``的`Model Zoo`包含``LightGBM``、``MLP``、``LSTM``等模型。这些模型被视为``Forecast Model``的基准。以下步骤展示如何将``LightGBM``作为独立模块运行。
 
-- Initialize ``Qlib`` with `qlib.init` first, please refer to `Initialization <../start/initialization.html>`_.
+- 首先使用`qlib.init`初始化``Qlib``，详情请参考`初始化 <../start/initialization.html>`_。
 - Run the following code to get the `prediction score` `pred_score`
     .. code-block:: Python
 
@@ -103,20 +103,20 @@ Example
 
     .. note::
 
-        `Alpha158` is the data handler provided by ``Qlib``, please refer to `Data Handler <data.html#data-handler>`_.
-        `SignalRecord` is the `Record Template` in ``Qlib``, please refer to `Workflow <recorder.html#record-template>`_.
+        `Alpha158`是``Qlib``提供的数据处理器，详情请参考`数据处理器 <data.html#data-handler>`_。
+        `SignalRecord`是``Qlib``中的`记录模板`，详情请参考`工作流 <recorder.html#record-template>`_。
 
-Also, the above example has been given in ``examples/train_backtest_analyze.ipynb``.
-Technically, the meaning of the model prediction depends on the label setting designed by user.
-By default, the meaning of the score is normally the rating of the instruments by the forecasting model. The higher the score, the more profit the instruments.
+此外，上述示例已在``examples/train_backtest_analyze.ipynb``中给出。
+从技术上讲，模型预测的含义取决于用户设计的标签设置。
+默认情况下，分数通常表示预测模型对工具的评级。分数越高，工具的收益越高。
 
 
-Custom Model
+自定义模型
 ============
 
-Qlib supports custom models. If users are interested in customizing their own models and integrating the models into ``Qlib``, please refer to `Custom Model Integration <../start/integration.html>`_.
+Qlib支持自定义模型。如果用户有兴趣定制自己的模型并将其集成到``Qlib``中，请参考`自定义模型集成 <../start/integration.html>`_。
 
 
 API
 ===
-Please refer to `Model API <../reference/api.html#module-qlib.model.base>`_.
+请参考`模型API <../reference/api.html#module-qlib.model.base>`_。

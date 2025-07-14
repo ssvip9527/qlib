@@ -1,9 +1,9 @@
 
-Quick Start
+快速开始
 ============
 .. currentmodule:: qlib
 
-QlibRL provides an example of an implementation of a single asset order execution task and the following is an example of the config file to train with QlibRL.
+QlibRL提供了一个单资产订单执行任务的实现示例，以下是使用QlibRL进行训练的配置文件示例。
 
 .. code-block:: yaml
 
@@ -156,20 +156,20 @@ And the config file for backtesting:
     # Concurrent environment workers.
     concurrency: 5
 
-With the above config files, you can start training the agent by the following command:
+使用上述配置文件，您可以通过以下命令开始训练智能体：
 
 .. code-block:: console
 
     $ python -m qlib.rl.contrib.train_onpolicy.py --config_path train_config.yml
 
-After the training, you can backtest with the following command:
+训练完成后，您可以通过以下命令进行回测：
 
 .. code-block:: console
 
     $ python -m qlib.rl.contrib.backtest.py --config_path backtest_config.yml
 
-In that case, :class:`~qlib.rl.order_execution.simulator_qlib.SingleAssetOrderExecution` and :class:`~qlib.rl.order_execution.simulator_simple.SingleAssetOrderExecutionSimple` as examples for simulator, :class:`qlib.rl.order_execution.interpreter.FullHistoryStateInterpreter` and :class:`qlib.rl.order_execution.interpreter.CategoricalActionInterpreter` as examples for interpreter, :class:`qlib.rl.order_execution.policy.PPO` as an example for policy, and :class:`qlib.rl.order_execution.reward.PAPenaltyReward` as an example for reward.
-For the single asset order execution task, if developers have already defined their simulator/interpreters/reward function/policy, they could launch the training and backtest pipeline by simply modifying the corresponding settings in the config files.
-The details about the example can be found `here <https://github.com/microsoft/qlib/blob/main/examples/rl/README.md>`_. 
+在这种情况下，:class:`~qlib.rl.order_execution.simulator_qlib.SingleAssetOrderExecution` 和 :class:`~qlib.rl.order_execution.simulator_simple.SingleAssetOrderExecutionSimple` 作为模拟器示例，:class:`qlib.rl.order_execution.interpreter.FullHistoryStateInterpreter` 和 :class:`qlib.rl.order_execution.interpreter.CategoricalActionInterpreter` 作为解释器示例，:class:`qlib.rl.order_execution.policy.PPO` 作为策略示例，:class:`qlib.rl.order_execution.reward.PAPenaltyReward` 作为奖励函数示例。
+对于单资产订单执行任务，如果开发者已经定义了自己的模拟器/解释器/奖励函数/策略，他们只需修改配置文件中的相应设置即可启动训练和回测流程。
+示例的详细信息可以在`这里 <https://github.com/microsoft/qlib/blob/main/examples/rl/README.md>`_ 找到。
 
-In the future, we will provide more examples for different scenarios such as RL-based portfolio construction.
+未来我们将提供更多不同场景的示例，例如基于强化学习的投资组合构建。

@@ -1,70 +1,61 @@
 =====================================================
-Reinforcement Learning in Quantitative Trading
+量化交易中的强化学习
 =====================================================
 
-Reinforcement Learning
+强化学习
 ======================
-Different from supervised learning tasks such as classification tasks and regression tasks. Another important paradigm in machine learning is Reinforcement Learning(RL), 
-which attempts to optimize an accumulative numerical reward signal by directly interacting with the environment under a few assumptions such as Markov Decision Process(MDP).
+与分类和回归等监督学习任务不同，机器学习中的另一个重要范式是强化学习（RL），它试图在马尔可夫决策过程（MDP）等假设下，通过与环境的直接交互来优化累积的数值奖励信号。
 
-As demonstrated in the following figure, an RL system consists of four elements, 1)the agent 2) the environment the agent interacts with 3) the policy that the agent follows to take actions on the environment and 4)the reward signal from the environment to the agent. 
-In general, the agent can perceive and interpret its environment, take actions and learn through reward, to seek long-term and maximum overall reward to achieve an optimal solution.
+如下图所示，一个强化学习系统由四个要素组成：1)智能体（agent）2)智能体交互的环境 3)智能体遵循的对环境采取行动的策略（policy）4)环境向智能体发出的奖励信号。通常，智能体能够感知和解释环境，采取行动并通过奖励学习，以寻求长期最大化总体奖励来实现最优解。
 
 .. image:: ../../_static/img/RL_framework.png
    :width: 300
    :align: center 
 
-RL attempts to learn to produce actions by trial and error. 
-By sampling actions and then observing which one leads to our desired outcome, a policy is obtained to generate optimal actions. 
-In contrast to supervised learning, RL learns this not from a label but from a time-delayed label called a reward. 
-This scalar value lets us know whether the current outcome is good or bad. 
-In a word, the target of RL is to take actions to maximize reward.
+强化学习试图通过试错来学习产生动作。通过采样动作并观察哪些动作会带来期望的结果，从而获得生成最优动作的策略。与监督学习不同，强化学习不是从标签中学习，而是从一种称为奖励的延时标签中学习。这个标量值让我们知道当前结果的好坏。总之，强化学习的目标是通过采取行动来最大化奖励。
 
-The Qlib Reinforcement Learning toolkit (QlibRL) is an RL platform for quantitative investment, which provides support to implement the RL algorithms in Qlib.
+Qlib强化学习工具包（QlibRL）是一个用于量化投资的强化学习平台，提供在Qlib中实现强化学习算法的支持。
 
 
-Potential Application Scenarios in Quantitative Trading
+量化交易中的潜在应用场景
 =======================================================
-RL methods have demonstrated remarkable achievements in various applications, including game playing, resource allocation, recommendation systems, marketing, and advertising.
-In the context of investment, which involves continuous decision-making, let's consider the example of the stock market. Investors strive to optimize their investment returns by effectively managing their positions and stock holdings through various buying and selling behaviors.
-Furthermore, investors carefully evaluate market conditions and stock-specific information before making each buying or selling decision. From an investor's perspective, this process can be viewed as a continuous decision-making process driven by interactions with the market. RL algorithms offer a promising approach to tackle such challenges.
-Here are several scenarios where RL holds potential for application in quantitative investment.
+强化学习方法在游戏、资源分配、推荐系统、市场营销和广告等多个领域已取得显著成就。在涉及连续决策的投资领域，以股票市场为例，投资者通过各种买卖行为有效管理头寸和股票持有，力求优化投资回报。此外，投资者在每次买卖决策前都会仔细评估市场状况和个股信息。从投资者角度看，这一过程可视为由市场交互驱动的连续决策过程。强化学习算法为应对此类挑战提供了有前景的方法。以下是强化学习在量化投资中具有应用潜力的几个场景。
 
-Order Execution
+订单执行
 ---------------
-The order execution task is to execute orders efficiently while considering multiple factors, including optimal prices, minimizing trading costs, reducing market impact, maximizing order fullfill rates, and achieving execution within a specified time frame. RL can be applied to such tasks by incorporating these objectives into the reward function and action selection process. Specifically, the RL agent interacts with the market environment, observes the state from market information, and makes decisions on next step execution. The RL algorithm learns an optimal execution strategy through trial and error, aiming to maximize the expected cumulative reward, which incorporates the desired objectives.
+订单执行任务是在考虑多个因素的同时高效执行订单，包括最优价格、最小化交易成本、减少市场冲击、最大化订单完成率以及在指定时间内完成执行。强化学习可通过将这些目标纳入奖励函数和动作选择过程来应用于此类任务。具体而言，强化学习智能体与市场环境交互，从市场信息中观察状态，并对下一步执行做出决策。强化学习算法通过试错学习最优执行策略，旨在最大化包含期望目标的预期累积奖励。
 
- - General Setting
-    - Environment: The environment represents the financial market where order execution takes place. It encompasses variables such as the order book dynamics, liquidity, price movements, and market conditions.
+ - 通用设置
+    - 环境（Environment）：表示订单执行所在的金融市场，包含订单簿动态、流动性、价格变动和市场状况等变量。
 
-    - State: The state refers to the information available to the RL agent at a given time step. It typically includes features such as the current order book state (bid-ask spread, order depth), historical price data, historical trading volume, market volatility, and any other relevant information that can aid in decision-making.
+    - 状态（State）：指强化学习智能体在特定时间步可获得的信息，通常包括当前订单簿状态（买卖价差、订单深度）、历史价格数据、历史交易量、市场波动性以及其他有助于决策的相关信息。
 
-    - Action: The action is the decision made by the RL agent based on the observed state. In order execution, actions can include selecting the order size, price, and timing of execution.
+    - 动作（Action）：强化学习智能体基于观察到的状态做出的决策。在订单执行中，动作可包括选择订单规模、价格和执行时机。
 
-    - Reward: The reward is a scalar signal that indicates the performance of the RL agent's action in the environment. The reward function is designed to encourage actions that lead to efficient and cost-effective order execution. It typically considers multiple objectives, such as maximizing price advantages, minimizing trading costs (including transaction fees and slippage), reducing market impact (the effect of the order on the market price) and maximizing order fullfill rates. 
+    - 奖励（Reward）：表示强化学习智能体在环境中动作表现的标量信号。奖励函数旨在鼓励导致高效且经济的订单执行的动作，通常考虑多个目标，如最大化价格优势、最小化交易成本（包括交易费用和滑点）、减少市场冲击（订单对市场价格的影响）以及最大化订单完成率。 
 
- - Scenarios
-    - Single-asset order execution: Single-asset order execution focuses on the task of executing a single order for a specific asset, such as a stock or a cryptocurrency. The primary objective is to execute the order efficiently while considering factors such as maximizing price advantages, minimizing trading costs, reducing market impact, and achieving a high fullfill rate. The RL agent interacts with the market environment and makes decisions on order size, price, and timing of execution for that particular asset. The goal is to learn an optimal execution strategy for the single asset, maximizing the expected cumulative reward while considering the specific dynamics and characteristics of that asset.
+ - 场景
+    - 单一资产订单执行：专注于为特定资产（如股票或加密货币）执行单个订单的任务。主要目标是在考虑最大化价格优势、最小化交易成本、减少市场冲击和实现高完成率等因素的同时高效执行订单。强化学习智能体与市场环境交互，对该特定资产的订单规模、价格和执行时机做出决策。目标是学习单一资产的最优执行策略，在考虑该资产特定动态和特征的同时最大化预期累积奖励。
 
-    - Multi-asset order execution: Multi-asset order execution expands the order execution task to involve multiple assets or securities. It typically involves executing a portfolio of orders across different assets simultaneously or sequentially. Unlike single-asset order execution, the focus is not only on the execution of individual orders but also on managing the interactions and dependencies between different assets within the portfolio. The RL agent needs to make decisions on the order sizes, prices, and timings for each asset in the portfolio, considering their interdependencies, cash constraints, market conditions, and transaction costs. The goal is to learn an optimal execution strategy that balances the execution efficiency for each asset while considering the overall performance and objectives of the portfolio as a whole.
+    - 多资产订单执行：将订单执行任务扩展到涉及多个资产或证券，通常包括同时或顺序执行跨不同资产的订单组合。与单一资产订单执行不同，其重点不仅在于单个订单的执行，还在于管理投资组合内不同资产之间的相互作用和依赖关系。强化学习智能体需要考虑资产间的相互依赖关系、现金约束、市场状况和交易成本，对投资组合中每个资产的订单规模、价格和时机做出决策。目标是学习一种最优执行策略，在平衡每个资产执行效率的同时考虑投资组合整体的绩效和目标。
    
-The choice of settings and RL algorithm depends on the specific requirements of the task, available data, and desired performance objectives. 
+设置和强化学习算法的选择取决于任务的具体要求、可用数据和期望的性能目标。 
 
-Portfolio Construction
+投资组合构建
 ----------------------
-Portfolio construction is a process of selecting and allocating assets in an investment portfolio. RL provides a framework to optimize portfolio management decisions by learning from interactions with the market environment and maximizing long-term returns while considering risk management.
+投资组合构建是选择资产并在投资组合中进行分配的过程。强化学习通过从与市场环境的交互中学习，在考虑风险管理的同时最大化长期回报，为优化投资组合管理决策提供了框架。
  - General Setting
-    - State: The state represents the current information about the market and the portfolio. It typically includes historical prices and volumes, technical indicators, and other relevant data.
+    - 状态（State）：表示当前市场和投资组合的信息，通常包括历史价格和成交量、技术指标以及其他相关数据。
 
-    - Action: The action corresponds to the decision of allocating capital to different assets in the portfolio. It determines the weights or proportions of investments in each asset.
+    - 动作（Action）：对应于将资金分配给投资组合中不同资产的决策，决定每个资产的投资权重或比例。
 
-    - Reward: The reward is a metric that evaluates the performance of the portfolio. It can be defined in various ways, such as total return, risk-adjusted return, or other objectives like maximizing Sharpe ratio or minimizing drawdown.
+    - 奖励（Reward）：评估投资组合绩效的指标，可通过多种方式定义，如总回报、风险调整后回报，或其他目标如最大化夏普比率、最小化回撤。
 
  - Scenarios
-    - Stock market: RL can be used to construct portfolios of stocks, where the agent learns to allocate capital among different stocks.
+    - 股票市场：强化学习可用于构建股票投资组合，智能体学习在不同股票之间分配资金。
 
-    - Cryptocurrency market: RL can be applied to construct portfolios of cryptocurrencies, where the agent learns to make allocation decisions.
+    - 加密货币市场：强化学习可应用于构建加密货币投资组合，智能体学习做出分配决策。
 
-    - Foreign exchange (Forex) market: RL can be used to construct portfolios of currency pairs, where the agent learns to allocate capital across different currencies based on exchange rate data, economic indicators, and other factors.
+    - 外汇（Forex）市场：强化学习可用于构建货币对投资组合，智能体基于汇率数据、经济指标和其他因素学习在不同货币之间分配资金。
 
-Similarly, the choice of basic setting and algorithm depends on the specific requirements of the problem and the characteristics of the market.
+同样，基本设置和算法的选择取决于问题的具体要求和市场特征。
