@@ -1,24 +1,24 @@
-# Get future trading days
+# 获取期货交易日
 
-> `D.calendar(future=True)` will be used
+> 将使用`D.calendar(future=True)`
 
-## Requirements
+## 需求说明
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Collector Data
+## 数据收集
 
 ```bash
-# parse instruments, using in qlib/instruments.
+# 解析工具列表，用于qlib/instruments
 python future_trading_date_collector.py --qlib_dir ~/.qlib/qlib_data/cn_data --freq day
 ```
 
-## Parameters
+## 参数说明
 
-- qlib_dir: qlib data directory
-- freq: value from [`day`, `1min`], default `day`
+- qlib_dir: qlib数据目录
+- freq: 取值范围为[`day`, `1min`]，默认值为`day`
 
 
 

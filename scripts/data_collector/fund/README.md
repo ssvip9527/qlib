@@ -1,35 +1,35 @@
-# Collect Fund Data
+# 收集基金数据
 
-> *Please pay **ATTENTION** that the data is collected from [天天基金网](https://fund.eastmoney.com/) and the data might not be perfect. We recommend users to prepare their own data if they have high-quality dataset. For more information, users can refer to the [related document](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*
+> *请注意，本数据来源于[天天基金网](https://fund.eastmoney.com/)，数据可能并不完美。如果用户拥有高质量数据集，建议自行准备数据。更多信息请参考[相关文档](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*
 
-## Requirements
+## 需求说明
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Collector Data
+## 数据收集
 
 
-### CN Data
+### 中国市场数据
 
-#### 1d from East Money
+#### 来自东方财富网的1日数据
 
 ```bash
 
-# download from eastmoney.com
+# 从东方财富网下载数据
 python collector.py download_data --source_dir ~/.qlib/fund_data/source/cn_data --region CN --start 2020-11-01 --end 2020-11-10 --delay 0.1 --interval 1d
 
-# normalize
+# 数据标准化
 python collector.py normalize_data --source_dir ~/.qlib/fund_data/source/cn_data --normalize_dir ~/.qlib/fund_data/source/cn_1d_nor --region CN --interval 1d --date_field_name FSRQ
 
-# dump data
+# 生成二进制文件
 cd qlib/scripts
 python dump_bin.py dump_all --csv_path ~/.qlib/fund_data/source/cn_1d_nor --qlib_dir ~/.qlib/qlib_data/cn_fund_data --freq day --date_field_name FSRQ --include_fields DWJZ,LJJZ
 
 ```
 
-### using data
+### 使用数据
 
 ```python
 import qlib
@@ -40,12 +40,12 @@ df = D.features(D.instruments(market="all"), ["$DWJZ", "$LJJZ"], freq="day")
 ```
 
 
-### Help
+### 帮助信息
 ```bash
 pythono collector.py collector_data --help
 ```
 
-## Parameters
+## 参数说明
 
 - interval: 1d
 - region: CN

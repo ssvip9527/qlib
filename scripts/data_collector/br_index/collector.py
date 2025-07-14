@@ -43,39 +43,33 @@ class IBOVIndex(IndexBase):
     @property
     def bench_start_date(self) -> pd.Timestamp:
         """
-        The ibovespa index started on 2 January 1968 (wiki), however,
-        no suitable data source that keeps track of ibovespa's history
-        stocks composition has been found. Except from the repo indicated
-        in README. Which keeps track of such information starting from
-        the first quarter of 2003
+        巴西IBOVESPA指数始于1968年1月2日（维基百科），然而，
+        尚未找到合适的数据源来跟踪IBOVESPA指数的历史股票成分。
+        除了README中指示的代码库外，该代码库从2003年第一季度开始跟踪此类信息
         """
         return pd.Timestamp("2003-01-03")
 
     def get_current_4_month_period(self, current_month: int):
         """
-        This function is used to calculated what is the current
-        four month period for the current month. For example,
-        If the current month is August 8, its four month period
-        is 2Q.
+        此函数用于计算当前月份所属的当前四个月周期。例如，
+        如果当前月份是8月，则其四个月周期为2Q。
 
-        OBS: In english Q is used to represent *quarter*
-        which means a three month period. However, in
-        portuguese we use Q to represent a four month period.
-        In other words,
+        注意：在英语中，Q代表"季度"（三个月周期）。然而，
+        在葡萄牙语中，我们使用Q代表四个月周期。换句话说：
 
-        Jan, Feb, Mar, Apr: 1Q
-        May, Jun, Jul, Aug: 2Q
-        Sep, Oct, Nov, Dez: 3Q
+        1月、2月、3月、4月：1Q
+        5月、6月、7月、8月：2Q
+        9月、10月、11月、12月：3Q
 
-        Parameters
+        参数
         ----------
         month : int
-            Current month (1 <= month <= 12)
+            当前月份（1 <= month <= 12）
 
-        Returns
+        返回值
         -------
         current_4m_period:str
-            Current Four Month Period (1Q or 2Q or 3Q)
+            当前四个月周期（1Q、2Q或3Q）
         """
         if current_month < 5:
             return "1Q"
@@ -88,9 +82,9 @@ class IBOVIndex(IndexBase):
 
     def get_four_month_period(self):
         """
-        The ibovespa index is updated every four months.
-        Therefore, we will represent each time period as 2003_1Q
-        which means 2003 first four mount period (Jan, Feb, Mar, Apr)
+        IBOVESPA指数每四个月更新一次。
+        因此，我们将每个时间段表示为2003_1Q，
+        表示2003年第一个四个月周期（1月、2月、3月、4月）
         """
         four_months_period = ["1Q", "2Q", "3Q"]
         init_year = 2003
@@ -107,14 +101,14 @@ class IBOVIndex(IndexBase):
         return self.years_4_month_periods
 
     def format_datetime(self, inst_df: pd.DataFrame) -> pd.DataFrame:
-        """formatting the datetime in an instrument
+        """格式化标的中的日期时间
 
-        Parameters
+        参数
         ----------
         inst_df: pd.DataFrame
             inst_df.columns = [self.SYMBOL_FIELD_NAME, self.START_DATE_FIELD, self.END_DATE_FIELD]
 
-        Returns
+        返回值
         -------
         inst_df: pd.DataFrame
 
@@ -136,28 +130,25 @@ class IBOVIndex(IndexBase):
 
     def format_quarter(self, cell: str):
         """
-        Parameters
+        参数
         ----------
         cell: str
-            It must be on the format 2003_1Q --> years_4_month_periods
+            必须为2003_1Q格式 --> years_4_month_periods
 
-        Returns
+        返回值
         ----------
         date: str
-            Returns date in format 2003-03-01
+            返回格式为2003-03-01的日期
         """
         cell_split = cell.split("_")
         return cell_split[0] + "-" + quarter_dict[cell_split[1]]
 
     def get_changes(self):
         """
-        Access the index historic composition and compare it quarter
-        by quarter and year by year in order to generate a file that
-        keeps track of which stocks have been removed and which have
-        been added.
+        访问指数的历史成分，并按季度和年度进行比较，以生成一个文件，
+        跟踪哪些股票已被移除和哪些已被添加。
 
-        The Dataframe used as reference will provided the index
-        composition for each year an quarter:
+        用作参考的DataFrame将提供每年和每季度的指数成分：
         pd.DataFrame:
             symbol
             SH600000
@@ -166,11 +157,11 @@ class IBOVIndex(IndexBase):
             .
             .
 
-        Parameters
+        参数
         ----------
-        self: is used to represent the instance of the class.
+        self: 用于表示类的实例。
 
-        Returns
+        返回值
         ----------
         pd.DataFrame:
             symbol      date        type
@@ -179,7 +170,7 @@ class IBOVIndex(IndexBase):
             dtypes:
                 symbol: str
                 date: pd.Timestamp
-                type: str, value from ["add", "remove"]
+                type: str, 取值为["add", "remove"]
         """
         logger.info("Getting companies changes in {} index ...".format(self.index_name))
 
@@ -230,17 +221,15 @@ class IBOVIndex(IndexBase):
 
     def get_new_companies(self):
         """
-        Get latest index composition.
-        The repo indicated on README has implemented a script
-        to get the latest index composition from B3 website using
-        selenium. Therefore, this method will download the file
-        containing such composition
+        获取最新的指数成分。
+        README中指示的代码库已实现一个脚本，使用selenium从B3网站获取最新的指数成分。
+        因此，此方法将下载包含此类成分的文件
 
-        Parameters
+        参数
         ----------
-        self: is used to represent the instance of the class.
+        self: 用于表示类的实例。
 
-        Returns
+        返回值
         ----------
         pd.DataFrame:
             symbol      start_date  end_date

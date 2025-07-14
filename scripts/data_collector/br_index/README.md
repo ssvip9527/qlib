@@ -1,58 +1,58 @@
-# iBOVESPA History Companies Collection
+# iBOVESPA指数历史成分股收集
 
-## Requirements
+## 需求说明
 
-- Install the libs from the file `requirements.txt`
+- 从`requirements.txt`文件安装依赖库
 
     ```bash
     pip install -r requirements.txt
     ```
-- `requirements.txt` file was generated using python3.8
+- `requirements.txt`文件使用python3.8生成
 
-## For the ibovespa (IBOV) index, we have:
-
-<hr/>
-
-### Method `get_new_companies`
-
-#### <b>Index start date</b>
-
-- The ibovespa index started on 2 January 1968 ([wiki](https://en.wikipedia.org/wiki/%C3%8Dndice_Bovespa)).  In order to use this start date in our `bench_start_date(self)` method, two conditions must be satisfied:
-    1) APIs used to download brazilian stocks (B3) historical prices must keep track of such historic data since 2 January 1968
-
-    2) Some website or API must provide, from that date, the historic index composition. In other words, the companies used to build the index .
-
-    As a consequence, the method `bench_start_date(self)` inside `collector.py` was implemented using `pd.Timestamp("2003-01-03")` due to two reasons
-
-    1) The earliest ibov composition that have been found was from the first quarter of 2003. More informations about such composition can be seen on the sections below.
-
-    2) Yahoo finance, one of the libraries used to download symbols historic prices, keeps track from this date forward.
-
-- Within the `get_new_companies` method, a logic was implemented to get, for each ibovespa component stock, the start date that yahoo finance keeps track of.
-
-#### <b>Code Logic</b>
-
-The code does a web scrapping into the B3's [website](https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br), which keeps track of the ibovespa stocks composition on the current day. 
-
-Other approaches, such as `request` and `Beautiful Soup` could have been used. However, the website shows the table with the stocks with some delay, since it uses a script inside of it to obtain such compositions.
-Alternatively, `selenium` was used to download this stocks' composition in order to overcome this problem.
-
-Futhermore, the data downloaded from the selenium script  was preprocessed so it could be saved into the `csv` format stablished by `scripts/data_collector/index.py`.
+## 关于ibovespa (IBOV)指数，我们提供以下功能：
 
 <hr/>
 
-### Method `get_changes` 
+### 方法 `get_new_companies`
 
-No suitable data source that keeps track of ibovespa's history stocks composition has been found. Except from this [repository](https://github.com/igor17400/IBOV-HCI) which provide such information have been used, however it only provides the data from the 1st quarter of 2003 to 3rd quarter of 2021.
+#### <b>指数起始日期</b>
 
-With that reference, the index's composition can be compared quarter by quarter and year by year and then generate a file that keeps track of which stocks have been removed and which have been added each quarter and year.
+- ibovespa指数始于1968年1月2日（[维基百科](https://en.wikipedia.org/wiki/%C3%8Dndice_Bovespa)）。为了在`bench_start_date(self)`方法中使用此起始日期，必须满足两个条件：
+    1) 用于下载巴西股票（B3）历史价格的API必须保留自1968年1月2日以来的历史数据
+
+    2) 某个网站或API必须从该日期开始提供历史指数成分股信息，即用于构建指数的公司名单
+
+    因此，`collector.py`中的`bench_start_date(self)`方法使用`pd.Timestamp("2003-01-03")`作为起始日期，原因如下
+
+    1) 已找到的最早ibov成分股数据来自2003年第一季度。有关该成分股的更多信息可参见以下部分
+
+    2) Yahoo Finance（用于下载股票历史价格的库之一）从该日期开始保留数据
+
+- 在`get_new_companies`方法中，实现了获取每只ibovespa成分股在Yahoo Finance中可追溯的起始日期的逻辑
+
+#### <b>代码逻辑</b>
+
+代码通过网页抓取B3[网站](https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br)上的信息，该网站记录了当前ibovespa指数的成分股构成 
+
+本可以使用`request`和`Beautiful Soup`等其他方法，但该网站使用内部脚本加载成分股表格，导致表格显示存在延迟
+为解决此问题，我们使用`selenium`来下载成分股数据
+
+此外，从selenium脚本下载的数据经过预处理，以保存为`scripts/data_collector/index.py`所规定的`csv`格式
 
 <hr/>
 
-### Collector Data
+### 方法 `get_changes` 
+
+尚未找到合适的ibovespa历史成分股数据源。目前使用了[该仓库](https://github.com/igor17400/IBOV-HCI)提供的信息，但其仅包含2003年第一季度至2021年第三季度的数据
+
+借助该参考数据，可以按季度和年度比较指数成分股变化，并生成记录每季度和每年新增及移除股票的文件
+
+<hr/>
+
+### 数据收集命令
 
 ```bash
-# parse instruments, using in qlib/instruments.
+# 解析工具列表，用于qlib/instruments
 python collector.py --index_name IBOV --qlib_dir ~/.qlib/qlib_data/br_data --method parse_instruments
 
 # parse new companies

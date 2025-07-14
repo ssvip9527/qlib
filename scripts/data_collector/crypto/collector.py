@@ -24,11 +24,11 @@ _CG_CRYPTO_SYMBOLS = None
 
 
 def get_cg_crypto_symbols(qlib_data_path: [str, Path] = None) -> list:
-    """get crypto symbols in coingecko
+    """获取CoinGecko中的加密货币代码
 
-    Returns
+    返回值
     -------
-        crypto symbols in given exchanges list of coingecko
+        给定CoinGecko交易所列表中的加密货币代码
     """
     global _CG_CRYPTO_SYMBOLS  # pylint: disable=W0603
 
@@ -69,27 +69,27 @@ class CryptoCollector(BaseCollector):
     ):
         """
 
-        Parameters
-        ----------
-        save_dir: str
-            crypto save dir
-        max_workers: int
-            workers, default 4
-        max_collector_count: int
-            default 2
-        delay: float
-            time.sleep(delay), default 0
-        interval: str
-            freq, value from [1min, 1d], default 1min
-        start: str
-            start datetime, default None
-        end: str
-            end datetime, default None
-        check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
-        limit_nums: int
-            using for debug, by default None
-        """
+    参数说明
+    ----------
+    save_dir: str
+        加密货币数据保存目录
+    max_workers: int
+        工作线程数量，默认4
+    max_collector_count: int
+        默认2
+    delay: float
+        延迟时间（秒），默认0
+    interval: str
+        时间频率，取值为[1min, 1d]，默认1min
+    start: str
+        开始时间，默认None
+    end: str
+        结束时间，默认None
+    check_data_length: int
+        检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认None。
+    limit_nums: int
+        用于调试，默认None
+    """
         super(CryptoCollector, self).__init__(
             save_dir=save_dir,
             start=start,
@@ -127,7 +127,7 @@ class CryptoCollector(BaseCollector):
     @property
     @abc.abstractmethod
     def _timezone(self):
-        raise NotImplementedError("rewrite get_timezone")
+        raise NotImplementedError("重写获取时区方法")
 
     @staticmethod
     def get_data_from_remote(symbol, interval, start, end):
@@ -228,16 +228,16 @@ class Run(BaseRun):
     def __init__(self, source_dir=None, normalize_dir=None, max_workers=1, interval="1d"):
         """
 
-        Parameters
+        参数说明
         ----------
         source_dir: str
-            The directory where the raw data collected from the Internet is saved, default "Path(__file__).parent/source"
+            从互联网收集的原始数据保存目录，默认"Path(__file__).parent/source"
         normalize_dir: str
-            Directory for normalize data, default "Path(__file__).parent/normalize"
+            归一化数据目录，默认"Path(__file__).parent/normalize"
         max_workers: int
-            Concurrent number, default is 1
+            并发数量，默认1
         interval: str
-            freq, value from [1min, 1d], default 1d
+            时间频率，取值为[1min, 1d]，默认1d
         """
         super().__init__(source_dir, normalize_dir, max_workers, interval)
 
@@ -262,42 +262,42 @@ class Run(BaseRun):
         check_data_length: int = None,
         limit_nums=None,
     ):
-        """download data from Internet
+        """从互联网下载数据
 
-        Parameters
+        参数说明
         ----------
         max_collector_count: int
-            default 2
+            默认2
         delay: float
-            time.sleep(delay), default 0
+            延迟时间（秒），默认0
         interval: str
-            freq, value from [1min, 1d], default 1d, currently only supprot 1d
+            时间频率，取值为[1min, 1d]，默认1d，目前仅支持1d
         start: str
-            start datetime, default "2000-01-01"
+            开始时间，默认"2000-01-01"
         end: str
-            end datetime, default ``pd.Timestamp(datetime.datetime.now() + pd.Timedelta(days=1))``
-        check_data_length: int # if this param useful?
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            结束时间，默认``pd.Timestamp(datetime.datetime.now() + pd.Timedelta(days=1))``
+        check_data_length: int # 此参数是否有用？
+            检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认None。
         limit_nums: int
-            using for debug, by default None
+            用于调试，默认None
 
-        Examples
+        使用示例
         ---------
-            # get daily data
+            # 获取日线数据
             $ python collector.py download_data --source_dir ~/.qlib/crypto_data/source/1d --start 2015-01-01 --end 2021-11-30 --delay 1 --interval 1d
         """
 
         super(Run, self).download_data(max_collector_count, delay, start, end, check_data_length, limit_nums)
 
     def normalize_data(self, date_field_name: str = "date", symbol_field_name: str = "symbol"):
-        """normalize data
+        """归一化数据
 
-        Parameters
+        参数说明
         ----------
         date_field_name: str
-            date field name, default date
+            日期字段名称，默认date
         symbol_field_name: str
-            symbol field name, default symbol
+            标的代码字段名称，默认symbol
 
         Examples
         ---------

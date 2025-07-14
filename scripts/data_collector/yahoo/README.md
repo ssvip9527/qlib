@@ -10,9 +10,9 @@
 
 > *Please pay **ATTENTION** that the data is collected from [Yahoo Finance](https://finance.yahoo.com/lookup) and the data might not be perfect. We recommend users to prepare their own data if they have high-quality dataset. For more information, users can refer to the [related document](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*
 
-**NOTE**:  Yahoo! Finance has blocked the access from China. Please change your network if you want to use the Yahoo data crawler.
+**注意**: 雅虎财经已阻止来自中国的访问。如果您想使用雅虎数据爬虫，请更换网络。
 
->  **Examples of abnormal data**
+>  **异常数据示例**
 
 - [SH000661](https://finance.yahoo.com/quote/000661.SZ/history?period1=1558310400&period2=1590796800&interval=1d&filter=history&frequency=1d)
 - [SZ300144](https://finance.yahoo.com/quote/300144.SZ/history?period1=1557446400&period2=1589932800&interval=1d&filter=history&frequency=1d)
@@ -37,7 +37,7 @@ pip install -r requirements.txt
     - `version`: dataset version, value from [`v1`, `v2`], by default `v1`
       - `v2` end date is *2021-06*, `v1` end date is *2020-09*
       - If users want to incrementally update data, they need to use yahoo collector to [collect data from scratch](#collector-yahoofinance-data-to-qlib).
-      - **the [benchmarks](https://github.com/microsoft/qlib/tree/main/examples/benchmarks) for qlib use `v1`**, *due to the unstable access to historical data by YahooFinance, there are some differences between `v2` and `v1`*
+      - **the [benchmarks](https://github.com/microsoft/qlib/tree/main/examples/benchmarks) for qlib use `v1`**, *由于雅虎财经对历史数据的访问不稳定，`v2`和`v1`之间存在一些差异*
     - `interval`: `1d` or `1min`, by default `1d`
     - `region`: `cn` or `us` or `in`, by default `cn`
     - `delete_old`: delete existing data from `target_dir`(*features, calendars, instruments, dataset_cache, features_cache*), value from [`True`, `False`], by default `True`
@@ -53,24 +53,24 @@ pip install -r requirements.txt
     ```
 
 ### Collector *YahooFinance* data to qlib
-> collector *YahooFinance* data and *dump* into `qlib` format.
-> If the above ready-made data can't meet users' requirements,  users can follow this section to crawl the latest data and convert it to qlib-data.
-  1. download data to csv: `python scripts/data_collector/yahoo/collector.py download_data`
+> 收集 *YahooFinance* 数据并 *转储* 为 `qlib` 格式。
+> 如果上述现成数据无法满足用户需求，用户可以按照本部分内容爬取最新数据并转换为 qlib 数据格式。
+  1. 下载数据到 csv：`python scripts/data_collector/yahoo/collector.py download_data`
      
-     This will download the raw data such as high, low, open, close, adjclose price from yahoo to a local directory. One file per symbol.
+这将从 Yahoo 下载最高价、最低价、开盘价、收盘价、复权收盘价等原始数据到本地目录，每个股票代码对应一个文件。
 
      - parameters:
           - `source_dir`: save the directory
           - `interval`: `1d` or `1min`, by default `1d`
-            > **due to the limitation of the *YahooFinance API*, only the last month's data is available in `1min`**
+            > **由于雅虎财经API的限制，`1min`频率数据仅能获取最近一个月的数据**
           - `region`: `CN` or `US` or `IN` or `BR`, by default `CN`
           - `delay`: `time.sleep(delay)`, by default *0.5*
           - `start`: start datetime, by default *"2000-01-01"*; *closed interval(including start)*
           - `end`: end datetime, by default `pd.Timestamp(datetime.datetime.now() + pd.Timedelta(days=1))`; *open interval(excluding end)*
           - `max_workers`: get the number of concurrent symbols, it is not recommended to change this parameter in order to maintain the integrity of the symbol data, by default *1*
-          - `check_data_length`: check the number of rows per *symbol*, by default `None`
-            > if `len(symbol_df) < check_data_length`, it will be re-fetched, with the number of re-fetches coming from the `max_collector_count` parameter
-          - `max_collector_count`: number of *"failed"* symbol retries, by default 2
+          - `check_data_length`: 检查每个股票代码的数据行数，默认值为`None`
+            > 如果`len(symbol_df) < check_data_length`，将重新获取数据，重新获取次数由`max_collector_count`参数决定
+          - `max_collector_count`: 失败股票代码的重试次数，默认值为2
      - examples:
           ```bash
           # cn 1d data
@@ -93,11 +93,11 @@ pip install -r requirements.txt
           # br 1min data
           python collector.py download_data --source_dir ~/.qlib/stock_data/source/br_data_1min --delay 1 --interval 1min --region BR
           ```
-  2. normalize data: `python scripts/data_collector/yahoo/collector.py normalize_data`
+  2. 数据标准化：`python scripts/data_collector/yahoo/collector.py normalize_data`
      
-     This will:
-     1. Normalize high, low, close, open price using adjclose.
-     2. Normalize the high, low, close, open price so that the first valid trading date's close price is 1. 
+此步骤将：
+1. 使用复权收盘价对最高价、最低价、收盘价、开盘价进行标准化处理。
+2. 对最高价、最低价、收盘价、开盘价进行归一化，使第一个有效交易日的收盘价为 1。 
 
      - parameters:
           - `source_dir`: csv directory
@@ -106,8 +106,8 @@ pip install -r requirements.txt
           - `interval`: `1d` or `1min`, by default `1d`
             > if **`interval == 1min`**, `qlib_data_1d_dir` cannot be `None`
           - `region`: `CN` or `US` or `IN`, by default `CN`
-          - `date_field_name`: column *name* identifying time in csv files, by default `date`
-          - `symbol_field_name`: column *name* identifying symbol in csv files, by default `symbol`
+          - `date_field_name`: csv文件中标识时间的列名，默认值为`date`
+          - `symbol_field_name`: csv文件中标识股票代码的列名，默认值为`symbol`
           - `end_date`: if not `None`, normalize the last date saved (*including end_date*); if `None`, it will ignore this parameter; by default `None`
           - `qlib_data_1d_dir`: qlib directory(1d data)
             ```
@@ -134,9 +134,9 @@ pip install -r requirements.txt
         # normalize 1min br
         python collector.py normalize_data --qlib_data_1d_dir ~/.qlib/qlib_data/br_data --source_dir ~/.qlib/stock_data/source/br_data_1min --normalize_dir ~/.qlib/stock_data/source/br_1min_nor --region BR --interval 1min
         ```
-  3. dump data: `python scripts/dump_bin.py dump_all`
+  3. 生成二进制文件：`python scripts/dump_bin.py dump_all`
     
-     This will convert the normalized csv in `feature` directory as numpy array and store the normalized data one file per column and one symbol per directory. 
+此步骤将把 `feature` 目录中标准化后的 csv 文件转换为 numpy 数组，并按列和股票代码分别存储归一化数据（每列一个文件，每个股票代码一个目录）。 
     
      - parameters:
        - `csv_path`: stock data path or directory, **normalize result(normalize_dir)**
@@ -144,9 +144,9 @@ pip install -r requirements.txt
        - `freq`: transaction frequency, by default `day`
          > `freq_map = {1d:day, 1mih: 1min}`
        - `max_workers`: number of threads, by default *16*
-       - `include_fields`: dump fields, by default `""`
-       - `exclude_fields`: fields not dumped, by default `"""
-         > dump_fields = `include_fields if include_fields else set(symbol_df.columns) - set(exclude_fields) exclude_fields else symbol_df.columns`
+       - `include_fields`: 需转储的字段，默认值为`""`
+       - `exclude_fields`: 不需转储的字段，默认值为`""`
+         > dump_fields = `include_fields if include_fields else set(symbol_df.columns) - set(exclude_fields) exclude_fields else symbol_df.columns`（如果指定include_fields则使用，否则使用所有列减去exclude_fields）
        - `symbol_field_name`: column *name* identifying symbol in csv files, by default `symbol`
        - `date_field_name`: column *name* identifying time in csv files, by default `date`
      - examples:
@@ -158,21 +158,21 @@ pip install -r requirements.txt
        ```
 
 ### Automatic update of daily frequency data(from yahoo finance)
-  > It is recommended that users update the data manually once (--trading_date 2021-05-25) and then set it to update automatically.
+  > 建议用户先手动更新一次数据（--trading_date 2021-05-25），然后再设置为自动更新。
   >
-  > **NOTE**: Users can't incrementally  update data based on the offline data provided by Qlib(some fields are removed to reduce the data size). Users should use [yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) to download Yahoo data from scratch and then incrementally update it.
+  > **注意**：用户无法基于 Qlib 提供的离线数据进行增量更新（为减小数据体积，部分字段已被移除）。用户应使用 [yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) 从头开始下载 Yahoo 数据，然后进行增量更新。
   > 
 
-  * Automatic update of data to the "qlib" directory each trading day(Linux)
-      * use *crontab*: `crontab -e`
-      * set up timed tasks:
+   * 每个交易日自动更新数据到 "qlib" 目录（Linux）
+      * 使用 *crontab*：`crontab -e`
+      * 设置定时任务：
 
         ```
         * * * * 1-5 python <script path> update_data_to_bin --qlib_data_1d_dir <user data dir>
         ```
         * **script path**: *scripts/data_collector/yahoo/collector.py*
 
-  * Manual update of data
+  * 手动更新数据
       ```
       python scripts/data_collector/yahoo/collector.py update_data_to_bin --qlib_data_1d_dir <user data dir> --end_date <end date>
       ```
@@ -180,7 +180,7 @@ pip install -r requirements.txt
       * `check_data_length`: check the number of rows per *symbol*, by default `None`
         > if `len(symbol_df) < check_data_length`, it will be re-fetched, with the number of re-fetches coming from the `max_collector_count` parameter
 
-  * `scripts/data_collector/yahoo/collector.py update_data_to_bin` parameters:
+  * `scripts/data_collector/yahoo/collector.py update_data_to_bin` 参数说明：
       * `source_dir`: The directory where the raw data collected from the Internet is saved, default "Path(__file__).parent/source"
       * `normalize_dir`: Directory for normalize data, default "Path(__file__).parent/normalize"
       * `qlib_data_1d_dir`: the qlib data to be updated for yahoo, usually from: [download qlib data](https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data)

@@ -18,6 +18,7 @@ from data_collector.utils import generate_minutes_calendar_from_daily
 
 
 def get_date_range(data_1min_dir: Path, max_workers: int = 16, date_field_name: str = "date"):
+    """获取日期范围"""
     csv_files = list(data_1min_dir.glob("*.csv"))
     min_date = None
     max_date = None
@@ -36,6 +37,7 @@ def get_date_range(data_1min_dir: Path, max_workers: int = 16, date_field_name: 
 
 
 def get_symbols(data_1min_dir: Path):
+    """获取标的代码"""
     return list(map(lambda x: x.name[:-4].upper(), data_1min_dir.glob("*.csv")))
 
 
@@ -46,20 +48,20 @@ def fill_1min_using_1d(
     date_field_name: str = "date",
     symbol_field_name: str = "symbol",
 ):
-    """Use 1d data to fill in the missing symbols relative to 1min
+    """使用日线数据填充1分钟数据中缺失的标的
 
-    Parameters
+    参数说明
     ----------
     data_1min_dir: str
-        1min data dir
+        1分钟数据目录
     qlib_data_1d_dir: str
-        1d qlib data(bin data) dir, from: https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format
+        日线QLib数据（二进制数据）目录，来源：https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format
     max_workers: int
-        ThreadPoolExecutor(max_workers), by default 16
+        线程池执行器（max_workers），默认16
     date_field_name: str
-        date field name, by default date
+        日期字段名称，默认date
     symbol_field_name: str
-        symbol field name, by default symbol
+        标的代码字段名称，默认symbol
 
     """
     data_1min_dir = Path(data_1min_dir).expanduser().resolve()

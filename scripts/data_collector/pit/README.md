@@ -1,38 +1,38 @@
-# Collect Point-in-Time Data
+# 收集时点数据
 
-> *Please pay **ATTENTION** that the data is collected from [baostock](http://baostock.com) and the data might not be perfect. We recommend users to prepare their own data if they have high-quality dataset. For more information, users can refer to the [related document](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*
+> *请注意，本数据来源于[baostock](http://baostock.com)，数据可能并不完美。如果用户拥有高质量数据集，建议自行准备数据。更多信息请参考[相关文档](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*
 
-## Requirements
+## 需求说明
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Collector Data
+## 数据收集
 
 
-### Download Quarterly CN Data
+### 下载季度中国市场数据
 
 ```bash
 cd qlib/scripts/data_collector/pit/
-# download from baostock.com
+# 从baostock.com下载数据
 python collector.py download_data --source_dir ~/.qlib/stock_data/source/pit --start 2000-01-01 --end 2020-01-01 --interval quarterly
 ```
 
-Downloading all data from the stock is very time-consuming. If you just want to run a quick test on a few stocks,  you can run the command below
+下载所有股票数据非常耗时。如果您只想对少数几只股票进行快速测试，可以运行以下命令
 ```bash
 python collector.py download_data --source_dir ~/.qlib/stock_data/source/pit --start 2000-01-01 --end 2020-01-01 --interval quarterly --symbol_regex "^(600519|000725).*"
 ```
 
 
-### Normalize Data
+### 数据标准化
 ```bash
 python collector.py normalize_data --interval quarterly --source_dir ~/.qlib/stock_data/source/pit --normalize_dir ~/.qlib/stock_data/source/pit_normalized
 ```
 
 
 
-### Dump Data into PIT Format
+### 将数据转储为PIT格式
 
 ```bash
 cd qlib/scripts

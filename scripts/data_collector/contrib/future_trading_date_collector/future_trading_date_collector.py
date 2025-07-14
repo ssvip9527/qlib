@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 
-# get data from baostock
+# 从baostock获取数据
 import baostock as bs
 
 CUR_DIR = Path(__file__).resolve().parent
@@ -46,14 +46,14 @@ def generate_qlib_calendar(date_list: List[str], freq: str) -> List[str]:
 
 
 def future_calendar_collector(qlib_dir: [str, Path], freq: str = "day"):
-    """get future calendar
+    """获取期货交易日历
 
-    Parameters
+    参数说明
     ----------
     qlib_dir: str or Path
-        qlib data directory
+        qlib数据目录
     freq: str
-        value from ["day", "1min"], by default day
+        取值范围为["day", "1min"], 默认day
     """
     qlib_dir = Path(qlib_dir).expanduser().resolve()
     if not qlib_dir.exists():

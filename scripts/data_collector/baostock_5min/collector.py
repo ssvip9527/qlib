@@ -37,28 +37,27 @@ class BaostockCollectorHS3005min(BaseCollector):
         limit_nums: int = None,
     ):
         """
-
-        Parameters
-        ----------
-        save_dir: str
-            stock save dir
-        max_workers: int
-            workers, default 4
-        max_collector_count: int
-            default 2
-        delay: float
-            time.sleep(delay), default 0
-        interval: str
-            freq, value from [5min], default 5min
-        start: str
-            start datetime, default None
-        end: str
-            end datetime, default None
-        check_data_length: int
-            check data length, by default None
-        limit_nums: int
-            using for debug, by default None
-        """
+    参数说明
+    ----------
+    save_dir: str
+        股票数据保存目录
+    max_workers: int
+        工作线程数量，默认4
+    max_collector_count: int
+        默认2
+    delay: float
+        延迟时间（秒），默认0
+    interval: str
+        时间频率，取值为[5min]，默认5min
+    start: str
+        开始时间，默认None
+    end: str
+        结束时间，默认None
+    check_data_length: int
+        检查数据长度，默认None
+    limit_nums: int
+        用于调试，默认None
+    """
         bs.login()
         super(BaostockCollectorHS3005min, self).__init__(
             save_dir=save_dir,
@@ -154,15 +153,14 @@ class BaostockNormalizeHS3005min(BaseNormalize):
         self, qlib_data_1d_dir: [str, Path], date_field_name: str = "date", symbol_field_name: str = "symbol", **kwargs
     ):
         """
-
-        Parameters
+        参数说明
         ----------
         qlib_data_1d_dir: str, Path
-            the qlib data to be updated for yahoo, usually from: Normalised to 5min using local 1d data
+            qlib日线数据目录，用于 Yahoo 数据更新，通常来自：使用本地日线数据归一化到5分钟数据
         date_field_name: str
-            date field name, default is date
+            日期字段名称，默认为date
         symbol_field_name: str
-            symbol field name, default is symbol
+            标的代码字段名称，默认为symbol
         """
         bs.login()
         qlib.init(provider_uri=qlib_data_1d_dir)
@@ -253,7 +251,7 @@ class BaostockNormalizeHS3005min(BaseNormalize):
 class Run(BaseRun):
     def __init__(self, source_dir=None, normalize_dir=None, max_workers=1, interval="5min", region="HS300"):
         """
-        Changed the default value of: scripts.data_collector.base.BaseRun.
+        修改了基类scripts.data_collector.base.BaseRun的默认值。
         """
         super().__init__(source_dir, normalize_dir, max_workers, interval)
         self.region = region
@@ -279,16 +277,16 @@ class Run(BaseRun):
         check_data_length=None,
         limit_nums=None,
     ):
-        """download data from Baostock
+        """从Baostock下载数据
 
-        Notes
+        注意事项
         -----
-            check_data_length, example:
-                hs300 5min, a week: 4 * 60 * 5
+            check_data_length参数示例：
+                沪深300 5分钟数据，一周约有：4 * 60 * 5 条记录
 
-        Examples
+        使用示例
         ---------
-            # get hs300 5min data
+            # 获取沪深300 5分钟数据
             $ python collector.py download_data --source_dir ~/.qlib/stock_data/source/hs300_5min_original --start 2022-01-01 --end 2022-01-30 --interval 5min --region HS300
         """
         super(Run, self).download_data(max_collector_count, delay, start, end, check_data_length, limit_nums)
@@ -300,18 +298,18 @@ class Run(BaseRun):
         end_date: str = None,
         qlib_data_1d_dir: str = None,
     ):
-        """normalize data
+        """归一化数据
 
-        Attention
+        注意事项
         ---------
-        qlib_data_1d_dir cannot be None, normalize 5min needs to use 1d data;
+        qlib_data_1d_dir参数不能为空，归一化5分钟数据需要使用日线数据；
 
-            qlib_data_1d can be obtained like this:
+            qlib日线数据可以通过以下方式获取：
                 $ python scripts/get_data.py qlib_data --target_dir ~/.qlib/qlib_data/cn_data --interval 1d --region cn --version v3
-            or:
-                download 1d data, reference: https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
+            或者：
+                下载日线数据，参考：https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
 
-        Examples
+        使用示例
         ---------
             $ python collector.py normalize_data --qlib_data_1d_dir ~/.qlib/qlib_data/cn_data --source_dir ~/.qlib/stock_data/source/hs300_5min_original --normalize_dir ~/.qlib/stock_data/source/hs300_5min_nor --region HS300 --interval 5min
         """

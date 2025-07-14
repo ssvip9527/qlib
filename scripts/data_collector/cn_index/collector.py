@@ -50,11 +50,11 @@ def retry_request(url: str, method: str = "get", exclude_status: List = None):
 class CSIIndex(IndexBase):
     @property
     def calendar_list(self) -> List[pd.Timestamp]:
-        """get history trading date
+        """获取历史交易日历
 
-        Returns
+        返回值
         -------
-            calendar list
+            交易日历列表
         """
         _calendar = getattr(self, "_calendar_list", None)
         if not _calendar:
@@ -74,9 +74,9 @@ class CSIIndex(IndexBase):
     @abc.abstractmethod
     def bench_start_date(self) -> pd.Timestamp:
         """
-        Returns
+        返回值
         -------
-            index start date
+            指数起始日期
         """
         raise NotImplementedError("rewrite bench_start_date")
 
@@ -84,31 +84,31 @@ class CSIIndex(IndexBase):
     @abc.abstractmethod
     def index_code(self) -> str:
         """
-        Returns
+        返回值
         -------
-            index code
+            指数代码
         """
         raise NotImplementedError("rewrite index_code")
 
     @property
     def html_table_index(self) -> int:
-        """Which table of changes in html
+        """HTML中变更信息所在的表格索引
 
-        CSI300: 0
-        CSI100: 1
+        沪深300指数(CSI300): 0
+        中证100指数(CSI100): 1
         :return:
         """
         raise NotImplementedError("rewrite html_table_index")
 
     def format_datetime(self, inst_df: pd.DataFrame) -> pd.DataFrame:
-        """formatting the datetime in an instrument
+        """格式化标的中的日期时间
 
-        Parameters
+        参数
         ----------
         inst_df: pd.DataFrame
             inst_df.columns = [self.SYMBOL_FIELD_NAME, self.START_DATE_FIELD, self.END_DATE_FIELD]
 
-        Returns
+        返回值
         -------
 
         """
@@ -122,18 +122,18 @@ class CSIIndex(IndexBase):
         return inst_df
 
     def get_changes(self) -> pd.DataFrame:
-        """get companies changes
+        """获取成分股变更信息
 
-        Returns
+        返回值
         -------
             pd.DataFrame:
                 symbol      date        type
                 SH600000  2019-11-11    add
                 SH600000  2020-11-10    remove
-            dtypes:
+            数据类型:
                 symbol: str
                 date: pd.Timestamp
-                type: str, value from ["add", "remove"]
+                type: str, 取值为["add", "remove"]
         """
         logger.info("get companies changes......")
         res = []
@@ -148,14 +148,14 @@ class CSIIndex(IndexBase):
     def normalize_symbol(symbol: str) -> str:
         """
 
-        Parameters
+        参数
         ----------
         symbol: str
-            symbol
+            标的代码
 
-        Returns
+        返回值
         -------
-            symbol
+            格式化后的标的代码
         """
         symbol = f"{int(symbol):06}"
         return f"SH{symbol}" if symbol.startswith("60") or symbol.startswith("688") else f"SZ{symbol}"
@@ -211,29 +211,29 @@ class CSIIndex(IndexBase):
         return df
 
     def _read_change_from_url(self, url: str) -> pd.DataFrame:
-        """read change from url
-        The parameter url is from the _get_change_notices_url method.
-        Determine the stock add_date/remove_date based on the title.
-        The response contains three cases:
-            1.Only excel_url(extract data from excel_url)
-            2.Both the excel_url and the body text(try to extract data from excel_url first, and then try to extract data from body text)
-            3.Only body text(extract data from body text)
+        """从URL读取变更信息
+        参数url来自_get_change_notices_url方法。
+        根据标题确定股票的添加日期/移除日期。
+        响应包含三种情况：
+            1.仅包含excel_url（从excel_url提取数据）
+            2.同时包含excel_url和正文文本（首先尝试从excel_url提取数据，然后尝试从正文文本提取数据）
+            3.仅包含正文文本（从正文文本提取数据）
 
-        Parameters
+        参数
         ----------
         url : str
-            change url
+            变更信息URL
 
-        Returns
+        返回值
         -------
             pd.DataFrame:
                 symbol      date        type
                 SH600000  2019-11-11    add
                 SH600000  2020-11-10    remove
-            dtypes:
+            数据类型:
                 symbol: str
                 date: pd.Timestamp
-                type: str, value from ["add", "remove"]
+                type: str, 取值为["add", "remove"]
         """
         resp = retry_request(url).json()["data"]
         title = resp["title"]
@@ -281,11 +281,11 @@ class CSIIndex(IndexBase):
         return df
 
     def _get_change_notices_url(self) -> Iterable[str]:
-        """get change notices url
+        """获取变更公告URL
 
-        Returns
+        返回值
         -------
-            [url1, url2]
+            [url1, url2] - 变更公告URL列表
         """
         page_num = 1
         page_size = 5
