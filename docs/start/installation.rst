@@ -1,13 +1,13 @@
 .. _installation:
 
 ============
-Installation
+安装
 ============
 
 .. currentmodule:: qlib
 
 
-``Qlib`` Installation
+``Qlib`` 安装
 =====================
 .. note::
 

@@ -318,34 +318,34 @@ rm -f qlib_bin.tar.gz
 
 ## Docker 镜像
 1. 从 Docker Hub 仓库拉取镜像
-    ```bash
-    docker pull pyqlib/qlib_image_stable:stable
-    ```
+```bash
+docker pull pyqlib/qlib_image_stable:stable
+```
 2. 启动新的 Docker 容器
-    ```bash
-    docker run -it --name <容器名> -v <本地挂载目录>:/app qlib_image_stable
-    ```
+```bash
+docker run -it --name <容器名> -v <本地挂载目录>:/app qlib_image_stable
+```
 3. 此时你已进入 docker 环境，可以运行 qlib 脚本。例如：
     ```bash
-    >>> python scripts/get_data.py qlib_data --name qlib_data_simple --target_dir ~/.qlib/qlib_data/cn_data --interval 1d --region cn
-    >>> python qlib/workflow/cli.py examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
-    ```
+>>> python scripts/get_data.py qlib_data --name qlib_data_simple --target_dir ~/.qlib/qlib_data/cn_data --interval 1d --region cn
+>>> python qlib/workflow/cli.py examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
+```
 4. 退出容器
-    ```bash
-    >>> exit
-    ```
+```bash
+>>> exit
+```
 5. 重启容器
-    ```bash
-    docker start -i -a <容器名>
-    ```
+```bash
+docker start -i -a <容器名>
+```
 6. 停止容器
     ```bash
-    docker stop <容器名>
-    ```
+docker stop <容器名>
+```
 7. 删除容器
-    ```bash
-    docker rm <容器名>
-    ```
+```bash
+docker rm <容器名>
+```
 8. 更多信息请参考[文档](https://qlib.readthedocs.io/en/latest/developer/how_to_build_image.html)。
 
 ## 自动化量化研究工作流

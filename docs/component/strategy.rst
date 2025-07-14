@@ -1,20 +1,20 @@
 .. _strategy:
 
 ========================================
-Portfolio Strategy: Portfolio Management
+投资组合策略：投资组合管理
 ========================================
 .. currentmodule:: qlib
 
-Introduction
+简介
 ============
 
-``Portfolio Strategy`` is designed to adopt different portfolio strategies, which means that users can adopt different algorithms to generate investment portfolios based on the prediction scores of the ``Forecast Model``. Users can use the ``Portfolio Strategy`` in an automatic workflow by ``Workflow`` module, please refer to `Workflow: Workflow Management <workflow.html>`_.
+``投资组合策略``旨在采用不同的投资组合策略，即用户可以基于``预测模型``的预测分数，采用不同算法生成投资组合。用户可以通过``工作流``模块在自动化工作流中使用``投资组合策略``，详情请参考`工作流：工作流管理 <workflow.html>`_。
 
-Because the components in ``Qlib`` are designed in a loosely-coupled way, ``Portfolio Strategy`` can be used as an independent module also.
+由于``Qlib``中的组件采用松耦合设计，``投资组合策略``也可以作为独立模块使用。
 
-``Qlib`` provides several implemented portfolio strategies. Also, ``Qlib`` supports custom strategy, users can customize strategies according to their own requirements.
+``Qlib``提供了多种已实现的投资组合策略。同时，``Qlib``支持自定义策略，用户可以根据自身需求定制策略。
 
-After users specifying the models(forecasting signals) and strategies, running backtest will help users to check the performance of a custom model(forecasting signals)/strategy.
+用户指定模型（预测信号）和策略后，运行回测可以帮助用户检查自定义模型（预测信号）/策略的性能。
 
 Base Class & Interface
 ======================
@@ -262,10 +262,10 @@ Running backtest
         pprint(analysis["excess_return_with_cost"])
 
 
-Result
+结果
 ------
 
-The backtest results are in the following form:
+回测结果格式如下：
 
 .. code-block:: python
 
@@ -282,31 +282,31 @@ The backtest results are in the following form:
                                max_drawdown      -0.075024
 
 
-- `excess_return_without_cost`
-    - `mean`
-        Mean value of the `CAR` (cumulative abnormal return) without cost
-    - `std`
-        The `Standard Deviation` of `CAR` (cumulative abnormal return) without cost.
-    - `annualized_return`
-        The `Annualized Rate` of `CAR` (cumulative abnormal return) without cost.
-    - `information_ratio`
-        The `Information Ratio` without cost. please refer to `Information Ratio – IR <https://www.investopedia.com/terms/i/informationratio.asp>`_.
-    - `max_drawdown`
-        The `Maximum Drawdown` of `CAR` (cumulative abnormal return) without cost, please refer to `Maximum Drawdown (MDD) <https://www.investopedia.com/terms/m/maximum-drawdown-mdd.asp>`_.
+- `excess_return_without_cost`（无成本超额收益）
+    - `mean`（均值）
+        无成本`CAR`（累计超额收益）的平均值
+    - `std`（标准差）
+        无成本`CAR`（累计超额收益）的标准差
+    - `annualized_return`（年化收益率）
+        无成本`CAR`（累计超额收益）的年化收益率
+    - `information_ratio`（信息比率）
+        无成本信息比率，详情请参考`Information Ratio – IR <https://www.investopedia.com/terms/i/informationratio.asp>`_。
+    - `max_drawdown`（最大回撤）
+        无成本`CAR`（累计超额收益）的最大回撤，详情请参考`Maximum Drawdown (MDD) <https://www.investopedia.com/terms/m/maximum-drawdown-mdd.asp>`_。
 
-- `excess_return_with_cost`
-    - `mean`
-        Mean value of the `CAR` (cumulative abnormal return) series with cost
-    - `std`
-        The `Standard Deviation` of `CAR` (cumulative abnormal return) series with cost.
-    - `annualized_return`
-        The `Annualized Rate` of `CAR` (cumulative abnormal return) with cost.
-    - `information_ratio`
-        The `Information Ratio` with cost. please refer to `Information Ratio – IR <https://www.investopedia.com/terms/i/informationratio.asp>`_.
-    - `max_drawdown`
-        The `Maximum Drawdown` of `CAR` (cumulative abnormal return) with cost, please refer to `Maximum Drawdown (MDD) <https://www.investopedia.com/terms/m/maximum-drawdown-mdd.asp>`_.
+- `excess_return_with_cost`（有成本超额收益）
+    - `mean`（均值）
+        有成本`CAR`（累计超额收益）序列的平均值
+    - `std`（标准差）
+        有成本`CAR`（累计超额收益）序列的标准差
+    - `annualized_return`（年化收益率）
+        有成本`CAR`（累计超额收益）的年化收益率
+    - `information_ratio`（信息比率）
+        有成本信息比率，详情请参考`Information Ratio – IR <https://www.investopedia.com/terms/i/informationratio.asp>`_。
+    - `max_drawdown`（最大回撤）
+        有成本`CAR`（累计超额收益）的最大回撤，详情请参考`Maximum Drawdown (MDD) <https://www.investopedia.com/terms/m/maximum-drawdown-mdd.asp>`_。
 
 
-Reference
+参考
 =========
-To know more about the `prediction score` `pred_score` output by ``Forecast Model``, please refer to `Forecast Model: Model Training & Prediction <model.html>`_.
+要了解更多关于``预测模型``输出的`prediction score`（预测分数）`pred_score`的信息，请参考`预测模型：模型训练与预测 <model.html>`_。

@@ -1,13 +1,13 @@
 .. _initialization:
 
 ===================
-Qlib Initialization
+Qlib初始化
 ===================
 
 .. currentmodule:: qlib
 
 
-Initialization
+初始化
 ==============
 
 请按照以下步骤初始化``Qlib``。
