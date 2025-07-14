@@ -1,25 +1,24 @@
 .. _getdata:
 
 ==============
-Data Retrieval
+数据获取
 ==============
 
 .. currentmodule:: qlib
 
-Introduction
+简介
 ============
 
-Users can get stock data with ``Qlib``. The following examples demonstrate the basic user interface.
+用户可以使用 ``Qlib`` 获取股票数据。以下示例演示了基本的用户接口。
 
-Examples
+示例
 ========
 
+``QLib`` 初始化：
 
-``QLib`` Initialization:
+.. note:: 为了获取数据，用户需要先用 `qlib.init` 初始化 ``Qlib``。请参考 `初始化 <initialization.html>`_。
 
-.. note:: In order to get the data, users need to initialize ``Qlib`` with `qlib.init` first. Please refer to `initialization <initialization.html>`_.
-
-If users followed steps in `initialization <initialization.html>`_ and downloaded the data, they should use the following code to initialize qlib
+如果用户已按照 `初始化 <initialization.html>`_ 的步骤下载了数据，应使用以下代码初始化 qlib：
 
 .. code-block:: python
 
@@ -27,7 +26,7 @@ If users followed steps in `initialization <initialization.html>`_ and downloade
     >> qlib.init(provider_uri='~/.qlib/qlib_data/cn_data')
 
 
-Load trading calendar with given time range and frequency:
+加载指定时间范围和频率的交易日历：
 
 .. code-block:: python
 
@@ -35,7 +34,7 @@ Load trading calendar with given time range and frequency:
    >> D.calendar(start_time='2010-01-01', end_time='2017-12-31', freq='day')[:2]
    [Timestamp('2010-01-04 00:00:00'), Timestamp('2010-01-05 00:00:00')]
 
-Parse a given market name into a stock pool config:
+将给定市场名称解析为股票池配置：
 
 .. code-block:: python
 
@@ -43,7 +42,7 @@ Parse a given market name into a stock pool config:
    >> D.instruments(market='all')
    {'market': 'all', 'filter_pipe': []}
 
-Load instruments of certain stock pool in the given time range:
+加载指定时间范围内某股票池的成分股：
 
 .. code-block:: python
 
@@ -52,7 +51,7 @@ Load instruments of certain stock pool in the given time range:
    >> D.list_instruments(instruments=instruments, start_time='2010-01-01', end_time='2017-12-31', as_list=True)[:6]
    ['SH600036', 'SH600110', 'SH600087', 'SH600900', 'SH600089', 'SZ000912']
 
-Load dynamic instruments from a base market according to a name filter
+根据名称过滤器从基础市场动态加载成分股：
 
 .. code-block:: python
 
@@ -63,7 +62,7 @@ Load dynamic instruments from a base market according to a name filter
    >> D.list_instruments(instruments=instruments, start_time='2015-01-01', end_time='2016-02-15', as_list=True)
    ['SH600655', 'SH601555']
 
-Load dynamic instruments from a base market according to an expression filter
+根据表达式过滤器从基础市场动态加载成分股：
 
 .. code-block:: python
 
@@ -74,9 +73,9 @@ Load dynamic instruments from a base market according to an expression filter
    >> D.list_instruments(instruments=instruments, start_time='2015-01-01', end_time='2016-02-15', as_list=True)
    ['SZ000651', 'SZ000002', 'SH600655', 'SH600570']
 
-For more details about filter, please refer `Filter API <../component/data.html>`_.
+更多关于过滤器的细节，请参考 `过滤器 API <../component/data.html>`_。
 
-Load features of certain instruments in a given time range:
+加载指定时间范围内某些股票的特征：
 
 .. code-block:: python
 
@@ -92,9 +91,9 @@ Load features of certain instruments in a given time range:
    ...             2010-01-07  83.788803  20813402.0       85.713585        85.645322    3.030487
    ...             2010-01-08  84.730675  16044853.0       83.788803        84.744354    2.047623'
 
-Load features of certain stock pool in a given time range:
+加载指定时间范围内某股票池的特征：
 
-.. note:: With cache enabled, the qlib data server will cache data all the time for the requested stock pool and fields, it may take longer to process the request for the first time than that without cache. But after the first time, requests with the same stock pool and fields will hit the cache and be processed faster even the requested time period changes.
+.. note:: 启用缓存后，qlib 数据服务器会一直为请求的股票池和字段缓存数据，首次请求可能比未启用缓存时更慢。但之后相同股票池和字段的请求会命中缓存，即使请求的时间区间变化也会更快。
 
 .. code-block:: python
 
@@ -113,14 +112,13 @@ Load features of certain stock pool in a given time range:
    ...             2010-01-12  2788.688232  164587.937500     2712.982422      2704.676758  128.413818
    ...             2010-01-13  2790.604004  145460.453125     2788.688232      2764.091553  128.413818'
 
+更多关于特征的细节，请参考 `特征 API <../component/data.html>`_。
 
-For more details about features, please refer `Feature API <../component/data.html>`_.
-
-.. note:: When calling `D.features()` at the client, use parameter `disk_cache=0` to skip dataset cache, use `disk_cache=1` to generate and use dataset cache. In addition, when calling at the server, users can use `disk_cache=2` to update the dataset cache.
+.. note:: 在客户端调用 `D.features()` 时，使用参数 `disk_cache=0` 可跳过数据集缓存，使用 `disk_cache=1` 可生成并使用数据集缓存。此外，在服务器端调用时，用户可用 `disk_cache=2` 更新数据集缓存。
 
 
-When you are building complicated expressions, implementing all the expressions in a single string may not be easy.
-For example, it looks quite long and complicated:
+当你构建复杂表达式时，将所有表达式写在一个字符串里可能不太方便。
+例如，下面的表达式看起来很长很复杂：
 
 .. code-block:: python
 
@@ -128,9 +126,8 @@ For example, it looks quite long and complicated:
    >> data = D.features(["sh600519"], ["(($high / $close) + ($open / $close)) * (($high / $close) + ($open / $close)) / (($high / $close) + ($open / $close))"], start_time="20200101")
 
 
-But using string is not the only way to implement the expression. You can also implement expression by code.
-Here is an exmaple which does the same thing as above examples.
-
+但字符串并不是实现表达式的唯一方式。你也可以用代码实现表达式。
+下面是一个与上例等价的代码实现：
 
 .. code-block:: python
 
@@ -146,4 +143,4 @@ Here is an exmaple which does the same thing as above examples.
 
 API
 ===
-To know more about how to use the Data, go to API Reference: `Data API <../reference/api.html#data>`_
+如需了解更多关于数据的使用方法，请参见 API 参考：`数据 API <../reference/api.html#data>`_
