@@ -17,7 +17,7 @@
 在``Qlib``中构建公式化Alpha因子
 =====================================
 
-In ``Qlib``, users can easily build formulaic alphas.
+在``Qlib``中，用户可以轻松构建公式化alpha因子。
 
 示例
 -------

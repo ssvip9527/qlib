@@ -1,40 +1,40 @@
 .. _api:
 
 =============
-API Reference
+API 参考
 =============
 
 
 
-Here you can find all ``Qlib`` interfaces.
+在这里你可以找到所有 ``Qlib`` 的接口。
 
 
-Data
+数据
 ====
 
-Provider
+数据提供器
 --------
 
 .. automodule:: qlib.data.data
     :members:
 
-Filter
+过滤器
 ------
 
 .. automodule:: qlib.data.filter
     :members:
 
-Class
+类
 -----
 .. automodule:: qlib.data.base
     :members:
 
-Operator
+操作符
 --------
 .. automodule:: qlib.data.ops
     :members:
 
-Cache
+缓存
 -----
 .. autoclass:: qlib.data.cache.MemCacheUnit
     :members:
@@ -55,7 +55,7 @@ Cache
     :members:
 
 
-Storage
+存储
 -------
 .. autoclass:: qlib.data.storage.storage.BaseStorage
     :members:
@@ -82,52 +82,52 @@ Storage
     :members:
 
 
-Dataset
+数据集
 -------
 
-Dataset Class
+数据集类
 ~~~~~~~~~~~~~
 .. automodule:: qlib.data.dataset.__init__
     :members:
 
-Data Loader
+数据加载器
 ~~~~~~~~~~~
 .. automodule:: qlib.data.dataset.loader
     :members:
 
-Data Handler
+数据处理器
 ~~~~~~~~~~~~
 .. automodule:: qlib.data.dataset.handler
     :members:
 
-Processor
+处理器
 ~~~~~~~~~
 .. automodule:: qlib.data.dataset.processor
     :members:
 
 
-Contrib
+扩展
 =======
 
-Model
+模型
 -----
 .. automodule:: qlib.model.base
     :members:
 
-Strategy
+策略
 --------
 
 .. automodule:: qlib.contrib.strategy
     :members:
 
-Evaluate
+评估
 --------
 
 .. automodule:: qlib.contrib.evaluate
     :members:
 
 
-Report
+报告
 ------
 
 .. automodule:: qlib.contrib.report.analysis_position.report
@@ -159,133 +159,133 @@ Report
     :members:
 
 
-Workflow
+工作流
 ========
 
 
-Experiment Manager
+实验管理器
 ------------------
 .. autoclass:: qlib.workflow.expm.ExpManager
     :members:
 
-Experiment
+实验
 ----------
 .. autoclass:: qlib.workflow.exp.Experiment
     :members:
 
-Recorder
+记录器
 --------
 .. autoclass:: qlib.workflow.recorder.Recorder
     :members:
 
-Record Template
+记录模板
 ---------------
 .. automodule:: qlib.workflow.record_temp
     :members:
 
-Task Management
+任务管理
 ===============
 
 
-TaskGen
+任务生成器
 -------
 .. automodule:: qlib.workflow.task.gen
     :members:
 
-TaskManager
+任务管理器
 -----------
 .. automodule:: qlib.workflow.task.manage
     :members:
 
-Trainer
+训练器
 -------
 .. automodule:: qlib.model.trainer
     :members:
 
-Collector
+收集器
 ---------
 .. automodule:: qlib.workflow.task.collect
     :members:
 
-Group
+分组
 -----
 .. automodule:: qlib.model.ens.group
     :members:
 
-Ensemble
+集成
 --------
 .. automodule:: qlib.model.ens.ensemble
     :members:
 
-Utils
+工具
 -----
 .. automodule:: qlib.workflow.task.utils
     :members:
 
 
-Online Serving
+在线服务
 ==============
 
 
-Online Manager
+在线管理器
 --------------
 .. automodule:: qlib.workflow.online.manager
     :members:
 
-Online Strategy
+在线策略
 ---------------
 .. automodule:: qlib.workflow.online.strategy
     :members:
 
-Online Tool
+在线工具
 -----------
 .. automodule:: qlib.workflow.online.utils
     :members:
 
 
-RecordUpdater
+记录更新器
 -------------
 .. automodule:: qlib.workflow.online.update
     :members:
 
 
-Utils
+工具
 =====
 
-Serializable
+可序列化
 ------------
 
 .. automodule:: qlib.utils.serial
     :members:
 
-RL
+强化学习
 ==============
 
-Base Component
+基础组件
 --------------
 .. automodule:: qlib.rl
     :members:
     :imported-members:
 
-Strategy
+策略
 --------
 .. automodule:: qlib.rl.strategy
     :members:
     :imported-members:
 
-Trainer
+训练器
 -------
 .. automodule:: qlib.rl.trainer
     :members:
     :imported-members:
 
-Order Execution
+订单执行
 ---------------
 .. automodule:: qlib.rl.order_execution
     :members:
     :imported-members:
 
-Utils
+工具
 ---------------
 .. automodule:: qlib.rl.utils
     :members:

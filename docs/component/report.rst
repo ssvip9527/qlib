@@ -39,11 +39,10 @@ Qlib中所有累积收益指标（如收益率、最大回撤）均通过求和�
     有关更多详细信息，请参考函数文档：类似 ``help(qcr.analysis_position.report_graph)`` 的用法
 
 
-
-Usage & Example
+用法与示例
 ===============
 
-Usage of `analysis_position.report`
+`analysis_position.report` 的用法
 -----------------------------------
 
 API
@@ -53,7 +52,7 @@ API
     :members:
     :noindex:
 
-Graphical Result
+图形化结果
 ~~~~~~~~~~~~~~~~
 
 .. note::
@@ -86,7 +85,7 @@ Graphical Result
 .. image:: ../_static/img/analysis/report.png
 
 
-Usage of `analysis_position.score_ic`
+`analysis_position.score_ic` 的用法
 -------------------------------------
 
 API
@@ -97,7 +96,7 @@ API
     :noindex:
 
 
-Graphical Result
+图形化结果
 ~~~~~~~~~~~~~~~~
 
 .. note::
@@ -145,7 +144,7 @@ Graphical Result
 .. .. image:: ../_static/img/analysis/cumulative_return_hold.png
 
 
-Usage of `analysis_position.risk_analysis`
+`analysis_position.risk_analysis` 的用法
 ------------------------------------------
 
 API
@@ -156,12 +155,12 @@ API
     :noindex:
 
 
-Graphical Result
+图形化结果
 ~~~~~~~~~~~~~~~~
 
 .. note::
 
-    - general graphics
+    - 通用图表
         - `std`（标准差）
             - `excess_return_without_cost`
                 无成本的累计超额收益（CAR）的标准差。
@@ -265,7 +264,7 @@ Graphical Result
 ..
 ..
 
-Usage of `analysis_model.analysis_model_performance`
+`analysis_model.analysis_model_performance` 的用法
 ----------------------------------------------------
 
 API
@@ -276,28 +275,28 @@ API
     :noindex:
 
 
-Graphical Results
+图形化结果
 ~~~~~~~~~~~~~~~~~
 
 .. note::
 
-    - cumulative return graphics
+    - 累计收益图表
         - `Group1`:
-            The `Cumulative Return` series of stocks group with (`ranking ratio` of label <= 20%)
+            `ranking ratio`（标签排名比率）小于等于20%的股票组的累计收益序列
         - `Group2`:
-            The `Cumulative Return` series of stocks group with (20% < `ranking ratio` of label <= 40%)
+            20% < `ranking ratio`（标签排名比率）小于等于40%的股票组的累计收益序列
         - `Group3`:
-            The `Cumulative Return` series of stocks group with (40% < `ranking ratio` of label <= 60%)
+            40% < `ranking ratio`（标签排名比率）小于等于60%的股票组的累计收益序列
         - `Group4`:
-            The `Cumulative Return` series of stocks group with (60% < `ranking ratio` of label <= 80%)
+            60% < `ranking ratio`（标签排名比率）小于等于80%的股票组的累计收益序列
         - `Group5`:
-            The `Cumulative Return` series of stocks group with (80% < `ranking ratio` of label)
+            `ranking ratio`（标签排名比率）大于80%的股票组的累计收益序列
         - `long-short`:
-            The Difference series between `Cumulative Return` of `Group1` and of `Group5`
+            `Group1`与`Group5`累计收益的差值序列
         - `long-average`
-            The Difference series between `Cumulative Return` of `Group1` and average `Cumulative Return` for all stocks.
+            `Group1`与所有股票累计收益均值的差值序列
 
-        The `ranking ratio` can be formulated as follows.
+        `ranking ratio`（标签排名比率）可表示为：
             .. math::
 
                 ranking\ ratio = \frac{Ascending\ Ranking\ of\ label}{Number\ of\ Stocks\ in\ the\ Portfolio}
@@ -307,7 +306,7 @@ Graphical Results
 
 .. note::
     - long-short/long-average
-        The distribution of long-short/long-average returns on each trading day
+        每个交易日的 long-short/long-average 收益分布
 
 
 .. image:: ../_static/img/analysis/analysis_model_long_short.png
@@ -316,33 +315,33 @@ Graphical Results
 .. TODO: ask xiao yang for detial
 
 .. note::
-    - Information Coefficient
-        - The `Pearson correlation coefficient` series between `labels` and `prediction scores` of stocks in portfolio.
-        - The graphics reports can be used to evaluate the `prediction scores`.
+    - 信息系数（IC）
+        - 投资组合中股票的`labels`与`prediction scores`之间的皮尔逊相关系数序列。
+        - 图形报告可用于评估`prediction scores`。
 
 .. image:: ../_static/img/analysis/analysis_model_IC.png
     :align: center
 
 .. note::
-    - Monthly IC
-        Monthly average of the `Information Coefficient`
+    - 月度IC
+        月度平均信息系数（IC）
 
 .. image:: ../_static/img/analysis/analysis_model_monthly_IC.png
     :align: center
 
 .. note::
     - IC
-        The distribution of the `Information Coefficient` on each trading day.
-    - IC Normal Dist. Q-Q
-        The `Quantile-Quantile Plot` is used for the normal distribution of `Information Coefficient` on each trading day.
+        每个交易日的信息系数（IC）分布。
+    - IC 正态分布 Q-Q 图
+        Q-Q 图用于展示每个交易日信息系数（IC）的正态分布。
 
 .. image:: ../_static/img/analysis/analysis_model_NDQ.png
     :align: center
 
 .. note::
-    - Auto Correlation
-        - The `Pearson correlation coefficient` series between the latest `prediction scores` and the `prediction scores` `lag` days ago of stocks in portfolio on each trading day.
-        - The graphics reports can be used to estimate the turnover rate.
+    - 自相关
+        - 投资组合中股票最新`prediction scores`与`lag`天前`prediction scores`之间的皮尔逊相关系数序列。
+        - 图形报告可用于估算换手率。
 
 
 .. image:: ../_static/img/analysis/analysis_model_auto_correlation.png

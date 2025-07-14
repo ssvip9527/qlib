@@ -7,9 +7,9 @@
 介绍
 ============
 
-``Forecast Model``旨在生成股票的`预测分数`。用户可以通过``qrun``在自动化工作流中使用``Forecast Model``，详情请参考`工作流：工作流管理 <workflow.html>`_。
+``预测模型（Forecast Model）``旨在生成股票的`预测分数`。用户可以通过``qrun``在自动化工作流中使用``预测模型``，详情请参考`工作流：工作流管理 <workflow.html>`_。
 
-由于``Qlib``中的组件采用松耦合设计，``Forecast Model``也可以作为独立模块使用。
+由于``Qlib``中的组件采用松耦合设计，``预测模型``也可以作为独立模块使用。
 
 基类与接口
 ======================
@@ -29,10 +29,10 @@
 示例
 =======
 
-``Qlib``的`Model Zoo`包含``LightGBM``、``MLP``、``LSTM``等模型。这些模型被视为``Forecast Model``的基准。以下步骤展示如何将``LightGBM``作为独立模块运行。
+``Qlib``的`模型库（Model Zoo）`包含``LightGBM``、``MLP``、``LSTM``等模型。这些模型被视为``预测模型``的基准。以下步骤展示如何将``LightGBM``作为独立模块运行。
 
 - 首先使用`qlib.init`初始化``Qlib``，详情请参考`初始化 <../start/initialization.html>`_。
-- Run the following code to get the `prediction score` `pred_score`
+- 运行以下代码以获得 `预测分数` `pred_score`
     .. code-block:: Python
 
         from qlib.contrib.model.gbdt import LGBModel
@@ -86,17 +86,17 @@
             },
         }
 
-        # model initialization
+        # 模型初始化
         model = init_instance_by_config(task["model"])
         dataset = init_instance_by_config(task["dataset"])
 
-        # start exp
+        # 开始实验
         with R.start(experiment_name="workflow"):
-            # train
+            # 训练
             R.log_params(**flatten_dict(task))
             model.fit(dataset)
 
-            # prediction
+            # 预测
             recorder = R.get_recorder()
             sr = SignalRecord(model, dataset, recorder)
             sr.generate()
