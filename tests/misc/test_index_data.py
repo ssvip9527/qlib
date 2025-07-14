@@ -7,55 +7,55 @@ import unittest
 
 class IndexDataTest(unittest.TestCase):
     def test_index_single_data(self):
-        # Auto broadcast for scalar
+        # 自动广播标量值
         sd = idd.SingleData(0, index=["foo", "bar"])
         print(sd)
 
-        # Support empty value
+        # 支持空值
         sd = idd.SingleData()
         print(sd)
 
-        # Bad case: the input is not aligned
+        # 错误案例：输入未对齐
         with self.assertRaises(ValueError):
             idd.SingleData(range(10), index=["foo", "bar"])
 
-        # test indexing
+        # 测试索引功能
         sd = idd.SingleData([1, 2, 3, 4], index=["foo", "bar", "f", "g"])
         print(sd)
         print(sd.iloc[1])  # get second row
 
-        # Bad case: it is not in the index
+        # 错误案例：不在索引中
         with self.assertRaises(KeyError):
             print(sd.loc[1])
 
         print(sd.loc["foo"])
 
-        # Test slicing
+        # 测试切片功能
         print(sd.loc[:"bar"])
 
         print(sd.iloc[:3])
 
     def test_index_multi_data(self):
-        # Auto broadcast for scalar
+        # 自动广播标量值
         sd = idd.MultiData(0, index=["foo", "bar"], columns=["f", "g"])
         print(sd)
 
-        # Bad case: the input is not aligned
+        # 错误案例：输入未对齐
         with self.assertRaises(ValueError):
             idd.MultiData(range(10), index=["foo", "bar"], columns=["f", "g"])
 
-        # test indexing
+        # 测试索引功能
         sd = idd.MultiData(np.arange(4).reshape(2, 2), index=["foo", "bar"], columns=["f", "g"])
         print(sd)
         print(sd.iloc[1])  # get second row
 
-        # Bad case: it is not in the index
+        # 错误案例：不在索引中
         with self.assertRaises(KeyError):
             print(sd.loc[1])
 
         print(sd.loc["foo"])
 
-        # Test slicing
+        # 测试切片功能
 
         print(sd.loc[:"foo"])
 
@@ -75,12 +75,12 @@ class IndexDataTest(unittest.TestCase):
 
         self.assertTrue(np.isnan(sd.loc["bar", "g"]))
 
-        # support slicing
+        # 支持切片
         print(sd.loc[~sd.loc[:, "g"].isna().data.astype(bool)])
 
         print(self.assertTrue(idd.SingleData().index == idd.SingleData().index))
 
-        # empty dict
+        # 空字典
         print(idd.SingleData({}))
         print(idd.SingleData(pd.Series()))
 
@@ -128,13 +128,13 @@ class IndexDataTest(unittest.TestCase):
 
     def test_todo(self):
         pass
-        # here are some examples which do not affect the current system, but it is weird not to support it
+        # 这里有一些不影响当前系统的示例，但不支持它们很奇怪
         # sd2 = idd.SingleData([1, 2, 3, 4], index=["foo", "bar", "f", "g"])
         # 2 * sd2
 
     def test_squeeze(self):
         sd1 = idd.SingleData([1, 2, 3, 4], index=["foo", "bar", "f", "g"])
-        # automatically squeezing
+        # 自动压缩
         self.assertTrue(not isinstance(np.nansum(sd1), idd.IndexData))
         self.assertTrue(not isinstance(np.sum(sd1), idd.IndexData))
         self.assertTrue(not isinstance(sd1.sum(), idd.IndexData))

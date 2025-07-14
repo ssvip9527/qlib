@@ -69,8 +69,8 @@ class AnyPolicy(BasePolicy):
 
 def test_simple_env_logger(caplog):
     set_log_with_config(C.logging_config)
-    # In order for caplog to capture log messages, we configure it here:
-    # allow logs from the qlib logger to be passed to the parent logger.
+    # 为了让caplog能够捕获日志消息，我们在此处进行配置：
+    # 允许qlib日志器的日志传递到父日志器
     C.logging_config["loggers"]["qlib"]["propagate"] = True
     logging.config.dictConfig(C.logging_config)
     for venv_cls_name in ["dummy", "shmem", "subproc"]:
@@ -150,8 +150,8 @@ def test_logger_with_env_wrapper():
                 logger=LogCollector(LogLevel.DEBUG),
             )
 
-        # loglevel can be debugged here because metrics can all dump into csv
-        # otherwise, csv writer might crash
+        # 此处可以调试日志级别，因为所有指标都可以转储到csv中
+        # 否则，csv写入器可能会崩溃
         csv_writer = CsvWriter(Path(__file__).parent / ".output", loglevel=LogLevel.DEBUG)
         venv = vectorize_env(env_wrapper_factory, "shmem", 4, csv_writer)
         with venv.collector_guard():

@@ -60,18 +60,18 @@ class TestDumpData(unittest.TestCase):
             )
         )
         res_calendars = set(D.calendar())
-        assert len(ori_calendars - res_calendars) == len(res_calendars - ori_calendars) == 0, "dump calendars failed"
+        assert len(ori_calendars - res_calendars) == len(res_calendars - ori_calendars) == 0, "日历数据导出失败"
 
     def test_2_dump_instruments(self):
         ori_ins = set(map(lambda x: x.name[:-4].upper(), SOURCE_DIR.glob("*.csv")))
         res_ins = set(D.list_instruments(D.instruments("all"), as_list=True))
-        assert len(ori_ins - res_ins) == len(ori_ins - res_ins) == 0, "dump instruments failed"
+        assert len(ori_ins - res_ins) == len(ori_ins - res_ins) == 0, "标的数据导出失败"
 
     def test_3_dump_features(self):
         df = D.features(self.STOCK_NAMES, self.QLIB_FIELDS)
         TestDumpData.SIMPLE_DATA = df.loc(axis=0)[self.STOCK_NAMES[0], :]
-        self.assertFalse(df.dropna().empty, "features data failed")
-        self.assertListEqual(list(df.columns), self.QLIB_FIELDS, "features columns failed")
+        self.assertFalse(df.dropna().empty, "特征数据导出失败")
+        self.assertListEqual(list(df.columns), self.QLIB_FIELDS, "特征列导出失败")
 
     def test_4_dump_features_simple(self):
         stock = self.STOCK_NAMES[0]
@@ -82,8 +82,8 @@ class TestDumpData(unittest.TestCase):
 
         df = D.features([stock], self.QLIB_FIELDS)
 
-        self.assertEqual(len(df), len(TestDumpData.SIMPLE_DATA), "dump features simple failed")
-        self.assertTrue(np.isclose(df.dropna(), self.SIMPLE_DATA.dropna()).all(), "dump features simple failed")
+        self.assertEqual(len(df), len(TestDumpData.SIMPLE_DATA), "简单特征数据导出失败")
+        self.assertTrue(np.isclose(df.dropna(), self.SIMPLE_DATA.dropna()).all(), "简单特征数据导出失败")
 
 
 if __name__ == "__main__":

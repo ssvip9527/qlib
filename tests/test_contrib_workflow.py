@@ -31,6 +31,8 @@ CSI300_GBDT_TASK = {
 }
 
 
+# 训练多段模型并记录结果
+
 def train_multiseg(uri_path: str = None):
     model = init_instance_by_config(CSI300_GBDT_TASK["model"])
     dataset = init_instance_by_config(CSI300_GBDT_TASK["dataset"])
@@ -43,6 +45,8 @@ def train_multiseg(uri_path: str = None):
         uri = R.get_uri()
     return uri
 
+
+# 训练模型并计算MSE指标
 
 def train_mse(uri_path: str = None):
     model = init_instance_by_config(CSI300_GBDT_TASK["model"])
@@ -63,16 +67,21 @@ class TestAllFlow(TestAutoData):
 
     @classmethod
     def tearDownClass(cls) -> None:
+        # 清除测试生成的目录
         shutil.rmtree(cls.URI_PATH.lstrip("file:"))
 
     @pytest.mark.slow
     def test_0_multiseg(self):
+        # 测试多段训练工作流
         uri_path = train_multiseg(self.URI_PATH)
 
     @pytest.mark.slow
     def test_1_mse(self):
+        # 测试MSE指标计算工作流
         uri_path = train_mse(self.URI_PATH)
 
+
+# 创建测试套件
 
 def suite():
     _suite = unittest.TestSuite()

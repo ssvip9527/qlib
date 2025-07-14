@@ -19,7 +19,7 @@ class TestGetData(TestAutoData):
 
     def test_multi_proc(self):
         """
-        For testing if it will raise error
+        用于测试是否会引发错误
         """
         iter_n = 2
         pool = Pool(iter_n)

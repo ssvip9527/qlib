@@ -17,10 +17,10 @@ class MLflowTest(unittest.TestCase):
 
     def test_creating_client(self):
         """
-        Please refer to qlib/workflow/expm.py:MLflowExpManager._client
-        we don't cache _client (this is helpful to reduce maintainance work when MLflowExpManager's uri is chagned)
+        请参考qlib/workflow/expm.py:MLflowExpManager._client
+        我们不缓存_client（这有助于在MLflowExpManager的uri更改时减少维护工作）
 
-        This implementation is based on the assumption creating a client is fast
+        此实现基于创建客户端速度很快的假设
         """
         start = time.time()
         for i in range(10):
@@ -28,7 +28,7 @@ class MLflowTest(unittest.TestCase):
         end = time.time()
         elapsed = end - start
         if platform.system() == "Linux":
-            self.assertLess(elapsed, 1e-2)  # it can be done in less than 10ms
+            self.assertLess(elapsed, 1e-2)  # 可以在10毫秒内完成
         else:
             self.assertLess(elapsed, 2e-2)
         print(elapsed)

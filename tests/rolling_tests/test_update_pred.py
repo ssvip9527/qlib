@@ -18,7 +18,7 @@ class TestRolling(TestAutoData):
     @pytest.mark.slow
     def test_update_pred(self):
         """
-        This test is for testing if it will raise error if the `to_date` is out of the boundary.
+        此测试用于验证当`to_date`超出边界时是否会引发错误。
         """
         task = copy.deepcopy(CSI300_GBDT_TASK)
 
@@ -120,7 +120,7 @@ class TestRolling(TestAutoData):
         label_date = label.dropna().index.get_level_values("datetime").max()
         pred_date = new_pred.dropna().index.get_level_values("datetime").max()
 
-        # The prediction is updated, but the label is not updated.
+        # 预测已更新，但标签尚未更新。
         self.assertTrue(label_date < pred_date)
 
         # Update label now

@@ -18,7 +18,7 @@ class WorkflowTest(TestAutoData):
             shutil.rmtree(self.TMP_PATH)
 
     def test_get_local_dir(self):
-        """ """
+        """测试获取本地目录功能"""
         self.TMP_PATH.mkdir(parents=True, exist_ok=True)
 
         with R.start(uri=str(self.TMP_PATH)):

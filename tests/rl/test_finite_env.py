@@ -149,7 +149,7 @@ class MetricTracker(LogWriter):
         assert rew == 1.0
         index = info["sample"]
         if done:
-            # assert index not in self.finished
+            # 断言索引不在已完成集合中
             self.finished.add(index)
         self.counter[index] += 1
 

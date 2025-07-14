@@ -32,7 +32,7 @@ class TestDataset(TestAutoData):
                     ],
                     "learn_processors": [
                         "DropnaLabel",
-                        {"class": "CSRankNorm", "kwargs": {"fields_group": "label"}},  # CSRankNorm
+                        {"class": "CSRankNorm", "kwargs": {"fields_group": "label"}},  # 截面排序归一化
                     ],
                 },
             },
@@ -42,7 +42,7 @@ class TestDataset(TestAutoData):
                 "test": ("2019-01-01", "2020-08-01"),
             },
         )
-        tsds_train = tsdh.prepare("train", data_key=DataHandlerLP.DK_L)  # Test the correctness
+        tsds_train = tsdh.prepare("train", data_key=DataHandlerLP.DK_L)  # 测试正确性
         tsds = tsdh.prepare("valid", data_key=DataHandlerLP.DK_L)
 
         t = time.time()
@@ -56,18 +56,18 @@ class TestDataset(TestAutoData):
         print(data.shape)
         print(f"2000 sample(batch index) * 20 times takes {time.time() - t}s")
 
-        # The dimension of sample is same as tabular data, but it will return timeseries data of the sample
+        # 样本维度与表格数据相同，但返回的是样本的时间序列数据
 
-        # We have two method to get the time-series of a sample
+        # 我们有两种方法获取样本的时间序列
 
-        # 1) sample by int index directly
+        # 1) 通过整数索引直接采样
         tsds[len(tsds) - 1]
 
-        # 2) sample by <datetime,instrument> index
+        # 2) 通过<日期时间,标的>索引采样
         data_from_ds = tsds["2017-12-31", "SZ300315"]
 
-        # Check the data
-        # Get data from DataFrame Directly
+        # 检查数据
+        # 直接从DataFrame获取数据
         data_from_df = (
             tsdh.handler.fetch(data_key=DataHandlerLP.DK_L)
             .loc(axis=0)["2017-01-01":"2017-12-31", "SZ300315"]
@@ -79,8 +79,8 @@ class TestDataset(TestAutoData):
         self.assertTrue(equal[~np.isnan(data_from_df)].all())
 
         if False:
-            # 3) get both index and data
-            # NOTE: We don't want to reply on pytorch, so this test can't be included. It is just a example
+            # 3) 同时获取索引和数据
+            # 注意：我们不想依赖pytorch，所以这个测试不能包含进来。这只是一个示例
             from torch.utils.data import DataLoader
             from qlib.model.utils import IndexSampler
 
@@ -102,7 +102,7 @@ class TestDataset(TestAutoData):
 class TestTSDataSampler(unittest.TestCase):
     def test_TSDataSampler(self):
         """
-        Test TSDataSampler for issue #1716
+        测试TSDataSampler以解决#1716问题
         """
         datetime_list = ["2000-01-31", "2000-02-29", "2000-03-31", "2000-04-30", "2000-05-31"]
         instruments = ["000001", "000002", "000003", "000004", "000005"]
@@ -125,7 +125,7 @@ class TestTSDataSampler(unittest.TestCase):
 
     def test_TSDataSampler2(self):
         """
-        Extra test TSDataSampler to prevent incorrect filling of nan for the values at the front
+        额外测试TSDataSampler以防止对前面的值进行错误的nan填充
         """
         datetime_list = ["2000-01-31", "2000-02-29", "2000-03-31", "2000-04-30", "2000-05-31"]
         instruments = ["000001", "000002", "000003", "000004", "000005"]

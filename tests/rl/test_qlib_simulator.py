@@ -15,7 +15,7 @@ from qlib.rl.order_execution.simulator_qlib import SingleAssetOrderExecution
 
 TOTAL_POSITION = 2100.0
 
-python_version_request = pytest.mark.skipif(sys.version_info < (3, 8), reason="requires python3.8 or higher")
+python_version_request = pytest.mark.skipif(sys.version_info < (3, 8), reason="需要python3.8或更高版本")
 
 
 def is_close(a: float, b: float, epsilon: float = 1e-4) -> bool:
@@ -90,7 +90,7 @@ def get_configs(order: Order) -> Tuple[dict, dict]:
 def get_simulator(order: Order) -> SingleAssetOrderExecution:
     DATA_ROOT_DIR = Path(__file__).parent.parent / ".data" / "rl" / "qlib_simulator"
 
-    # fmt: off
+    # 关闭自动格式化
     qlib_config = {
         "provider_uri_day": DATA_ROOT_DIR / "qlib_1d",
         "provider_uri_1min": DATA_ROOT_DIR / "qlib_1min",
@@ -104,7 +104,7 @@ def get_simulator(order: Order) -> SingleAssetOrderExecution:
             "$bidV_1", "$bidV1_1", "$bidV3_1", "$bidV5_1", "$askV_1", "$askV1_1", "$askV3_1", "$askV5_1",
         ],
     }
-    # fmt: on
+    # 开启自动格式化
 
     executor_config, exchange_config = get_configs(order)
 

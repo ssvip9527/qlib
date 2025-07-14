@@ -46,7 +46,7 @@ class TestStructuredCovEstimator(unittest.TestCase):
         self.assertTrue(if_identical)
 
     def test_decompose_covariance(self):
-        # 测试 return_decomposed_components 是否被正确传递。
+        # 测试return_decomposed_components是否被正确传递
         NUM_VARIABLE = 10
         NUM_OBSERVATION = 200
 
@@ -59,8 +59,8 @@ class TestStructuredCovEstimator(unittest.TestCase):
         self.assertTrue(F is not None and cov_b is not None and var_u is not None)
 
     def test_constructed_covariance(self):
-        # 尝试从特殊构造的矩阵估计协方差。
-        # 由于 X 是特殊构造的，应该存在显著相关性。
+        # 尝试从特殊构造的矩阵估计协方差
+        # 由于X是特殊构造的，应该存在显著相关性
         NUM_VARIABLE = 7
         NUM_OBSERVATION = 500
         EPS = 0.1
@@ -84,8 +84,8 @@ class TestStructuredCovEstimator(unittest.TestCase):
         self.assertTrue(if_identical)
 
     def test_decomposition(self):
-        # 尝试从特殊构造的矩阵估计协方差。
-        # 该矩阵假设观测值可由多个因子预测生成。
+        # 尝试从特殊构造的矩阵估计协方差
+        # 该矩阵假设观测值可由多个因子预测生成
         NUM_VARIABLE = 30
         NUM_OBSERVATION = 100
         NUM_FACTOR = 10

@@ -66,10 +66,10 @@ class TestHandlerStorage(TestAutoData):
     }
 
     def test_handler_storage(self):
-        # init data handler
+        # 初始化数据处理器
         data_handler = TestHandler(**self.data_handler_kwargs)
 
-        # init data handler with hasing storage
+        # 使用哈希存储初始化数据处理器
         data_handler_hs = TestHandler(**self.data_handler_kwargs, infer_processors=["HashStockFormat"])
 
         fetch_start_time = "2019-01-01"
@@ -79,27 +79,27 @@ class TestHandlerStorage(TestAutoData):
             instruments=instruments, start_time=fetch_start_time, end_time=fetch_end_time, as_list=True
         )
 
-        with TimeInspector.logt("random fetch with DataFrame Storage"):
-            # single stock
+        with TimeInspector.logt("使用DataFrame存储随机获取数据"):
+            # 单只股票
             for i in range(100):
                 random_index = np.random.randint(len(instruments), size=1)[0]
                 fetch_stock = instruments[random_index]
                 data_handler.fetch(selector=(fetch_stock, slice(fetch_start_time, fetch_end_time)), level=None)
 
-            # multi stocks
+            # 多只股票
             for i in range(100):
                 random_indexs = np.random.randint(len(instruments), size=5)
                 fetch_stocks = [instruments[_index] for _index in random_indexs]
                 data_handler.fetch(selector=(fetch_stocks, slice(fetch_start_time, fetch_end_time)), level=None)
 
-        with TimeInspector.logt("random fetch with HashingStock Storage"):
-            # single stock
+        with TimeInspector.logt("使用HashingStock存储随机获取数据"):
+            # 单只股票
             for i in range(100):
                 random_index = np.random.randint(len(instruments), size=1)[0]
                 fetch_stock = instruments[random_index]
                 data_handler_hs.fetch(selector=(fetch_stock, slice(fetch_start_time, fetch_end_time)), level=None)
 
-            # multi stocks
+            # 多只股票
             for i in range(100):
                 random_indexs = np.random.randint(len(instruments), size=5)
                 fetch_stocks = [instruments[_index] for _index in random_indexs]

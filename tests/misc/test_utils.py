@@ -16,13 +16,13 @@ REG_MAP = {REG_CN: CN_TIME, REG_US: US_TIME, REG_TW: TW_TIME}
 
 def cal_sam_minute(x: pd.Timestamp, sam_minutes: int, region: str):
     """
-    Sample raw calendar into calendar with sam_minutes freq, shift represents the shift minute the market time
-        - open time of stock market is [9:30 - shift*pd.Timedelta(minutes=1)]
-        - mid close time of stock market is [11:29 - shift*pd.Timedelta(minutes=1)]
-        - mid open time of stock market is [13:00 - shift*pd.Timedelta(minutes=1)]
-        - close time of stock market is [14:59 - shift*pd.Timedelta(minutes=1)]
+    将原始日历采样为sam_minutes频率的日历，shift表示市场时间的偏移分钟数
+        - 股票市场开盘时间为 [9:30 - shift*pd.Timedelta(minutes=1)]
+        - 股票市场午间收盘时间为 [11:29 - shift*pd.Timedelta(minutes=1)]
+        - 股票市场午间开盘时间为 [13:00 - shift*pd.Timedelta(minutes=1)]
+        - 股票市场收盘时间为 [14:59 - shift*pd.Timedelta(minutes=1)]
     """
-    # TODO: actually, this version is much faster when no cache or optimization
+    # TODO: 实际上，在没有缓存或优化的情况下，此版本速度更快
     day_time = pd.Timestamp(x.date())
     shift = C.min_data_shift
     region_time = REG_MAP[region]
@@ -75,7 +75,7 @@ class TimeUtils(TestCase):
         init()
 
     def test_cal_sam_minute(self):
-        # test the correctness of the code
+        # 测试代码的正确性
         random_n = 1000
         regions = [REG_CN, REG_US, REG_TW]
 
@@ -101,7 +101,7 @@ class TimeUtils(TestCase):
             for args in gen_args(cal_time):
                 assert cal_sam_minute(*args, region) == cal_sam_minute_new(*args, region=region)
 
-            # test the performance of the code
+            # 测试代码的性能
             args_l = list(gen_args(cal_time))
 
             with TimeInspector.logt():

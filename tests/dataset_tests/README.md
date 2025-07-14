@@ -1,2 +1,2 @@
-# About dataset tests
-Tests in this folder are for testing the prepared dataset from Yahoo
+# 关于数据集测试
+此文件夹中的测试用于测试来自Yahoo的预处理数据集

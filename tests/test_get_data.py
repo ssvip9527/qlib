@@ -37,13 +37,13 @@ class TestGetData(unittest.TestCase):
             name="qlib_data_simple", target_dir=QLIB_DIR, region="cn", interval="1d", delete_old=False, exists_skip=True
         )
         df = D.features(D.instruments("csi300"), self.FIELDS)
-        self.assertListEqual(list(df.columns), self.FIELDS, "get qlib data failed")
-        self.assertFalse(df.dropna().empty, "get qlib data failed")
+        self.assertListEqual(list(df.columns), self.FIELDS, "获取QLIB数据失败")
+        self.assertFalse(df.dropna().empty, "获取QLIB数据失败")
 
     def test_1_csv_data(self):
         GetData().download_data(file_name="csv_data_cn.zip", target_dir=SOURCE_DIR)
         stock_name = set(map(lambda x: x.name[:-4].upper(), SOURCE_DIR.glob("*.csv")))
-        self.assertEqual(len(stock_name), 85, "get csv data failed")
+        self.assertEqual(len(stock_name), 85, "获取CSV数据失败")
 
 
 if __name__ == "__main__":

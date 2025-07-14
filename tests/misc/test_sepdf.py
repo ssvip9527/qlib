@@ -49,11 +49,11 @@ class SepDF(unittest.TestCase):
 
         del df["g1"]
         del df["g2"]
-        # it will not raise error, and df will be an empty dataframe
+        # 不会引发错误，且df将成为空DataFrame
 
         del sdf["g1"]
         del sdf["g2"]
-        # sdf should support deleting all the columns
+        # sdf应支持删除所有列
 
 
 if __name__ == "__main__":

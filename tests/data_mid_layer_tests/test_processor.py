@@ -65,9 +65,9 @@ class TestProcessor(TestAutoData):
         origin_df = origin_df.groupby("datetime", group_keys=False).apply(lambda x: x[10:12])[50:60]
         df = origin_df.copy()
         CSZScoreNorm(fields_group=None).__call__(df)
-        # If we use the formula directly on the original data, we cannot get the correct result,
-        # because the original data is processed by `groupby`, so we use the method of slicing,
-        # taking the 2nd group of data from the original data, to calculate and compare.
+        # 如果直接对原始数据应用公式无法得到正确结果，
+        # 因为原始数据经过了`groupby`处理，所以我们使用切片方法，
+        # 从原始数据中取第2组数据进行计算和比较。
         assert (df[2:4] == ((origin_df[2:4] - origin_df[2:4].mean()).div(origin_df[2:4].std()))).all().all()
 
 

@@ -1,3 +1,3 @@
-Some implementations of Qlib depend on some assumptions of its dependencies.
+Qlib的某些实现依赖于其依赖项的一些假设。
 
-So some tests are requried to ensure that these assumptions are valid.
+因此需要一些测试来确保这些假设是有效的。

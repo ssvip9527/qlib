@@ -51,10 +51,12 @@ class Distance(PairOperator):
 class TestRegiterCustomOps(TestAutoData):
     @classmethod
     def setUpClass(cls) -> None:
+        # 更新设置参数，添加自定义算子
         cls._setup_kwargs.update({"custom_ops": [Diff, Distance]})
         super().setUpClass()
 
     def test_regiter_custom_ops(self):
+        # 测试自定义算子注册功能
         instruments = ["SH600000"]
         fields = ["Diff($close)", "Distance($close, Ref($close, 1))"]
         print(D.features(instruments, fields, start_time="2010-01-01", end_time="2017-12-31", freq="day"))

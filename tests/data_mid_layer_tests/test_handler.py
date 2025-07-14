@@ -28,7 +28,7 @@ class HandlerTests(TestAutoData):
         self.assertTrue(dh_d._data.equals(df))
         self.assertTrue(dh_d._infer is dh_d._data)
         self.assertTrue(dh_d._learn is dh_d._data)
-        # Data loader will no longer be useful
+        # 数据加载器将不再包含数据引用
         self.assertTrue("_data" not in dh_d.data_loader.__dict__.keys())
         os.remove(fname)
 

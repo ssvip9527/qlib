@@ -8,7 +8,7 @@ import unittest
 import pandas as pd
 
 
-@unittest.skip("This test takes a lot of time due to the large size of high-frequency data")
+@unittest.skip("此测试因高频数据量大而耗时较长")
 class TestHFBacktest(TestAutoData):
     @classmethod
     def setUpClass(cls) -> None:

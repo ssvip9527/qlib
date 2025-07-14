@@ -1,5 +1,5 @@
 # TODO:
-# dump alpha 360 to dataframe and merge it with Alpha158
+# 将alpha 360转储到dataframe并与Alpha158合并
 
 import sys
 import unittest
@@ -29,7 +29,7 @@ class TestDataLoader(unittest.TestCase):
                 },
             ]
         )
-        # Of course you can use StaticDataLoader
+        # 当然你也可以使用StaticDataLoader
 
         dataset = nd.load(instruments="csi300", start_time="2020-01-01", end_time="2020-01-31")
 
@@ -53,8 +53,8 @@ class TestDataLoader(unittest.TestCase):
 
         assert not fn_dataset.isna().any().any()
 
-        # Then you can use it wth DataHandler;
-        # NOTE: please note that the data processors are missing!!!  You should add based on your requirements
+        # 然后你可以将其与DataHandler一起使用；
+        # 注意：数据处理器缺失！！！你需要根据需求添加
 
         """
         dataset.to_pickle("test_df.pkl")

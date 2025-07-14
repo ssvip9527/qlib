@@ -17,7 +17,7 @@ class TestNN(TestAutoData):
             "end_time": "2020-08-01",
             "instruments": "csi300",
             "data_loader": {
-                "class": "QlibDataLoader",  # Assuming QlibDataLoader is a string reference to the class
+                "class": "QlibDataLoader",  # 假设QlibDataLoader是类的字符串引用
                 "kwargs": {
                     "config": {
                         "feature": [["$high", "$close", "$low"], ["H", "C", "L"]],
@@ -26,7 +26,7 @@ class TestNN(TestAutoData):
                     "freq": "day",
                 },
             },
-            # TODO: processors
+            # TODO: 处理器
             "learn_processors": [
                 {
                     "class": "DropnaLabel",
@@ -41,10 +41,10 @@ class TestNN(TestAutoData):
         }
         data_handler = DataHandlerLP(**data_handler_config)
 
-        # time-series dataset
+        # 时间序列数据集
         tsds = TSDatasetH(handler=data_handler, segments=segments)
 
-        # tabular dataset
+        # 表格数据集
         tbds = DatasetH(handler=data_handler, segments=segments)
 
         model_l = [
@@ -64,7 +64,7 @@ class TestNN(TestAutoData):
                 n_epochs=2,
                 batch_size=32,
                 n_jobs=0,
-                pt_model_uri="qlib.contrib.model.pytorch_nn.Net",  # it is a MLP
+                pt_model_uri="qlib.contrib.model.pytorch_nn.Net",  # 这是一个MLP
                 pt_model_kwargs={
                     "input_dim": 3,
                 },
@@ -72,8 +72,8 @@ class TestNN(TestAutoData):
         ]
 
         for ds, model in list(zip((tsds, tbds), model_l)):
-            model.fit(ds)  # It works
-            model.predict(ds)  # It works
+            model.fit(ds)  # 可以正常工作
+            model.predict(ds)  # 可以正常工作
 
 
 if __name__ == "__main__":

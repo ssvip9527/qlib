@@ -215,7 +215,7 @@ def test_interpreter():
 
 
 def test_network_sanity():
-    # we won't check the correctness of networks here
+    # 我们不会在这里检查网络的正确性
     order = Order("AAL", 15.0, 1, pd.Timestamp("2013-12-11 9:30:00"), pd.Timestamp("2013-12-11 15:59:59"))
 
     simulator = SingleAssetOrderExecutionSimple(order, DATA_DIR)
@@ -277,7 +277,7 @@ def test_twap_strategy(finite_env_type):
 
 def test_cn_ppo_strategy():
     set_log_with_config(C.logging_config)
-    # The data starts with 9:31 and ends with 15:00
+    # 数据从9:31开始，到15:00结束
     orders = pickle_styled.load_orders(CN_ORDER_DIR, start_time=pd.Timestamp("9:31"), end_time=pd.Timestamp("14:58"))
     assert len(orders) == 40
 
@@ -308,7 +308,7 @@ def test_cn_ppo_strategy():
 
 def test_ppo_train():
     set_log_with_config(C.logging_config)
-    # The data starts with 9:31 and ends with 15:00
+    # 数据从9:31开始，到15:00结束
     orders = pickle_styled.load_orders(CN_ORDER_DIR, start_time=pd.Timestamp("9:31"), end_time=pd.Timestamp("14:58"))
     assert len(orders) == 40
 

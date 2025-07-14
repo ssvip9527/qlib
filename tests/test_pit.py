@@ -45,7 +45,7 @@ class TestPIT(unittest.TestCase):
         )
         GetData().qlib_data(name="qlib_data", target_dir=pit_dir, region="pit", delete_old=False, exists_skip=True)
 
-        # NOTE: This code does the same thing as line 43, but since baostock is not stable in downloading data, we have chosen to download offline data.
+        # 注意：以下代码与第43行功能相同，但由于baostock下载数据不稳定，我们选择下载离线数据
         # bs.login()
         # Run(
         #     source_dir=pit_dir,
@@ -64,7 +64,7 @@ class TestPIT(unittest.TestCase):
         ).dump(interval="quarterly")
 
     def setUp(self):
-        # qlib.init(kernels=1)  # NOTE: set kernel to 1 to make it debug easier
+        # qlib.init(kernels=1)  # 注意：将内核设置为1以便于调试
         provider_uri = str(QLIB_DIR.joinpath("cn_data").resolve())
         qlib.init(provider_uri=provider_uri)
 
@@ -77,7 +77,7 @@ class TestPIT(unittest.TestCase):
     def test_query(self):
         instruments = ["sh600519"]
         fields = ["P($$roewa_q)", "P($$yoyni_q)"]
-        # Mao Tai published 2019Q2 report at 2019-07-13 & 2019-07-18
+        # 茅台在2019-07-13和2019-07-18发布了2019年第二季度报告
         # - http://www.cninfo.com.cn/new/commonUrl/pageOfSearch?url=disclosure/list/search&lastPage=index
         data = D.features(instruments, fields, start_time="2019-01-01", end_time="2019-07-19", freq="day")
         res = """
@@ -107,7 +107,7 @@ class TestPIT(unittest.TestCase):
     def test_no_exist_data(self):
         fields = ["P($$roewa_q)", "P($$yoyni_q)", "$close"]
         data = D.features(["sh600519", "sh601988"], fields, start_time="2019-01-01", end_time="2019-07-19", freq="day")
-        data["$close"] = 1  # in case of different dataset gives different values
+        data["$close"] = 1  # 防止不同数据集给出不同的值
         expect = """
                                P($$roewa_q)  P($$yoyni_q)  $close
         instrument datetime
@@ -163,10 +163,10 @@ class TestPIT(unittest.TestCase):
         # fields = ["P(Mean($$roewa_q, 1))", "P($$roewa_q)", "P(Mean($$roewa_q, 2))", "P(Ref($$roewa_q, 1))", "P((Ref($$roewa_q, 1) +$$roewa_q) / 2)"]
         fields = ["P($$roewa_q)"]
         instruments = ["sh600519"]
-        _ = D.features(instruments, fields, freq="day")  # this should not raise error
-        data = D.features(instruments, fields, end_time="2020-01-01", freq="day")  # this should not raise error
+        _ = D.features(instruments, fields, freq="day")  # 这行代码不应引发错误
+        data = D.features(instruments, fields, end_time="2020-01-01", freq="day")  # 这行代码不应引发错误
         s = data.iloc[:, 0]
-        # You can check the expected value based on the content in `docs/advanced/PIT.rst`
+        # 您可以根据`docs/advanced/PIT.rst`中的内容检查预期值
         expect = """
         instrument  datetime
         sh600519    2005-01-04         NaN

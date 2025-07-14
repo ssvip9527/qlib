@@ -24,7 +24,7 @@ class DummyDataset(Dataset):
 
 
 def _worker(dataloader, collector):
-    # for i in range(3):
+    # 循环3次:
     for i, data in enumerate(dataloader):
         collector.put(len(data))
 

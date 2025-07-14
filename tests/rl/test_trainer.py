@@ -142,8 +142,8 @@ def test_trainer_fast_dev_run():
 
 
 def test_trainer_earlystop():
-    # TODO this is just sanity check.
-    # need to see the logs to check whether it works.
+    # TODO 这只是基本检查。
+    # 需要查看日志以确认是否正常工作。
     set_log_with_config(C.logging_config)
     trainer = Trainer(
         max_iters=10,
