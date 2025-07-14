@@ -7,27 +7,27 @@
 [![License](https://img.shields.io/pypi/l/pyqlib)](LICENSE)
 [![Join the chat at https://gitter.im/Microsoft/qlib](https://badges.gitter.im/Microsoft/qlib.svg)](https://gitter.im/Microsoft/qlib?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## :newspaper: **What's NEW!** &nbsp;   :sparkling_heart: 
+## :newspaper: **最新消息！** &nbsp;   :sparkling_heart: 
 
-Recent released features
+最近发布的特性
 
-### Introducing <a href="https://github.com/microsoft/RD-Agent"><img src="docs/_static/img/rdagent_logo.png" alt="RD_Agent" style="height: 2em"></a>: LLM-Based Autonomous Evolving Agents for Industrial Data-Driven R&D
+### 介绍 <a href="https://github.com/microsoft/RD-Agent"><img src="docs/_static/img/rdagent_logo.png" alt="RD_Agent" style="height: 2em"></a>: 基于LLM的自主演化代理，用于工业数据驱动的研发
 
-We are excited to announce the release of **RD-Agent**📢, a powerful tool that supports automated factor mining and model optimization in quant investment R&D.
+我们很高兴宣布发布 **RD-Agent**📢，这是一个强大的工具，支持量化投资研发中的自动化因子挖掘和模型优化。
 
-RD-Agent is now available on [GitHub](https://github.com/microsoft/RD-Agent), and we welcome your star🌟!
+RD-Agent 现在已在 [GitHub](https://github.com/microsoft/RD-Agent) 上可用，我们欢迎您的星标🌟！
 
-To learn more, please visit our [♾️Demo page](https://rdagent.azurewebsites.net/). Here, you will find demo videos in both English and Chinese to help you better understand the scenario and usage of RD-Agent.
+要了解更多信息，请访问我们的 [♾️演示页面](https://rdagent.azurewebsites.net/)。在这里，您将找到英文和中文演示视频，帮助您更好地理解 RD-Agent 的场景和用法。
 
-We have prepared several demo videos for you:
-| Scenario | Demo video (English) | Demo video (中文) |
+我们为您准备了几个演示视频：
+| 场景 | 演示视频 (English) | 演示视频 (中文) |
 | --                      | ------    | ------    |
-| Quant Factor Mining | [Link](https://rdagent.azurewebsites.net/factor_loop?lang=en) | [Link](https://rdagent.azurewebsites.net/factor_loop?lang=zh) |
-| Quant Factor Mining from reports | [Link](https://rdagent.azurewebsites.net/report_factor?lang=en) | [Link](https://rdagent.azurewebsites.net/report_factor?lang=zh) |
-| Quant Model Optimization | [Link](https://rdagent.azurewebsites.net/model_loop?lang=en) | [Link](https://rdagent.azurewebsites.net/model_loop?lang=zh) |
+| 量化因子挖掘 | [链接](https://rdagent.azurewebsites.net/factor_loop?lang=en) | [链接](https://rdagent.azurewebsites.net/factor_loop?lang=zh) |
+| 从报告中量化因子挖掘 | [链接](https://rdagent.azurewebsites.net/report_factor?lang=en) | [链接](https://rdagent.azurewebsites.net/report_factor?lang=zh) |
+| 量化模型优化 | [链接](https://rdagent.azurewebsites.net/model_loop?lang=en) | [链接](https://rdagent.azurewebsites.net/model_loop?lang=zh) |
 
-- 📃**Paper**: [R&D-Agent-Quant: A Multi-Agent Framework for Data-Centric Factors and Model Joint Optimization](https://arxiv.org/abs/2505.15155)
-- 👾**Code**: https://github.com/microsoft/RD-Agent/
+- 📃**论文**: [R&D-Agent-Quant: A Multi-Agent Framework for Data-Centric Factors and Model Joint Optimization](https://arxiv.org/abs/2505.15155)
+- 👾**代码**: https://github.com/microsoft/RD-Agent/
 ```BibTeX
 @misc{li2025rdagentquant,
     title={R\&D-Agent-Quant: A Multi-Agent Framework for Data-Centric Factors and Model Joint Optimization},
@@ -42,92 +42,92 @@ We have prepared several demo videos for you:
 
 ***
 
-| Feature | Status |
+| 特性 | 状态 |
 | --                      | ------    |
-| [R&D-Agent-Quant](https://arxiv.org/abs/2505.15155) Published | Apply R&D-Agent to Qlib for quant trading | 
-| BPQP for End-to-end learning | 📈Coming soon!([Under review](https://github.com/microsoft/qlib/pull/1863)) |
-| 🔥LLM-driven Auto Quant Factory🔥 | 🚀 Released in [♾️RD-Agent](https://github.com/microsoft/RD-Agent) on Aug 8, 2024 |
-| KRNN and Sandwich models | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/1414/) on May 26, 2023 |
-| Release Qlib v0.9.0 | :octocat: [Released](https://github.com/microsoft/qlib/releases/tag/v0.9.0) on Dec 9, 2022 |
-| RL Learning Framework | :hammer: :chart_with_upwards_trend: Released on Nov 10, 2022. [#1332](https://github.com/microsoft/qlib/pull/1332), [#1322](https://github.com/microsoft/qlib/pull/1322), [#1316](https://github.com/microsoft/qlib/pull/1316),[#1299](https://github.com/microsoft/qlib/pull/1299),[#1263](https://github.com/microsoft/qlib/pull/1263), [#1244](https://github.com/microsoft/qlib/pull/1244), [#1169](https://github.com/microsoft/qlib/pull/1169), [#1125](https://github.com/microsoft/qlib/pull/1125), [#1076](https://github.com/microsoft/qlib/pull/1076)|
-| HIST and IGMTF models | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/1040) on Apr 10, 2022 |
-| Qlib [notebook tutorial](https://github.com/microsoft/qlib/tree/main/examples/tutorial) | 📖 [Released](https://github.com/microsoft/qlib/pull/1037) on Apr 7, 2022 | 
-| Ibovespa index data | :rice: [Released](https://github.com/microsoft/qlib/pull/990) on Apr 6, 2022 |
-| Point-in-Time database | :hammer: [Released](https://github.com/microsoft/qlib/pull/343) on Mar 10, 2022 |
-| Arctic Provider Backend & Orderbook data example | :hammer: [Released](https://github.com/microsoft/qlib/pull/744) on Jan 17, 2022 |
-| Meta-Learning-based framework & DDG-DA  | :chart_with_upwards_trend:  :hammer: [Released](https://github.com/microsoft/qlib/pull/743) on Jan 10, 2022 | 
-| Planning-based portfolio optimization | :hammer: [Released](https://github.com/microsoft/qlib/pull/754) on Dec 28, 2021 | 
-| Release Qlib v0.8.0 | :octocat: [Released](https://github.com/microsoft/qlib/releases/tag/v0.8.0) on Dec 8, 2021 |
-| ADD model | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/704) on Nov 22, 2021 |
-| ADARNN  model | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/689) on Nov 14, 2021 |
-| TCN  model | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/668) on Nov 4, 2021 |
-| Nested Decision Framework | :hammer: [Released](https://github.com/microsoft/qlib/pull/438) on Oct 1, 2021. [Example](https://github.com/microsoft/qlib/blob/main/examples/nested_decision_execution/workflow.py) and [Doc](https://qlib.readthedocs.io/en/latest/component/highfreq.html) |
-| Temporal Routing Adaptor (TRA) | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/531) on July 30, 2021 |
-| Transformer & Localformer | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/508) on July 22, 2021 |
-| Release Qlib v0.7.0 | :octocat: [Released](https://github.com/microsoft/qlib/releases/tag/v0.7.0) on July 12, 2021 |
-| TCTS Model | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/491) on July 1, 2021 |
-| Online serving and automatic model rolling | :hammer:  [Released](https://github.com/microsoft/qlib/pull/290) on May 17, 2021 | 
-| DoubleEnsemble Model | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/286) on Mar 2, 2021 | 
-| High-frequency data processing example | :hammer: [Released](https://github.com/microsoft/qlib/pull/257) on Feb 5, 2021  |
-| High-frequency trading example | :chart_with_upwards_trend: [Part of code released](https://github.com/microsoft/qlib/pull/227) on Jan 28, 2021  | 
-| High-frequency data(1min) | :rice: [Released](https://github.com/microsoft/qlib/pull/221) on Jan 27, 2021 |
-| Tabnet Model | :chart_with_upwards_trend: [Released](https://github.com/microsoft/qlib/pull/205) on Jan 22, 2021 |
+| [R&D-Agent-Quant](https://arxiv.org/abs/2505.15155) 已发布 | 将 R&D-Agent 应用于 Qlib 用于量化交易 | 
+| BPQP 用于端到端学习 | 📈即将到来！([审核中](https://github.com/microsoft/qlib/pull/1863)) |
+| 🔥LLM驱动的自动量化工厂🔥 | 🚀 于2024年8月8日在 [♾️RD-Agent](https://github.com/microsoft/RD-Agent) 中发布 |
+| KRNN 和 Sandwich 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/1414/) 于2023年5月26日 |
+| 发布 Qlib v0.9.0 | :octocat: [已发布](https://github.com/microsoft/qlib/releases/tag/v0.9.0) 于2022年12月9日 |
+| RL 学习框架 | :hammer: :chart_with_upwards_trend: 于2022年11月10日发布。 [#1332](https://github.com/microsoft/qlib/pull/1332), [#1322](https://github.com/microsoft/qlib/pull/1322), [#1316](https://github.com/microsoft/qlib/pull/1316),[#1299](https://github.com/microsoft/qlib/pull/1299),[#1263](https://github.com/microsoft/qlib/pull/1263), [#1244](https://github.com/microsoft/qlib/pull/1244), [#1169](https://github.com/microsoft/qlib/pull/1169), [#1125](https://github.com/microsoft/qlib/pull/1125), [#1076](https://github.com/microsoft/qlib/pull/1076)|
+| HIST 和 IGMTF 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/1040) 于2022年4月10日 |
+| Qlib [notebook 教程](https://github.com/microsoft/qlib/tree/main/examples/tutorial) | 📖 [已发布](https://github.com/microsoft/qlib/pull/1037) 于2022年4月7日 | 
+| Ibovespa 指数数据 | :rice: [已发布](https://github.com/microsoft/qlib/pull/990) 于2022年4月6日 |
+| Point-in-Time 数据库 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/343) 于2022年3月10日 |
+| Arctic Provider Backend & Orderbook 数据示例 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/744) 于2022年1月17日 |
+| 基于元学习的框架 & DDG-DA  | :chart_with_upwards_trend:  :hammer: [已发布](https://github.com/microsoft/qlib/pull/743) 于2022年1月10日 | 
+| 基于规划的投资组合优化 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/754) 于2021年12月28日 | 
+| 发布 Qlib v0.8.0 | :octocat: [已发布](https://github.com/microsoft/qlib/releases/tag/v0.8.0) 于2021年12月8日 |
+| ADD 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/704) 于2021年11月22日 |
+| ADARNN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/689) 于2021年11月14日 |
+| TCN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/668) 于2021年11月4日 |
+| 嵌套决策框架 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/438) 于2021年10月1日。 [示例](https://github.com/microsoft/qlib/blob/main/examples/nested_decision_execution/workflow.py) 和 [文档](https://qlib.readthedocs.io/en/latest/component/highfreq.html) |
+| Temporal Routing Adaptor (TRA) | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/531) 于2021年7月30日 |
+| Transformer & Localformer | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/508) 于2021年7月22日 |
+| 发布 Qlib v0.7.0 | :octocat: [已发布](https://github.com/microsoft/qlib/releases/tag/v0.7.0) 于2021年7月12日 |
+| TCTS 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/491) 于2021年7月1日 |
+| 在线服务和自动模型滚动 | :hammer:  [已发布](https://github.com/microsoft/qlib/pull/290) 于2021年5月17日 | 
+| DoubleEnsemble 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/286) 于2021年3月2日 | 
+| 高频数据处理示例 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/257) 于2021年2月5日  |
+| 高频交易示例 | :chart_with_upwards_trend: [部分代码已发布](https://github.com/microsoft/qlib/pull/227) 于2021年1月28日  | 
+| 高频数据(1min) | :rice: [已发布](https://github.com/microsoft/qlib/pull/221) 于2021年1月27日 |
+| Tabnet 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/205) 于2021年1月22日 |
 
-Features released before 2021 are not listed here.
+2021年之前发布的特性未在此列出。
 
 <p align="center">
   <img src="docs/_static/img/logo/1.png" />
 </p>
 
-Qlib is an open-source, AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to implementing productions. Qlib supports diverse machine learning modeling paradigms, including supervised learning, market dynamics modeling, and reinforcement learning.
+Qlib 是一个开源的、面向AI的量化投资平台，旨在利用AI技术在量化投资中实现潜力、赋能研究并创造价值，从探索想法到实施生产。Qlib 支持多种机器学习建模范式，包括监督学习、市场动态建模和强化学习。
 
-An increasing number of SOTA Quant research works/papers in diverse paradigms are being released in Qlib to collaboratively solve key challenges in quantitative investment. For example, 1) using supervised learning to mine the market's complex non-linear patterns from rich and heterogeneous financial data, 2) modeling the dynamic nature of the financial market using adaptive concept drift technology, and 3) using reinforcement learning to model continuous investment decisions and assist investors in optimizing their trading strategies.
+越来越多的 SOTA 量化研究工作/论文在 Qlib 中发布，以协作解决量化投资中的关键挑战。例如，1) 使用监督学习从丰富且异构的金融数据中挖掘市场的复杂非线性模式，2) 使用自适应概念漂移技术建模金融市场的动态性质，3) 使用强化学习建模连续投资决策并帮助投资者优化交易策略。
 
-It contains the full ML pipeline of data processing, model training, back-testing; and covers the entire chain of quantitative investment: alpha seeking, risk modeling, portfolio optimization, and order execution. 
-For more details, please refer to our paper ["Qlib: An AI-oriented Quantitative Investment Platform"](https://arxiv.org/abs/2009.11189).
+它包含数据处理、模型训练、回测的完整ML管道；并覆盖量化投资的整个链条：alpha 寻求、风险建模、投资组合优化和订单执行。
+更多细节，请参考我们的论文 ["Qlib: An AI-oriented Quantitative Investment Platform"](https://arxiv.org/abs/2009.11189)。
 
 
 <table>
   <tbody>
     <tr>
-      <th>Frameworks, Tutorial, Data & DevOps</th>
-      <th>Main Challenges & Solutions in Quant Research</th>
+      <th>框架、教程、数据 & DevOps</th>
+      <th>量化研究中的主要挑战 & 解决方案</th>
     </tr>
     <tr>
       <td>
-        <li><a href="#plans"><strong>Plans</strong></a></li>
-        <li><a href="#framework-of-qlib">Framework of Qlib</a></li>
-        <li><a href="#quick-start">Quick Start</a></li>
+        <li><a href="#plans"><strong>计划</strong></a></li>
+        <li><a href="#framework-of-qlib">Qlib 框架</a></li>
+        <li><a href="#quick-start">快速开始</a></li>
           <ul dir="auto">
-            <li type="circle"><a href="#installation">Installation</a> </li>
-            <li type="circle"><a href="#data-preparation">Data Preparation</a></li>
-            <li type="circle"><a href="#auto-quant-research-workflow">Auto Quant Research Workflow</a></li>
-            <li type="circle"><a href="#building-customized-quant-research-workflow-by-code">Building Customized Quant Research Workflow by Code</a></li></ul>
-        <li><a href="#quant-dataset-zoo"><strong>Quant Dataset Zoo</strong></a></li>
-        <li><a href="#learning-framework">Learning Framework</a></li>
-        <li><a href="#more-about-qlib">More About Qlib</a></li>
-        <li><a href="#offline-mode-and-online-mode">Offline Mode and Online Mode</a>
+            <li type="circle"><a href="#installation">安装</a> </li>
+            <li type="circle"><a href="#data-preparation">数据准备</a></li>
+            <li type="circle"><a href="#auto-quant-research-workflow">自动量化研究工作流</a></li>
+            <li type="circle"><a href="#building-customized-quant-research-workflow-by-code">通过代码构建自定义量化研究工作流</a></li></ul>
+        <li><a href="#quant-dataset-zoo"><strong>量化数据集动物园</strong></a></li>
+        <li><a href="#learning-framework">学习框架</a></li>
+        <li><a href="#more-about-qlib">关于 Qlib 的更多信息</a></li>
+        <li><a href="#offline-mode-and-online-mode">离线模式和在线模式</a>
         <ul>
-          <li type="circle"><a href="#performance-of-qlib-data-server">Performance of Qlib Data Server</a></li></ul>
-        <li><a href="#related-reports">Related Reports</a></li>
-        <li><a href="#contact-us">Contact Us</a></li>
-        <li><a href="#contributing">Contributing</a></li>
+          <li type="circle"><a href="#performance-of-qlib-data-server">Qlib 数据服务器的性能</a></li></ul>
+        <li><a href="#related-reports">相关报告</a></li>
+        <li><a href="#contact-us">联系我们</a></li>
+        <li><a href="#contributing">贡献</a></li>
       </td>
       <td valign="baseline">
-        <li><a href="#main-challenges--solutions-in-quant-research">Main Challenges &amp; Solutions in Quant Research</a>
+        <li><a href="#main-challenges--solutions-in-quant-research">量化研究中的主要挑战 & 解决方案</a>
           <ul>
-            <li type="circle"><a href="#forecasting-finding-valuable-signalspatterns">Forecasting: Finding Valuable Signals/Patterns</a>
+            <li type="circle"><a href="#forecasting-finding-valuable-signalspatterns">预测：找到有价值的信号/模式</a>
               <ul>
-                <li type="disc"><a href="#quant-model-paper-zoo"><strong>Quant Model (Paper) Zoo</strong></a>
+                <li type="disc"><a href="#quant-model-paper-zoo"><strong>量化模型 (论文) 动物园</strong></a>
                   <ul>
-                    <li type="circle"><a href="#run-a-single-model">Run a Single Model</a></li>
-                    <li type="circle"><a href="#run-multiple-models">Run Multiple Models</a></li>
+                    <li type="circle"><a href="#run-a-single-model">运行单个模型</a></li>
+                    <li type="circle"><a href="#run-multiple-models">运行多个模型</a></li>
                   </ul>
                 </li>
               </ul>
             </li>
-          <li type="circle"><a href="#adapting-to-market-dynamics">Adapting to Market Dynamics</a></li>
-          <li type="circle"><a href="#reinforcement-learning-modeling-continuous-decisions">Reinforcement Learning: modeling continuous decisions</a></li>
+          <li type="circle"><a href="#adapting-to-market-dynamics">适应市场动态</a></li>
+          <li type="circle"><a href="#reinforcement-learning-modeling-continuous-decisions">强化学习：建模连续决策</a></li>
           </ul>
         </li>
       </td>
@@ -135,40 +135,40 @@ For more details, please refer to our paper ["Qlib: An AI-oriented Quantitative 
   </tbody>
 </table>
 
-# Plans
-New features under development(order by estimated release time).
-Your feedbacks about the features are very important.
+# 计划
+正在开发的新特性（按预计发布时间排序）。
+您的反馈对这些特性非常重要。
 <!-- | Feature                        | Status      | -->
 <!-- | --                      | ------    | -->
 
-# Framework of Qlib
+# Qlib 框架
 
 <div style="align: center">
 <img src="docs/_static/img/framework-abstract.jpg" />
 </div>
 
-The high-level framework of Qlib can be found above(users can find the [detailed framework](https://qlib.readthedocs.io/en/latest/introduction/introduction.html#framework) of Qlib's design when getting into nitty gritty).
-The components are designed as loose-coupled modules, and each component could be used stand-alone.
+Qlib 的高层框架如上所示（用户可以在深入细节时找到 Qlib 设计的[详细框架](https://qlib.readthedocs.io/en/latest/introduction/introduction.html#framework)）。
+组件被设计为松散耦合的模块，每个组件都可以独立使用。
 
-Qlib provides a strong infrastructure to support Quant research. [Data](https://qlib.readthedocs.io/en/latest/component/data.html) is always an important part.
-A strong learning framework is designed to support diverse learning paradigms (e.g. [reinforcement learning](https://qlib.readthedocs.io/en/latest/component/rl.html), [supervised learning](https://qlib.readthedocs.io/en/latest/component/workflow.html#model-section)) and patterns at different levels(e.g. [market dynamic modeling](https://qlib.readthedocs.io/en/latest/component/meta.html)).
-By modeling the market, [trading strategies](https://qlib.readthedocs.io/en/latest/component/strategy.html) will generate trade decisions that will be executed. Multiple trading strategies and executors in different levels or granularities can be [nested to be optimized and run together](https://qlib.readthedocs.io/en/latest/component/highfreq.html).
-At last, a comprehensive [analysis](https://qlib.readthedocs.io/en/latest/component/report.html) will be provided and the model can be [served online](https://qlib.readthedocs.io/en/latest/component/online.html) in a low cost.
-
-
-# Quick Start
-
-This quick start guide tries to demonstrate
-1. It's very easy to build a complete Quant research workflow and try your ideas with _Qlib_.
-2. Though with *public data* and *simple models*, machine learning technologies **work very well** in practical Quant investment.
-
-Here is a quick **[demo](https://terminalizer.com/view/3f24561a4470)** shows how to install ``Qlib``, and run LightGBM with ``qrun``. **But**, please make sure you have already prepared the data following the [instruction](#data-preparation).
+Qlib 提供强大的基础设施来支持量化研究。[数据](https://qlib.readthedocs.io/en/latest/component/data.html) 始终是重要的一部分。
+设计了一个强大的学习框架来支持不同的学习范式（例如 [强化学习](https://qlib.readthedocs.io/en/latest/component/rl.html), [监督学习](https://qlib.readthedocs.io/en/latest/component/workflow.html#model-section)）和不同级别的模式（例如 [市场动态建模](https://qlib.readthedocs.io/en/latest/component/meta.html)）。
+通过建模市场，[交易策略](https://qlib.readthedocs.io/en/latest/component/strategy.html) 将生成将被执行的交易决策。不同级别或粒度的多个交易策略和执行器可以[嵌套以一起优化和运行](https://qlib.readthedocs.io/en/latest/component/highfreq.html)。
+最后，将提供全面的[分析](https://qlib.readthedocs.io/en/latest/component/report.html)，并且模型可以以低成本[在线服务](https://qlib.readthedocs.io/en/latest/component/online.html)。
 
 
-## Installation
+# 快速开始
 
-This table demonstrates the supported Python version of `Qlib`:
-|               | install with pip      | install from source  |        plot        |
+这个快速开始指南试图演示
+1. 使用 _Qlib_ 构建完整的量化研究工作流并尝试您的想法非常容易。
+2. 尽管使用*公共数据*和*简单模型*，机器学习技术在实际量化投资中**工作得非常好**。
+
+这里是一个快速 **[演示](https://terminalizer.com/view/3f24561a4470)** 显示如何安装 ``Qlib``，并使用 ``qrun`` 运行 LightGBM。**但是**，请确保您已经按照[说明](#data-preparation)准备好数据。
+
+
+## 安装
+
+此表展示了 `Qlib` 支持的 Python 版本：
+|               | 使用 pip 安装      | 从源代码安装  |        绘图        |
 | ------------- |:---------------------:|:--------------------:|:------------------:|
 | Python 3.8    | :heavy_check_mark:    | :heavy_check_mark:   | :heavy_check_mark: |
 | Python 3.9    | :heavy_check_mark:    | :heavy_check_mark:   | :heavy_check_mark: |
@@ -176,42 +176,42 @@ This table demonstrates the supported Python version of `Qlib`:
 | Python 3.11   | :heavy_check_mark:    | :heavy_check_mark:   | :heavy_check_mark: |
 | Python 3.12   | :heavy_check_mark:    | :heavy_check_mark:   | :heavy_check_mark: |
 
-**Note**: 
-1. **Conda** is suggested for managing your Python environment. In some cases, using Python outside of a `conda` environment may result in missing header files, causing the installation failure of certain packages.
-2. Please pay attention that installing cython in Python 3.6 will raise some error when installing ``Qlib`` from source. If users use Python 3.6 on their machines, it is recommended to *upgrade* Python to version 3.8 or higher, or use `conda`'s Python to install ``Qlib`` from source.
+**注意**： 
+1. 建议使用 **Conda** 管理您的 Python 环境。在某些情况下，在 `conda` 环境之外使用 Python 可能会导致缺少头文件，从而导致某些包的安装失败。
+2. 请注意，在 Python 3.6 中安装 cython 会导致从源代码安装 ``Qlib`` 时出现一些错误。如果用户在他们的机器上使用 Python 3.6，建议*升级* Python 到 3.8 或更高版本，或者使用 `conda` 的 Python 从源代码安装 ``Qlib``。
 
-### Install with pip
-Users can easily install ``Qlib`` by pip according to the following command.
+### 使用 pip 安装
+用户可以按照以下命令轻松使用 pip 安装 ``Qlib``。
 
 ```bash
   pip install pyqlib
 ```
 
-**Note**: pip will install the latest stable qlib. However, the main branch of qlib is in active development. If you want to test the latest scripts or functions in the main branch. Please install qlib with the methods below.
+**注意**：pip 将安装最新的稳定版 qlib。但是，qlib 的 main 分支处于活跃开发中。如果您想测试 main 分支中的最新脚本或函数。请使用以下方法安装 qlib。
 
-### Install from source
-Also, users can install the latest dev version ``Qlib`` by the source code according to the following steps:
+### 从源代码安装
+用户也可以按照以下步骤通过源代码安装最新的开发版 ``Qlib``：
 
-* Before installing ``Qlib`` from source, users need to install some dependencies:
+* 在从源代码安装 ``Qlib`` 之前，用户需要安装一些依赖项：
 
   ```bash
   pip install numpy
   pip install --upgrade cython
   ```
 
-* Clone the repository and install ``Qlib`` as follows.
+* 克隆仓库并安装 ``Qlib`` 如下。
     ```bash
     git clone https://github.com/microsoft/qlib.git && cd qlib
-    pip install .  # `pip install -e .[dev]` is recommended for development. check details in docs/developer/code_standard_and_dev_guide.rst
+    pip install .  # `pip install -e .[dev]` 推荐用于开发。检查 docs/developer/code_standard_and_dev_guide.rst 中的细节
     ```
 
-**Tips**: If you fail to install `Qlib` or run the examples in your environment,  comparing your steps and the [CI workflow](.github/workflows/test_qlib_from_source.yml) may help you find the problem.
+**提示**：如果您在环境中安装 `Qlib` 或运行示例失败，比较您的步骤和 [CI 工作流](.github/workflows/test_qlib_from_source.yml) 可能有助于您找到问题。
 
-**Tips for Mac**: If you are using Mac with M1, you might encounter issues in building the wheel for LightGBM, which is due to missing dependencies from OpenMP. To solve the problem, install openmp first with ``brew install libomp`` and then run ``pip install .`` to build it successfully. 
+**Mac 提示**：如果您使用的是带 M1 的 Mac，您可能会在为 LightGBM 构建 wheel 时遇到问题，这是由于缺少 OpenMP 的依赖项。为了解决问题，首先使用 ``brew install libomp`` 安装 openmp，然后运行 ``pip install .`` 以成功构建它。
 
-## Data Preparation
-❗ Due to more restrict data security policy. The official dataset is disabled temporarily. You can try [this data source](https://github.com/chenditc/investment_data/releases) contributed by the community.
-Here is an example to download the latest data.
+## 数据准备
+❗ 由于更严格的数据安全策略。官方数据集暂时禁用。您可以尝试社区贡献的[此数据源](https://github.com/chenditc/investment_data/releases)。
+这里是一个下载最新数据的示例。
 ```bash
 wget https://github.com/chenditc/investment_data/releases/latest/download/qlib_bin.tar.gz
 mkdir -p ~/.qlib/qlib_data/cn_data
@@ -219,76 +219,75 @@ tar -zxvf qlib_bin.tar.gz -C ~/.qlib/qlib_data/cn_data --strip-components=1
 rm -f qlib_bin.tar.gz
 ```
 
-The official dataset below will resume in short future.
+下面的官方数据集将在不久的将来恢复。
 
 
 ----
 
-Load and prepare data by running the following code:
+通过运行以下代码加载和准备数据：
 
-### Get with module
+### 使用模块获取
   ```bash
-  # get 1d data
+  # 获取 1d 数据
   python -m qlib.run.get_data qlib_data --target_dir ~/.qlib/qlib_data/cn_data --region cn
 
-  # get 1min data
+  # 获取 1min 数据
   python -m qlib.run.get_data qlib_data --target_dir ~/.qlib/qlib_data/cn_data_1min --region cn --interval 1min
 
   ```
 
-### Get from source
+### 从源获取
 
   ```bash
-  # get 1d data
+  # 获取 1d 数据
   python scripts/get_data.py qlib_data --target_dir ~/.qlib/qlib_data/cn_data --region cn
 
-  # get 1min data
+  # 获取 1min 数据
   python scripts/get_data.py qlib_data --target_dir ~/.qlib/qlib_data/cn_data_1min --region cn --interval 1min
 
   ```
 
-This dataset is created by public data collected by [crawler scripts](scripts/data_collector/), which have been released in
-the same repository.
-Users could create the same dataset with it. [Description of dataset](https://github.com/microsoft/qlib/tree/main/scripts/data_collector#description-of-dataset)
+此数据集是由 [crawler scripts](scripts/data_collector/) 收集的公共数据创建的，这些脚本已在同一仓库中发布。
+用户可以使用它创建相同的数据集。[数据集描述](https://github.com/microsoft/qlib/tree/main/scripts/data_collector#description-of-dataset)
 
-*Please pay **ATTENTION** that the data is collected from [Yahoo Finance](https://finance.yahoo.com/lookup), and the data might not be perfect.
-We recommend users to prepare their own data if they have a high-quality dataset. For more information, users can refer to the [related document](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*.
+*请**注意**数据是从 [Yahoo Finance](https://finance.yahoo.com/lookup) 收集的，数据可能不完美。
+我们建议用户如果有高质量数据集，请准备自己的数据。更多信息，用户可以参考[相关文档](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*。
 
-### Automatic update of daily frequency data (from yahoo finance)
-  > This step is *Optional* if users only want to try their models and strategies on history data.
+### 自动更新每日频率数据 (从 yahoo finance)
+  > 如果用户只想在历史数据上尝试他们的模型和策略，此步骤是*可选*的。
   > 
-  > It is recommended that users update the data manually once (--trading_date 2021-05-25) and then set it to update automatically.
+  > 建议用户手动更新一次数据 (--trading_date 2021-05-25) 然后设置为自动更新。
   >
-  > **NOTE**: Users can't incrementally  update data based on the offline data provided by Qlib(some fields are removed to reduce the data size). Users should use [yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) to download Yahoo data from scratch and then incrementally update it.
+  > **注意**：用户无法基于 Qlib 提供的离线数据（一些字段被移除以减少数据大小）增量更新数据。用户应使用 [yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) 从头下载 Yahoo 数据，然后增量更新它。
   > 
-  > For more information, please refer to: [yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance)
+  > 更多信息，请参考：[yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance)
 
-  * Automatic update of data to the "qlib" directory each trading day(Linux)
-      * use *crontab*: `crontab -e`
-      * set up timed tasks:
+  * 每个交易日自动更新数据到 "qlib" 目录 (Linux)
+      * 使用 *crontab*: `crontab -e`
+      * 设置定时任务：
 
         ```
         * * * * 1-5 python <script path> update_data_to_bin --qlib_data_1d_dir <user data dir>
         ```
         * **script path**: *scripts/data_collector/yahoo/collector.py*
 
-  * Manual update of data
+  * 手动更新数据
       ```
       python scripts/data_collector/yahoo/collector.py update_data_to_bin --qlib_data_1d_dir <user data dir> --trading_date <start date> --end_date <end date>
       ```
-      * *trading_date*: start of trading day
-      * *end_date*: end of trading day(not included)
+      * *trading_date*: 交易日开始
+      * *end_date*: 交易日结束（不包括）
 
-### Checking the health of the data
-  * We provide a script to check the health of the data, you can run the following commands to check whether the data is healthy or not.
+### 检查数据健康状况
+  * 我们提供了一个脚本来检查数据的健康状况，您可以运行以下命令来检查数据是否健康。
     ```
     python scripts/check_data_health.py check_data --qlib_dir ~/.qlib/qlib_data/cn_data
     ```
-  * Of course, you can also add some parameters to adjust the test results, such as this.
+  * 当然，您也可以添加一些参数来调整测试结果，例如这样。
     ```
     python scripts/check_data_health.py check_data --qlib_dir ~/.qlib/qlib_data/cn_data --missing_data_num 30055 --large_step_threshold_volume 94485 --large_step_threshold_price 20
     ```
-  * If you want more information about `check_data_health`, please refer to the [documentation](https://qlib.readthedocs.io/en/latest/component/data.html#checking-the-health-of-the-data).
+  * 如果您想了解更多关于 `check_data_health` 的信息，请参考[文档](https://qlib.readthedocs.io/en/latest/component/data.html#checking-the-health-of-the-data)。
 
 <!-- 
 - Run the initialization code and get stock data:
@@ -317,62 +316,62 @@ We recommend users to prepare their own data if they have a high-quality dataset
   ```
  -->
 
-## Docker images
-1. Pulling a docker image from a docker hub repository
+## Docker 镜像
+1. 从 Docker Hub 仓库拉取镜像
     ```bash
     docker pull pyqlib/qlib_image_stable:stable
     ```
-2. Start a new Docker container
+2. 启动新的 Docker 容器
     ```bash
-    docker run -it --name <container name> -v <Mounted local directory>:/app qlib_image_stable
+    docker run -it --name <容器名> -v <本地挂载目录>:/app qlib_image_stable
     ```
-3. At this point you are in the docker environment and can run the qlib scripts. An example:
+3. 此时你已进入 docker 环境，可以运行 qlib 脚本。例如：
     ```bash
     >>> python scripts/get_data.py qlib_data --name qlib_data_simple --target_dir ~/.qlib/qlib_data/cn_data --interval 1d --region cn
     >>> python qlib/workflow/cli.py examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
     ```
-4. Exit the container
+4. 退出容器
     ```bash
     >>> exit
     ```
-5. Restart the container
+5. 重启容器
     ```bash
-    docker start -i -a <container name>
+    docker start -i -a <容器名>
     ```
-6. Stop the container
+6. 停止容器
     ```bash
-    docker stop <container name>
+    docker stop <容器名>
     ```
-7. Delete the container
+7. 删除容器
     ```bash
-    docker rm <container name>
+    docker rm <容器名>
     ```
-8. If you want to know more information, please refer to the [documentation](https://qlib.readthedocs.io/en/latest/developer/how_to_build_image.html).
+8. 更多信息请参考[文档](https://qlib.readthedocs.io/en/latest/developer/how_to_build_image.html)。
 
-## Auto Quant Research Workflow
-Qlib provides a tool named `qrun` to run the whole workflow automatically (including building dataset, training models, backtest and evaluation). You can start an auto quant research workflow and have a graphical reports analysis according to the following steps: 
+## 自动化量化研究工作流
+Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工作流（包括数据集构建、模型训练、回测和评估）。你可以按照以下步骤启动自动化量化研究工作流，并进行图形化报告分析：
 
-1. Quant Research Workflow: Run  `qrun` with lightgbm workflow config ([workflow_config_lightgbm_Alpha158.yaml](examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml) as following.
+1. 量化研究工作流：使用 lightgbm 的工作流配置文件运行 `qrun`（如 [workflow_config_lightgbm_Alpha158.yaml](examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml)）。
     ```bash
-      cd examples  # Avoid running program under the directory contains `qlib`
+      cd examples  # 避免在包含 `qlib` 的目录下运行程序
       qrun benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
     ```
-    If users want to use `qrun` under debug mode, please use the following command:
+    如果用户希望在调试模式下使用 `qrun`，请使用以下命令：
     ```bash
     python -m pdb qlib/workflow/cli.py examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
     ```
-    The result of `qrun` is as follows, please refer to [docs](https://qlib.readthedocs.io/en/latest/component/strategy.html#result) for more explanations about the result. 
+    `qrun` 的结果如下，更多解释请参考[文档](https://qlib.readthedocs.io/en/latest/component/strategy.html#result)。
 
     ```bash
 
-    'The following are analysis results of the excess return without cost.'
+    '以下为超额收益（不含成本）的分析结果。'
                            risk
     mean               0.000708
     std                0.005626
     annualized_return  0.178316
     information_ratio  1.996555
     max_drawdown      -0.081806
-    'The following are analysis results of the excess return with cost.'
+    '以下为超额收益（含成本）的分析结果。'
                            risk
     mean               0.000512
     std                0.005626
@@ -380,23 +379,23 @@ Qlib provides a tool named `qrun` to run the whole workflow automatically (inclu
     information_ratio  1.444287
     max_drawdown      -0.091078
     ```
-    Here are detailed documents for `qrun` and [workflow](https://qlib.readthedocs.io/en/latest/component/workflow.html).
+    有关 `qrun` 和 [工作流](https://qlib.readthedocs.io/en/latest/component/workflow.html) 的详细文档请参考链接。
 
-2. Graphical Reports Analysis: First, run `python -m pip install .[analysis]` to install the required dependencies. Then run `examples/workflow_by_code.ipynb` with `jupyter notebook` to get graphical reports. 
-    - Forecasting signal (model prediction) analysis
-      - Cumulative Return of groups
+2. 图形化报告分析：首先运行 `python -m pip install .[analysis]` 安装所需依赖，然后用 `jupyter notebook` 打开并运行 `examples/workflow_by_code.ipynb`，即可获得图形化报告。
+    - 预测信号（模型预测）分析
+      - 分组累计收益
       ![Cumulative Return](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_cumulative_return.png)
-      - Return distribution
+      - 收益分布
       ![long_short](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_long_short.png)
-      - Information Coefficient (IC)
+      - 信息系数（IC）
       ![Information Coefficient](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_IC.png)
       ![Monthly IC](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_monthly_IC.png)
       ![IC](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_NDQ.png)
-      - Auto Correlation of forecasting signal (model prediction)
+      - 预测信号（模型预测）的自相关性
       ![Auto Correlation](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_auto_correlation.png)
 
-    - Portfolio analysis
-      - Backtest return
+    - 投资组合分析
+      - 回测收益
       ![Report](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/report.png)
       <!-- 
       - Score IC
@@ -408,227 +407,217 @@ Qlib provides a tool named `qrun` to run the whole workflow automatically (inclu
       - Rank Label
       ![Rank Label](docs/_static/img/rank_label.png)
       -->
-   - [Explanation](https://qlib.readthedocs.io/en/latest/component/report.html) of above results
+   - 上述结果的[详细解释](https://qlib.readthedocs.io/en/latest/component/report.html)
 
-## Building Customized Quant Research Workflow by Code
-The automatic workflow may not suit the research workflow of all Quant researchers. To support a flexible Quant research workflow, Qlib also provides a modularized interface to allow researchers to build their own workflow by code. [Here](examples/workflow_by_code.ipynb) is a demo for customized Quant research workflow by code.
+## 通过代码构建自定义量化研究工作流
+自动化工作流可能并不适用于所有量化研究者的研究流程。为支持灵活的量化研究工作流，Qlib 还提供了模块化接口，允许研究者通过代码自定义工作流。[这里](examples/workflow_by_code.ipynb)有一个通过代码自定义量化研究工作流的演示。
 
-# Main Challenges & Solutions in Quant Research
-Quant investment is a very unique scenario with lots of key challenges to be solved.
-Currently, Qlib provides some solutions for several of them.
+# 量化研究中的主要挑战与解决方案
+量化投资是一个非常独特的场景，存在许多关键挑战需要解决。
+目前，Qlib 针对其中一些挑战提供了解决方案。
 
-## Forecasting: Finding Valuable Signals/Patterns
-Accurate forecasting of the stock price trend is a very important part to construct profitable portfolios.
-However, huge amount of data with various formats in the financial market which make it challenging to build forecasting models.
+## 预测：寻找有价值的信号/模式
+准确预测股票价格趋势对于构建盈利投资组合至关重要。
+然而，金融市场中存在大量不同格式的数据，这使得构建预测模型变得具有挑战性。
 
-An increasing number of SOTA Quant research works/papers, which focus on building forecasting models to mine valuable signals/patterns in complex financial data, are released in `Qlib`
+越来越多关注在复杂金融数据中挖掘有价值信号/模式的 SOTA 量化研究工作/论文在 `Qlib` 中发布。
 
 
-### [Quant Model (Paper) Zoo](examples/benchmarks)
+### [量化模型（论文）动物园](examples/benchmarks)
 
-Here is a list of models built on `Qlib`.
-- [GBDT based on XGBoost (Tianqi Chen, et al. KDD 2016)](examples/benchmarks/XGBoost/)
-- [GBDT based on LightGBM (Guolin Ke, et al. NIPS 2017)](examples/benchmarks/LightGBM/)
-- [GBDT based on Catboost (Liudmila Prokhorenkova, et al. NIPS 2018)](examples/benchmarks/CatBoost/)
-- [MLP based on pytorch](examples/benchmarks/MLP/)
-- [LSTM based on pytorch (Sepp Hochreiter, et al. Neural computation 1997)](examples/benchmarks/LSTM/)
-- [GRU based on pytorch (Kyunghyun Cho, et al. 2014)](examples/benchmarks/GRU/)
-- [ALSTM based on pytorch (Yao Qin, et al. IJCAI 2017)](examples/benchmarks/ALSTM)
-- [GATs based on pytorch (Petar Velickovic, et al. 2017)](examples/benchmarks/GATs/)
-- [SFM based on pytorch (Liheng Zhang, et al. KDD 2017)](examples/benchmarks/SFM/)
-- [TFT based on tensorflow (Bryan Lim, et al. International Journal of Forecasting 2019)](examples/benchmarks/TFT/)
-- [TabNet based on pytorch (Sercan O. Arik, et al. AAAI 2019)](examples/benchmarks/TabNet/)
-- [DoubleEnsemble based on LightGBM (Chuheng Zhang, et al. ICDM 2020)](examples/benchmarks/DoubleEnsemble/)
-- [TCTS based on pytorch (Xueqing Wu, et al. ICML 2021)](examples/benchmarks/TCTS/)
-- [Transformer based on pytorch (Ashish Vaswani, et al. NeurIPS 2017)](examples/benchmarks/Transformer/)
-- [Localformer based on pytorch (Juyong Jiang, et al.)](examples/benchmarks/Localformer/)
-- [TRA based on pytorch (Hengxu, Dong, et al. KDD 2021)](examples/benchmarks/TRA/)
-- [TCN based on pytorch (Shaojie Bai, et al. 2018)](examples/benchmarks/TCN/)
-- [ADARNN based on pytorch (YunTao Du, et al. 2021)](examples/benchmarks/ADARNN/)
-- [ADD based on pytorch (Hongshun Tang, et al.2020)](examples/benchmarks/ADD/)
-- [IGMTF based on pytorch (Wentao Xu, et al.2021)](examples/benchmarks/IGMTF/)
-- [HIST based on pytorch (Wentao Xu, et al.2021)](examples/benchmarks/HIST/)
-- [KRNN based on pytorch](examples/benchmarks/KRNN/)
-- [Sandwich based on pytorch](examples/benchmarks/Sandwich/)
+以下是基于 `Qlib` 构建的模型列表：
+- [基于 XGBoost 的 GBDT (Tianqi Chen, et al. KDD 2016)](examples/benchmarks/XGBoost/)
+- [基于 LightGBM 的 GBDT (Guolin Ke, et al. NIPS 2017)](examples/benchmarks/LightGBM/)
+- [基于 Catboost 的 GBDT (Liudmila Prokhorenkova, et al. NIPS 2018)](examples/benchmarks/CatBoost/)
+- [基于 pytorch 的 MLP](examples/benchmarks/MLP/)
+- [基于 pytorch 的 LSTM (Sepp Hochreiter, et al. Neural computation 1997)](examples/benchmarks/LSTM/)
+- [基于 pytorch 的 GRU (Kyunghyun Cho, et al. 2014)](examples/benchmarks/GRU/)
+- [基于 pytorch 的 ALSTM (Yao Qin, et al. IJCAI 2017)](examples/benchmarks/ALSTM)
+- [基于 pytorch 的 GATs (Petar Velickovic, et al. 2017)](examples/benchmarks/GATs/)
+- [基于 pytorch 的 SFM (Liheng Zhang, et al. KDD 2017)](examples/benchmarks/SFM/)
+- [基于 tensorflow 的 TFT (Bryan Lim, et al. International Journal of Forecasting 2019)](examples/benchmarks/TFT/)
+- [基于 pytorch 的 TabNet (Sercan O. Arik, et al. AAAI 2019)](examples/benchmarks/TabNet/)
+- [基于 LightGBM 的 DoubleEnsemble (Chuheng Zhang, et al. ICDM 2020)](examples/benchmarks/DoubleEnsemble/)
+- [基于 pytorch 的 TCTS (Xueqing Wu, et al. ICML 2021)](examples/benchmarks/TCTS/)
+- [基于 pytorch 的 Transformer (Ashish Vaswani, et al. NeurIPS 2017)](examples/benchmarks/Transformer/)
+- [基于 pytorch 的 Localformer (Juyong Jiang, et al.)](examples/benchmarks/Localformer/)
+- [基于 pytorch 的 TRA (Hengxu, Dong, et al. KDD 2021)](examples/benchmarks/TRA/)
+- [基于 pytorch 的 TCN (Shaojie Bai, et al. 2018)](examples/benchmarks/TCN/)
+- [基于 pytorch 的 ADARNN (YunTao Du, et al. 2021)](examples/benchmarks/ADARNN/)
+- [基于 pytorch 的 ADD (Hongshun Tang, et al.2020)](examples/benchmarks/ADD/)
+- [基于 pytorch 的 IGMTF (Wentao Xu, et al.2021)](examples/benchmarks/IGMTF/)
+- [基于 pytorch 的 HIST (Wentao Xu, et al.2021)](examples/benchmarks/HIST/)
+- [基于 pytorch 的 KRNN](examples/benchmarks/KRNN/)
+- [基于 pytorch 的 Sandwich](examples/benchmarks/Sandwich/)
 
-Your PR of new Quant models is highly welcomed.
+欢迎提交新的量化模型 PR。
 
-The performance of each model on the `Alpha158` and `Alpha360` datasets can be found [here](examples/benchmarks/README.md).
+每个模型在 `Alpha158` 和 `Alpha360` 数据集上的表现可在[这里](examples/benchmarks/README.md)查看。
 
-### Run a single model
-All the models listed above are runnable with ``Qlib``. Users can find the config files we provide and some details about the model through the [benchmarks](examples/benchmarks) folder. More information can be retrieved at the model files listed above.
+### 运行单个模型
+上述所有模型均可通过 ``Qlib`` 运行。用户可在 [benchmarks](examples/benchmarks) 文件夹中找到我们提供的配置文件及模型详情，更多信息可在上述模型文件中获取。
 
-`Qlib` provides three different ways to run a single model, users can pick the one that fits their cases best:
-- Users can use the tool `qrun` mentioned above to run a model's workflow based from a config file.
-- Users can create a `workflow_by_code` python script based on the [one](examples/workflow_by_code.py) listed in the `examples` folder.
+`Qlib` 提供三种不同方式运行单个模型，用户可根据实际情况选择：
+- 使用上文提到的 `qrun` 工具，通过配置文件运行模型工作流。
+- 基于 `examples` 文件夹下的 [workflow_by_code.py](examples/workflow_by_code.py) 创建 `workflow_by_code` Python 脚本。
 
-- Users can use the script [`run_all_model.py`](examples/run_all_model.py) listed in the `examples` folder to run a model. Here is an example of the specific shell command to be used: `python run_all_model.py run --models=lightgbm`, where the `--models` arguments can take any number of models listed above(the available models can be found  in [benchmarks](examples/benchmarks/)). For more use cases, please refer to the file's [docstrings](examples/run_all_model.py).
-    - **NOTE**: Each baseline has different environment dependencies, please make sure that your python version aligns with the requirements(e.g. TFT only supports Python 3.6~3.7 due to the limitation of `tensorflow==1.15.0`)
+- 使用 `examples` 文件夹下的 [`run_all_model.py`](examples/run_all_model.py) 脚本运行模型。例如：`python run_all_model.py run --models=lightgbm`，其中 `--models` 参数可指定上述任意模型（可用模型见 [benchmarks](examples/benchmarks/)）。更多用法请参考文件的 [docstring](examples/run_all_model.py)。
+    - **注意**：每个基线模型依赖的环境不同，请确保你的 Python 版本与要求一致（如 TFT 仅支持 Python 3.6~3.7，因 `tensorflow==1.15.0` 限制）。
 
-### Run multiple models
-`Qlib` also provides a script [`run_all_model.py`](examples/run_all_model.py) which can run multiple models for several iterations. (**Note**: the script only support *Linux* for now. Other OS will be supported in the future. Besides, it doesn't support parallel running the same model for multiple times as well, and this will be fixed in the future development too.)
+### 运行多个模型
+`Qlib` 还提供了 [`run_all_model.py`](examples/run_all_model.py) 脚本，可多次迭代运行多个模型。（**注意**：该脚本目前仅支持 *Linux*，其他操作系统未来会支持。此外，目前不支持同一模型多次并行运行，后续开发将修复此问题。）
 
-The script will create a unique virtual environment for each model, and delete the environments after training. Thus, only experiment results such as `IC` and `backtest` results will be generated and stored.
+该脚本会为每个模型创建独立虚拟环境，训练完成后自动删除，仅保留实验结果如 `IC` 和 `backtest`。
 
-Here is an example of running all the models for 10 iterations:
+例如，运行所有模型 10 次：
 ```python
 python run_all_model.py run 10
 ```
 
-It also provides the API to run specific models at once. For more use cases, please refer to the file's [docstrings](examples/run_all_model.py). 
+也可通过 API 一次性运行指定模型。更多用法请参考文件的 [docstring](examples/run_all_model.py)。
 
-### Break change
-In `pandas`, `group_key` is one of the parameters of the `groupby` method. From version 1.5 to 2.0 of `pandas`, the default value of `group_key` has been changed from `no default` to `True`, which will cause qlib to report an error during operation. So we set `group_key=False`, but it doesn't guarantee that some programmes will run correctly, including:
+### 兼容性变更
+在 `pandas` 中，`group_key` 是 `groupby` 方法的参数之一。从 1.5 版本到 2.0 版本，`group_key` 的默认值由 `无默认` 变为 `True`，这会导致 qlib 运行时报错。因此我们设置了 `group_key=False`，但不能保证所有程序都能正确运行，包括：
 * qlib\examples\rl_order_execution\scripts\gen_training_orders.py
 * qlib\examples\benchmarks\TRA\src\dataset.MTSDatasetH.py
 * qlib\examples\benchmarks\TFT\tft.py
 
 
 
-## [Adapting to Market Dynamics](examples/benchmarks_dynamic)
+## [适应市场动态](examples/benchmarks_dynamic)
 
-Due to the non-stationary nature of the environment of the financial market, the data distribution may change in different periods, which makes the performance of models build on training data decays in the future test data.
-So adapting the forecasting models/strategies to market dynamics is very important to the model/strategies' performance.
+由于金融市场环境的非平稳性，数据分布在不同阶段可能发生变化，这导致基于训练数据构建的模型在未来测试数据上的表现下降。因此，使预测模型/策略适应市场动态对于其性能至关重要。
 
-Here is a list of solutions built on `Qlib`.
-- [Rolling Retraining](examples/benchmarks_dynamic/baseline/)
-- [DDG-DA on pytorch (Wendi, et al. AAAI 2022)](examples/benchmarks_dynamic/DDG-DA/)
+以下是基于 `Qlib` 构建的解决方案列表：
+- [滚动再训练](examples/benchmarks_dynamic/baseline/)
+- [基于 pytorch 的 DDG-DA (Wendi, et al. AAAI 2022)](examples/benchmarks_dynamic/DDG-DA/)
 
-##  Reinforcement Learning: modeling continuous decisions
-Qlib now supports reinforcement learning, a feature designed to model continuous investment decisions. This functionality assists investors in optimizing their trading strategies by learning from interactions with the environment to maximize some notion of cumulative reward.
+## 强化学习：建模连续决策
+Qlib 现已支持强化学习功能，用于建模连续投资决策。该功能通过与环境的交互学习，帮助投资者优化交易策略，以最大化累计收益。
 
-Here is a list of solutions built on `Qlib` categorized by scenarios.
+以下是基于不同场景的 Qlib 强化学习解决方案列表：
 
-### [RL for order execution](examples/rl_order_execution)
-[Here](https://qlib.readthedocs.io/en/latest/component/rl/overall.html#order-execution) is the introduction of this scenario.  All the methods below are compared [here](examples/rl_order_execution).
+### [订单执行中的强化学习](examples/rl_order_execution)
+[这里](https://qlib.readthedocs.io/en/latest/component/rl/overall.html#order-execution)有该场景的介绍，所有方法的对比见[此处](examples/rl_order_execution)。
 - [TWAP](examples/rl_order_execution/exp_configs/backtest_twap.yml)
 - [PPO: "An End-to-End Optimal Trade Execution Framework based on Proximal Policy Optimization", IJCAL 2020](examples/rl_order_execution/exp_configs/backtest_ppo.yml)
 - [OPDS: "Universal Trading for Order Execution with Oracle Policy Distillation", AAAI 2021](examples/rl_order_execution/exp_configs/backtest_opds.yml)
 
-# Quant Dataset Zoo
-Dataset plays a very important role in Quant. Here is a list of the datasets built on `Qlib`:
+# 量化数据集动物园
+数据集在量化研究中扮演着非常重要的角色。以下是基于 `Qlib` 构建的数据集列表：
 
-| Dataset                                    | US Market | China Market |
+| 数据集                                    | 美国市场 | 中国市场 |
 | --                                         | --        | --           |
 | [Alpha360](./qlib/contrib/data/handler.py) |  √        |  √           |
 | [Alpha158](./qlib/contrib/data/handler.py) |  √        |  √           |
 
-[Here](https://qlib.readthedocs.io/en/latest/advanced/alpha.html) is a tutorial to build dataset with `Qlib`.
-Your PR to build new Quant dataset is highly welcomed.
+[这里](https://qlib.readthedocs.io/en/latest/advanced/alpha.html)有使用 `Qlib` 构建数据集的教程。
+欢迎提交新的量化数据集 PR。
 
 
-# Learning Framework
-Qlib is high customizable and a lot of its components are learnable.
-The learnable components are instances of `Forecast Model` and `Trading Agent`. They are learned based on the `Learning Framework` layer and then applied to multiple scenarios in `Workflow` layer.
-The learning framework leverages the `Workflow` layer as well(e.g. sharing `Information Extractor`, creating environments based on `Execution Env`).
+# 学习框架
+Qlib 高度可定制，许多组件都可学习。
+可学习组件包括 `预测模型` 和 `交易代理` 的实例。它们基于 `学习框架` 层进行训练，然后应用于 `工作流` 层的多个场景。
+学习框架也会利用 `工作流` 层（如共享 `信息提取器`，基于 `执行环境` 创建环境等）。
 
-Based on learning paradigms, they can be categorized into reinforcement learning and supervised learning.
-- For supervised learning, the detailed docs can be found [here](https://qlib.readthedocs.io/en/latest/component/model.html).
-- For reinforcement learning, the detailed docs can be found [here](https://qlib.readthedocs.io/en/latest/component/rl.html). Qlib's RL learning framework leverages `Execution Env` in `Workflow` layer to create environments.  It's worth noting that `NestedExecutor` is supported as well. This empowers users to optimize different level of strategies/models/agents together (e.g. optimizing an order execution strategy for a specific portfolio management strategy).
+根据学习范式，可分为强化学习和监督学习：
+- 监督学习的详细文档见[这里](https://qlib.readthedocs.io/en/latest/component/model.html)。
+- 强化学习的详细文档见[这里](https://qlib.readthedocs.io/en/latest/component/rl.html)。Qlib 的 RL 学习框架利用 `工作流` 层的 `执行环境` 创建环境，支持 `NestedExecutor`，可实现多层次策略/模型/代理的联合优化（如针对特定投资组合管理策略优化订单执行策略）。
 
 
-# More About Qlib
-If you want to have a quick glance at the most frequently used components of qlib, you can try notebooks [here](examples/tutorial/).
+# 关于 Qlib 的更多信息
+如果你想快速了解 qlib 最常用的组件，可以尝试 [notebooks 示例](examples/tutorial/)。
 
-The detailed documents are organized in [docs](docs/).
-[Sphinx](http://www.sphinx-doc.org) and the readthedocs theme is required to build the documentation in html formats. 
+详细文档见 [docs](docs/)。
+构建 HTML 格式文档需安装 [Sphinx](http://www.sphinx-doc.org) 及 readthedocs 主题。
 ```bash
 cd docs/
 conda install sphinx sphinx_rtd_theme -y
-# Otherwise, you can install them with pip
+# 或者用 pip 安装
 # pip install sphinx sphinx_rtd_theme
 make html
 ```
-You can also view the [latest document](http://qlib.readthedocs.io/) online directly.
+你也可以直接在线查看[最新文档](http://qlib.readthedocs.io/)。
 
-Qlib is in active and continuing development. Our plan is in the roadmap, which is managed as a [github project](https://github.com/microsoft/qlib/projects/1).
+Qlib 正在持续开发中，开发计划见 [github 项目](https://github.com/microsoft/qlib/projects/1)。
 
 
 
-# Offline Mode and Online Mode
-The data server of Qlib can either deployed as `Offline` mode or `Online` mode. The default mode is offline mode.
+# 离线与在线模式
+Qlib 的数据服务器可部署为“离线”模式或“在线”模式，默认模式为离线模式。
 
-Under `Offline` mode, the data will be deployed locally. 
+在“离线”模式下，数据会本地部署。
 
-Under `Online` mode, the data will be deployed as a shared data service. The data and their cache will be shared by all the clients. The data retrieval performance is expected to be improved due to a higher rate of cache hits. It will consume less disk space, too. The documents of the online mode can be found in [Qlib-Server](https://qlib-server.readthedocs.io/). The online mode can be deployed automatically with [Azure CLI based scripts](https://qlib-server.readthedocs.io/en/latest/build.html#one-click-deployment-in-azure). The source code of online data server can be found in [Qlib-Server repository](https://github.com/microsoft/qlib-server).
+在“在线”模式下，数据作为共享数据服务部署，数据及其缓存会被所有客户端共享。由于缓存命中率更高，数据检索性能有望提升，同时也会节省磁盘空间。在线模式文档见 [Qlib-Server](https://qlib-server.readthedocs.io/)，可通过 [Azure CLI 脚本一键部署](https://qlib-server.readthedocs.io/en/latest/build.html#one-click-deployment-in-azure)。在线数据服务器源码见 [Qlib-Server 仓库](https://github.com/microsoft/qlib-server)。
 
-## Performance of Qlib Data Server
-The performance of data processing is important to data-driven methods like AI technologies. As an AI-oriented platform, Qlib provides a solution for data storage and data processing. To demonstrate the performance of Qlib data server, we
-compare it with several other data storage solutions. 
+## Qlib 数据服务器性能
+数据处理性能对 AI 等数据驱动方法至关重要。作为面向 AI 的平台，Qlib 提供了数据存储与处理的解决方案。为展示 Qlib 数据服务器的性能，我们与其他数据存储方案进行了对比。
 
-We evaluate the performance of several storage solutions by finishing the same task,
-which creates a dataset (14 features/factors) from the basic OHLCV daily data of a stock market (800 stocks each day from 2007 to 2020). The task involves data queries and processing.
+我们通过同一任务评估多种存储方案性能：从股票市场（2007-2020 年，800 只股票每日 OHLCV 数据）生成包含 14 个特征/因子的因子数据集，涉及数据查询与处理。
 
 |                         | HDF5      | MySQL     | MongoDB   | InfluxDB  | Qlib -E -D  | Qlib +E -D   | Qlib +E +D  |
 | --                      | ------    | ------    | --------  | --------- | ----------- | ------------ | ----------- |
-| Total (1CPU) (seconds)  | 184.4±3.7 | 365.3±7.5 | 253.6±6.7 | 368.2±3.6 | 147.0±8.8   | 47.6±1.0     | **7.4±0.3** |
-| Total (64CPU) (seconds) |           |           |           |           | 8.8±0.6     | **4.2±0.2**  |             |
-* `+(-)E` indicates with (out) `ExpressionCache`
-* `+(-)D` indicates with (out) `DatasetCache`
+| 单核总耗时（秒）        | 184.4±3.7 | 365.3±7.5 | 253.6±6.7 | 368.2±3.6 | 147.0±8.8   | 47.6±1.0     | **7.4±0.3** |
+| 64 核总耗时（秒）       |           |           |           |           | 8.8±0.6     | **4.2±0.2**  |             |
+* `+(-)E` 表示有（无）`ExpressionCache`
+* `+(-)D` 表示有（无）`DatasetCache`
 
-Most general-purpose databases take too much time to load data. After looking into the underlying implementation, we find that data go through too many layers of interfaces and unnecessary format transformations in general-purpose database solutions.
-Such overheads greatly slow down the data loading process.
-Qlib data are stored in a compact format, which is efficient to be combined into arrays for scientific computation.
+大多数通用数据库加载数据耗时较长。深入底层实现后发现，通用数据库方案中数据需经过多层接口和不必要的格式转换，极大拖慢了数据加载速度。
+Qlib 数据以紧凑格式存储，便于高效组合为科学计算所需的数组。
 
-# Related Reports
+# 相关报道
 - [Guide To Qlib: Microsoft’s AI Investment Platform](https://analyticsindiamag.com/qlib/)
 - [微软也搞AI量化平台？还是开源的！](https://mp.weixin.qq.com/s/47bP5YwxfTp2uTHjUBzJQQ)
 - [微矿Qlib：业内首个AI量化投资开源平台](https://mp.weixin.qq.com/s/vsJv7lsgjEi-ALYUz4CvtQ)
 
-# Contact Us
-- If you have any issues, please create issue [here](https://github.com/microsoft/qlib/issues/new/choose) or send messages in [gitter](https://gitter.im/Microsoft/qlib).
-- If you want to make contributions to `Qlib`, please [create pull requests](https://github.com/microsoft/qlib/compare). 
-- For other reasons, you are welcome to contact us by email([qlib@microsoft.com](mailto:qlib@microsoft.com)).
-  - We are recruiting new members(both FTEs and interns), your resumes are welcome!
+# 联系我们
+- 如有任何问题，请在 [这里](https://github.com/microsoft/qlib/issues/new/choose) 提 issue，或在 [gitter](https://gitter.im/Microsoft/qlib) 留言。
+- 如希望为 `Qlib` 做贡献，请[提交 pull request](https://github.com/microsoft/qlib/compare)。
+- 其他事宜欢迎邮件联系（[qlib@microsoft.com](mailto:qlib@microsoft.com)）。
+  - 我们正在招聘新成员（全职/实习），欢迎投递简历！
 
-Join IM discussion groups:
+加入 IM 讨论群：
 |[Gitter](https://gitter.im/Microsoft/qlib)|
 |----|
 |![image](https://github.com/microsoft/qlib/blob/main/docs/_static/img/qrcode/gitter_qr.png)|
 
-# Contributing
-We appreciate all contributions and thank all the contributors!
+# 贡献
+感谢所有贡献者！
 <a href="https://github.com/microsoft/qlib/graphs/contributors"><img src="https://contrib.rocks/image?repo=microsoft/qlib" /></a>
 
-Before we released Qlib as an open-source project on Github in Sep 2020, Qlib is an internal project in our group. Unfortunately, the internal commit history is not kept. A lot of members in our group have also contributed a lot to Qlib, which includes Ruihua Wang, Yinda Zhang, Haisu Yu, Shuyu Wang, Bochen Pang, and [Dong Zhou](https://github.com/evanzd/evanzd). Especially thanks to [Dong Zhou](https://github.com/evanzd/evanzd) due to his initial version of Qlib.
+Qlib 于 2020 年 9 月开源前为组内项目，遗憾的是内部提交历史未保留。组内许多成员也为 Qlib 做出了重要贡献，包括 Ruihua Wang、Yinda Zhang、Haisu Yu、Shuyu Wang、Bochen Pang 及 [Dong Zhou](https://github.com/evanzd/evanzd)。特别感谢 [Dong Zhou](https://github.com/evanzd/evanzd) 的初始版本。
 
-## Guidance
+## 指南
 
-This project welcomes contributions and suggestions.  
-**Here are some 
-[code standards and development guidance](docs/developer/code_standard_and_dev_guide.rst) for submiting a pull request.**
+本项目欢迎各种贡献和建议。
+**[代码规范与开发指南](docs/developer/code_standard_and_dev_guide.rst) 可参考提交 pull request。**
 
-Making contributions is not a hard thing. Solving an issue(maybe just answering a question raised in [issues list](https://github.com/microsoft/qlib/issues) or [gitter](https://gitter.im/Microsoft/qlib)), fixing/issuing a bug, improving the documents and even fixing a typo are important contributions to Qlib.
+贡献并不难。解决 issue（如回答 [issues 列表](https://github.com/microsoft/qlib/issues) 或 [gitter](https://gitter.im/Microsoft/qlib) 上的问题）、修复/提出 bug、完善文档甚至修正错别字，都是对 Qlib 的重要贡献。
 
-For example, if you want to contribute to Qlib's document/code, you can follow the steps in the figure below.
+如想为 Qlib 文档/代码做贡献，可参考下图步骤：
 <p align="center">
   <img src="https://github.com/demon143/qlib/blob/main/docs/_static/img/change%20doc.gif" />
 </p>
 
-If you don't know how to start to contribute, you can refer to the following examples.
-| Type | Examples |
+如不知如何开始，可参考以下示例：
+| 类型 | 示例 |
 | -- | -- |
-| Solving issues | [Answer a question](https://github.com/microsoft/qlib/issues/749);  [issuing](https://github.com/microsoft/qlib/issues/765) or [fixing](https://github.com/microsoft/qlib/pull/792) a bug |
-| Docs | [Improve docs quality](https://github.com/microsoft/qlib/pull/797/files) ;  [Fix a typo](https://github.com/microsoft/qlib/pull/774) | 
-| Feature |  Implement a [requested feature](https://github.com/microsoft/qlib/projects) like [this](https://github.com/microsoft/qlib/pull/754); [Refactor interfaces](https://github.com/microsoft/qlib/pull/539/files) |
-| Dataset | [Add a dataset](https://github.com/microsoft/qlib/pull/733) | 
-| Models |  [Implement a new model](https://github.com/microsoft/qlib/pull/689), [some instructions to contribute models](https://github.com/microsoft/qlib/tree/main/examples/benchmarks#contributing) |
+| 解决问题 | [回答问题](https://github.com/microsoft/qlib/issues/749)；[提出](https://github.com/microsoft/qlib/issues/765)或[修复](https://github.com/microsoft/qlib/pull/792) bug |
+| 文档 | [提升文档质量](https://github.com/microsoft/qlib/pull/797/files)；[修正错别字](https://github.com/microsoft/qlib/pull/774) |
+| 新特性 | [实现需求特性](https://github.com/microsoft/qlib/projects) 如 [此](https://github.com/microsoft/qlib/pull/754)；[重构接口](https://github.com/microsoft/qlib/pull/539/files) |
+| 数据集 | [新增数据集](https://github.com/microsoft/qlib/pull/733) |
+| 模型 | [实现新模型](https://github.com/microsoft/qlib/pull/689)，[贡献模型说明](https://github.com/microsoft/qlib/tree/main/examples/benchmarks#contributing) |
 
-[Good first issues](https://github.com/microsoft/qlib/labels/good%20first%20issue) are labelled to indicate that they are easy to start your contributions.
+[Good first issues](https://github.com/microsoft/qlib/labels/good%20first%20issue) 标签表示适合新手入门。
 
-You can find some impefect implementation in Qlib by  `rg 'TODO|FIXME' qlib`
- 
-If you would like to become one of Qlib's maintainers to contribute more (e.g. help merge PR, triage issues), please contact us by email([qlib@microsoft.com](mailto:qlib@microsoft.com)).  We are glad to help to upgrade your permission.
+可通过 `rg 'TODO|FIXME' qlib` 查找 Qlib 中待完善实现。
 
-## License
-Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the right to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+如希望成为 Qlib 维护者（如协助合并 PR、管理 issue），请邮件联系（[qlib@microsoft.com](mailto:qlib@microsoft.com)）。我们乐于协助提升权限。
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+## 许可证
+大多数贡献需签署贡献者许可协议（CLA），声明你有权并实际授权我们使用你的贡献。详情见 https://cla.opensource.microsoft.com。
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+提交 pull request 时，CLA 机器人会自动判断是否需签署 CLA 并做相应标记（如状态检查、评论）。请按机器人指引操作。所有使用 CLA 的仓库只需签署一次。
+
+本项目采用 [Microsoft 开源行为准则](https://opensource.microsoft.com/codeofconduct/)。
+更多信息见 [行为准则 FAQ](https://opensource.microsoft.com/codeofconduct/faq/)，或邮件联系 [opencode@microsoft.com](mailto:opencode@microsoft.com)。
