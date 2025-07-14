@@ -43,26 +43,26 @@ class BaseCollector(abc.ABC):
     ):
         """
 
-        Parameters
+        参数说明
         ----------
         save_dir: str
-            instrument save dir
+            标的数据保存目录
         max_workers: int
-            workers, default 1; Concurrent number, default is 1; when collecting data, it is recommended that max_workers be set to 1
+            工作进程数，默认为1；并发数量，默认为1；收集数据时建议将max_workers设置为1
         max_collector_count: int
-            default 2
+            默认为2
         delay: float
-            time.sleep(delay), default 0
+            时间间隔(秒)，time.sleep(delay)，默认为0
         interval: str
-            freq, value from [1min, 1d], default 1d
+            时间频率，取值为[1min, 1d]，默认为1d
         start: str
-            start datetime, default None
+            开始日期时间，默认为None
         end: str
-            end datetime, default None
+            结束日期时间，默认为None
         check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认为None。
         limit_nums: int
-            using for debug, by default None
+            用于调试，默认为None
         """
         self.save_dir = Path(save_dir).expanduser().resolve()
         self.save_dir.mkdir(parents=True, exist_ok=True)
@@ -373,28 +373,28 @@ class BaseRun(abc.ABC):
         limit_nums=None,
         **kwargs,
     ):
-        """download data from Internet
+        """从互联网下载数据
 
-        Parameters
+        参数说明
         ----------
         max_collector_count: int
-            default 2
+            默认为2
         delay: float
-            time.sleep(delay), default 0
+            时间间隔(秒)，time.sleep(delay)，默认为0
         start: str
-            start datetime, default "2000-01-01"
+            开始日期时间，默认为"2000-01-01"
         end: str
-            end datetime, default ``pd.Timestamp(datetime.datetime.now() + pd.Timedelta(days=1))``
+            结束日期时间，默认为``pd.Timestamp(datetime.datetime.now() + pd.Timedelta(days=1))``
         check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认为None。
         limit_nums: int
-            using for debug, by default None
+            用于调试，默认为None
 
-        Examples
+        使用示例
         ---------
-            # get daily data
+            # 获取日线数据
             $ python collector.py download_data --source_dir ~/.qlib/instrument_data/source --region CN --start 2020-11-01 --end 2020-11-10 --delay 0.1 --interval 1d
-            # get 1m data
+            # 获取1分钟数据
             $ python collector.py download_data --source_dir ~/.qlib/instrument_data/source --region CN --start 2020-11-01 --end 2020-11-10 --delay 0.1 --interval 1m
         """
 
@@ -413,16 +413,16 @@ class BaseRun(abc.ABC):
         ).collector_data()
 
     def normalize_data(self, date_field_name: str = "date", symbol_field_name: str = "symbol", **kwargs):
-        """normalize data
+        """归一化数据
 
-        Parameters
+        参数说明
         ----------
         date_field_name: str
-            date field name, default date
+            日期字段名称，默认为date
         symbol_field_name: str
-            symbol field name, default symbol
+            标的代码字段名称，默认为symbol
 
-        Examples
+        使用示例
         ---------
             $ python collector.py normalize_data --source_dir ~/.qlib/instrument_data/source --normalize_dir ~/.qlib/instrument_data/normalize --region CN --interval 1d
         """

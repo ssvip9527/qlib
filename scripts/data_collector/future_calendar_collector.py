@@ -21,14 +21,14 @@ class CollectorFutureCalendar:
     def __init__(self, qlib_dir: Union[str, Path], start_date: str = None, end_date: str = None):
         """
 
-        Parameters
+        参数说明
         ----------
         qlib_dir:
-            qlib data directory
+            Qlib数据目录
         start_date
-            start date
+            开始日期
         end_date
-            end date
+            结束日期
         """
         self.qlib_dir = Path(qlib_dir).expanduser().absolute()
         self.calendar_path = self.qlib_dir.joinpath("calendars/day.txt")
@@ -92,23 +92,23 @@ class CollectorFutureCalendarUS(CollectorFutureCalendar):
 
 
 def run(qlib_dir: Union[str, Path], region: str = "cn", start_date: str = None, end_date: str = None):
-    """Collect future calendar(day)
+    """收集期货交易日历(日线)
 
-    Parameters
+    参数说明
     ----------
     qlib_dir:
-        qlib data directory
+        Qlib数据目录
     region:
-        cn/CN or us/US
+        cn/CN或us/US
     start_date
-        start date
+        开始日期
     end_date
-        end date
+        结束日期
 
-    Examples
+    使用示例
     -------
-        # get cn future calendar
-        $ python future_calendar_collector.py --qlib_data_1d_dir <user data dir> --region cn
+        # 获取中国市场期货日历
+        $ python future_calendar_collector.py --qlib_data_1d_dir <用户数据目录> --region cn
     """
     logger.info(f"collector future calendar: region={region}")
     _cur_module = importlib.import_module("future_calendar_collector")

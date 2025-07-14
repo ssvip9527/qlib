@@ -36,18 +36,18 @@ class IndexBase:
     ):
         """
 
-        Parameters
+        参数说明
         ----------
         index_name: str
-            index name
+            指数名称
         qlib_dir: str
-            qlib directory, by default Path(__file__).resolve().parent.joinpath("qlib_data")
+            Qlib数据目录，默认为Path(__file__).resolve().parent.joinpath("qlib_data")
         freq: str
-            freq, value from ["day", "1min"]
+            时间频率，取值为["day", "1min"]
         request_retry: int
-            request retry, by default 5
+            请求重试次数，默认为5
         retry_sleep: int
-            request sleep, by default 3
+            请求重试间隔(秒)，默认为3
         """
         self.index_name = index_name
         if qlib_dir is None:
@@ -132,9 +132,9 @@ class IndexBase:
         raise NotImplementedError("rewrite format_datetime")
 
     def save_new_companies(self):
-        """save new companies
+        """保存新公司
 
-        Examples
+        使用示例
         -------
             $ python collector.py save_new_companies --index_name CSI300 --qlib_dir ~/.qlib/qlib_data/cn_data
         """

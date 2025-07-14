@@ -42,28 +42,28 @@ class PitCollector(BaseCollector):
         symbol_regex: Optional[str] = None,
     ):
         """
-        Parameters
+        参数说明
         ----------
         save_dir: str
-            instrument save dir
+            标的数据保存目录
         max_workers: int
-            workers, default 1; Concurrent number, default is 1; when collecting data, it is recommended that max_workers be set to 1
+            工作线程数量，默认1；并发数量，默认1；收集数据时建议将max_workers设置为1
         max_collector_count: int
-            default 2
+            默认2
         delay: float
-            time.sleep(delay), default 0
+            延迟时间（秒），默认0
         interval: str
-            freq, value from [1min, 1d], default 1d
+            时间频率，取值为[1min, 1d]，默认1d
         start: str
-            start datetime, default None
+            开始时间，默认None
         end: str
-            end datetime, default None
+            结束时间，默认None
         check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认None。
         limit_nums: int
-            using for debug, by default None
+            用于调试，默认None
         symbol_regex: str
-            symbol regular expression, by default None.
+            标的代码正则表达式，默认None。
         """
         self.symbol_regex = symbol_regex
         super().__init__(

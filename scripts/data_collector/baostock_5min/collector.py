@@ -156,7 +156,7 @@ class BaostockNormalizeHS3005min(BaseNormalize):
         参数说明
         ----------
         qlib_data_1d_dir: str, Path
-            qlib日线数据目录，用于 Yahoo 数据更新，通常来自：使用本地日线数据归一化到5分钟数据
+            qlib日线数据目录，用于 Baostock 数据更新，通常来自：使用本地日线数据归一化到5分钟数据
         date_field_name: str
             日期字段名称，默认为date
         symbol_field_name: str
@@ -223,11 +223,13 @@ class BaostockNormalizeHS3005min(BaseNormalize):
         return df.reset_index()
 
     def generate_5min_from_daily(self, calendars: Iterable) -> pd.Index:
+        """从日线日历生成5分钟级交易日历"""
         return generate_minutes_calendar_from_daily(
             calendars, freq="5min", am_range=self.AM_RANGE, pm_range=self.PM_RANGE
         )
 
     def adjusted_price(self, df: pd.DataFrame) -> pd.DataFrame:
+        """计算复权价格"""
         df = calc_adjusted_price(
             df=df,
             _date_field_name=self._date_field_name,

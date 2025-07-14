@@ -38,26 +38,26 @@ class FundCollector(BaseCollector):
     ):
         """
 
-        Parameters
+        参数说明
         ----------
         save_dir: str
-            fund save dir
+            基金数据保存目录
         max_workers: int
-            workers, default 4
+            工作线程数量，默认4
         max_collector_count: int
-            default 2
+            默认2
         delay: float
-            time.sleep(delay), default 0
+            延迟时间（秒），默认0
         interval: str
-            freq, value from [1min, 1d], default 1min
+            时间频率，取值为[1min, 1d]，默认1min
         start: str
-            start datetime, default None
+            开始时间，默认None
         end: str
-            end datetime, default None
+            结束时间，默认None
         check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认None。
         limit_nums: int
-            using for debug, by default None
+            用于调试，默认None
         """
         super(FundCollector, self).__init__(
             save_dir=save_dir,
@@ -103,7 +103,7 @@ class FundCollector(BaseCollector):
         error_msg = f"{symbol}-{interval}-{start}-{end}"
 
         try:
-            # TODO: numberOfHistoricalDaysToCrawl should be bigger enough
+            # TODO: numberOfHistoricalDaysToCrawl 应该足够大
             url = INDEX_BENCH_URL.format(
                 index_code=symbol, numberOfHistoricalDaysToCrawl=10000, startDate=start, endDate=end
             )
@@ -114,12 +114,12 @@ class FundCollector(BaseCollector):
 
             data = json.loads(resp.text.split("(")[-1].split(")")[0])
 
-            # Some funds don't show the net value, example: http://fundf10.eastmoney.com/jjjz_010288.html
+            # 有些基金不显示净值，例如：http://fundf10.eastmoney.com/jjjz_010288.html
             SYType = data["Data"]["SYType"]
             if SYType in {"每万份收益", "每百份收益", "每百万份收益"}:
                 raise ValueError("The fund contains 每*份收益")
 
-            # TODO: should we sort the value by datetime?
+            # TODO: 是否应该按日期时间对值进行排序？
             _resp = pd.DataFrame(data["Data"]["LSJZList"])
 
             if isinstance(_resp, pd.DataFrame):
@@ -219,18 +219,18 @@ class Run(BaseRun):
     def __init__(self, source_dir=None, normalize_dir=None, max_workers=4, interval="1d", region=REGION_CN):
         """
 
-        Parameters
+        参数说明
         ----------
         source_dir: str
-            The directory where the raw data collected from the Internet is saved, default "Path(__file__).parent/source"
+            从互联网收集的原始数据保存目录，默认为"Path(__file__).parent/source"
         normalize_dir: str
-            Directory for normalize data, default "Path(__file__).parent/normalize"
+            归一化后数据保存目录，默认为"Path(__file__).parent/normalize"
         max_workers: int
-            Concurrent number, default is 4
+            并发数量，默认为4
         interval: str
-            freq, value from [1min, 1d], default 1d
+            时间频率，取值为[1min, 1d]，默认为1d
         region: str
-            region, value from ["CN"], default "CN"
+            市场区域，取值为["CN"]，默认为"CN"
         """
         super().__init__(source_dir, normalize_dir, max_workers, interval)
         self.region = region
@@ -284,16 +284,16 @@ class Run(BaseRun):
         super(Run, self).download_data(max_collector_count, delay, start, end, check_data_length, limit_nums)
 
     def normalize_data(self, date_field_name: str = "date", symbol_field_name: str = "symbol"):
-        """normalize data
+        """归一化数据
 
-        Parameters
+        参数说明
         ----------
         date_field_name: str
-            date field name, default date
+            日期字段名称，默认为'date'
         symbol_field_name: str
-            symbol field name, default symbol
+            标的字段名称，默认为'symbol'
 
-        Examples
+        示例
         ---------
             $ python collector.py normalize_data --source_dir ~/.qlib/fund_data/source/cn_data --normalize_dir ~/.qlib/fund_data/source/cn_1d_nor --region CN --interval 1d --date_field_name FSRQ
         """

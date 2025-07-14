@@ -297,14 +297,14 @@ class CSIIndex(IndexBase):
     def get_new_companies(self) -> pd.DataFrame:
         """
 
-        Returns
+        返回值
         -------
             pd.DataFrame:
 
                 symbol     start_date    end_date
                 SH600000   2000-01-01    2099-12-31
 
-            dtypes:
+            数据类型:
                 symbol: str
                 start_date: pd.Timestamp
                 end_date: pd.Timestamp
@@ -327,6 +327,7 @@ class CSIIndex(IndexBase):
 
 
 class CSI300Index(CSIIndex):
+    """沪深300指数成分股收集器"""
     @property
     def index_code(self):
         return "000300"
@@ -341,6 +342,7 @@ class CSI300Index(CSIIndex):
 
 
 class CSI100Index(CSIIndex):
+    """中证100指数成分股收集器"""
     @property
     def index_code(self):
         return "000903"
@@ -364,35 +366,35 @@ class CSI500Index(CSIIndex):
         return pd.Timestamp("2007-01-15")
 
     def get_changes(self) -> pd.DataFrame:
-        """get companies changes
+        """获取公司变动情况
 
-        Return
+        返回值
         --------
            pd.DataFrame:
                symbol      date        type
                SH600000  2019-11-11    add
                SH600000  2020-11-10    remove
-           dtypes:
+           数据类型:
                symbol: str
                date: pd.Timestamp
-               type: str, value from ["add", "remove"]
+               type: str, 取值为["add", "remove"]
         """
         return self.get_changes_with_history_companies(self.get_history_companies())
 
     def get_history_companies(self) -> pd.DataFrame:
         """
 
-        Returns
+        返回值
         -------
 
             pd.DataFrame:
                 symbol      date        type
                 SH600000  2019-11-11    add
                 SH600000  2020-11-10    remove
-            dtypes:
+            数据类型:
                 symbol: str
                 date: pd.Timestamp
-                type: str, value from ["add", "remove"]
+                type: str, 取值为["add", "remove"]
         """
         bs.login()
         today = pd.Timestamp.now()
@@ -407,17 +409,16 @@ class CSI500Index(CSIIndex):
     @staticmethod
     def get_data_from_baostock(date) -> pd.DataFrame:
         """
-        Data source: http://baostock.com/baostock/index.php/%E4%B8%AD%E8%AF%81500%E6%88%90%E5%88%86%E8%82%A1
-        Avoid a large number of parallel data acquisition,
-        such as 1000 times of concurrent data acquisition, because IP will be blocked
+        数据来源: http://baostock.com/baostock/index.php/%E4%B8%AD%E8%AF%81500%E6%88%90%E5%88%86%E8%82%A1
+        避免大量并行数据获取，例如1000次并发数据获取会导致IP被封锁
 
-        Returns
+        返回值
         -------
             pd.DataFrame:
                 date      symbol        code_name
                 SH600039  2007-01-15    四川路桥
                 SH600051  2020-01-15    宁波联合
-            dtypes:
+            数据类型:
                 date: pd.Timestamp
                 symbol: str
                 code_name: str

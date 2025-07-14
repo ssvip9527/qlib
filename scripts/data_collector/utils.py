@@ -53,16 +53,16 @@ MINIMUM_SYMBOLS_NUM = 3900
 
 
 def get_calendar_list(bench_code="CSI300") -> List[pd.Timestamp]:
-    """get SH/SZ history calendar list
+    """获取沪深历史交易日历列表
 
-    Parameters
+    参数说明
     ----------
     bench_code: str
-        value from ["CSI300", "CSI500", "ALL", "US_ALL"]
+        有效值包括["CSI300", "CSI500", "ALL", "US_ALL"]
 
-    Returns
+    返回值
     -------
-        history calendar list
+        历史交易日历列表
     """
 
     logger.info(f"get calendar list: {bench_code}......")
@@ -110,6 +110,19 @@ def get_calendar_list(bench_code="CSI300") -> List[pd.Timestamp]:
 
 
 def return_date_list(date_field_name: str, file_path: Path):
+    """返回日期列表
+
+    参数说明
+    ----------
+    date_field_name: str
+        日期字段名称
+    file_path: Path
+        文件路径
+
+    返回值
+    -------
+        排序后的日期列表
+    """
     date_list = pd.read_csv(file_path, sep=",", index_col=0)[date_field_name].to_list()
     return sorted([pd.Timestamp(x) for x in date_list])
 
@@ -121,24 +134,24 @@ def get_calendar_list_by_ratio(
     minimum_count: int = 10,
     max_workers: int = 16,
 ) -> list:
-    """get calendar list by selecting the date when few funds trade in this day
+    """通过选择基金交易较少的日期获取交易日历列表
 
-    Parameters
+    参数说明
     ----------
     source_dir: str or Path
-        The directory where the raw data collected from the Internet is saved
+        从互联网收集的原始数据保存目录
     date_field_name: str
-            date field name, default is date
+            日期字段名称，默认为'date'
     threshold: float
-        threshold to exclude some days when few funds trade in this day, default 0.5
+        排除基金交易较少日期的阈值，默认为0.5
     minimum_count: int
-        minimum count of funds should trade in one day
+        单日基金交易的最小数量
     max_workers: int
-        Concurrent number, default is 16
+        并发数量，默认为16
 
-    Returns
+    返回值
     -------
-        history calendar list
+        历史交易日历列表
     """
     logger.info(f"get calendar list from {source_dir} by threshold = {threshold}......")
 
@@ -180,11 +193,11 @@ def get_calendar_list_by_ratio(
 
 
 def get_hs_stock_symbols() -> list:
-    """get SH/SZ stock symbols
+    """获取沪深股票代码
 
-    Returns
+    返回值
     -------
-        stock symbols
+        股票代码列表
     """
     global _HS_SYMBOLS  # pylint: disable=W0603
 
@@ -291,11 +304,11 @@ def get_hs_stock_symbols() -> list:
 
 
 def get_us_stock_symbols(qlib_data_path: [str, Path] = None) -> list:
-    """get US stock symbols
+    """获取美国股票代码
 
-    Returns
+    返回值
     -------
-        stock symbols
+        股票代码列表
     """
     global _US_SYMBOLS  # pylint: disable=W0603
 
@@ -378,11 +391,11 @@ def get_us_stock_symbols(qlib_data_path: [str, Path] = None) -> list:
 
 
 def get_in_stock_symbols(qlib_data_path: [str, Path] = None) -> list:
-    """get IN stock symbols
+    """获取印度股票代码
 
-    Returns
+    返回值
     -------
-        stock symbols
+        股票代码列表
     """
     global _IN_SYMBOLS  # pylint: disable=W0603
 
@@ -419,11 +432,11 @@ def get_in_stock_symbols(qlib_data_path: [str, Path] = None) -> list:
 
 
 def get_br_stock_symbols(qlib_data_path: [str, Path] = None) -> list:
-    """get Brazil(B3) stock symbols
+    """获取巴西(B3)股票代码
 
-    Returns
+    返回值
     -------
-        B3 stock symbols
+        B3股票代码列表
     """
     global _BR_SYMBOLS  # pylint: disable=W0603
 
@@ -470,11 +483,11 @@ def get_br_stock_symbols(qlib_data_path: [str, Path] = None) -> list:
 
 
 def get_en_fund_symbols(qlib_data_path: [str, Path] = None) -> list:
-    """get en fund symbols
+    """获取英文基金代码
 
-    Returns
+    返回值
     -------
-        fund symbols in China
+        中国市场基金代码列表
     """
     global _EN_FUND_SYMBOLS  # pylint: disable=W0603
 
@@ -506,17 +519,18 @@ def get_en_fund_symbols(qlib_data_path: [str, Path] = None) -> list:
 
 
 def symbol_suffix_to_prefix(symbol: str, capital: bool = True) -> str:
-    """symbol suffix to prefix
+    """将股票代码后缀转换为前缀
 
-    Parameters
+    参数说明
     ----------
     symbol: str
-        symbol
+        股票代码
     capital : bool
-        by default True
-    Returns
-    -------
+        是否大写，默认为True
 
+    返回值
+    -------
+        转换后的股票代码
     """
     code, exchange = symbol.split(".")
     if exchange.lower() in ["sh", "ss"]:
@@ -527,17 +541,18 @@ def symbol_suffix_to_prefix(symbol: str, capital: bool = True) -> str:
 
 
 def symbol_prefix_to_sufix(symbol: str, capital: bool = True) -> str:
-    """symbol prefix to sufix
+    """将股票代码前缀转换为后缀
 
-    Parameters
+    参数说明
     ----------
     symbol: str
-        symbol
+        股票代码
     capital : bool
-        by default True
-    Returns
-    -------
+        是否大写，默认为True
 
+    返回值
+    -------
+        转换后的股票代码
     """
     res = f"{symbol[:-2]}.{symbol[-2:]}"
     return res.upper() if capital else res.lower()
@@ -568,20 +583,20 @@ def deco_retry(retry: int = 5, retry_sleep: int = 3):
 
 
 def get_trading_date_by_shift(trading_list: list, trading_date: pd.Timestamp, shift: int = 1):
-    """get trading date by shift
+    """通过偏移获取交易日
 
-    Parameters
+    参数说明
     ----------
     trading_list: list
-        trading calendar list
+        交易日历列表
     shift : int
-        shift, default is 1
+        偏移量，默认为1
 
     trading_date : pd.Timestamp
-        trading date
-    Returns
+        交易日
+    返回值
     -------
-
+        偏移后的交易日
     """
     trading_date = pd.Timestamp(trading_date)
     left_index = bisect.bisect_left(trading_list, trading_date)
@@ -598,18 +613,18 @@ def generate_minutes_calendar_from_daily(
     am_range: Tuple[str, str] = ("09:30:00", "11:29:00"),
     pm_range: Tuple[str, str] = ("13:00:00", "14:59:00"),
 ) -> pd.Index:
-    """generate minutes calendar
+    """生成分钟级交易日历
 
-    Parameters
+    参数说明
     ----------
     calendars: Iterable
-        daily calendar
+        日线交易日历
     freq: str
-        by default 1min
+        时间频率，默认为1min
     am_range: Tuple[str, str]
-        AM Time Range, by default China-Stock: ("09:30:00", "11:29:00")
+        上午交易时段，默认为中国股市: ("09:30:00", "11:29:00")
     pm_range: Tuple[str, str]
-        PM Time Range, by default China-Stock: ("13:00:00", "14:59:00")
+        下午交易时段，默认为中国股市: ("13:00:00", "14:59:00")
 
     """
     daily_format: str = "%Y-%m-%d"
@@ -638,30 +653,29 @@ def get_instruments(
 ):
     """
 
-    Parameters
+    参数说明
     ----------
     qlib_dir: str
-        qlib data dir, default "Path(__file__).parent/qlib_data"
+        qlib数据目录，默认为"Path(__file__).parent/qlib_data"
     index_name: str
-        index name, value from ["csi100", "csi300"]
+        指数名称，可选值为["csi100", "csi300"]
     method: str
-        method, value from ["parse_instruments", "save_new_companies"]
+        方法名称，可选值为["parse_instruments", "save_new_companies"]
     freq: str
-        freq, value from ["day", "1min"]
+        频率，可选值为["day", "1min"]
     request_retry: int
-        request retry, by default 5
+        请求重试次数，默认为5
     retry_sleep: int
-        request sleep, by default 3
+        请求重试间隔时间(秒)，默认为3
     market_index: str
-        Where the files to obtain the index are located,
-        for example data_collector.cn_index.collector
+        获取指数文件的位置，例如data_collector.cn_index.collector
 
-    Examples
+    示例
     -------
-        # parse instruments
+        # 解析工具
         $ python collector.py --index_name CSI300 --qlib_dir ~/.qlib/qlib_data/cn_data --method parse_instruments
 
-        # parse new companies
+        # 解析新公司
         $ python collector.py --index_name CSI300 --qlib_dir ~/.qlib/qlib_data/cn_data --method save_new_companies
 
     """
@@ -688,9 +702,9 @@ def get_1d_data(
     end: str,
     _1d_data_all: pd.DataFrame,
 ) -> pd.DataFrame:
-    """get 1d data
+    """获取日线数据
 
-    Returns
+    返回值
     ------
         data_1d: pd.DataFrame
             data_1d.columns = [_date_field_name, _symbol_field_name, "paused", "volume", "factor", "close"]
@@ -713,22 +727,22 @@ def calc_adjusted_price(
     consistent_1d: bool = True,
     calc_paused: bool = True,
 ) -> pd.DataFrame:
-    """calc adjusted price
-    This method does 4 things.
-    1. Adds the `paused` field.
-        - The added paused field comes from the paused field of the 1d data.
-    2. Aligns the time of the 1d data.
-    3. The data is reweighted.
-        - The reweighting method:
+    """计算复权价格
+    此方法执行4个操作：
+    1. 添加`paused`字段
+        - 添加的paused字段来自日线数据的paused字段
+    2. 对齐日线数据的时间
+    3. 数据重新加权
+        - 加权方法：
             - volume / factor
             - open * factor
             - high * factor
             - low * factor
             - close * factor
-    4. Called `calc_paused_num` method to add the `paused_num` field.
-        - The `paused_num` is the number of consecutive days of trading suspension.
+    4. 调用`calc_paused_num`方法添加`paused_num`字段
+        - `paused_num`是连续停牌天数
     """
-    # TODO: using daily data factor
+    # TODO: 使用日线数据因子
     if df.empty:
         return df
     df = df.copy()
@@ -736,27 +750,27 @@ def calc_adjusted_price(
     df.sort_values(_date_field_name, inplace=True)
     symbol = df.iloc[0][_symbol_field_name]
     df[_date_field_name] = pd.to_datetime(df[_date_field_name])
-    # get 1d data from qlib
+    # 从qlib获取日线数据
     _start = pd.Timestamp(df[_date_field_name].min()).strftime("%Y-%m-%d")
     _end = (pd.Timestamp(df[_date_field_name].max()) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     data_1d: pd.DataFrame = get_1d_data(_date_field_name, _symbol_field_name, symbol, _start, _end, _1d_data_all)
     data_1d = data_1d.copy()
     if data_1d is None or data_1d.empty:
         df["factor"] = 1 / df.loc[df["close"].first_valid_index()]["close"]
-        # TODO: np.nan or 1 or 0
+        # TODO: 使用np.nan还是1或0
         df["paused"] = np.nan
     else:
-        # NOTE: volume is np.nan or volume <= 0, paused = 1
-        # FIXME: find a more accurate data source
+        # 注意: 当volume为np.nan或volume <= 0时，paused = 1
+        # FIXME: 寻找更准确的数据源
         data_1d["paused"] = 0
         data_1d.loc[(data_1d["volume"].isna()) | (data_1d["volume"] <= 0), "paused"] = 1
         data_1d = data_1d.set_index(_date_field_name)
 
-        # add factor from 1d data
-        # NOTE: 1d data info:
-        #   - Close price adjusted for splits. Adjusted close price adjusted for both dividends and splits.
-        #   - data_1d.adjclose: Adjusted close price adjusted for both dividends and splits.
-        #   - data_1d.close: `data_1d.adjclose / (close for the first trading day that is not np.nan)`
+        # 从日线数据添加因子
+        # 注意: 日线数据说明:
+        #   - 复权收盘价已考虑拆股因素。调整后的收盘价同时考虑了股息和拆股因素。
+        #   - data_1d.adjclose: 同时考虑股息和拆股因素的调整后收盘价。
+        #   - data_1d.close: `data_1d.adjclose / (首个非np.nan交易日的收盘价)`
         def _calc_factor(df_1d: pd.DataFrame):
             try:
                 _date = pd.Timestamp(pd.Timestamp(df_1d[_date_field_name].iloc[0]).date())
@@ -769,7 +783,7 @@ def calc_adjusted_price(
 
         df = df.groupby([df[_date_field_name].dt.date], group_keys=False).apply(_calc_factor)
         if consistent_1d:
-            # the date sequence is consistent with 1d
+            # 日期序列与日线数据保持一致
             df.set_index(_date_field_name, inplace=True)
             df = df.reindex(
                 generate_minutes_calendar_from_daily(
@@ -795,18 +809,18 @@ def calc_adjusted_price(
 
 
 def calc_paused_num(df: pd.DataFrame, _date_field_name, _symbol_field_name):
-    """calc paused num
-    This method adds the paused_num field
-        - The `paused_num` is the number of consecutive days of trading suspension.
+    """计算停牌天数
+    此方法添加paused_num字段
+        - `paused_num`是连续停牌的天数
     """
     _symbol = df.iloc[0][_symbol_field_name]
     df = df.copy()
     df["_tmp_date"] = df[_date_field_name].apply(lambda x: pd.Timestamp(x).date())
-    # remove data that starts and ends with `np.nan` all day
+    # 移除全天数据均为`np.nan`的起始和结束部分
     all_data = []
-    # Record the number of consecutive trading days where the whole day is nan, to remove the last trading day where the whole day is nan
+    # 记录全天为nan的连续交易日数量，用于移除最后一个全天为nan的交易日
     all_nan_nums = 0
-    # Record the number of consecutive occurrences of trading days that are not nan throughout the day
+    # 记录全天非nan的交易日连续出现次数
     not_nan_nums = 0
     for _date, _df in df.groupby("_tmp_date", group_keys=False):
         _df["paused"] = 0

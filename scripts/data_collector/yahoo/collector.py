@@ -221,7 +221,7 @@ class YahooCollectorCN(YahooCollector, ABC):
 
 class YahooCollectorCN1d(YahooCollectorCN):
     def download_index_data(self):
-        # TODO: from MSN
+        # TODO: 来自MSN
         _format = "%Y%m%d"
         _begin = self.start_datetime.strftime(_format)
         _end = self.end_datetime.strftime(_format)
@@ -320,20 +320,16 @@ class YahooCollectorIN1min(YahooCollectorIN):
 class YahooCollectorBR(YahooCollector, ABC):
     def retry(cls):  # pylint: disable=E0213
         """
-        The reason to use retry=2 is due to the fact that
-        Yahoo Finance unfortunately does not keep track of some
-        Brazilian stocks.
+        使用retry=2的原因是，
+        遗憾的是Yahoo Finance没有跟踪一些巴西股票。
 
-        Therefore, the decorator deco_retry with retry argument
-        set to 5 will keep trying to get the stock data up to 5 times,
-        which makes the code to download Brazilians stocks very slow.
+        因此，将retry参数设置为5的deco_retry装饰器将尝试获取股票数据最多5次，
+        这会使下载巴西股票的代码非常慢。
 
-        In future, this may change, but for now
-        I suggest to leave retry argument to 1 or 2 in
-        order to improve download speed.
+        将来这可能会改变，但目前
+        建议将retry参数保留为1或2以提高下载速度。
 
-        To achieve this goal an abstract attribute (retry)
-        was added into YahooCollectorBR base class
+        为实现此目标，在YahooCollectorBR基类中添加了抽象属性(retry)
         """
         raise NotImplementedError
 
@@ -408,12 +404,12 @@ class YahooNormalize(BaseNormalize):
         df.loc[(df["volume"] <= 0) | np.isnan(df["volume"]), list(set(df.columns) - {symbol_field_name})] = np.nan
 
         change_series = YahooNormalize.calc_change(df, last_close)
-        # NOTE: The data obtained by Yahoo finance sometimes has exceptions
-        # WARNING: If it is normal for a `symbol(exchange)` to differ by a factor of *89* to *111* for consecutive trading days,
-        # WARNING: the logic in the following line needs to be modified
+        # 注意：Yahoo Finance获取的数据有时会有异常
+        # 警告：如果某个`标的(交易所)`连续交易日的价格差异达到89到111倍是正常情况，
+        # 警告：则需要修改以下行的逻辑
         _count = 0
         while True:
-            # NOTE: may appear unusual for many days in a row
+            # 注意：可能会连续多天出现异常
             change_series = YahooNormalize.calc_change(df, last_close)
             _mask = (change_series >= 89) & (change_series <= 111)
             if not _mask.any():
@@ -478,18 +474,18 @@ class YahooNormalize1d(YahooNormalize, ABC):
         return df
 
     def _get_first_close(self, df: pd.DataFrame) -> float:
-        """get first close value
+        """获取首个收盘价
 
-        Notes
+        注意事项
         -----
-            For incremental updates(append) to Yahoo 1D data, user need to use a close that is not 0 on the first trading day of the existing data
+            对于Yahoo日线数据的增量更新（追加），用户需要使用现有数据首个交易日非零的收盘价
         """
         df = df.loc[df["close"].first_valid_index() :]
         _close = df["close"].iloc[0]
         return _close
 
     def _manual_adj_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        """manual adjust data: All fields (except change) are standardized according to the close of the first day"""
+        """手动调整数据：所有字段（除change外）均按首个交易日收盘价进行标准化"""
         if df.empty:
             return df
         df = df.copy()
@@ -512,15 +508,14 @@ class YahooNormalize1dExtend(YahooNormalize1d):
         self, old_qlib_data_dir: [str, Path], date_field_name: str = "date", symbol_field_name: str = "symbol", **kwargs
     ):
         """
-
-        Parameters
+        参数说明
         ----------
         old_qlib_data_dir: str, Path
-            the qlib data to be updated for yahoo, usually from: https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
+            用于Yahoo数据更新的QLib历史数据目录，通常来自：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
         date_field_name: str
-            date field name, default is date
+            日期字段名称，默认为date
         symbol_field_name: str
-            symbol field name, default is symbol
+            标的代码字段名称，默认为symbol
         """
         super(YahooNormalize1dExtend, self).__init__(date_field_name, symbol_field_name)
         self.column_list = ["open", "high", "low", "close", "volume", "factor", "change"]
@@ -554,7 +549,7 @@ class YahooNormalize1dExtend(YahooNormalize1d):
 
 
 class YahooNormalize1min(YahooNormalize, ABC):
-    """Normalised to 1min using local 1d data"""
+    """使用本地日线数据归一化到1分钟数据"""
 
     AM_RANGE = None  # type: tuple  # eg: ("09:30:00", "11:29:00")
     PM_RANGE = None  # type: tuple  # eg: ("13:00:00", "14:59:00")
@@ -568,14 +563,14 @@ class YahooNormalize1min(YahooNormalize, ABC):
     ):
         """
 
-        Parameters
+        参数说明
         ----------
         qlib_data_1d_dir: str, Path
-            the qlib data to be updated for yahoo, usually from: Normalised to 1min using local 1d data
+            用于Yahoo数据更新的QLib日线数据目录，通常用于：使用本地日线数据归一化到1分钟数据
         date_field_name: str
-            date field name, default is date
+            日期字段名称，默认为date
         symbol_field_name: str
-            symbol field name, default is symbol
+            标的代码字段名称，默认为symbol
         """
         super(YahooNormalize1min, self).__init__(date_field_name, symbol_field_name)
         qlib.init(provider_uri=qlib_data_1d_dir)
@@ -593,11 +588,13 @@ class YahooNormalize1min(YahooNormalize, ABC):
         return calendar_list_1d
 
     def generate_1min_from_daily(self, calendars: Iterable) -> pd.Index:
+        """从日线日历生成1分钟级交易日历"""
         return generate_minutes_calendar_from_daily(
             calendars, freq="1min", am_range=self.AM_RANGE, pm_range=self.PM_RANGE
         )
 
     def adjusted_price(self, df: pd.DataFrame) -> pd.DataFrame:
+        """计算1分钟数据的复权价格"""
         df = calc_adjusted_price(
             df=df,
             _date_field_name=self._date_field_name,
@@ -611,11 +608,13 @@ class YahooNormalize1min(YahooNormalize, ABC):
 
     @abc.abstractmethod
     def symbol_to_yahoo(self, symbol):
-        raise NotImplementedError("rewrite symbol_to_yahoo")
+        """将标的代码转换为Yahoo Finance格式"""
+        raise NotImplementedError("需重写symbol_to_yahoo方法")
 
     @abc.abstractmethod
     def _get_1d_calendar_list(self) -> Iterable[pd.Timestamp]:
-        raise NotImplementedError("rewrite _get_1d_calendar_list")
+        """获取日线级交易日历列表"""
+        raise NotImplementedError("需重写_get_1d_calendar_list方法")
 
 
 class YahooNormalizeUS:
@@ -633,16 +632,19 @@ class YahooNormalizeUS1dExtend(YahooNormalizeUS, YahooNormalize1dExtend):
 
 
 class YahooNormalizeUS1min(YahooNormalizeUS, YahooNormalize1min):
+    """美国市场1分钟数据归一化器"""
     CALC_PAUSED_NUM = False
 
     def _get_calendar_list(self) -> Iterable[pd.Timestamp]:
-        # TODO: support 1min
-        raise ValueError("Does not support 1min")
+        # TODO: 支持1分钟数据
+        raise ValueError("不支持1分钟数据")
 
     def _get_1d_calendar_list(self):
+        """获取美国市场日线交易日历"""
         return get_calendar_list("US_ALL")
 
     def symbol_to_yahoo(self, symbol):
+        """将美国市场标的代码转换为Yahoo格式"""
         return fname_to_code(symbol)
 
 
@@ -728,18 +730,18 @@ class Run(BaseRun):
     def __init__(self, source_dir=None, normalize_dir=None, max_workers=1, interval="1d", region=REGION_CN):
         """
 
-        Parameters
+        参数说明
         ----------
         source_dir: str
-            The directory where the raw data collected from the Internet is saved, default "Path(__file__).parent/source"
+            从互联网收集的原始数据保存目录，默认为"Path(__file__).parent/source"
         normalize_dir: str
-            Directory for normalize data, default "Path(__file__).parent/normalize"
+            归一化后数据保存目录，默认为"Path(__file__).parent/normalize"
         max_workers: int
-            Concurrent number, default is 1; when collecting data, it is recommended that max_workers be set to 1
+            并发数量，默认为1；收集数据时建议将max_workers设置为1
         interval: str
-            freq, value from [1min, 1d], default 1d
+            时间频率，取值为[1min, 1d]，默认为1d
         region: str
-            region, value from ["CN", "US", "BR"], default "CN"
+            市场区域，取值为["CN", "US", "BR"]，默认为"CN"
         """
         super().__init__(source_dir, normalize_dir, max_workers, interval)
         self.region = region
@@ -765,35 +767,35 @@ class Run(BaseRun):
         check_data_length=None,
         limit_nums=None,
     ):
-        """download data from Internet
+        """从互联网下载数据
 
-        Parameters
+        参数说明
         ----------
         max_collector_count: int
-            default 2
+            默认值为2
         delay: float
-            time.sleep(delay), default 0.5
+            延迟时间（秒），默认值为0.5
         start: str
-            start datetime, default "2000-01-01"; closed interval(including start)
+            开始时间，默认为"2000-01-01"；闭区间（包含开始时间）
         end: str
-            end datetime, default ``pd.Timestamp(datetime.datetime.now() + pd.Timedelta(days=1))``; open interval(excluding end)
+            结束时间，默认为``pd.Timestamp(datetime.datetime.now() + pd.Timedelta(days=1))``；开区间（不包含结束时间）
         check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            检查数据长度，如果不为None且大于0，每个标的数据长度大于等于该值则认为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认值为None
         limit_nums: int
-            using for debug, by default None
+            用于调试，默认值为None
 
-        Notes
+        注意事项
         -----
-            check_data_length, example:
-                daily, one year: 252 // 4
-                us 1min, a week: 6.5 * 60 * 5
-                cn 1min, a week: 4 * 60 * 5
+            check_data_length参数示例：
+                日线数据，一年约：252 // 4
+                美国1分钟数据，一周约：6.5 * 60 * 5
+                中国1分钟数据，一周约：4 * 60 * 5
 
-        Examples
+        使用示例
         ---------
-            # get daily data
+            # 获取日线数据
             $ python collector.py download_data --source_dir ~/.qlib/stock_data/source --region CN --start 2020-11-01 --end 2020-11-10 --delay 0.1 --interval 1d
-            # get 1m data
+            # 获取1分钟数据
             $ python collector.py download_data --source_dir ~/.qlib/stock_data/source --region CN --start 2020-11-01 --end 2020-11-10 --delay 0.1 --interval 1m
         """
         if self.interval == "1d" and pd.Timestamp(end) > pd.Timestamp(datetime.datetime.now().strftime("%Y-%m-%d")):
@@ -808,26 +810,26 @@ class Run(BaseRun):
         end_date: str = None,
         qlib_data_1d_dir: str = None,
     ):
-        """normalize data
+        """归一化数据
 
-        Parameters
+        参数说明
         ----------
         date_field_name: str
-            date field name, default date
+            日期字段名称，默认为date
         symbol_field_name: str
-            symbol field name, default symbol
+            标的代码字段名称，默认为symbol
         end_date: str
-            if not None, normalize the last date saved (including end_date); if None, it will ignore this parameter; by default None
+            若不为None，则归一化保存的最后日期（包含end_date）；若为None，则忽略此参数；默认值为None
         qlib_data_1d_dir: str
-            if interval==1min, qlib_data_1d_dir cannot be None, normalize 1min needs to use 1d data;
+            当interval==1min时，qlib_data_1d_dir不能为空，归一化1分钟数据需要使用日线数据；
 
-                qlib_data_1d can be obtained like this:
+                qlib日线数据可通过以下方式获取：
                     $ python scripts/get_data.py qlib_data --target_dir <qlib_data_1d_dir> --interval 1d
                     $ python scripts/data_collector/yahoo/collector.py update_data_to_bin --qlib_data_1d_dir <qlib_data_1d_dir> --trading_date 2021-06-01
-                or:
-                    download 1d data, reference: https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
+                或者：
+                    下载日线数据，参考：https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
 
-        Examples
+        使用示例
         ---------
             $ python collector.py normalize_data --source_dir ~/.qlib/stock_data/source --normalize_dir ~/.qlib/stock_data/normalize --region cn --interval 1d
             $ python collector.py normalize_data --qlib_data_1d_dir ~/.qlib/qlib_data/cn_data --source_dir ~/.qlib/stock_data/source_cn_1min --normalize_dir ~/.qlib/stock_data/normalize_cn_1min --region CN --interval 1min
@@ -844,32 +846,32 @@ class Run(BaseRun):
     def normalize_data_1d_extend(
         self, old_qlib_data_dir, date_field_name: str = "date", symbol_field_name: str = "symbol"
     ):
-        """normalize data extend; extending yahoo qlib data(from: https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data)
+        """归一化数据扩展；扩展Yahoo Qlib数据(来源: https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data)
 
-        Notes
+        注意事项
         -----
-            Steps to extend yahoo qlib data:
+            扩展Yahoo Qlib数据的步骤：
 
-                1. download qlib data: https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data; save to <dir1>
+                1. 下载Qlib数据：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data；保存至<dir1>
 
-                2. collector source data: https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#collector-data; save to <dir2>
+                2. 收集源数据：https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#collector-data；保存至<dir2>
 
-                3. normalize new source data(from step 2): python scripts/data_collector/yahoo/collector.py normalize_data_1d_extend --old_qlib_dir <dir1> --source_dir <dir2> --normalize_dir <dir3> --region CN --interval 1d
+                3. 归一化新源数据(来自步骤2)：python scripts/data_collector/yahoo/collector.py normalize_data_1d_extend --old_qlib_dir <dir1> --source_dir <dir2> --normalize_dir <dir3> --region CN --interval 1d
 
-                4. dump data: python scripts/dump_bin.py dump_update --csv_path <dir3> --qlib_dir <dir1> --freq day --date_field_name date --symbol_field_name symbol --exclude_fields symbol,date
+                4. 导出数据：python scripts/dump_bin.py dump_update --csv_path <dir3> --qlib_dir <dir1> --freq day --date_field_name date --symbol_field_name symbol --exclude_fields symbol,date
 
-                5. update instrument(eg. csi300): python python scripts/data_collector/cn_index/collector.py --index_name CSI300 --qlib_dir <dir1> --method parse_instruments
+                5. 更新标的(例如：沪深300)：python scripts/data_collector/cn_index/collector.py --index_name CSI300 --qlib_dir <dir1> --method parse_instruments
 
-        Parameters
+        参数说明
         ----------
         old_qlib_data_dir: str
-            the qlib data to be updated for yahoo, usually from: https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
+            用于更新的Yahoo Qlib数据，通常来自：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
         date_field_name: str
-            date field name, default date
+            日期字段名称，默认为date
         symbol_field_name: str
-            symbol field name, default symbol
+            标的代码字段名称，默认为symbol
 
-        Examples
+        使用示例
         ---------
             $ python collector.py normalize_data_1d_extend --old_qlib_dir ~/.qlib/qlib_data/cn_data --source_dir ~/.qlib/stock_data/source --normalize_dir ~/.qlib/stock_data/normalize --region CN --interval 1d
         """
@@ -892,35 +894,35 @@ class Run(BaseRun):
         check_data_length=None,
         limit_nums=None,
     ):
-        """download today data from Internet
+        """从互联网下载今日数据
 
-        Parameters
+        参数说明
         ----------
         max_collector_count: int
-            default 2
+            默认为2
         delay: float
-            time.sleep(delay), default 0.5
+            时间间隔(秒)，time.sleep(delay)，默认为0.5
         check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认为None。
         limit_nums: int
-            using for debug, by default None
+            用于调试，默认为None
 
-        Notes
+        注意事项
         -----
-            Download today's data:
-                start_time = datetime.datetime.now().date(); closed interval(including start)
-                end_time = pd.Timestamp(start_time + pd.Timedelta(days=1)).date(); open interval(excluding end)
+            下载今日数据：
+                start_time = datetime.datetime.now().date(); 闭区间(包含开始时间)
+                end_time = pd.Timestamp(start_time + pd.Timedelta(days=1)).date(); 开区间(不包含结束时间)
 
-            check_data_length, example:
-                daily, one year: 252 // 4
-                us 1min, a week: 6.5 * 60 * 5
-                cn 1min, a week: 4 * 60 * 5
+            check_data_length示例：
+                日线数据，一年：252 // 4
+                美国市场1分钟数据，一周：6.5 * 60 * 5
+                中国市场1分钟数据，一周：4 * 60 * 5
 
-        Examples
+        使用示例
         ---------
-            # get daily data
+            # 获取日线数据
             $ python collector.py download_today_data --source_dir ~/.qlib/stock_data/source --region CN --delay 0.1 --interval 1d
-            # get 1m data
+            # 获取1分钟数据
             $ python collector.py download_today_data --source_dir ~/.qlib/stock_data/source --region CN --delay 0.1 --interval 1m
         """
         start = datetime.datetime.now().date()
@@ -942,28 +944,28 @@ class Run(BaseRun):
         delay: float = 1,
         exists_skip: bool = False,
     ):
-        """update yahoo data to bin
+        """将Yahoo数据更新为二进制格式
 
-        Parameters
+        参数说明
         ----------
         qlib_data_1d_dir: str
-            the qlib data to be updated for yahoo, usually from: https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
+            用于Yahoo数据更新的Qlib数据，通常来自：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
 
         end_date: str
-            end datetime, default ``pd.Timestamp(trading_date + pd.Timedelta(days=1))``; open interval(excluding end)
+            结束日期时间，默认为``pd.Timestamp(trading_date + pd.Timedelta(days=1))``；开区间(不包含结束日期)
         check_data_length: int
-            check data length, if not None and greater than 0, each symbol will be considered complete if its data length is greater than or equal to this value, otherwise it will be fetched again, the maximum number of fetches being (max_collector_count). By default None.
+            检查数据长度，如果不为None且大于0，当每个标的的数据长度大于等于该值时视为完整，否则将重新获取，最大获取次数为(max_collector_count)。默认为None。
         delay: float
-            time.sleep(delay), default 1
+            时间间隔(秒)，time.sleep(delay)，默认为1
         exists_skip: bool
-            exists skip, by default False
-        Notes
+            是否跳过已存在文件，默认为False
+        注意事项
         -----
-            If the data in qlib_data_dir is incomplete, np.nan will be populated to trading_date for the previous trading day
+            如果qlib_data_dir中的数据不完整，将使用np.nan填充前一交易日的trading_date
 
-        Examples
+        使用示例
         -------
-            $ python collector.py update_data_to_bin --qlib_data_1d_dir <user data dir> --trading_date <start date> --end_date <end date>
+            $ python collector.py update_data_to_bin --qlib_data_1d_dir <用户数据目录> --trading_date <开始日期> --end_date <结束日期>
         """
 
         if self.interval.lower() != "1d":

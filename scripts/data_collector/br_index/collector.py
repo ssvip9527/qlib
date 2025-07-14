@@ -167,7 +167,7 @@ class IBOVIndex(IndexBase):
             symbol      date        type
             SH600000  2019-11-11    add
             SH600001  2020-11-10    remove
-            dtypes:
+            数据类型:
                 symbol: str
                 date: pd.Timestamp
                 type: str, 取值为["add", "remove"]

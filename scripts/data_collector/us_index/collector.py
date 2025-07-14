@@ -34,8 +34,8 @@ WIKI_INDEX_NAME_MAP = {
 
 
 class WIKIIndex(IndexBase):
-    # NOTE: The US stock code contains "PRN", and the directory cannot be created on Windows system, use the "_" prefix
-    # https://superuser.com/questions/613313/why-cant-we-make-con-prn-null-folder-in-windows
+    # 注意：美国股票代码包含"PRN"，在Windows系统上无法创建该目录，使用"_"前缀
+# https://superuser.com/questions/613313/why-cant-we-make-con-prn-null-folder-in-windows
     INST_PREFIX = ""
 
     def __init__(
@@ -56,38 +56,38 @@ class WIKIIndex(IndexBase):
     @abc.abstractmethod
     def bench_start_date(self) -> pd.Timestamp:
         """
-        Returns
+        返回值
         -------
-            index start date
+            指数起始日期
         """
         raise NotImplementedError("rewrite bench_start_date")
 
     @abc.abstractmethod
     def get_changes(self) -> pd.DataFrame:
-        """get companies changes
+        """获取公司变动情况
 
-        Returns
+        返回值
         -------
             pd.DataFrame:
                 symbol      date        type
                 SH600000  2019-11-11    add
                 SH600000  2020-11-10    remove
-            dtypes:
+            数据类型:
                 symbol: str
                 date: pd.Timestamp
-                type: str, value from ["add", "remove"]
+                type: str, 取值为["add", "remove"]
         """
         raise NotImplementedError("rewrite get_changes")
 
     def format_datetime(self, inst_df: pd.DataFrame) -> pd.DataFrame:
-        """formatting the datetime in an instrument
+        """格式化标的中的日期时间
 
-        Parameters
+        参数说明
         ----------
         inst_df: pd.DataFrame
             inst_df.columns = [self.SYMBOL_FIELD_NAME, self.START_DATE_FIELD, self.END_DATE_FIELD]
 
-        Returns
+        返回值
         -------
 
         """
@@ -99,11 +99,11 @@ class WIKIIndex(IndexBase):
 
     @property
     def calendar_list(self) -> List[pd.Timestamp]:
-        """get history trading date
+        """获取历史交易日历
 
-        Returns
+        返回值
         -------
-            calendar list
+            交易日历列表
         """
         _calendar_list = getattr(self, "_calendar_list", None)
         if _calendar_list is None:
