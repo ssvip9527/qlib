@@ -28,10 +28,9 @@ class InternalData:
 
     def setup(self, trainer=TrainerR, trainer_kwargs={}):
         """
-        after running this function `self.data_ic_df` will become set.
-        Each col represents a data.
-        Each row represents the Timestamp of performance of that data.
-        For example,
+        运行此函数后，`self.data_ic_df` 将被设置。
+        每列代表一个数据，每行代表该数据表现的时间戳。
+        例如：
 
         .. code-block:: python
 
@@ -105,13 +104,28 @@ class InternalData:
         del self.dh  # handler is not useful now
 
     def _calc_perf(self, pred, label):
+        """计算预测值与标签值之间的斯皮尔曼相关系数
+
+        参数:
+            pred: 预测值序列
+            label: 真实标签序列
+
+        返回:
+            每日的斯皮尔曼相关系数序列
+        """
         df = pd.DataFrame({"pred": pred, "label": label})
         df = df.groupby("datetime", group_keys=False).corr(method="spearman")
         corr = df.loc(axis=0)[:, "pred"]["label"].droplevel(axis=0, level=-1)
         return corr
 
     def update(self):
-        """update the data for online trading"""
+        """更新在线交易数据
+
+        TODO:
+        当新数据（包括标签）完全可用时：
+        - 更新预测值
+        - 更新数据相似度映射（如适用）
+        """
         # TODO:
         # when new data are totally(including label) available
         # - update the prediction
@@ -119,16 +133,16 @@ class InternalData:
 
 
 class MetaTaskDS(MetaTask):
-    """Meta Task for Data Selection"""
+    """数据选择的元任务"""
 
     def __init__(self, task: dict, meta_info: pd.DataFrame, mode: str = MetaTask.PROC_MODE_FULL, fill_method="max"):
         """
 
-        The description of the processed data
+        处理后数据的描述
 
-            time_perf: A array with shape  <hist_step_n * step, data pieces>  ->  data piece performance
+            time_perf: 形状为 <hist_step_n * step, data pieces> 的数组 -> 数据片段表现
 
-            time_belong:  A array with shape <sample, data pieces>  -> belong or not (1. or 0.)
+            time_belong: 形状为 <sample, data pieces> 的数组 -> 是否属于该数据片段（1.表示是，0.表示否）
             array([[1., 0., 0., ..., 0., 0., 0.],
                    [1., 0., 0., ..., 0., 0., 0.],
                    [1., 0., 0., ..., 0., 0., 0.],
@@ -137,10 +151,10 @@ class MetaTaskDS(MetaTask):
                    [0., 0., 0., ..., 0., 0., 1.],
                    [0., 0., 0., ..., 0., 0., 1.]])
 
-        Parameters
+        参数
         ----------
         meta_info: pd.DataFrame
-            please refer to the docs of _prepare_meta_ipt for detailed explanation.
+            详细解释请参考_prepare_meta_ipt方法的文档
         """
         super().__init__(task, meta_info)
         self.fill_method = fill_method

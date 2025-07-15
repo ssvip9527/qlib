@@ -37,46 +37,48 @@ class OrderDir(IntEnum):
 class Order:
     """
     stock_id : str
+        股票ID
     amount : float
+        交易数量（非负且已调整的值）
     start_time : pd.Timestamp
-        closed start time for order trading
+        订单交易的闭区间开始时间
     end_time : pd.Timestamp
-        closed end time for order trading
+        订单交易的闭区间结束时间
     direction : int
-        Order.SELL for sell; Order.BUY for buy
+        Order.SELL表示卖出；Order.BUY表示买入
     factor : float
-            presents the weight factor assigned in Exchange()
+        表示在Exchange()中分配的权重因子
     """
 
     # 1) time invariant values
-    # - they are set by users and is time-invariant.
+    # - 这些字段由用户设置且不随时间变化
     stock_id: str
-    amount: float  # `amount` is a non-negative and adjusted value
+    amount: float  # `amount`是一个非负的已调整值
     direction: OrderDir
 
-    # 2) time variant values:
-    # - Users may want to set these values when using lower level APIs
-    # - If users don't, TradeDecisionWO will help users to set them
-    # The interval of the order which belongs to (NOTE: this is not the expected order dealing range time)
+    # 2) 随时间变化的字段:
+    # - 用户在使用底层API时可能需要设置这些值
+    # - 如果用户不设置，TradeDecisionWO会帮助用户设置
+    # 订单所属的时间区间(注意：这不是预期的订单执行时间范围)
     start_time: pd.Timestamp
     end_time: pd.Timestamp
 
-    # 3) results
-    # - users should not care about these values
-    # - they are set by the backtest system after finishing the results.
-    # What the value should be about in all kinds of cases
-    # - not tradable: the deal_amount == 0 , factor is None
-    #    - the stock is suspended and the entire order fails. No cost for this order
-    # - dealt or partially dealt: deal_amount >= 0 and factor is not None
-    deal_amount: float = 0.0  # `deal_amount` is a non-negative value
+    # 3) 结果字段
+    # - 用户通常不需要关心这些值
+    # - 它们由回测系统在执行完成后设置
+    # 各种情况下这些值应该是什么
+    # - 不可交易: deal_amount == 0, factor为None
+    #    - 股票停牌，整个订单失败。该订单无成本
+    # - 已成交或部分成交: deal_amount >= 0 且 factor不为None
+    deal_amount: float = 0.0  # `deal_amount`是一个非负值
     factor: Optional[float] = None
 
     # TODO:
-    # a status field to indicate the dealing result of the order
+    # 添加一个状态字段来指示订单的执行结果
 
     # FIXME:
-    # for compatible now.
-    # Please remove them in the future
+    # 目前为了兼容性保留
+    # 将来请移除这些字段
     SELL: ClassVar[OrderDir] = OrderDir.SELL
     BUY: ClassVar[OrderDir] = OrderDir.BUY
 
@@ -89,27 +91,27 @@ class Order:
     @property
     def amount_delta(self) -> float:
         """
-        return the delta of amount.
-        - Positive value indicates buying `amount` of share
-        - Negative value indicates selling `amount` of share
+        返回amount的差值
+        - 正值表示买入`amount`数量的股票
+        - 负值表示卖出`amount`数量的股票
         """
         return self.amount * self.sign
 
     @property
     def deal_amount_delta(self) -> float:
         """
-        return the delta of deal_amount.
-        - Positive value indicates buying `deal_amount` of share
-        - Negative value indicates selling `deal_amount` of share
+        返回deal_amount的差值
+        - 正值表示买入`deal_amount`数量的股票
+        - 负值表示卖出`deal_amount`数量的股票
         """
         return self.deal_amount * self.sign
 
     @property
     def sign(self) -> int:
         """
-        return the sign of trading
-        - `+1` indicates buying
-        - `-1` value indicates selling
+        返回交易方向符号
+        - `+1`表示买入
+        - `-1`表示卖出
         """
         return self.direction * 2 - 1
 
@@ -137,26 +139,26 @@ class Order:
 
     @property
     def key_by_day(self) -> tuple:
-        """A hashable & unique key to identify this order, under the granularity in day."""
+        """返回一个可哈希且唯一的键，用于在日粒度上标识该订单"""
         return self.stock_id, self.date, self.direction
 
     @property
     def key(self) -> tuple:
-        """A hashable & unique key to identify this order."""
+        """返回一个可哈希且唯一的键，用于标识该订单"""
         return self.stock_id, self.start_time, self.end_time, self.direction
 
     @property
     def date(self) -> pd.Timestamp:
-        """Date of the order."""
+        """返回订单的日期"""
         return pd.Timestamp(self.start_time.replace(hour=0, minute=0, second=0))
 
 
 class OrderHelper:
     """
-    Motivation
-    - Make generating order easier
-        - User may have no knowledge about the adjust-factor information about the system.
-        - It involves too much interaction with the exchange when generating orders.
+    设计目的
+    - 简化订单生成过程
+        - 用户可能不了解系统中的调整因子信息
+        - 生成订单时需要与交易所进行过多交互
     """
 
     def __init__(self, exchange: Exchange) -> None:
@@ -171,27 +173,27 @@ class OrderHelper:
         end_time: Union[str, pd.Timestamp] = None,
     ) -> Order:
         """
-        help to create a order
+        帮助创建订单
 
         # TODO: create order for unadjusted amount order
 
-        Parameters
+        参数
         ----------
         code : str
-            the id of the instrument
+            标的证券ID
         amount : float
-            **adjusted trading amount**
+            **已调整的交易数量**
         direction : OrderDir
-            trading  direction
-        start_time : Union[str, pd.Timestamp] (optional)
-            The interval of the order which belongs to
-        end_time : Union[str, pd.Timestamp] (optional)
-            The interval of the order which belongs to
+            交易方向
+        start_time : Union[str, pd.Timestamp] (可选)
+            订单所属的时间区间开始时间
+        end_time : Union[str, pd.Timestamp] (可选)
+            订单所属的时间区间结束时间
 
-        Returns
+        返回值
         -------
         Order:
-            The created order
+            创建的订单对象
         """
         # NOTE: factor is a value belongs to the results section. User don't have to care about it when creating orders
         return Order(
@@ -207,44 +209,45 @@ class TradeRange:
     @abstractmethod
     def __call__(self, trade_calendar: TradeCalendarManager) -> Tuple[int, int]:
         """
-        This method will be call with following way
+        此方法将按以下方式调用
 
-        The outer strategy give a decision with with `TradeRange`
-        The decision will be checked by the inner decision.
-        inner decision will pass its trade_calendar as parameter when getting the trading range
-        - The framework's step is integer-index based.
+        外部策略通过`TradeRange`给出决策
+        该决策将由内部决策进行检查
+        内部决策在获取交易范围时会将其trade_calendar作为参数传入
+        - 框架的步骤基于整数索引
 
-        Parameters
+        参数
         ----------
         trade_calendar : TradeCalendarManager
-            the trade_calendar is from inner strategy
+            来自内部策略的交易日历
 
-        Returns
+        返回值
         -------
         Tuple[int, int]:
-            the start index and end index which are tradable
+            可交易的开始索引和结束索引
 
-        Raises
+        异常
         ------
         NotImplementedError:
-            Exceptions are raised when no range limitation
+            当没有范围限制时引发异常
         """
         raise NotImplementedError(f"Please implement the `__call__` method")
 
     @abstractmethod
     def clip_time_range(self, start_time: pd.Timestamp, end_time: pd.Timestamp) -> Tuple[pd.Timestamp, pd.Timestamp]:
         """
-        Parameters
+        参数
         ----------
         start_time : pd.Timestamp
+            开始时间
         end_time : pd.Timestamp
-            Both sides (start_time, end_time) are closed
+            结束时间（start_time和end_time均为闭区间）
 
-        Returns
+        返回值
         -------
         Tuple[pd.Timestamp, pd.Timestamp]:
-            The tradable time range.
-            - It is intersection of [start_time, end_time] and the rule of TradeRange itself
+            可交易的时间范围。
+            - 即[start_time, end_time]与TradeRange自身规则的交集
         """
         raise NotImplementedError(f"Please implement the `clip_time_range` method")
 
@@ -266,18 +269,18 @@ class TradeRangeByTime(TradeRange):
 
     def __init__(self, start_time: str | time, end_time: str | time) -> None:
         """
-        This is a callable class.
+        这是一个可调用类。
 
-        **NOTE**:
-        - It is designed for minute-bar for intra-day trading!!!!!
-        - Both start_time and end_time are **closed** in the range
+        **注意**:
+        - 专为日内交易的分钟级K线设计！！！
+        - start_time和end_time在范围内均为**闭区间**
 
-        Parameters
+        参数
         ----------
         start_time : str | time
-            e.g. "9:30"
+            例如："9:30"
         end_time : str | time
-            e.g. "14:30"
+            例如："14:30"
         """
         self.start_time = pd.Timestamp(start_time).time() if isinstance(start_time, str) else start_time
         self.end_time = pd.Timestamp(end_time).time() if isinstance(end_time, str) else end_time
@@ -317,17 +320,17 @@ class BaseTradeDecision(Generic[DecisionType]):
 
     def __init__(self, strategy: BaseStrategy, trade_range: Union[Tuple[int, int], TradeRange, None] = None) -> None:
         """
-        Parameters
+        参数
         ----------
         strategy : BaseStrategy
-            The strategy who make the decision
-        trade_range: Union[Tuple[int, int], Callable] (optional)
-            The index range for underlying strategy.
+            做出决策的策略实例
+        trade_range: Union[Tuple[int, int], Callable] (可选)
+            底层策略的索引范围。
 
-            Here are two examples of trade_range for each type
+            以下是每种类型的trade_range示例：
 
             1) Tuple[int, int]
-            start_index and end_index of the underlying strategy(both sides are closed)
+            底层策略的开始索引和结束索引（均为闭区间）
 
             2) TradeRange
 
@@ -343,38 +346,38 @@ class BaseTradeDecision(Generic[DecisionType]):
 
     def get_decision(self) -> List[DecisionType]:
         """
-        get the **concrete decision**  (e.g. execution orders)
-        This will be called by the inner strategy
+        获取**具体决策**（例如执行订单）
+        此方法将由内部策略调用
 
-        Returns
+        返回值
         -------
         List[DecisionType:
-            The decision result. Typically it is some orders
-            Example:
+            决策结果。通常是一些订单
+            示例:
                 []:
-                    Decision not available
+                    决策不可用
                 [concrete_decision]:
-                    available
+                    决策可用
         """
         raise NotImplementedError(f"This type of input is not supported")
 
     def update(self, trade_calendar: TradeCalendarManager) -> Optional[BaseTradeDecision]:
         """
-        Be called at the **start** of each step.
+        在每个步骤的**开始**时被调用。
 
-        This function is design for following purpose
-        1) Leave a hook for the strategy who make `self` decision to update the decision itself
-        2) Update some information from the inner executor calendar
+        此函数设计用于以下目的：
+        1) 为做出`self`决策的策略留下更新决策本身的钩子
+        2) 从内部执行器日历更新一些信息
 
-        Parameters
+        参数
         ----------
         trade_calendar : TradeCalendarManager
-            The calendar of the **inner strategy**!!!!!
+            **内部策略**的日历！！！
 
-        Returns
+        返回值
         -------
         BaseTradeDecision:
-            New update, use new decision. If no updates, return None (use previous decision (or unavailable))
+            新的更新，使用新决策。如果没有更新，返回None（使用先前的决策或不可用状态）
         """
         # purpose 1)
         self.total_step = trade_calendar.get_trade_len()
@@ -390,42 +393,41 @@ class BaseTradeDecision(Generic[DecisionType]):
 
     def get_range_limit(self, **kwargs: Any) -> Tuple[int, int]:
         """
-        return the expected step range for limiting the decision execution time
-        Both left and right are **closed**
+        返回用于限制决策执行时间的预期步骤范围
+        左右边界均为**闭区间**
 
-        if no available trade_range, `default_value` will be returned
+        如果没有可用的trade_range，将返回`default_value`
 
-        It is only used in `NestedExecutor`
-        - The outmost strategy will not follow any range limit (but it may give range_limit)
-        - The inner most strategy's range_limit will be useless due to atomic executors don't have such
-          features.
+        此方法仅在`NestedExecutor`中使用
+        - 最外层策略不遵循任何范围限制（但可能提供range_limit）
+        - 最内层策略的range_limit无效，因为原子执行器没有此类功能
 
-        **NOTE**:
-        1) This function must be called after `self.update` in following cases(ensured by NestedExecutor):
-        - user relies on the auto-clip feature of `self.update`
+        **注意**:
+        1) 在以下情况下，此函数必须在`self.update`之后调用（由NestedExecutor确保）：
+        - 用户依赖`self.update`的自动裁剪功能
 
-        2) This function will be called after _init_sub_trading in NestedExecutor.
+        2) 此函数将在NestedExecutor的_init_sub_trading之后调用
 
-        Parameters
+        参数
         ----------
         **kwargs:
             {
-                "default_value": <default_value>, # using dict is for distinguish no value provided or None provided
-                "inner_calendar": <trade calendar of inner strategy>
-                # because the range limit  will control the step range of inner strategy, inner calendar will be a
-                # important parameter when trade_range is callable
+                "default_value": <default_value>, # 使用字典是为了区分未提供值和提供None值的情况
+                "inner_calendar": <内部策略的交易日历>
+                # 因为范围限制将控制内部策略的步骤范围，当trade_range为可调用对象时，内部日历是重要参数
             }
 
-        Returns
+        返回值
         -------
         Tuple[int, int]:
+            步骤范围的开始索引和结束索引
 
-        Raises
+        异常
         ------
         NotImplementedError:
-            If the following criteria meet
-            1) the decision can't provide a unified start and end
-            2) default_value is not provided
+            当满足以下条件时引发：
+            1) 决策无法提供统一的开始和结束索引
+            2) 未提供default_value
         """
         try:
             _start_idx, _end_idx = self._get_range_limit(**kwargs)
@@ -451,39 +453,39 @@ class BaseTradeDecision(Generic[DecisionType]):
 
     def get_data_cal_range_limit(self, rtype: str = "full", raise_error: bool = False) -> Tuple[int, int]:
         """
-        get the range limit based on data calendar
+        根据数据日历获取范围限制
 
-        NOTE: it is **total** range limit instead of a single step
+        注意：这是**整体**范围限制，而非单个步骤
 
-        The following assumptions are made
-        1) The frequency of the exchange in common_infra is the same as the data calendar
-        2) Users want the index mod by **day** (i.e. 240 min)
+        基于以下假设：
+        1) common_infra中交易所的频率与数据日历相同
+        2) 用户希望按**天**（即240分钟）对索引取模
 
-        Parameters
+        参数
         ----------
         rtype: str
-            - "full": return the full limitation of the decision in the day
-            - "step": return the limitation of current step
+            - "full": 返回当日决策的完整限制范围
+            - "step": 返回当前步骤的限制范围
 
         raise_error: bool
-            True: raise error if no trade_range is set
-            False: return full trade calendar.
+            True: 如果未设置trade_range则引发错误
+            False: 返回完整的交易日历
 
-            It is useful in following cases
-            - users want to follow the order specific trading time range when decision level trade range is not
-              available. Raising NotImplementedError to indicates that range limit is not available
+            在以下情况下很有用：
+            - 当决策级别的交易范围不可用时，用户希望遵循订单特定的交易时间范围。
+              引发NotImplementedError表示范围限制不可用
 
-        Returns
+        返回值
         -------
         Tuple[int, int]:
-            the range limit in data calendar
+            数据日历中的范围限制
 
-        Raises
+        异常
         ------
         NotImplementedError:
-            If the following criteria meet
-            1) the decision can't provide a unified start and end
-            2) raise_error is True
+            当满足以下条件时引发：
+            1) 决策无法提供统一的开始和结束
+            2) raise_error为True
         """
         # potential performance issue
         day_start = pd.Timestamp(self.start_time.date())
@@ -517,18 +519,18 @@ class BaseTradeDecision(Generic[DecisionType]):
 
     def mod_inner_decision(self, inner_trade_decision: BaseTradeDecision) -> None:
         """
-        This method will be called on the inner_trade_decision after it is generated.
-        `inner_trade_decision` will be changed **inplace**.
+        此方法将在inner_trade_decision生成后被调用。
+        `inner_trade_decision`将被**就地**修改。
 
-        Motivation of the `mod_inner_decision`
-        - Leave a hook for outer decision to affect the decision generated by the inner strategy
-            - e.g. the outmost strategy generate a time range for trading. But the upper layer can only affect the
-              nearest layer in the original design.  With `mod_inner_decision`, the decision can passed through multiple
-              layers
+        `mod_inner_decision`的设计动机：
+        - 为外部决策留下影响内部策略生成的决策的钩子
+            - 例如：最外层策略生成交易时间范围。但在原始设计中，上层只能影响最近的一层。
+              通过`mod_inner_decision`，决策可以传递多个层级
 
-        Parameters
+        参数
         ----------
         inner_trade_decision : BaseTradeDecision
+            内部交易决策实例
         """
         # base class provide a default behaviour to modify inner_trade_decision
         # trade_range should be propagated when inner trade_range is not set
@@ -546,8 +548,8 @@ class EmptyTradeDecision(BaseTradeDecision[object]):
 
 class TradeDecisionWO(BaseTradeDecision[Order]):
     """
-    Trade Decision (W)ith (O)rder.
-    Besides, the time_range is also included.
+    交易决策（包含订单）。
+    此外，还包括时间范围。
     """
 
     def __init__(
@@ -580,8 +582,8 @@ class TradeDecisionWO(BaseTradeDecision[Order]):
 
 class TradeDecisionWithDetails(TradeDecisionWO):
     """
-    Decision with detail information.
-    Detail information is used to generate execution reports.
+    包含详细信息的决策。
+    详细信息用于生成执行报告。
     """
 
     def __init__(

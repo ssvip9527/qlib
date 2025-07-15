@@ -6,7 +6,7 @@ from ...data.dataset.processor import Processor, get_group_columns
 
 class ConfigSectionProcessor(Processor):
     """
-    This processor is designed for Alpha158. And will be replaced by simple processors in the future
+    此处理器专为Alpha158设计，未来将被简单处理器替代。
     """
 
     def __init__(self, fields_group=None, **kwargs):
@@ -25,7 +25,7 @@ class ConfigSectionProcessor(Processor):
 
     def _transform(self, df):
         def _label_norm(x):
-            x = x - x.mean()  # copy
+            x = x - x.mean()  # 复制
             x /= x.std()
             if self.clip_label_outlier:
                 x.clip(-3, 3, inplace=True)
@@ -34,7 +34,7 @@ class ConfigSectionProcessor(Processor):
             return x
 
         def _feature_norm(x):
-            x = x - x.median()  # copy
+            x = x - x.median()  # 复制
             x /= x.abs().median() * 1.4826
             if self.clip_feature_outlier:
                 x.clip(-3, 3, inplace=True)
@@ -47,17 +47,17 @@ class ConfigSectionProcessor(Processor):
 
         TimeInspector.set_time_mark()
 
-        # Copy the focus part and change it to single level
+        # 复制关注部分并将其改为单层级
         selected_cols = get_group_columns(df, self.fields_group)
         df_focus = df[selected_cols].copy()
         if len(df_focus.columns.levels) > 1:
             df_focus = df_focus.droplevel(level=0)
 
-        # Label
+        # 标签
         cols = df_focus.columns[df_focus.columns.str.contains("^LABEL")]
         df_focus[cols] = df_focus[cols].groupby(level="datetime", group_keys=False).apply(_label_norm)
 
-        # Features
+        # 特征
         cols = df_focus.columns[df_focus.columns.str.contains("^KLEN|^KLOW|^KUP")]
         df_focus[cols] = (
             df_focus[cols].apply(lambda x: x**0.25).groupby(level="datetime", group_keys=False).apply(_feature_norm)

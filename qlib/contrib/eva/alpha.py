@@ -1,7 +1,7 @@
 """
-Here is a batch of evaluation functions.
+这里是一批评估函数。
 
-The interface should be redesigned carefully in the future.
+未来应仔细重新设计接口。
 """
 
 import pandas as pd
@@ -15,10 +15,10 @@ def calc_long_short_prec(
     pred: pd.Series, label: pd.Series, date_col="datetime", quantile: float = 0.2, dropna=False, is_alpha=False
 ) -> Tuple[pd.Series, pd.Series]:
     """
-    calculate the precision for long and short operation
+    计算多空操作的准确率
 
 
-    :param pred/label: index is **pd.MultiIndex**, index name is **[datetime, instruments]**; columns names is **[score]**.
+    :param pred/label: 索引为**pd.MultiIndex**，索引名称为**[datetime, instruments]**；列名称为**[score]**。
 
             .. code-block:: python
                                                   score
@@ -29,14 +29,14 @@ def calc_long_short_prec(
                                     SH600584    0.517297
                                     SH600715    0.544674
     label :
-        label
+        标签
     date_col :
-        date_col
+        日期列
 
     Returns
     -------
     (pd.Series, pd.Series)
-        long precision and short precision in time level
+        时间维度上的多头准确率和空头准确率
     """
     if is_alpha:
         label = label - label.groupby(level=date_col, group_keys=False).mean()
@@ -52,7 +52,7 @@ def calc_long_short_prec(
     def N(x):
         return int(len(x) * quantile)
 
-    # find the top/low quantile of prediction and treat them as long and short target
+    # 找出预测值的最高/最低分位数，并将其作为多空目标
     long = group.apply(lambda x: x.nlargest(N(x), columns="pred").label)
     short = group.apply(lambda x: x.nsmallest(N(x), columns="pred").label)
 
@@ -76,28 +76,28 @@ def calc_long_short_return(
     dropna: bool = False,
 ) -> Tuple[pd.Series, pd.Series]:
     """
-    calculate long-short return
+    计算多空收益
 
-    Note:
-        `label` must be raw stock returns.
+    注意：
+        `label`必须是原始股票收益。
 
-    Parameters
+    参数
     ----------
     pred : pd.Series
-        stock predictions
+        股票预测值
     label : pd.Series
-        stock returns
+        股票收益
     date_col : str
-        datetime index name
+        日期时间索引名称
     quantile : float
-        long-short quantile
+        多空分位数
 
-    Returns
+    返回
     ----------
     long_short_r : pd.Series
-        daily long-short returns
+        每日多空收益
     long_avg_r : pd.Series
-        daily long-average returns
+        每日多头平均收益
     """
     df = pd.DataFrame({"pred": pred, "label": label})
     if dropna:
@@ -114,12 +114,12 @@ def calc_long_short_return(
 
 
 def pred_autocorr(pred: pd.Series, lag=1, inst_col="instrument", date_col="datetime"):
-    """pred_autocorr.
+    """预测自相关
 
-    Limitation:
-    - If the datetime is not sequential densely, the correlation will be calulated based on adjacent dates. (some users may expected NaN)
+    限制：
+    - 如果日期时间不是连续密集的，相关性将基于相邻日期计算。(有些用户可能期望NaN)
 
-    :param pred: pd.Series with following format
+    :param pred: pd.Series，格式如下
                 instrument  datetime
                 SH600000    2016-01-04   -0.000403
                             2016-01-05   -0.000753
@@ -127,7 +127,7 @@ def pred_autocorr(pred: pd.Series, lag=1, inst_col="instrument", date_col="datet
                             2016-01-07   -0.065230
                             2016-01-08   -0.062465
     :type pred: pd.Series
-    :param lag:
+    :param lag: 滞后阶数
     """
     if isinstance(pred, pd.DataFrame):
         pred = pred.iloc[:, 0]
@@ -142,14 +142,14 @@ def pred_autocorr(pred: pd.Series, lag=1, inst_col="instrument", date_col="datet
 
 def pred_autocorr_all(pred_dict, n_jobs=-1, **kwargs):
     """
-    calculate auto correlation for pred_dict
+    计算pred_dict的自相关
 
-    Parameters
+    参数
     ----------
     pred_dict : dict
-        A dict like {<method_name>:  <prediction>}
+        类似{<方法名称>: <预测值>}的字典
     kwargs :
-        all these arguments will be passed into pred_autocorr
+        所有这些参数将传递给pred_autocorr
     """
     ac_dict = {}
     for k, pred in pred_dict.items():
@@ -158,21 +158,21 @@ def pred_autocorr_all(pred_dict, n_jobs=-1, **kwargs):
 
 
 def calc_ic(pred: pd.Series, label: pd.Series, date_col="datetime", dropna=False) -> (pd.Series, pd.Series):
-    """calc_ic.
+    """计算IC值
 
-    Parameters
+    参数
     ----------
     pred :
-        pred
+        预测值
     label :
-        label
+        标签
     date_col :
-        date_col
+        日期列
 
-    Returns
+    返回
     -------
     (pd.Series, pd.Series)
-        ic and rank ic
+        IC值和排序IC值
     """
     df = pd.DataFrame({"pred": pred, "label": label})
     ic = df.groupby(date_col, group_keys=False).apply(lambda df: df["pred"].corr(df["label"]))
@@ -184,23 +184,24 @@ def calc_ic(pred: pd.Series, label: pd.Series, date_col="datetime", dropna=False
 
 
 def calc_all_ic(pred_dict_all, label, date_col="datetime", dropna=False, n_jobs=-1):
-    """calc_all_ic.
+    """
+    计算所有IC值
 
-    Parameters
+    参数
     ----------
     pred_dict_all :
-        A dict like {<method_name>:  <prediction>}
+        类似{<方法名称>: <预测值>}的字典
     label:
-        A pd.Series of label values
+        标签值的pd.Series
 
-    Returns
+    返回
     -------
-    {'Q2+IND_z': {'ic': <ic series like>
+    {'Q2+IND_z': {'ic': <IC序列类似>
                           2016-01-04   -0.057407
                           ...
                           2020-05-28    0.183470
                           2020-05-29    0.171393
-                  'ric': <rank ic series like>
+                  'ric': <排序IC序列类似>
                           2016-01-04   -0.040888
                           ...
                           2020-05-28    0.236665

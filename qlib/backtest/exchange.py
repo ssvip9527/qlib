@@ -26,13 +26,13 @@ from .high_performance_ds import BaseQuote, NumpyQuote
 
 
 class Exchange:
-    # `quote_df` is a pd.DataFrame class that contains basic information for backtesting
-    # After some processing, the data will later be maintained by `quote_cls` object for faster data retrieving.
-    # Some conventions for `quote_df`
-    # - $close is for calculating the total value at end of each day.
-    #   - if $close is None, the stock on that day is regarded as suspended.
-    # - $factor is for rounding to the trading unit;
-    #   - if any $factor is missing when $close exists, trading unit rounding will be disabled
+    # `quote_df`是一个包含回测基础信息的pd.DataFrame类
+    # 经过处理后，数据将由`quote_cls`对象维护以实现更快的数据检索
+    # `quote_df`的数据约定：
+    # - $close用于计算每日结束时的总价值
+    #   - 如果$close为None，则该日股票被视为停牌
+    # - $factor用于交易单位的舍入
+    #   - 当$close存在时，如果任何$factor缺失，将禁用交易单位舍入功能
     quote_df: pd.DataFrame
 
     def __init__(
@@ -53,80 +53,71 @@ class Exchange:
         quote_cls: Type[BaseQuote] = NumpyQuote,
         **kwargs: Any,
     ) -> None:
-        """__init__
-        :param freq:             frequency of data
-        :param start_time:       closed start time for backtest
-        :param end_time:         closed end time for backtest
-        :param codes:            list stock_id list or a string of instruments(i.e. all, csi500, sse50)
+        """
+        初始化方法
+        :param freq:             数据频率
+        :param start_time:       回测的闭区间开始时间
+        :param end_time:         回测的闭区间结束时间
+        :param codes:            股票ID列表或工具字符串（如all, csi500, sse50）
         :param deal_price:      Union[str, Tuple[str, str], List[str]]
-                                The `deal_price` supports following two types of input
+                                `deal_price`支持以下两种输入类型
                                 - <deal_price> : str
-                                - (<buy_price>, <sell_price>): Tuple[str] or List[str]
-                                <deal_price>, <buy_price> or <sell_price> := <price>
+                                - (<buy_price>, <sell_price>): 元组或列表
+                                <deal_price>, <buy_price>或<sell_price> := <price>
                                 <price> := str
-                                - for example '$close', '$open', '$vwap' ("close" is OK. `Exchange` will help to prepend
-                                  "$" to the expression)
-        :param subscribe_fields: list, subscribe fields. This expressions will be added to the query and `self.quote`.
-                                 It is useful when users want more fields to be queried
+                                - 例如'$close', '$open', '$vwap'（"close"也可以，`Exchange`会自动在表达式前添加"$"）
+        :param subscribe_fields: 列表，订阅字段。这些表达式将添加到查询和`self.quote`中。
+                                 当用户需要查询更多字段时非常有用
         :param limit_threshold: Union[Tuple[str, str], float, None]
-                                1) `None`: no limitation
-                                2) float, 0.1 for example, default None
-                                3) Tuple[str, str]: (<the expression for buying stock limitation>,
-                                                     <the expression for sell stock limitation>)
-                                                    `False` value indicates the stock is tradable
-                                                    `True` value indicates the stock is limited and not tradable
+                                1) `None`: 无限制
+                                2) float，例如0.1，默认None
+                                3) Tuple[str, str]: (<买入限制表达式>, <卖出限制表达式>)
+                                                    `False`值表示股票可交易
+                                                    `True`值表示股票受限不可交易
         :param volume_threshold: Union[
                                     Dict[
-                                        "all": ("cum" or "current", limit_str),
-                                        "buy": ("cum" or "current", limit_str),
-                                        "sell":("cum" or "current", limit_str),
+                                        "all": ("cum"或"current", 限制表达式),
+                                        "buy": ("cum"或"current", 限制表达式),
+                                        "sell":("cum"或"current", 限制表达式),
                                     ],
-                                    ("cum" or "current", limit_str),
+                                    ("cum"或"current", 限制表达式),
                                  ]
-                                1) ("cum" or "current", limit_str) denotes a single volume limit.
-                                    - limit_str is qlib data expression which is allowed to define your own Operator.
-                                    Please refer to qlib/contrib/ops/high_freq.py, here are any custom operator for
-                                    high frequency, such as DayCumsum. !!!NOTE: if you want you use the custom
-                                    operator, you need to register it in qlib_init.
-                                    - "cum" means that this is a cumulative value over time, such as cumulative market
-                                    volume. So when it is used as a volume limit, it is necessary to subtract the dealt
-                                    amount.
-                                    - "current" means that this is a real-time value and will not accumulate over time,
-                                    so it can be directly used as a capacity limit.
-                                    e.g. ("cum", "0.2 * DayCumsum($volume, '9:45', '14:45')"), ("current", "$bidV1")
-                                2) "all" means the volume limits are both buying and selling.
-                                "buy" means the volume limits of buying. "sell" means the volume limits of selling.
-                                Different volume limits will be aggregated with min(). If volume_threshold is only
-                                ("cum" or "current", limit_str) instead of a dict, the volume limits are for
-                                both by default. In other words, it is same as {"all": ("cum" or "current", limit_str)}.
-                                3) e.g. "volume_threshold": {
+                                1) ("cum"或"current", 限制表达式)表示单一的成交量限制。
+                                    - 限制表达式是qlib数据表达式，允许定义自己的操作符。
+                                    请参考qlib/contrib/ops/high_freq.py，这里有高频数据的自定义操作符，如DayCumsum。
+                                    !!!注意：如果要使用自定义操作符，需要在qlib_init中注册。
+                                    - "cum"表示这是随时间累积的值，如累积成交量。因此当用作成交量限制时，需要减去已成交金额。
+                                    - "current"表示实时值，不会随时间累积，因此可直接用作容量限制。
+                                    例如：("cum", "0.2 * DayCumsum($volume, '9:45', '14:45')"), ("current", "$bidV1")
+                                2) "all"表示买入和卖出均受此成交量限制。
+                                "buy"表示买入的成交量限制。"sell"表示卖出的成交量限制。
+                                不同的成交量限制将通过min()函数聚合。如果volume_threshold只是
+                                ("cum"或"current", 限制表达式)而非字典，则默认适用于买入和卖出，即等同于{"all": ("cum"或"current", 限制表达式)}。
+                                3) 示例："volume_threshold": {
                                             "all": ("cum", "0.2 * DayCumsum($volume, '9:45', '14:45')"),
                                             "buy": ("current", "$askV1"),
                                             "sell": ("current", "$bidV1"),
                                         }
-        :param open_cost:        cost rate for open, default 0.0015
-        :param close_cost:       cost rate for close, default 0.0025
-        :param trade_unit:       trade unit, 100 for China A market.
-                                 None for disable trade unit.
-                                 **NOTE**: `trade_unit` is included in the `kwargs`. It is necessary because we must
-                                 distinguish `not set` and `disable trade_unit`
-        :param min_cost:         min cost, default 5
-        :param impact_cost:     market impact cost rate (a.k.a. slippage). A recommended value is 0.1.
-        :param extra_quote:     pandas, dataframe consists of
-                                    columns: like ['$vwap', '$close', '$volume', '$factor', 'limit_sell', 'limit_buy'].
-                                            The limit indicates that the etf is tradable on a specific day.
-                                            Necessary fields:
-                                                $close is for calculating the total value at end of each day.
-                                            Optional fields:
-                                                $volume is only necessary when we limit the trade amount or calculate
-                                                PA(vwap) indicator
-                                                $vwap is only necessary when we use the $vwap price as the deal price
-                                                $factor is for rounding to the trading unit
-                                                limit_sell will be set to False by default (False indicates we can sell
-                                                this target on this day).
-                                                limit_buy will be set to False by default (False indicates we can buy
-                                                this target on this day).
-                                    index: MultipleIndex(instrument, pd.Datetime)
+        :param open_cost:        开仓成本率，默认0.0015
+        :param close_cost:       平仓成本率，默认0.0025
+        :param trade_unit:       交易单位，中国A股市场为100股。
+                                 None表示禁用交易单位。
+                                 **注意**：`trade_unit`包含在`kwargs`中。这是必要的，因为我们必须
+                                 区分"未设置"和"禁用交易单位"
+        :param min_cost:         最低成本，默认5
+        :param impact_cost:     市场冲击成本率（也称为滑点）。推荐值为0.1。
+        :param extra_quote:     pandas DataFrame，包含以下列：
+                                    如['$vwap', '$close', '$volume', '$factor', 'limit_sell', 'limit_buy']。
+                                    限制列表示ETF在特定日期是否可交易。
+                                    必要字段：
+                                        $close用于计算每日结束时的总价值。
+                                    可选字段：
+                                        $volume仅在限制交易金额或计算PA(vwap)指标时需要
+                                        $vwap仅在使用$vwap价格作为成交价格时需要
+                                        $factor用于舍入到交易单位
+                                        limit_sell默认设为False（False表示当天可卖出该标的）。
+                                        limit_buy默认设为False（False表示当天可买入该标的）。
+                                    索引：MultiIndex(instrument, pd.Datetime)
         """
         self.freq = freq
         self.start_time = start_time
@@ -144,8 +135,8 @@ class Exchange:
         # we have some verbose information here. So logging is enabled
         self.logger = get_module_logger("online operator")
 
-        # TODO: the quote, trade_dates, codes are not necessary.
-        # It is just for performance consideration.
+        # TODO: quote、trade_dates和codes不是必需的
+        # 这些字段仅出于性能考虑而保留
         self.limit_type = self._get_limit_type(limit_threshold)
         if limit_threshold is None:
             if C.region in [REG_CN, REG_TW]:
@@ -166,13 +157,13 @@ class Exchange:
         if isinstance(codes, str):
             codes = D.instruments(codes)
         self.codes = codes
-        # Necessary fields
-        # $close is for calculating the total value at end of each day.
-        # - if $close is None, the stock on that day is regarded as suspended.
-        # $factor is for rounding to the trading unit
-        # $change is for calculating the limit of the stock
+        # 必需字段
+        # $close用于计算每日结束时的总价值
+        # - 如果$close为None，则该日股票被视为停牌
+        # $factor用于交易单位的舍入
+        # $change用于计算股票的涨跌停限制
 
-        # 　get volume limit from kwargs
+        # 从kwargs获取成交量限制
         self.buy_vol_limit, self.sell_vol_limit, vol_lt_fields = self._get_vol_limit(volume_threshold)
 
         necessary_fields = {self.buy_price, self.sell_price, "$close", "$change", "$factor", "$volume"}
@@ -343,21 +334,24 @@ class Exchange:
         direction: int | None = None,
     ) -> bool:
         """
-        Parameters
+        参数
         ----------
         stock_id : str
+            股票ID
         start_time: pd.Timestamp
+            开始时间
         end_time: pd.Timestamp
+            结束时间
         direction : int, optional
-            trade direction, by default None
-            - if direction is None, check if tradable for buying and selling.
-            - if direction == Order.BUY, check the if tradable for buying
-            - if direction == Order.SELL, check the sell limit for selling.
+            交易方向，默认为None
+            - 如果direction为None，检查买入和卖出是否均可交易
+            - 如果direction == Order.BUY，检查买入是否可交易
+            - 如果direction == Order.SELL，检查卖出是否受限
 
-        Returns
+        返回值
         -------
-        True: the trading of the stock is limited (maybe hit the highest/lowest price), hence the stock is not tradable
-        False: the trading of the stock is not limited, hence the stock may be tradable
+        True: 股票交易受限（可能达到最高价/最低价），因此股票不可交易
+        False: 股票交易不受限，因此股票可交易
         """
         # NOTE:
         # **all** is used when checking limitation.
@@ -381,7 +375,7 @@ class Exchange:
         start_time: pd.Timestamp,
         end_time: pd.Timestamp,
     ) -> bool:
-        """if stock is suspended(hence not tradable), True will be returned"""
+        """如果股票停牌（因此不可交易），返回True"""
         # is suspended
         if stock_id in self.quote.get_all_stock():
             # suspended stocks are represented by None $close stock
@@ -426,13 +420,13 @@ class Exchange:
         dealt_order_amount: Dict[str, float] = defaultdict(float),
     ) -> Tuple[float, float, float]:
         """
-        Deal order when the actual transaction
-        the results section in `Order` will be changed.
-        :param order:  Deal the order.
-        :param trade_account: Trade account to be updated after dealing the order.
-        :param position: position to be updated after dealing the order.
-        :param dealt_order_amount: the dealt order amount dict with the format of {stock_id: float}
-        :return: trade_val, trade_cost, trade_price
+        实际交易时处理订单
+        `Order`中的结果部分将会被修改。
+        :param order:  待处理的订单。
+        :param trade_account: 处理订单后要更新的交易账户。
+        :param position: 处理订单后要更新的持仓。
+        :param dealt_order_amount: 已成交订单数量字典，格式为{stock_id: float}
+        :return: trade_val（交易价值）, trade_cost（交易成本）, trade_price（交易价格）
         """
         # check order first.
         if not self.check_order(order):
@@ -488,7 +482,7 @@ class Exchange:
         end_time: pd.Timestamp,
         method: Optional[str] = "sum",
     ) -> Union[None, int, float, bool, IndexData]:
-        """get the total deal volume of stock with `stock_id` between the time interval [start_time, end_time)"""
+        """获取股票`stock_id`在时间区间[start_time, end_time)内的总成交 volume"""
         return self.quote.get_data(stock_id, start_time, end_time, field="$volume", method=method)
 
     def get_deal_price(

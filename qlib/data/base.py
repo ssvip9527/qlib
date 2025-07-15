@@ -12,15 +12,15 @@ from ..log import get_module_logger
 
 class Expression(abc.ABC):
     """
-    Expression base class
+    表达式基类
 
-    Expression is designed to handle the calculation of data with the format below
-    data with two dimension for each instrument,
+    表达式用于处理具有以下格式的数据计算
+    每个工具包含两个维度的数据：
 
-    - feature
-    - time:  it  could be observation time or period time.
+    - 特征（feature）
+    - 时间（time）：可以是观察时间或周期时间
 
-        - period time is designed for Point-in-time database.  For example, the period time maybe 2014Q4, its value can observed for multiple times(different value may be observed at different time due to amendment).
+        - 周期时间专为时点数据库设计。例如，周期时间可能是2014Q4，其值可以被多次观察（由于修正，不同时间可能观察到不同值）。
     """
 
     def __str__(self):
@@ -140,50 +140,50 @@ class Expression(abc.ABC):
         return Or(other, self)
 
     def load(self, instrument, start_index, end_index, *args):
-        """load  feature
-        This function is responsible for loading feature/expression based on the expression engine.
+        """加载特征
+        此函数负责基于表达式引擎加载特征/表达式。
 
-        The concrete implementation will be separated into two parts:
+        具体实现分为两部分：
 
-        1) caching data, handle errors.
+        1) 缓存数据，处理错误。
 
-            - This part is shared by all the expressions and implemented in Expression
-        2) processing and calculating data based on the specific expression.
+            - 这部分由所有表达式共享，并在Expression中实现
+        2) 根据特定表达式处理和计算数据。
 
-            - This part is different in each expression and implemented in each expression
+            - 这部分在每个表达式中不同，并在每个表达式中实现
 
-        Expression Engine is shared by different data.
-        Different data will have different extra information for `args`.
+        表达式引擎由不同数据共享。
+        不同数据会为`args`提供不同的额外信息。
 
-        Parameters
+        参数
         ----------
         instrument : str
-            instrument code.
+            工具代码。
         start_index : str
-            feature start index [in calendar].
+            特征开始索引[在日历中]。
         end_index : str
-            feature end  index  [in calendar].
+            特征结束索引[在日历中]。
 
-        *args may contain following information:
-        1) if it is used in basic expression engine data, it contains following arguments
+        *args可能包含以下信息：
+        1) 如果用于基本表达式引擎数据，包含以下参数
             freq: str
-                feature frequency.
+                特征频率。
 
-        2) if is used in PIT data, it contains following arguments
+        2) 如果用于PIT数据，包含以下参数
             cur_pit:
-                it is designed for the point-in-time data.
+                专为时点数据设计。
             period: int
-                This is used for query specific period.
-                The period is represented with int in Qlib. (e.g. 202001 may represent the first quarter in 2020)
+                用于查询特定周期。
+                Qlib中周期用整数表示（例如202001可能表示2020年第一季度）
 
-        Returns
+        返回
         ----------
         pd.Series
-            feature series: The index of the series is the calendar index
+            特征序列：序列的索引是日历索引
         """
         from .cache import H  # pylint: disable=C0415
 
-        # cache
+        # 缓存
         cache_key = str(self), instrument, start_index, end_index, *args
         if cache_key in H["f"]:
             return H["f"][cache_key]
@@ -193,9 +193,9 @@ class Expression(abc.ABC):
             series = self._load_internal(instrument, start_index, end_index, *args)
         except Exception as e:
             get_module_logger("data").debug(
-                f"Loading data error: instrument={instrument}, expression={str(self)}, "
+                f"加载数据错误: instrument={instrument}, expression={str(self)}, "
                 f"start_index={start_index}, end_index={end_index}, args={args}. "
-                f"error info: {str(e)}"
+                f"错误信息: {str(e)}"
             )
             raise
         series.name = str(self)

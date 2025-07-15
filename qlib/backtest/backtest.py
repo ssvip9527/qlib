@@ -29,16 +29,16 @@ def backtest_loop(
     trade_strategy: BaseStrategy,
     trade_executor: BaseExecutor,
 ) -> Tuple[PORT_METRIC, INDICATOR_METRIC]:
-    """backtest function for the interaction of the outermost strategy and executor in the nested decision execution
+    """嵌套决策执行中最外层策略与执行器交互的回测函数
 
-    please refer to the docs of `collect_data_loop`
+    请参考 `collect_data_loop` 的文档
 
-    Returns
+    返回值
     -------
     portfolio_dict: PORT_METRIC
-        it records the trading portfolio_metrics information
+        记录交易组合指标信息
     indicator_dict: INDICATOR_METRIC
-        it computes the trading indicator
+        计算交易指标
     """
     return_value: dict = {}
     for _decision in collect_data_loop(start_time, end_time, trade_strategy, trade_executor, return_value):
@@ -57,28 +57,28 @@ def collect_data_loop(
     trade_executor: BaseExecutor,
     return_value: dict | None = None,
 ) -> Generator[BaseTradeDecision, Optional[BaseTradeDecision], None]:
-    """Generator for collecting the trade decision data for rl training
+    """用于收集强化学习训练所需交易决策数据的生成器
 
-    Parameters
+    参数
     ----------
     start_time : Union[pd.Timestamp, str]
-        closed start time for backtest
-        **NOTE**: This will be applied to the outmost executor's calendar.
+        回测的闭区间开始时间
+        **注意**: 此时间将应用于最外层执行器的日历。
     end_time : Union[pd.Timestamp, str]
-        closed end time for backtest
-        **NOTE**: This will be applied to the outmost executor's calendar.
-        E.g. Executor[day](Executor[1min]), setting `end_time == 20XX0301` will include all the minutes on 20XX0301
+        回测的闭区间结束时间
+        **注意**: 此时间将应用于最外层执行器的日历。
+        例如：Executor[day](Executor[1min])，设置`end_time == 20XX0301`将包含20XX0301当天的所有分钟数据
     trade_strategy : BaseStrategy
-        the outermost portfolio strategy
+        最外层的组合策略
     trade_executor : BaseExecutor
-        the outermost executor
+        最外层的执行器
     return_value : dict
-        used for backtest_loop
+        用于backtest_loop函数
 
-    Yields
+    生成值
     -------
     object
-        trade decision
+        交易决策
     """
     trade_executor.reset(start_time=start_time, end_time=end_time)
     trade_strategy.reset(level_infra=trade_executor.get_level_infra())

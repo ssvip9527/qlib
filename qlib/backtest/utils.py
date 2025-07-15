@@ -22,8 +22,8 @@ from ..data.data import Cal
 
 class TradeCalendarManager:
     """
-    Manager for trading calendar
-        - BaseStrategy and BaseExecutor will use it
+    交易日历管理器
+        - BaseStrategy和BaseExecutor会使用该类
     """
 
     def __init__(
@@ -34,16 +34,16 @@ class TradeCalendarManager:
         level_infra: LevelInfrastructure | None = None,
     ) -> None:
         """
-        Parameters
+        参数
         ----------
         freq : str
-            frequency of trading calendar, also trade time per trading step
+            交易日历频率，也是每个交易步骤的交易时间
         start_time : Union[str, pd.Timestamp], optional
-            closed start of the trading calendar, by default None
-            If `start_time` is None, it must be reset before trading.
+            交易日历的闭区间起始时间，默认为None
+            如果`start_time`为None，必须在交易前重置
         end_time : Union[str, pd.Timestamp], optional
-            closed end of the trade time range, by default None
-            If `end_time` is None, it must be reset before trading.
+            交易时间范围的闭区间结束时间，默认为None
+            如果`end_time`为None，必须在交易前重置
         """
         self.level_infra = level_infra
         self.reset(freq=freq, start_time=start_time, end_time=end_time)
@@ -55,11 +55,11 @@ class TradeCalendarManager:
         end_time: Union[str, pd.Timestamp] = None,
     ) -> None:
         """
-        Please refer to the docs of `__init__`
+        请参考`__init__`方法的文档
 
-        Reset the trade calendar
-        - self.trade_len : The total count for trading step
-        - self.trade_step : The number of trading step finished, self.trade_step can be
+        重置交易日历
+        - self.trade_len : 交易步骤总数
+        - self.trade_step : 已完成的交易步骤数，self.trade_step取值范围为
             [0, 1, 2, ..., self.trade_len - 1]
         """
         self.freq = freq
@@ -77,10 +77,10 @@ class TradeCalendarManager:
 
     def finished(self) -> bool:
         """
-        Check if the trading finished
-        - Should check before calling strategy.generate_decisions and executor.execute
-        - If self.trade_step >= self.self.trade_len, it means the trading is finished
-        - If self.trade_step < self.self.trade_len, it means the number of trading step finished is self.trade_step
+        检查交易是否结束
+        - 在调用strategy.generate_decisions和executor.execute前应检查
+        - 如果self.trade_step >= self.self.trade_len，表示交易已完成
+        - 如果self.trade_step < self.self.trade_len，表示已完成的交易步骤数为self.trade_step
         """
         return self.trade_step >= self.trade_len
 
@@ -93,7 +93,7 @@ class TradeCalendarManager:
         return self.freq
 
     def get_trade_len(self) -> int:
-        """get the total step length"""
+        """获取总步骤长度"""
         return self.trade_len
 
     def get_trade_step(self) -> int:
@@ -101,29 +101,26 @@ class TradeCalendarManager:
 
     def get_step_time(self, trade_step: int | None = None, shift: int = 0) -> Tuple[pd.Timestamp, pd.Timestamp]:
         """
-        Get the left and right endpoints of the trade_step'th trading interval
+        获取第trade_step个交易区间的左右端点
 
-        About the endpoints:
-            - Qlib uses the closed interval in time-series data selection, which has the same performance as
-            pandas.Series.loc
-            # - The returned right endpoints should minus 1 seconds because of the closed interval representation in
-            #   Qlib.
-            # Note: Qlib supports up to minutely decision execution, so 1 seconds is less than any trading time
-            #   interval.
+        关于端点:
+            - Qlib在时间序列数据选择中使用闭区间，与pandas.Series.loc性能相同
+            # - 返回的右端点应减去1秒，因为Qlib中使用闭区间表示
+            # 注意：Qlib支持分钟级决策执行，所以1秒小于任何交易时间间隔
 
-        Parameters
+        参数
         ----------
         trade_step : int, optional
-            the number of trading step finished, by default None to indicate current step
+            已完成的交易步骤数，默认为None表示当前步骤
         shift : int, optional
-            shift bars , by default 0
+            偏移的bar数，默认为0
 
-        Returns
+        返回值
         -------
         Tuple[pd.Timestamp, pd.Timestamp]
-            - If shift == 0, return the trading time range
-            - If shift > 0, return the trading time range of the earlier shift bars
-            - If shift < 0, return the trading time range of the later shift bar
+            - 如果shift == 0，返回当前交易时间范围
+            - 如果shift > 0，返回前shift个bar的交易时间范围
+            - 如果shift < 0，返回后shift个bar的交易时间范围
         """
         if trade_step is None:
             trade_step = self.get_trade_step()
@@ -132,18 +129,18 @@ class TradeCalendarManager:
 
     def get_data_cal_range(self, rtype: str = "full") -> Tuple[int, int]:
         """
-        get the calendar range
-        The following assumptions are made
-        1) The frequency of the exchange in common_infra is the same as the data calendar
-        2) Users want the **data index** mod by **day** (i.e. 240 min)
+        获取日历范围
+        做出以下假设：
+        1) common_infra中的交易所频率与数据日历相同
+        2) 用户希望按天(即240分钟)对**数据索引**取模
 
-        Parameters
+        参数
         ----------
         rtype: str
-            - "full": return the full limitation of the decision in the day
-            - "step": return the limitation of current step
+            - "full": 返回当天决策的完整限制范围
+            - "step": 返回当前步骤的限制范围
 
-        Returns
+        返回值
         -------
         Tuple[int, int]:
         """
@@ -165,23 +162,25 @@ class TradeCalendarManager:
         return start_idx - day_start_idx, end_index - day_start_idx
 
     def get_all_time(self) -> Tuple[pd.Timestamp, pd.Timestamp]:
-        """Get the start_time and end_time for trading"""
+        """获取交易的开始时间和结束时间"""
         return self.start_time, self.end_time
 
     # helper functions
     def get_range_idx(self, start_time: pd.Timestamp, end_time: pd.Timestamp) -> Tuple[int, int]:
         """
-        get the range index which involve start_time~end_time  (both sides are closed)
+        获取包含start_time~end_time范围的索引(两边都是闭区间)
 
-        Parameters
+        参数
         ----------
         start_time : pd.Timestamp
+            开始时间
         end_time : pd.Timestamp
+            结束时间
 
-        Returns
+        返回值
         -------
         Tuple[int, int]:
-            the index of the range.  **the left and right are closed**
+            范围的索引。**左右都是闭区间**
         """
         left = int(np.searchsorted(self._calendar, start_time, side="right") - 1)
         right = int(np.searchsorted(self._calendar, end_time, side="right") - 1)
@@ -238,14 +237,14 @@ class CommonInfrastructure(BaseInfrastructure):
 
 
 class LevelInfrastructure(BaseInfrastructure):
-    """level infrastructure is created by executor, and then shared to strategies on the same level"""
+    """层级基础设施由执行器创建，然后共享给同层级的策略"""
 
     def get_support_infra(self) -> Set[str]:
         """
-        Descriptions about the infrastructure
+        关于基础设施的描述
 
         sub_level_infra:
-        - **NOTE**: this will only work after _init_sub_trading !!!
+        - **注意**: 仅在_init_sub_trading之后才会生效!!!
         """
         return {"trade_calendar", "sub_level_infra", "common_infra", "executor"}
 
@@ -255,7 +254,7 @@ class LevelInfrastructure(BaseInfrastructure):
         start_time: Union[str, pd.Timestamp, None],
         end_time: Union[str, pd.Timestamp, None],
     ) -> None:
-        """reset trade calendar manager"""
+        """重置交易日历管理器"""
         if self.has("trade_calendar"):
             self.get("trade_calendar").reset(freq, start_time=start_time, end_time=end_time)
         else:
@@ -264,25 +263,26 @@ class LevelInfrastructure(BaseInfrastructure):
             )
 
     def set_sub_level_infra(self, sub_level_infra: LevelInfrastructure) -> None:
-        """this will make the calendar access easier when crossing multi-levels"""
+        """这将使跨多层级访问日历更加方便"""
         self.reset_infra(sub_level_infra=sub_level_infra)
 
 
 def get_start_end_idx(trade_calendar: TradeCalendarManager, outer_trade_decision: BaseTradeDecision) -> Tuple[int, int]:
     """
-    A helper function for getting the decision-level index range limitation for inner strategy
-    - NOTE: this function is not applicable to order-level
+    用于获取内部策略决策级别索引范围限制的辅助函数
+    - 注意: 此函数不适用于订单级别
 
-    Parameters
+    参数
     ----------
     trade_calendar : TradeCalendarManager
+        交易日历管理器
     outer_trade_decision : BaseTradeDecision
-        the trade decision made by outer strategy
+        外部策略做出的交易决策
 
-    Returns
+    返回值
     -------
     Union[int, int]:
-        start index and end index
+        开始索引和结束索引
     """
     try:
         return outer_trade_decision.get_range_limit(inner_calendar=trade_calendar)

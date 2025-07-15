@@ -23,7 +23,7 @@ class MetaLogger(type):
 
 class QlibLogger(metaclass=MetaLogger):
     """
-    Customized logger for Qlib.
+    Qlib的自定义日志器。
     """
 
     def __init__(self, module_name):
@@ -58,20 +58,21 @@ class _QLibLoggerManager:
 
     def __call__(self, module_name, level: Optional[int] = None) -> QlibLogger:
         """
-        Get a logger for a specific module.
+        获取特定模块的日志器。
 
         :param module_name: str
-            Logic module name.
+            逻辑模块名称。
         :param level: int
+            日志级别
         :return: Logger
-            Logger object.
+            日志器对象。
         """
         if level is None:
             level = C.logging_level
 
         if not module_name.startswith("qlib."):
-            # Add a prefix of qlib. when the requested ``module_name`` doesn't start with ``qlib.``.
-            # If the module_name is already qlib.xxx, we do not format here. Otherwise, it will become qlib.qlib.xxx.
+            # 当请求的``module_name``不以``qlib.``开头时，添加qlib.前缀。
+            # 如果module_name已经是qlib.xxx，则不在此格式化，否则会变成qlib.qlib.xxx。
             module_name = "qlib.{}".format(module_name)
 
         # Get logger.
@@ -91,9 +92,9 @@ class TimeInspector:
     @classmethod
     def set_time_mark(cls):
         """
-        Set a time mark with current time, and this time mark will push into a stack.
+        用当前时间设置一个时间标记，并将此标记压入栈中。
         :return: float
-            A timestamp for current time.
+            当前时间的时间戳。
         """
         _time = time()
         cls.time_marks.append(_time)
@@ -102,16 +103,16 @@ class TimeInspector:
     @classmethod
     def pop_time_mark(cls):
         """
-        Pop last time mark from stack.
+        从栈中弹出最后一个时间标记。
         """
         return cls.time_marks.pop()
 
     @classmethod
     def get_cost_time(cls):
         """
-        Get last time mark from stack, calculate time diff with current time.
+        从栈中获取最后一个时间标记，计算与当前时间的差值。
         :return: float
-            Time diff calculated by last time mark with current time.
+            最后一个时间标记与当前时间的差值。
         """
         cost_time = time() - cls.time_marks.pop()
         return cost_time
@@ -119,9 +120,9 @@ class TimeInspector:
     @classmethod
     def log_cost_time(cls, info="Done"):
         """
-        Get last time mark from stack, calculate time diff with current time, and log time diff and info.
+        从栈中获取最后一个时间标记，计算与当前时间的差值，并记录时间差和信息。
         :param info: str
-            Info that will be logged into stdout.
+            将记录到标准输出的信息。
         """
         cost_time = time() - cls.time_marks.pop()
         cls.timer_logger.info("Time cost: {0:.3f}s | {1}".format(cost_time, info))
@@ -130,30 +131,32 @@ class TimeInspector:
     @contextmanager
     def logt(cls, name="", show_start=False):
         """logt.
-        Log the time of the inside code
+        记录内部代码的执行时间
 
-        Parameters
+        参数
         ----------
         name :
-            name
+            名称
         show_start :
-            show_start
+            是否显示开始信息
         """
         if show_start:
-            cls.timer_logger.info(f"{name} Begin")
+            cls.timer_logger.info(f"{name} 开始")
         cls.set_time_mark()
         try:
             yield None
         finally:
             pass
-        cls.log_cost_time(info=f"{name} Done")
+        cls.log_cost_time(info=f"{name} 完成")
 
 
 def set_log_with_config(log_config: Dict[Text, Any]):
-    """set log with config
+    """使用配置设置日志
 
     :param log_config:
+        日志配置字典
     :return:
+        无
     """
     logging_config.dictConfig(log_config)
 

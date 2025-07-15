@@ -42,8 +42,8 @@ from .ops import Operators  # pylint: disable=W0611  # noqa: F401
 
 class ProviderBackendMixin:
     """
-    This helper class tries to make the provider based on storage backend more convenient
-    It is not necessary to inherent this class if that provider don't rely on the backend storage
+    这个辅助类旨在使基于存储后端的提供器更加便捷
+    如果提供器不依赖后端存储，则无需继承此类
     """
 
     def get_default_backend(self):
@@ -63,29 +63,29 @@ class ProviderBackendMixin:
 
 
 class CalendarProvider(abc.ABC):
-    """Calendar provider base class
+    """日历提供器基类
 
-    Provide calendar data.
+    提供日历数据。
     """
 
     def calendar(self, start_time=None, end_time=None, freq="day", future=False):
-        """Get calendar of certain market in given time range.
+        """获取特定市场在给定时间范围内的日历
 
-        Parameters
+        参数
         ----------
         start_time : str
-            start of the time range.
+            时间范围的开始。
         end_time : str
-            end of the time range.
+            时间范围的结束。
         freq : str
-            time frequency, available: year/quarter/month/week/day.
+            时间频率，可选值：year/quarter/month/week/day。
         future : bool
-            whether including future trading day.
+            是否包含未来交易日。
 
-        Returns
+        返回
         ----------
         list
-            calendar list
+            日历列表
         """
         _calendar, _calendar_index = self._get_calendar(freq, future)
         if start_time == "None":
@@ -111,29 +111,29 @@ class CalendarProvider(abc.ABC):
     def locate_index(
         self, start_time: Union[pd.Timestamp, str], end_time: Union[pd.Timestamp, str], freq: str, future: bool = False
     ):
-        """Locate the start time index and end time index in a calendar under certain frequency.
+        """在特定频率的日历中定位开始时间索引和结束时间索引
 
-        Parameters
+        参数
         ----------
         start_time : pd.Timestamp
-            start of the time range.
+            时间范围的开始。
         end_time : pd.Timestamp
-            end of the time range.
+            时间范围的结束。
         freq : str
-            time frequency, available: year/quarter/month/week/day.
+            时间频率，可选值：year/quarter/month/week/day。
         future : bool
-            whether including future trading day.
+            是否包含未来交易日。
 
-        Returns
+        返回
         -------
         pd.Timestamp
-            the real start time.
+            实际开始时间。
         pd.Timestamp
-            the real end time.
+            实际结束时间。
         int
-            the index of start time.
+            开始时间的索引。
         int
-            the index of end time.
+            结束时间的索引。
         """
         start_time = pd.Timestamp(start_time)
         end_time = pd.Timestamp(end_time)
@@ -152,21 +152,21 @@ class CalendarProvider(abc.ABC):
         return start_time, end_time, start_index, end_index
 
     def _get_calendar(self, freq, future):
-        """Load calendar using memcache.
+        """使用内存缓存加载日历
 
-        Parameters
+        参数
         ----------
         freq : str
-            frequency of read calendar file.
+            读取日历文件的频率。
         future : bool
-            whether including future trading day.
+            是否包含未来交易日。
 
-        Returns
+        返回
         -------
         list
-            list of timestamps.
+            时间戳列表。
         dict
-            dict composed by timestamp as key and index as value for fast search.
+            以时间戳为键、索引为值的字典，用于快速搜索。
         """
         flag = f"{freq}_future_{future}"
         if flag not in H["c"]:
@@ -176,54 +176,55 @@ class CalendarProvider(abc.ABC):
         return H["c"][flag]
 
     def _uri(self, start_time, end_time, freq, future=False):
-        """Get the uri of calendar generation task."""
+        """获取日历生成任务的URI。"""
         return hash_args(start_time, end_time, freq, future)
 
     def load_calendar(self, freq, future):
-        """Load original calendar timestamp from file.
+        """从文件加载原始日历时间戳
 
-        Parameters
+        参数
         ----------
         freq : str
-            frequency of read calendar file.
+            读取日历文件的频率。
         future: bool
+            是否包含未来交易日。
 
-        Returns
+        返回
         ----------
         list
-            list of timestamps
+            时间戳列表
         """
         raise NotImplementedError("Subclass of CalendarProvider must implement `load_calendar` method")
 
 
 class InstrumentProvider(abc.ABC):
-    """Instrument provider base class
+    """工具提供器基类
 
-    Provide instrument data.
+    提供工具数据。
     """
 
     @staticmethod
     def instruments(market: Union[List, str] = "all", filter_pipe: Union[List, None] = None):
-        """Get the general config dictionary for a base market adding several dynamic filters.
+        """获取基础市场的通用配置字典，添加多个动态过滤器。
 
-        Parameters
+        参数
         ----------
         market : Union[List, str]
             str:
-                market/industry/index shortname, e.g. all/sse/szse/sse50/csi300/csi500.
+                市场/行业/指数简称，例如 all/sse/szse/sse50/csi300/csi500。
             list:
-                ["ID1", "ID2"]. A list of stocks
+                ["ID1", "ID2"]。股票列表
         filter_pipe : list
-            the list of dynamic filters.
+            动态过滤器列表。
 
-        Returns
+        返回
         ----------
-        dict: if isinstance(market, str)
-            dict of stockpool config.
+        dict: 如果 isinstance(market, str)
+            股票池配置字典。
 
-            {`market` => base market name, `filter_pipe` => list of filters}
+            {`market` => 基础市场名称, `filter_pipe` => 过滤器列表}
 
-            example :
+            示例 :
 
             .. code-block::
 
@@ -238,9 +239,9 @@ class InstrumentProvider(abc.ABC):
                 'filter_start_time': None,
                 'filter_end_time': None}]}
 
-        list: if isinstance(market, list)
-            just return the original list directly.
-            NOTE: this will make the instruments compatible with more cases. The user code will be simpler.
+        list: 如果 isinstance(market, list)
+            直接返回原始列表。
+            注意: 这将使工具与更多情况兼容，用户代码将更简单。
         """
         if isinstance(market, list):
             return market
@@ -265,23 +266,23 @@ class InstrumentProvider(abc.ABC):
 
     @abc.abstractmethod
     def list_instruments(self, instruments, start_time=None, end_time=None, freq="day", as_list=False):
-        """List the instruments based on a certain stockpool config.
+        """根据特定股票池配置列出工具。
 
-        Parameters
+        参数
         ----------
         instruments : dict
-            stockpool config.
+            股票池配置。
         start_time : str
-            start of the time range.
+            时间范围的开始。
         end_time : str
-            end of the time range.
+            时间范围的结束。
         as_list : bool
-            return instruments as list or dict.
+            以列表或字典形式返回工具。
 
-        Returns
+        返回
         -------
         dict or list
-            instruments list or dictionary with time spans
+            工具列表或带时间跨度的字典
         """
         raise NotImplementedError("Subclass of InstrumentProvider must implement `list_instruments` method")
 
@@ -305,32 +306,32 @@ class InstrumentProvider(abc.ABC):
 
 
 class FeatureProvider(abc.ABC):
-    """Feature provider class
+    """特征提供器类
 
-    Provide feature data.
+    提供特征数据。
     """
 
     @abc.abstractmethod
     def feature(self, instrument, field, start_time, end_time, freq):
-        """Get feature data.
+        """获取特征数据。
 
-        Parameters
+        参数
         ----------
         instrument : str
-            a certain instrument.
+            特定工具。
         field : str
-            a certain field of feature.
+            特征的特定字段。
         start_time : str
-            start of the time range.
+            时间范围的开始。
         end_time : str
-            end of the time range.
+            时间范围的结束。
         freq : str
-            time frequency, available: year/quarter/month/week/day.
+            时间频率，可选值：year/quarter/month/week/day。
 
-        Returns
+        返回
         -------
         pd.Series
-            data of a certain feature
+            特定特征的数据
         """
         raise NotImplementedError("Subclass of FeatureProvider must implement `feature` method")
 
@@ -347,43 +348,43 @@ class PITProvider(abc.ABC):
         period: Optional[int] = None,
     ) -> pd.Series:
         """
-        get the historical periods data series between `start_index` and `end_index`
+        获取`start_index`和`end_index`之间的历史周期数据序列
 
-        Parameters
+        参数
         ----------
         start_index: int
-            start_index is a relative index to the latest period to cur_time
+            start_index是相对于cur_time最新周期的相对索引
 
         end_index: int
-            end_index is a relative index to the latest period to cur_time
-            in most cases, the start_index and end_index will be a non-positive values
-            For example, start_index == -3 end_index == 0 and current period index is cur_idx,
-            then the data between [start_index + cur_idx, end_index + cur_idx] will be retrieved.
+            end_index是相对于cur_time最新周期的相对索引
+            在大多数情况下，start_index和end_index将是非正值
+            例如，start_index == -3 end_index == 0且当前周期索引为cur_idx，
+            则将检索[start_index + cur_idx, end_index + cur_idx]之间的数据。
 
         period: int
-            This is used for query specific period.
-            The period is represented with int in Qlib. (e.g. 202001 may represent the first quarter in 2020)
-            NOTE: `period`  will override `start_index` and `end_index`
+            用于查询特定周期。
+            Qlib中周期用整数表示（例如202001可能表示2020年第一季度）
+            注意: `period`将覆盖`start_index`和`end_index`
 
-        Returns
+        返回
         -------
         pd.Series
-            The index will be integers to indicate the periods of the data
-            An typical examples will be
+            索引将是整数，表示数据的周期
+            典型示例将是
             TODO
 
-        Raises
+        引发
         ------
         FileNotFoundError
-            This exception will be raised if the queried data do not exist.
+            如果查询的数据不存在，将引发此异常。
         """
         raise NotImplementedError(f"Please implement the `period_feature` method")
 
 
 class ExpressionProvider(abc.ABC):
-    """Expression provider class
+    """表达式提供器类
 
-    Provide Expression data.
+    提供表达式数据。
     """
 
     def __init__(self):

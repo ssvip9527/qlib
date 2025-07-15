@@ -7,15 +7,15 @@ class InstProcessor:
     @abc.abstractmethod
     def __call__(self, df: pd.DataFrame, instrument, *args, **kwargs):
         """
-        process the data
+        处理数据
 
-        NOTE: **The processor could change the content of `df` inplace !!!!! **
-        User should keep a copy of data outside
+        注意：**处理器可能会就地修改`df`的内容！！！**
+        用户应在外部保留数据的副本
 
-        Parameters
+        参数
         ----------
         df : pd.DataFrame
-            The raw_df of handler or result from previous processor.
+            处理器的原始数据框或前一个处理器的结果。
         """
 
     def __str__(self):

@@ -23,25 +23,25 @@ def _to_tensor(x):
 
 def _create_ts_slices(index, seq_len):
     """
-    create time series slices from pandas index
+    从pandas索引创建时间序列切片
 
-    Args:
-        index (pd.MultiIndex): pandas multiindex with <instrument, datetime> order
-        seq_len (int): sequence length
+    参数:
+        index (pd.MultiIndex): pandas多级索引，顺序为<instrument, datetime>
+        seq_len (int): 序列长度
     """
     assert isinstance(index, pd.MultiIndex), "unsupported index type"
     assert seq_len > 0, "sequence length should be larger than 0"
     assert index.is_monotonic_increasing, "index should be sorted"
 
-    # number of dates for each instrument
+    # 每个instrument的日期数量
     sample_count_by_insts = index.to_series().groupby(level=0, group_keys=False).size().values
 
-    # start index for each instrument
+    # 每个instrument的起始索引
     start_index_of_insts = np.roll(np.cumsum(sample_count_by_insts), 1)
     start_index_of_insts[0] = 0
 
-    # all the [start, stop) indices of features
-    # features between [start, stop) will be used to predict label at `stop - 1`
+    # 所有特征的[start, stop)索引
+    # [start, stop)之间的特征将用于预测`stop - 1`处的标签
     slices = []
     for cur_loc, cur_cnt in zip(start_index_of_insts, sample_count_by_insts):
         for stop in range(1, cur_cnt + 1):
@@ -56,11 +56,11 @@ def _create_ts_slices(index, seq_len):
 
 
 def _get_date_parse_fn(target):
-    """get date parse function
+    """获取日期解析函数
 
-    This method is used to parse date arguments as target type.
+    此方法用于将日期参数解析为目标类型。
 
-    Example:
+    示例：
         get_date_parse_fn('20120101')('2017-01-01') => '20170101'
         get_date_parse_fn(20120101)('2017-01-01') => 20170101
     """
@@ -83,12 +83,12 @@ def _get_date_parse_fn(target):
 
 
 def _maybe_padding(x, seq_len, zeros=None):
-    """padding 2d <time * feature> data with zeros
+    """用零填充二维<时间*特征>数据
 
-    Args:
-        x (np.ndarray): 2d data with shape <time * feature>
-        seq_len (int): target sequence length
-        zeros (np.ndarray): zeros with shape <seq_len * feature>
+    参数：
+        x (np.ndarray): 二维数据，形状为<时间*特征>
+        seq_len (int): 目标序列长度
+        zeros (np.ndarray): 零矩阵，形状为<seq_len * feature>
     """
     assert seq_len > 0, "sequence length should be larger than 0"
     if zeros is None:
@@ -101,20 +101,20 @@ def _maybe_padding(x, seq_len, zeros=None):
 
 
 class MTSDatasetH(DatasetH):
-    """Memory Augmented Time Series Dataset
+    """内存增强时间序列数据集
 
-    Args:
-        handler (DataHandler): data handler
-        segments (dict): data split segments
-        seq_len (int): time series sequence length
-        horizon (int): label horizon
-        num_states (int): how many memory states to be added
-        memory_mode (str): memory mode (daily or sample)
-        batch_size (int): batch size (<0 will use daily sampling)
-        n_samples (int): number of samples in the same day
-        shuffle (bool): whether shuffle data
-        drop_last (bool): whether drop last batch < batch_size
-        input_size (int): reshape flatten rows as this input_size (backward compatibility)
+    参数:
+        handler (DataHandler): 数据处理器
+        segments (dict): 数据分割片段
+        seq_len (int): 时间序列长度
+        horizon (int): 标签预测周期
+        num_states (int): 要添加的内存状态数量
+        memory_mode (str): 内存模式（daily或sample）
+        batch_size (int): 批次大小（<0将使用按日采样）
+        n_samples (int): 同一天内的样本数量
+        shuffle (bool): 是否打乱数据
+        drop_last (bool): 是否丢弃最后一个小于batch_size的批次
+        input_size (int): 将展平的行重塑为此输入大小（向后兼容）
     """
 
     def __init__(
@@ -133,20 +133,20 @@ class MTSDatasetH(DatasetH):
         **kwargs,
     ):
         if horizon == 0:
-            # Try to guess horizon
+            # 尝试猜测预测周期
             if isinstance(handler, (dict, str)):
                 handler = init_instance_by_config(handler)
             assert "label" in getattr(handler.data_loader, "fields", None)
             label = handler.data_loader.fields["label"][0][0]
             horizon = guess_horizon([label])
 
-        assert num_states == 0 or horizon > 0, "please specify `horizon` to avoid data leakage"
-        assert memory_mode in ["sample", "daily"], "unsupported memory mode"
-        assert memory_mode == "sample" or batch_size < 0, "daily memory requires daily sampling (`batch_size < 0`)"
-        assert batch_size != 0, "invalid batch size"
+        assert num_states == 0 or horizon > 0, "请指定`horizon`以避免数据泄露"
+        assert memory_mode in ["sample", "daily"], "不支持的内存模式"
+        assert memory_mode == "sample" or batch_size < 0, "daily内存模式需要按日采样（`batch_size < 0`）"
+        assert batch_size != 0, "无效的批次大小"
 
         if batch_size > 0 and n_samples is not None:
-            warnings.warn("`n_samples` can only be used for daily sampling (`batch_size < 0`)")
+            warnings.warn("`n_samples`仅可用于按日采样（`batch_size < 0`）")
 
         self.seq_len = seq_len
         self.horizon = horizon
@@ -157,7 +157,7 @@ class MTSDatasetH(DatasetH):
         self.shuffle = shuffle
         self.drop_last = drop_last
         self.input_size = input_size
-        self.params = (batch_size, n_samples, drop_last, shuffle)  # for train/eval switch
+        self.params = (batch_size, n_samples, drop_last, shuffle)  # 用于`train/eval`切换
 
         super().__init__(handler, segments, **kwargs)
 
@@ -167,38 +167,38 @@ class MTSDatasetH(DatasetH):
         if handler_kwargs is not None:
             self.handler.setup_data(**handler_kwargs)
 
-        # pre-fetch data and change index to <code, date>
-        # NOTE: we will use inplace sort to reduce memory use
+        # 预获取数据并将索引更改为<code, date>
+        # 注意：我们将使用原地排序以减少内存使用
         try:
             df = self.handler._learn.copy()  # use copy otherwise recorder will fail
-            # FIXME: currently we cannot support switching from `_learn` to `_infer` for inference
+            # FIXME: 当前不支持从`_learn`切换到`_infer`进行推理
         except Exception:
-            warnings.warn("cannot access `_learn`, will load raw data")
+            warnings.warn("无法访问`_learn`，将加载原始数据")
             df = self.handler._data.copy()
         df.index = df.index.swaplevel()
         df.sort_index(inplace=True)
 
-        # convert to numpy
+        # 转换为numpy数组
         self._data = df["feature"].values.astype("float32")
-        np.nan_to_num(self._data, copy=False)  # NOTE: fillna in case users forget using the fillna processor
+        np.nan_to_num(self._data, copy=False)  # 注意：填充NaN以防用户忘记使用fillna处理器
         self._label = df["label"].squeeze().values.astype("float32")
         self._index = df.index
 
         if self.input_size is not None and self.input_size != self._data.shape[1]:
-            warnings.warn("the data has different shape from input_size and the data will be reshaped")
-            assert self._data.shape[1] % self.input_size == 0, "data mismatch, please check `input_size`"
+            warnings.warn("数据形状与input_size不同，数据将被重塑")
+            assert self._data.shape[1] % self.input_size == 0, "数据不匹配，请检查`input_size`"
 
-        # create batch slices
+        # 创建批次切片
         self._batch_slices = _create_ts_slices(self._index, self.seq_len)
 
-        # create daily slices
-        daily_slices = {date: [] for date in sorted(self._index.unique(level=1))}  # sorted by date
+        # 创建每日切片
+        daily_slices = {date: [] for date in sorted(self._index.unique(level=1))}  # 按日期排序
         for i, (code, date) in enumerate(self._index):
             daily_slices[date].append(self._batch_slices[i])
         self._daily_slices = np.array(list(daily_slices.values()), dtype="object")
-        self._daily_index = pd.Series(list(daily_slices.keys()))  # index is the original date index
+        self._daily_index = pd.Series(list(daily_slices.keys()))  # 索引为原始日期索引
 
-        # add memory (sample wise and daily)
+        # 添加内存（按样本和按日）
         if self.memory_mode == "sample":
             self._memory = np.zeros((len(self._data), self.num_states), dtype=np.float32)
         elif self.memory_mode == "daily":
@@ -206,7 +206,7 @@ class MTSDatasetH(DatasetH):
         else:
             raise ValueError(f"invalid memory_mode `{self.memory_mode}`")
 
-        # padding tensor
+        # 填充张量
         self._zeros = np.zeros((self.seq_len, max(self.num_states, self._data.shape[1])), dtype=np.float32)
 
     def _prepare_seg(self, slc, **kwargs):
@@ -220,7 +220,7 @@ class MTSDatasetH(DatasetH):
         start_date = pd.Timestamp(fn(start))
         end_date = pd.Timestamp(fn(stop))
         obj = copy.copy(self)  # shallow copy
-        # NOTE: Seriable will disable copy `self._data` so we manually assign them here
+        # 注意：Seriable会禁用`self._data`的复制，因此我们在此手动赋值
         obj._data = self._data  # reference (no copy)
         obj._label = self._label
         obj._index = self._index
@@ -253,11 +253,11 @@ class MTSDatasetH(DatasetH):
         self._memory[:] = 0
 
     def train(self):
-        """enable traning mode"""
+        """启用训练模式"""
         self.batch_size, self.n_samples, self.drop_last, self.shuffle = self.params
 
     def eval(self):
-        """enable evaluation mode"""
+        """启用评估模式"""
         self.batch_size = -1
         self.n_samples = None
         self.drop_last = False
@@ -296,37 +296,37 @@ class MTSDatasetH(DatasetH):
             daily_count = []  # store number of samples for each day
 
             for j in indices[i : i + batch_size]:
-                # normal sampling: self.batch_size > 0 => slices is a list => slices_subset is a slice
-                # daily sampling: self.batch_size < 0 => slices is a nested list => slices_subset is a list
+                # 常规采样: self.batch_size > 0 => slices is a list => slices_subset is a slice
+                # 按日采样: self.batch_size < 0 => slices is a nested list => slices_subset is a list
                 slices_subset = slices[j]
 
                 # daily sampling
                 # each slices_subset contains a list of slices for multiple stocks
                 # NOTE: daily sampling is used in 1) eval mode, 2) train mode with self.batch_size < 0
                 if self.batch_size < 0:
-                    # store daily index
+                    # 存储每日索引
                     idx = self._daily_index.index[j]  # daily_index.index is the index of the original data
                     daily_index.append(idx)
 
-                    # store daily memory if specified
-                    # NOTE: daily memory always requires daily sampling (self.batch_size < 0)
+                    # 如指定则存储每日内存
+                    # 注意：每日内存始终需要按日采样（self.batch_size < 0）
                     if self.memory_mode == "daily":
                         slc = slice(max(idx - self.seq_len - self.horizon, 0), max(idx - self.horizon, 0))
                         state.append(_maybe_padding(self._memory[slc], self.seq_len, self._zeros))
 
-                    # down-sample stocks and store count
-                    if self.n_samples and 0 < self.n_samples < len(slices_subset):  # intraday subsample
+                    # 对股票进行下采样并存储数量
+                    if self.n_samples and 0 < self.n_samples < len(slices_subset):  # 日内子采样
                         slices_subset = np.random.choice(slices_subset, self.n_samples, replace=False)
                     daily_count.append(len(slices_subset))
 
-                # normal sampling
+                # 常规采样
                 # each slices_subset is a single slice
-                # NOTE: normal sampling is used in train mode with self.batch_size > 0
+                # 注意：常规采样用于self.batch_size > 0的训练模式
                 else:
                     slices_subset = [slices_subset]
 
                 for slc in slices_subset:
-                    # legacy support for Alpha360 data by `input_size`
+                    # 通过`input_size`向后兼容Alpha360数据
                     if self.input_size:
                         data.append(self._data[slc.stop - 1].reshape(self.input_size, -1).T)
                     else:
@@ -338,11 +338,11 @@ class MTSDatasetH(DatasetH):
                     label.append(self._label[slc.stop - 1])
                     index.append(slc.stop - 1)
 
-                    # end slices loop
+                    # 结束切片循环
 
-                # end indices batch loop
+                # 结束索引批次循环
 
-            # concate
+            # 拼接
             data = _to_tensor(np.stack(data))
             state = _to_tensor(np.stack(state))
             label = _to_tensor(np.stack(label))
@@ -350,7 +350,7 @@ class MTSDatasetH(DatasetH):
             daily_index = np.array(daily_index)
             daily_count = np.array(daily_count)
 
-            # yield -> generator
+            # yield -> 生成器
             yield {
                 "data": data,
                 "label": label,
@@ -360,4 +360,4 @@ class MTSDatasetH(DatasetH):
                 "daily_count": daily_count,
             }
 
-        # end indice loop
+        # 结束索引循环

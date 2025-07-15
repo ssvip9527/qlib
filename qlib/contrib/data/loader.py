@@ -14,13 +14,12 @@ class Alpha360DL(QlibDataLoader):
 
     @staticmethod
     def get_feature_config():
-        # NOTE:
-        # Alpha360 tries to provide a dataset with original price data
-        # the original price data includes the prices and volume in the last 60 days.
-        # To make it easier to learn models from this dataset, all the prices and volume
-        # are normalized by the latest price and volume data ( dividing by $close, $volume)
-        # So the latest normalized $close will be 1 (with name CLOSE0), the latest normalized $volume will be 1 (with name VOLUME0)
-        # If further normalization are executed (e.g. centralization),  CLOSE0 and VOLUME0 will be 0.
+        # 注意：
+        # Alpha360尝试提供包含原始价格数据的数据集
+        # 原始价格数据包括过去60天的价格和成交量
+        # 为便于从该数据集学习模型，所有价格和成交量均通过最新价格和成交量数据进行归一化（除以$close、$volume）
+        # 因此最新归一化后的$close将为1（名称为CLOSE0），最新归一化后的$volume将为1（名称为VOLUME0）
+        # 若执行进一步归一化（如中心化处理），CLOSE0和VOLUME0将变为0。
         fields = []
         names = []
 
@@ -59,7 +58,7 @@ class Alpha360DL(QlibDataLoader):
 
 
 class Alpha158DL(QlibDataLoader):
-    """Dataloader to get Alpha158"""
+    """获取Alpha158的数据集加载器"""
 
     def __init__(self, config=None, **kwargs):
         _config = {
@@ -145,119 +144,119 @@ class Alpha158DL(QlibDataLoader):
             def use(x):
                 return x not in exclude and (include is None or x in include)
 
-            # Some factor ref: https://guorn.com/static/upload/file/3/134065454575605.pdf
+            # 部分因子参考: https://guorn.com/static/upload/file/3/134065454575605.pdf
             if use("ROC"):
                 # https://www.investopedia.com/terms/r/rateofchange.asp
-                # Rate of change, the price change in the past d days, divided by latest close price to remove unit
+                # 变动率指标，过去d天的价格变化，除以最新收盘价去除单位影响
                 fields += ["Ref($close, %d)/$close" % d for d in windows]
                 names += ["ROC%d" % d for d in windows]
             if use("MA"):
                 # https://www.investopedia.com/ask/answers/071414/whats-difference-between-moving-average-and-weighted-moving-average.asp
-                # Simple Moving Average, the simple moving average in the past d days, divided by latest close price to remove unit
+                # 简单移动平均线，过去d天的收盘价均值，除以最新收盘价去除单位影响
                 fields += ["Mean($close, %d)/$close" % d for d in windows]
                 names += ["MA%d" % d for d in windows]
             if use("STD"):
-                # The standard diviation of close price for the past d days, divided by latest close price to remove unit
+                # 过去d天收盘价的标准差，除以最新收盘价去除单位影响
                 fields += ["Std($close, %d)/$close" % d for d in windows]
                 names += ["STD%d" % d for d in windows]
             if use("BETA"):
-                # The rate of close price change in the past d days, divided by latest close price to remove unit
-                # For example, price increase 10 dollar per day in the past d days, then Slope will be 10.
+                # 过去d天收盘价变化的斜率，除以最新收盘价去除单位影响
+                # 例如：过去d天价格每天上涨10美元，则Slope值为10
                 fields += ["Slope($close, %d)/$close" % d for d in windows]
                 names += ["BETA%d" % d for d in windows]
             if use("RSQR"):
-                # The R-sqaure value of linear regression for the past d days, represent the trend linear
+                # 过去d天线性回归的R平方值，表示趋势的线性程度
                 fields += ["Rsquare($close, %d)" % d for d in windows]
                 names += ["RSQR%d" % d for d in windows]
             if use("RESI"):
-                # The redisdual for linear regression for the past d days, represent the trend linearity for past d days.
+                # 过去d天线性回归的残差值，表示过去d天趋势的线性程度
                 fields += ["Resi($close, %d)/$close" % d for d in windows]
                 names += ["RESI%d" % d for d in windows]
             if use("MAX"):
-                # The max price for past d days, divided by latest close price to remove unit
+                # 过去d天的最高价，除以最新收盘价去除单位影响
                 fields += ["Max($high, %d)/$close" % d for d in windows]
                 names += ["MAX%d" % d for d in windows]
             if use("LOW"):
-                # The low price for past d days, divided by latest close price to remove unit
+                # 过去d天的最低价，除以最新收盘价去除单位影响
                 fields += ["Min($low, %d)/$close" % d for d in windows]
                 names += ["MIN%d" % d for d in windows]
             if use("QTLU"):
-                # The 80% quantile of past d day's close price, divided by latest close price to remove unit
-                # Used with MIN and MAX
+                # 过去d天收盘价的80%分位数，除以最新收盘价去除单位影响
+                # 与MIN和MAX指标配合使用
                 fields += ["Quantile($close, %d, 0.8)/$close" % d for d in windows]
                 names += ["QTLU%d" % d for d in windows]
             if use("QTLD"):
-                # The 20% quantile of past d day's close price, divided by latest close price to remove unit
+                # 过去d天收盘价的20%分位数，除以最新收盘价去除单位影响
                 fields += ["Quantile($close, %d, 0.2)/$close" % d for d in windows]
                 names += ["QTLD%d" % d for d in windows]
             if use("RANK"):
-                # Get the percentile of current close price in past d day's close price.
-                # Represent the current price level comparing to past N days, add additional information to moving average.
+                # 获取当前收盘价在过去d天收盘价中的百分位
+                # 表示当前价格相对于过去N天的水平，为移动平均线提供额外信息
                 fields += ["Rank($close, %d)" % d for d in windows]
                 names += ["RANK%d" % d for d in windows]
             if use("RSV"):
-                # Represent the price position between upper and lower resistent price for past d days.
+                # 表示当前价格在过去d天最高价和最低价之间的位置
                 fields += ["($close-Min($low, %d))/(Max($high, %d)-Min($low, %d)+1e-12)" % (d, d, d) for d in windows]
                 names += ["RSV%d" % d for d in windows]
             if use("IMAX"):
-                # The number of days between current date and previous highest price date.
-                # Part of Aroon Indicator https://www.investopedia.com/terms/a/aroon.asp
-                # The indicator measures the time between highs and the time between lows over a time period.
-                # The idea is that strong uptrends will regularly see new highs, and strong downtrends will regularly see new lows.
+                # 当前日期与之前最高价日期之间的天数
+                # Aroon指标的一部分 https://www.investopedia.com/terms/a/aroon.asp
+                # 该指标衡量一段时间内高点与高点、低点与低点之间的时间间隔
+                # 其原理是：强劲的上升趋势会定期出现新高，强劲的下降趋势会定期出现新低
                 fields += ["IdxMax($high, %d)/%d" % (d, d) for d in windows]
                 names += ["IMAX%d" % d for d in windows]
             if use("IMIN"):
-                # The number of days between current date and previous lowest price date.
-                # Part of Aroon Indicator https://www.investopedia.com/terms/a/aroon.asp
-                # The indicator measures the time between highs and the time between lows over a time period.
-                # The idea is that strong uptrends will regularly see new highs, and strong downtrends will regularly see new lows.
+                # 当前日期与之前最低价日期之间的天数
+                # Aroon指标的一部分 https://www.investopedia.com/terms/a/aroon.asp
+                # 该指标衡量一段时间内高点与高点、低点与低点之间的时间间隔
+                # 其原理是：强劲的上升趋势会定期出现新高，强劲的下降趋势会定期出现新低
                 fields += ["IdxMin($low, %d)/%d" % (d, d) for d in windows]
                 names += ["IMIN%d" % d for d in windows]
             if use("IMXD"):
-                # The time period between previous lowest-price date occur after highest price date.
-                # Large value suggest downward momemtum.
+                # 最高价日期与之后最低价日期之间的时间间隔
+                # 较大值表明存在下降动量
                 fields += ["(IdxMax($high, %d)-IdxMin($low, %d))/%d" % (d, d, d) for d in windows]
                 names += ["IMXD%d" % d for d in windows]
             if use("CORR"):
-                # The correlation between absolute close price and log scaled trading volume
+                # 收盘价绝对值与对数成交量之间的相关性
                 fields += ["Corr($close, Log($volume+1), %d)" % d for d in windows]
                 names += ["CORR%d" % d for d in windows]
             if use("CORD"):
-                # The correlation between price change ratio and volume change ratio
+                # 价格变化率与成交量变化率之间的相关性
                 fields += ["Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), %d)" % d for d in windows]
                 names += ["CORD%d" % d for d in windows]
             if use("CNTP"):
-                # The percentage of days in past d days that price go up.
+                # 过去d天中价格上涨的天数占比
                 fields += ["Mean($close>Ref($close, 1), %d)" % d for d in windows]
                 names += ["CNTP%d" % d for d in windows]
             if use("CNTN"):
-                # The percentage of days in past d days that price go down.
+                # 过去d天中价格下跌的天数占比
                 fields += ["Mean($close<Ref($close, 1), %d)" % d for d in windows]
                 names += ["CNTN%d" % d for d in windows]
             if use("CNTD"):
-                # The diff between past up day and past down day
+                # 过去上涨天数与下跌天数的差值
                 fields += ["Mean($close>Ref($close, 1), %d)-Mean($close<Ref($close, 1), %d)" % (d, d) for d in windows]
                 names += ["CNTD%d" % d for d in windows]
             if use("SUMP"):
-                # The total gain / the absolute total price changed
-                # Similar to RSI indicator. https://www.investopedia.com/terms/r/rsi.asp
+                # 总收益/绝对总价格变化
+                # 类似于RSI指标 https://www.investopedia.com/terms/r/rsi.asp
                 fields += [
                     "Sum(Greater($close-Ref($close, 1), 0), %d)/(Sum(Abs($close-Ref($close, 1)), %d)+1e-12)" % (d, d)
                     for d in windows
                 ]
                 names += ["SUMP%d" % d for d in windows]
             if use("SUMN"):
-                # The total lose / the absolute total price changed
-                # Can be derived from SUMP by SUMN = 1 - SUMP
-                # Similar to RSI indicator. https://www.investopedia.com/terms/r/rsi.asp
+                # 总损失/绝对总价格变化
+                # 可从SUMP推导得到：SUMN = 1 - SUMP
+                # 类似于RSI指标 https://www.investopedia.com/terms/r/rsi.asp
                 fields += [
                     "Sum(Greater(Ref($close, 1)-$close, 0), %d)/(Sum(Abs($close-Ref($close, 1)), %d)+1e-12)" % (d, d)
                     for d in windows
                 ]
                 names += ["SUMN%d" % d for d in windows]
             if use("SUMD"):
-                # The diff ratio between total gain and total lose
-                # Similar to RSI indicator. https://www.investopedia.com/terms/r/rsi.asp
+                # 总收益与总损失之间的差异比率
+                # 类似于RSI指标 https://www.investopedia.com/terms/r/rsi.asp
                 fields += [
                     "(Sum(Greater($close-Ref($close, 1), 0), %d)-Sum(Greater(Ref($close, 1)-$close, 0), %d))"
                     "/(Sum(Abs($close-Ref($close, 1)), %d)+1e-12)" % (d, d, d)
@@ -265,15 +264,15 @@ class Alpha158DL(QlibDataLoader):
                 ]
                 names += ["SUMD%d" % d for d in windows]
             if use("VMA"):
-                # Simple Volume Moving average: https://www.barchart.com/education/technical-indicators/volume_moving_average
+                # 过去d天成交量的简单移动平均
                 fields += ["Mean($volume, %d)/($volume+1e-12)" % d for d in windows]
                 names += ["VMA%d" % d for d in windows]
             if use("VSTD"):
-                # The standard deviation for volume in past d days.
+                # 过去d天成交量的标准差
                 fields += ["Std($volume, %d)/($volume+1e-12)" % d for d in windows]
                 names += ["VSTD%d" % d for d in windows]
             if use("WVMA"):
-                # The volume weighted price change volatility
+                # 过去d天成交量加权的价格变动波动率
                 fields += [
                     "Std(Abs($close/Ref($close, 1)-1)*$volume, %d)/(Mean(Abs($close/Ref($close, 1)-1)*$volume, %d)+1e-12)"
                     % (d, d)
@@ -281,7 +280,7 @@ class Alpha158DL(QlibDataLoader):
                 ]
                 names += ["WVMA%d" % d for d in windows]
             if use("VSUMP"):
-                # The total volume increase / the absolute total volume changed
+                # 总成交量增加/绝对总成交量变化
                 fields += [
                     "Sum(Greater($volume-Ref($volume, 1), 0), %d)/(Sum(Abs($volume-Ref($volume, 1)), %d)+1e-12)"
                     % (d, d)
@@ -289,8 +288,8 @@ class Alpha158DL(QlibDataLoader):
                 ]
                 names += ["VSUMP%d" % d for d in windows]
             if use("VSUMN"):
-                # The total volume increase / the absolute total volume changed
-                # Can be derived from VSUMP by VSUMN = 1 - VSUMP
+                # 总成交量增加/绝对总成交量变化
+                # 可从VSUMP推导得到：VSUMN = 1 - VSUMP
                 fields += [
                     "Sum(Greater(Ref($volume, 1)-$volume, 0), %d)/(Sum(Abs($volume-Ref($volume, 1)), %d)+1e-12)"
                     % (d, d)
@@ -298,8 +297,8 @@ class Alpha158DL(QlibDataLoader):
                 ]
                 names += ["VSUMN%d" % d for d in windows]
             if use("VSUMD"):
-                # The diff ratio between total volume increase and total volume decrease
-                # RSI indicator for volume
+                # 总成交量增加与减少之间的差异比率
+                # 成交量版的RSI指标
                 fields += [
                     "(Sum(Greater($volume-Ref($volume, 1), 0), %d)-Sum(Greater(Ref($volume, 1)-$volume, 0), %d))"
                     "/(Sum(Abs($volume-Ref($volume, 1)), %d)+1e-12)" % (d, d, d)

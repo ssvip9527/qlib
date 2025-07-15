@@ -5,23 +5,23 @@
 class Reweighter:
     def __init__(self, *args, **kwargs):
         """
-        To initialize the Reweighter, users should provide specific methods to let reweighter do the reweighting (such as sample-wise, rule-based).
+        要初始化Reweighter，用户应提供特定方法让重加权器执行重加权操作（如样本级、规则基）。
         """
         raise NotImplementedError()
 
     def reweight(self, data: object) -> object:
         """
-        Get weights for data
+        为数据获取权重
 
-        Parameters
+        参数
         ----------
         data : object
-            The input data.
-            The first dimension is the index of samples
+            输入数据。
+            第一维度是样本索引
 
-        Returns
+        返回
         -------
         object:
-            the weights info for the data
+            数据的权重信息
         """
         raise NotImplementedError(f"This type of input is not supported")

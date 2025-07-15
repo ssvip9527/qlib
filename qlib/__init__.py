@@ -18,18 +18,18 @@ from .log import get_module_logger
 def init(default_conf="client", **kwargs):
     """
 
-    Parameters
+    参数
     ----------
     default_conf: str
-        the default value is client. Accepted values: client/server.
+        默认值为client。接受的值：client/server。
     **kwargs :
-        clear_mem_cache: str
-            the default value is True;
-            Will the memory cache be clear.
-            It is often used to improve performance when init will be called for multiple times
-        skip_if_reg: bool: str
-            the default value is True;
-            When using the recorder, skip_if_reg can set to True to avoid loss of recorder.
+        clear_mem_cache: bool
+            默认值为True；
+            是否清除内存缓存。
+            当多次调用init时，常用于提高性能
+        skip_if_reg: bool
+            默认值为True；
+            使用记录器时，可将skip_if_reg设为True以避免记录器丢失。
 
     """
     from .config import C  # pylint: disable=C0415
@@ -39,8 +39,8 @@ def init(default_conf="client", **kwargs):
 
     skip_if_reg = kwargs.pop("skip_if_reg", False)
     if skip_if_reg and C.registered:
-        # if we reinitialize Qlib during running an experiment `R.start`.
-        # it will result in loss of the recorder
+        # 如果在运行实验`R.start`期间重新初始化Qlib。
+        # 这将导致记录器丢失
         logger.warning("Skip initialization because `skip_if_reg is True`")
         return
 
@@ -72,7 +72,7 @@ def init(default_conf="client", **kwargs):
 
     if "flask_server" in C:
         logger.info(f"flask_server={C['flask_server']}, flask_port={C['flask_port']}")
-    logger.info("qlib successfully initialized based on %s settings." % default_conf)
+    logger.info("qlib已基于%s设置成功初始化。" % default_conf)
     data_path = {_freq: C.dpm.get_data_uri(_freq) for _freq in C.dpm.provider_uri.keys()}
     logger.info(f"data_path={data_path}")
 
@@ -80,18 +80,18 @@ def init(default_conf="client", **kwargs):
 def _mount_nfs_uri(provider_uri, mount_path, auto_mount: bool = False):
     LOG = get_module_logger("mount nfs", level=logging.INFO)
     if mount_path is None:
-        raise ValueError(f"Invalid mount path: {mount_path}!")
+        raise ValueError(f"无效的挂载路径: {mount_path}!")
     if not re.match(r"^[a-zA-Z0-9.:/\-_]+$", provider_uri):
-        raise ValueError(f"Invalid provider_uri format: {provider_uri}")
-    # FIXME: the C["provider_uri"] is modified in this function
-    # If it is not modified, we can pass only  provider_uri or mount_path instead of C
+        raise ValueError(f"无效的provider_uri格式: {provider_uri}")
+    # FIXME: C["provider_uri"]在此函数中被修改
+    # 如果不修改，我们只需传递provider_uri或mount_path而不是C
     mount_command = ["sudo", "mount.nfs", provider_uri, mount_path]
     # If the provider uri looks like this 172.23.233.89//data/csdesign'
     # It will be a nfs path. The client provider will be used
     if not auto_mount:  # pylint: disable=R1702
         if not Path(mount_path).exists():
             raise FileNotFoundError(
-                f"Invalid mount path: {mount_path}! Please mount manually: {' '.join(mount_command)} or Set init parameter `auto_mount=True`"
+                f"无效的挂载路径: {mount_path}! 请手动挂载: {' '.join(mount_command)} 或设置初始化参数`auto_mount=True`"
             )
     else:
         # Judging system type
@@ -111,11 +111,11 @@ def _mount_nfs_uri(provider_uri, mount_path, auto_mount: bool = False):
                 if e.returncode == 85:
                     LOG.warning(f"{provider_uri} already mounted at {mount_path}")
                 elif e.returncode == 53:
-                    raise OSError("Network path not found") from e
+                    raise OSError("网络路径未找到") from e
                 elif "error" in error_output.lower() or "错误" in error_output:
-                    raise OSError("Invalid mount path") from e
+                    raise OSError("无效的挂载路径") from e
                 else:
-                    raise OSError(f"Unknown mount error: {error_output.strip()}") from e
+                    raise OSError(f"未知的挂载错误: {error_output.strip()}") from e
         else:
             # system: linux/Unix/Mac
             # check mount
@@ -152,33 +152,33 @@ def _mount_nfs_uri(provider_uri, mount_path, auto_mount: bool = False):
                     Path(mount_path).mkdir(parents=True, exist_ok=True)
                 except Exception as e:
                     raise OSError(
-                        f"Failed to create directory {mount_path}, please create {mount_path} manually!"
+                        f"创建目录{mount_path}失败，请手动创建{mount_path}!"
                     ) from e
 
                 # check nfs-common
                 command_res = os.popen("dpkg -l | grep nfs-common")
                 command_res = command_res.readlines()
                 if not command_res:
-                    raise OSError("nfs-common is not found, please install it by execute: sudo apt install nfs-common")
+                    raise OSError("未找到nfs-common，请通过执行以下命令安装: sudo apt install nfs-common")
                 # manually mount
                 try:
                     subprocess.run(mount_command, check=True, capture_output=True, text=True)
                     LOG.info("Mount finished.")
                 except subprocess.CalledProcessError as e:
                     if e.returncode == 256:
-                        raise OSError("Mount failed: requires sudo or permission denied") from e
+                        raise OSError("挂载失败: 需要sudo权限或权限被拒绝") from e
                     elif e.returncode == 32512:
-                        raise OSError(f"mount {provider_uri} on {mount_path} error! Command error") from e
+                        raise OSError(f"将{provider_uri}挂载到{mount_path}错误! 命令错误") from e
                     else:
-                        raise OSError(f"Mount failed: {e.stderr}") from e
+                        raise OSError(f"挂载失败: {e.stderr}") from e
             else:
-                LOG.warning(f"{_remote_uri} on {_mount_path} is already mounted")
+                LOG.warning(f"{_remote_uri}已挂载到{_mount_path}")
 
 
 def init_from_yaml_conf(conf_path, **kwargs):
-    """init_from_yaml_conf
+    """从yaml配置文件初始化
 
-    :param conf_path: A path to the qlib config in yml format
+    :param conf_path: qlib配置文件的yml格式路径
     """
 
     if conf_path is None:
@@ -194,9 +194,9 @@ def init_from_yaml_conf(conf_path, **kwargs):
 
 def get_project_path(config_name="config.yaml", cur_path: Union[Path, str, None] = None) -> Path:
     """
-    If users are building a project follow the following pattern.
-    - Qlib is a sub folder in project path
-    - There is a file named `config.yaml` in qlib.
+    如果用户按照以下模式构建项目：
+    - Qlib是项目路径中的子文件夹
+    - qlib文件夹中有一个名为`config.yaml`的文件。
 
     For example:
         If your project file system structure follows such a pattern

@@ -15,8 +15,8 @@ from .decision import Order
 
 class BasePosition:
     """
-    The Position wants to maintain the position like a dictionary
-    Please refer to the `Position` class for the position
+    持仓类希望像字典一样维护持仓信息
+    有关具体持仓实现，请参考`Position`类
     """
 
     def __init__(self, *args: Any, cash: float = 0.0, **kwargs: Any) -> None:
@@ -40,57 +40,57 @@ class BasePosition:
 
     def check_stock(self, stock_id: str) -> bool:
         """
-        check if is the stock in the position
+        检查股票是否在持仓中
 
-        Parameters
+        参数
         ----------
         stock_id : str
-            the id of the stock
+            股票ID
 
-        Returns
+        返回
         -------
         bool:
-            if is the stock in the position
+            股票是否在持仓中的标志
         """
         raise NotImplementedError(f"Please implement the `check_stock` method")
 
     def update_order(self, order: Order, trade_val: float, cost: float, trade_price: float) -> None:
         """
-        Parameters
+        参数
         ----------
         order : Order
-            the order to update the position
+            用于更新持仓的订单
         trade_val : float
-            the trade value(money) of dealing results
+            交易结果的价值(金额)
         cost : float
-            the trade cost of the dealing results
+            交易结果的成本
         trade_price : float
-            the trade price of the dealing results
+            交易执行价格
         """
         raise NotImplementedError(f"Please implement the `update_order` method")
 
     def update_stock_price(self, stock_id: str, price: float) -> None:
         """
-        Updating the latest price of the order
-        The useful when clearing balance at each bar end
+        更新订单的最新价格
+        在每个交易小节结束时清算余额时有用
 
-        Parameters
+        参数
         ----------
         stock_id :
-            the id of the stock
+            股票ID
         price : float
-            the price to be updated
+            要更新的价格
         """
-        raise NotImplementedError(f"Please implement the `update stock price` method")
+        raise NotImplementedError(f"Please implement the `update_stock_price` method")
 
     def calculate_stock_value(self) -> float:
         """
-        calculate the value of the all assets except cash in the position
+        计算持仓中除现金外所有资产的价值
 
-        Returns
+        返回
         -------
         float:
-            the value(money) of all the stock
+            所有股票的价值(金额)
         """
         raise NotImplementedError(f"Please implement the `calculate_stock_value` method")
 
@@ -99,79 +99,79 @@ class BasePosition:
 
     def get_stock_list(self) -> List[str]:
         """
-        Get the list of stocks in the position.
+        获取持仓中的股票列表。
         """
         raise NotImplementedError(f"Please implement the `get_stock_list` method")
 
     def get_stock_price(self, code: str) -> float:
         """
-        get the latest price of the stock
+        获取股票的最新价格
 
-        Parameters
+        参数
         ----------
         code :
-            the code of the stock
+            股票代码
         """
         raise NotImplementedError(f"Please implement the `get_stock_price` method")
 
     def get_stock_amount(self, code: str) -> float:
         """
-        get the amount of the stock
+        获取股票的数量
 
-        Parameters
+        参数
         ----------
         code :
-            the code of the stock
+            股票代码
 
-        Returns
+        返回
         -------
         float:
-            the amount of the stock
+            股票的数量
         """
         raise NotImplementedError(f"Please implement the `get_stock_amount` method")
 
     def get_cash(self, include_settle: bool = False) -> float:
         """
-        Parameters
+        参数
         ----------
         include_settle:
-            will the unsettled(delayed) cash included
-            Default: not include those unavailable cash
+            是否包含未结算(延迟)现金
+            默认值: 不包含那些不可用现金
 
-        Returns
+        返回
         -------
         float:
-            the available(tradable) cash in position
+            持仓中的可用(可交易)现金
         """
         raise NotImplementedError(f"Please implement the `get_cash` method")
 
     def get_stock_amount_dict(self) -> dict:
         """
-        generate stock amount dict {stock_id : amount of stock}
+        生成股票数量字典 {stock_id : 股票数量}
 
-        Returns
+        返回
         -------
         Dict:
-            {stock_id : amount of stock}
+            {stock_id : 股票数量}
         """
         raise NotImplementedError(f"Please implement the `get_stock_amount_dict` method")
 
     def get_stock_weight_dict(self, only_stock: bool = False) -> dict:
         """
-        generate stock weight dict {stock_id : value weight of stock in the position}
-        it is meaningful in the beginning or the end of each trade step
-        - During execution of each trading step, the weight may be not consistent with the portfolio value
+        生成股票权重字典 {stock_id : 股票在持仓中的价值权重}
+        在每个交易步骤的开始或结束时才有意义
+        - 在每个交易步骤执行期间，权重可能与投资组合价值不一致
 
-        Parameters
+        参数
         ----------
         only_stock : bool
-            If only_stock=True, the weight of each stock in total stock will be returned
-            If only_stock=False, the weight of each stock in total assets(stock + cash) will be returned
+            如果only_stock=True，返回每只股票在股票总额中的权重
+            如果only_stock=False，返回每只股票在总资产(股票+现金)中的权重
 
-        Returns
+        返回
         -------
         Dict:
-            {stock_id : value weight of stock in the position}
+            {stock_id : 股票在持仓中的价值权重}
         """
         raise NotImplementedError(f"Please implement the `get_stock_weight_dict` method")
 
@@ -188,10 +188,9 @@ class BasePosition:
 
     def update_weight_all(self) -> None:
         """
-        Updating the position weight;
+        更新持仓权重；
 
-        # TODO: this function is a little weird. The weight data in the position is in a wrong state after dealing order
-        # and before updating weight.
+        # TODO: 此函数有点奇怪。在处理订单后和更新权重前，持仓中的权重数据处于错误状态。
         """
         raise NotImplementedError(f"Please implement the `add_count_all` method")
 
@@ -200,24 +199,23 @@ class BasePosition:
 
     def settle_start(self, settle_type: str) -> None:
         """
-        settlement start
-        It will act like start and commit a transaction
+        结算开始
+        其作用类似于开始并提交一笔交易
 
-        Parameters
+        参数
         ----------
         settle_type : str
-            Should we make delay the settlement in each execution (each execution will make the executor a step forward)
-            - "cash": make the cash settlement delayed.
-                - The cash you get can't be used in current step (e.g. you can't sell a stock to get cash to buy another
-                        stock)
-            - None: not settlement mechanism
-            - TODO: other assets will be supported in the future.
+            是否在每次执行中延迟结算（每次执行会使执行器前进一个步骤）
+            - "cash": 延迟现金结算。
+                - 获得的现金不能在当前步骤使用（例如，不能卖出股票获得现金来购买另一只股票）
+            - None: 无结算机制
+            - TODO: 未来将支持其他资产。
         """
         raise NotImplementedError(f"Please implement the `settle_conf` method")
 
     def settle_commit(self) -> None:
         """
-        settlement commit
+        结算提交
         """
         raise NotImplementedError(f"Please implement the `settle_commit` method")
 

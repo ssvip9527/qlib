@@ -16,33 +16,33 @@ def align_index(df_dict, join):
 # Mocking the pd.DataFrame class
 class SepDataFrame:
     """
-    (Sep)erate DataFrame
-    We usually concat multiple dataframe to be processed together(Such as feature, label, weight, filter).
-    However, they are usually be used separately at last.
-    This will result in extra cost for concatenating and splitting data(reshaping and copying data in the memory is very expensive)
+    （Sep）分离式DataFrame
+    我们通常会拼接多个DataFrame一起处理（如特征、标签、权重、过滤器）。
+    然而，它们最终通常会被单独使用。
+    这会导致拼接和拆分数据时产生额外成本（在内存中重塑和复制数据非常昂贵）
 
-    SepDataFrame tries to act like a DataFrame whose column with multiindex
+    SepDataFrame尝试表现得像列带有MultiIndex的DataFrame
     """
 
     # TODO:
-    # SepDataFrame try to behave like pandas dataframe,  but it is still not them same
-    # Contributions are welcome to make it more complete.
+    # SepDataFrame尝试表现得像pandas DataFrame，但两者仍不相同
+    # 欢迎贡献代码使其更加完善。
 
     def __init__(self, df_dict: Dict[str, pd.DataFrame], join: str, skip_align=False):
         """
-        initialize the data based on the dataframe dictionary
+        基于DataFrame字典初始化数据
 
-        Parameters
+        参数
         ----------
         df_dict : Dict[str, pd.DataFrame]
-            dataframe dictionary
+            DataFrame字典
         join : str
-            how to join the data
-            It will reindex the dataframe based on the join key.
-            If join is None, the reindex step will be skipped
+            数据连接方式
+            将基于连接键重新索引DataFrame。
+            如果join为None，则跳过重新索引步骤
 
         skip_align :
-            for some cases, we can improve performance by skipping aligning index
+            在某些情况下，可通过跳过索引对齐来提高性能
         """
         self.join = join
 
@@ -61,8 +61,8 @@ class SepDataFrame:
 
     def apply_each(self, method: str, skip_align=True, *args, **kwargs):
         """
-        Assumptions:
-        - inplace methods will return None
+        假设：
+        - 原地修改方法会返回None
         """
         inplace = False
         df_dict = {}
@@ -84,15 +84,15 @@ class SepDataFrame:
             if len(self._df_dict) > 0:
                 self.join = next(iter(self._df_dict.keys()))
             else:
-                # NOTE: this will change the behavior of previous reindex when all the keys are empty
+                # 注意：当所有键为空时，这将改变之前的重新索引行为
                 self.join = None
 
     def __getitem__(self, item):
-        # TODO: behave more like pandas when multiindex
+        # TODO: 处理MultiIndex时表现更接近pandas
         return self._df_dict[item]
 
     def __setitem__(self, item: str, df: Union[pd.DataFrame, pd.Series]):
-        # TODO: consider the join behavior
+        # TODO: 考虑连接行为
         if not isinstance(item, tuple):
             self._df_dict[item] = df
         else:
@@ -109,7 +109,7 @@ class SepDataFrame:
                         col_name = col_name[0]
                     self._df_dict[_df_dict_key] = df.to_frame(col_name)
                 else:
-                    df_copy = df.copy()  # avoid changing df
+                    df_copy = df.copy()  # 避免修改df
                     df_copy.columns = pd.MultiIndex.from_tuples([(*col_name, *idx) for idx in df.columns.to_list()])
                     self._df_dict[_df_dict_key] = df_copy
 
@@ -124,7 +124,7 @@ class SepDataFrame:
         return len(self._df_dict[self.join])
 
     def droplevel(self, *args, **kwargs):
-        raise NotImplementedError(f"Please implement the `droplevel` method")
+        raise NotImplementedError(f"请实现`droplevel`方法")
 
     @property
     def columns(self):
@@ -146,7 +146,7 @@ class SepDataFrame:
 
 
 class SDFLoc:
-    """Mock Class"""
+    """模拟类"""
 
     def __init__(self, sdf: SepDataFrame, join):
         self._sdf = sdf
@@ -165,7 +165,7 @@ class SDFLoc:
                 new_df_dict = {k: self._sdf[k] for k in args}
                 return SepDataFrame(new_df_dict, join=self.join if self.join in args else args[0], skip_align=True)
             else:
-                raise NotImplementedError(f"This type of input is not supported")
+                raise NotImplementedError(f"不支持此类型的输入")
         elif self.axis == 0:
             return SepDataFrame(
                 {k: df.loc(axis=0)[args] for k, df in self._sdf._df_dict.items()}, join=self.join, skip_align=True
@@ -186,7 +186,7 @@ class SDFLoc:
 
 
 # Patch pandas DataFrame
-# Tricking isinstance to accept SepDataFrame as its subclass
+# 欺骗isinstance使其接受SepDataFrame作为子类
 import builtins
 
 

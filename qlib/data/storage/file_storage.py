@@ -77,6 +77,7 @@ class FileCalendarStorage(FileStorageMixin, CalendarStorage):
     def __init__(self, freq: str, future: bool, provider_uri: dict = None, **kwargs):
         super(FileCalendarStorage, self).__init__(freq, future, **kwargs)
         self.future = future
+        # 如果提供了provider_uri，则使用格式化后的路径；否则使用默认值
         self._provider_uri = None if provider_uri is None else C.DataPathManager.format_provider_uri(provider_uri)
         self.enable_read_cache = True  # TODO: make it configurable
         self.region = C["region"]
@@ -129,6 +130,7 @@ class FileCalendarStorage(FileStorageMixin, CalendarStorage):
 
     @property
     def data(self) -> List[CalVT]:
+        # 检查文件是否存在
         self.check()
         # If cache is enabled, then return cache directly
         if self.enable_read_cache:
@@ -191,16 +193,18 @@ class FileCalendarStorage(FileStorageMixin, CalendarStorage):
 
 class FileInstrumentStorage(FileStorageMixin, InstrumentStorage):
     INSTRUMENT_SEP = "\t"
-    INSTRUMENT_START_FIELD = "start_datetime"
-    INSTRUMENT_END_FIELD = "end_datetime"
-    SYMBOL_FIELD_NAME = "instrument"
+    INSTRUMENT_START_FIELD = "start_datetime"  # 开始时间字段
+    INSTRUMENT_END_FIELD = "end_datetime"    # 结束时间字段
+    SYMBOL_FIELD_NAME = "instrument"         # 工具代码字段
 
     def __init__(self, market: str, freq: str, provider_uri: dict = None, **kwargs):
         super(FileInstrumentStorage, self).__init__(market, freq, **kwargs)
         self._provider_uri = None if provider_uri is None else C.DataPathManager.format_provider_uri(provider_uri)
+        # 文件名格式化为小写市场名称
         self.file_name = f"{market.lower()}.txt"
 
     def _read_instrument(self) -> Dict[InstKT, InstVT]:
+        # 如果文件不存在，则创建空文件
         if not self.uri.exists():
             self._write_instrument()
 
@@ -224,18 +228,21 @@ class FileInstrumentStorage(FileStorageMixin, InstrumentStorage):
             return
 
         res = []
+        # 将工具数据转换为DataFrame格式
         for inst, v_list in data.items():
             _df = pd.DataFrame(v_list, columns=[self.INSTRUMENT_START_FIELD, self.INSTRUMENT_END_FIELD])
             _df[self.SYMBOL_FIELD_NAME] = inst
             res.append(_df)
 
         df = pd.concat(res, sort=False)
+        # 保存工具数据到文件
         df.loc[:, [self.SYMBOL_FIELD_NAME, self.INSTRUMENT_START_FIELD, self.INSTRUMENT_END_FIELD]].to_csv(
             self.uri, header=False, sep=self.INSTRUMENT_SEP, index=False
         )
         df.to_csv(self.uri, sep="\t", encoding="utf-8", header=False, index=False)
 
     def clear(self) -> None:
+        # 清空工具数据
         self._write_instrument(data={})
 
     @property
@@ -286,6 +293,7 @@ class FileFeatureStorage(FileStorageMixin, FeatureStorage):
     def __init__(self, instrument: str, field: str, freq: str, provider_uri: dict = None, **kwargs):
         super(FileFeatureStorage, self).__init__(instrument, field, freq, **kwargs)
         self._provider_uri = None if provider_uri is None else C.DataPathManager.format_provider_uri(provider_uri)
+        # 文件名格式化为小写工具/字段/频率.bin
         self.file_name = f"{instrument.lower()}/{field.lower()}.{freq.lower()}.bin"
 
     def clear(self):
@@ -299,23 +307,24 @@ class FileFeatureStorage(FileStorageMixin, FeatureStorage):
     def write(self, data_array: Union[List, np.ndarray], index: int = None) -> None:
         if len(data_array) == 0:
             logger.info(
-                "len(data_array) == 0, write"
-                "if you need to clear the FeatureStorage, please execute: FeatureStorage.clear"
+                "数据数组长度为0，写入操作已取消。"
+                "如果需要清空特征存储，请执行: FeatureStorage.clear"
             )
             return
         if not self.uri.exists():
-            # write
+            # 文件不存在，直接写入数据
             index = 0 if index is None else index
             with self.uri.open("wb") as fp:
                 np.hstack([index, data_array]).astype("<f").tofile(fp)
         else:
             if index is None or index > self.end_index:
-                # append
+                # 追加数据到文件末尾
                 index = 0 if index is None else index
                 with self.uri.open("ab+") as fp:
+                    # 填充缺失索引位置为NaN
                     np.hstack([[np.nan] * (index - self.end_index - 1), data_array]).astype("<f").tofile(fp)
             else:
-                # rewrite
+                # 重写指定位置的数据
                 with self.uri.open("rb+") as fp:
                     _old_data = np.fromfile(fp, dtype="<f")
                     _old_index = _old_data[0]
@@ -326,6 +335,7 @@ class FileFeatureStorage(FileStorageMixin, FeatureStorage):
                     _new_df = pd.DataFrame(data_array, index=range(index, index + len(data_array)), columns=["new"])
                     _df = pd.concat([_old_df, _new_df], sort=False, axis=1)
                     _df = _df.reindex(range(_df.index.min(), _df.index.max() + 1))
+                    # 新数据优先，缺失值用旧数据填充
                     _df["new"].fillna(_df["old"]).values.astype("<f").tofile(fp)
 
     @property
@@ -340,7 +350,7 @@ class FileFeatureStorage(FileStorageMixin, FeatureStorage):
     def end_index(self) -> Union[int, None]:
         if not self.uri.exists():
             return None
-        # The next  data appending index point will be  `end_index + 1`
+        # 下一个数据追加的索引位置为 `end_index + 1`
         return self.start_index + len(self) - 1
 
     def __getitem__(self, i: Union[int, slice]) -> Union[Tuple[int, float], pd.Series]:
@@ -356,18 +366,22 @@ class FileFeatureStorage(FileStorageMixin, FeatureStorage):
         storage_end_index = self.end_index
         with self.uri.open("rb") as fp:
             if isinstance(i, int):
+                # 检查索引是否在有效范围内
                 if storage_start_index > i:
-                    raise IndexError(f"{i}: start index is {storage_start_index}")
+                    raise IndexError(f"索引{i}超出范围，起始索引为{storage_start_index}")
+                # 定位到指定索引位置
                 fp.seek(4 * (i - storage_start_index) + 4)
                 return i, struct.unpack("f", fp.read(4))[0]
             elif isinstance(i, slice):
+                # 处理切片索引
                 start_index = storage_start_index if i.start is None else i.start
                 end_index = storage_end_index if i.stop is None else i.stop - 1
                 si = max(start_index, storage_start_index)
                 if si > end_index:
                     return pd.Series(dtype=np.float32)
+                # 定位到起始位置
                 fp.seek(4 * (si - storage_start_index) + 4)
-                # read n bytes
+                # 读取指定长度的数据
                 count = end_index - si + 1
                 data = np.frombuffer(fp.read(4 * count), dtype="<f")
                 return pd.Series(data, index=pd.RangeIndex(si, si + len(data)))

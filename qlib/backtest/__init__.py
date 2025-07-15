@@ -44,47 +44,46 @@ def get_exchange(
     deal_price: Union[str, Tuple[str, str], List[str]] | None = None,
     **kwargs: Any,
 ) -> Exchange:
-    """get_exchange
+    """获取交易所实例
 
-    Parameters
+    参数
     ----------
 
-    # exchange related arguments
+    # 交易所相关参数
     exchange: Exchange
-        It could be None or any types that are acceptable by `init_instance_by_config`.
+        可以是None或任何能被`init_instance_by_config`接受的类型
     freq: str
-        frequency of data.
+        数据频率
     start_time: Union[pd.Timestamp, str]
-        closed start time for backtest.
+        回测开始时间(闭区间)
     end_time: Union[pd.Timestamp, str]
-        closed end time for backtest.
+        回测结束时间(闭区间)
     codes: Union[list, str]
-        list stock_id list or a string of instruments (i.e. all, csi500, sse50)
+        股票代码列表或字符串形式的标的集合(如all, csi500, sse50)
     subscribe_fields: list
-        subscribe fields.
+        订阅的字段列表
     open_cost : float
-        open transaction cost. It is a ratio. The cost is proportional to your order's deal amount.
+        开仓交易成本比例，与订单成交金额成比例
     close_cost : float
-        close transaction cost. It is a ratio. The cost is proportional to your order's deal amount.
+        平仓交易成本比例，与订单成交金额成比例
     min_cost : float
-        min transaction cost.  It is an absolute amount of cost instead of a ratio of your order's deal amount.
-        e.g. You must pay at least 5 yuan of commission regardless of your order's deal amount.
+        最低交易成本(绝对值)，无论订单金额多少都至少收取的费用
+        例如：无论订单金额多少，至少收取5元手续费
     deal_price: Union[str, Tuple[str, str], List[str]]
-                The `deal_price` supports following two types of input
+                支持以下两种输入格式：
                 - <deal_price> : str
-                - (<buy_price>, <sell_price>): Tuple[str, str] or List[str]
+                - (<buy_price>, <sell_price>): Tuple[str, str] 或 List[str]
 
-                <deal_price>, <buy_price> or <sell_price> := <price>
-                <price> := str
-                - for example '$close', '$open', '$vwap' ("close" is OK. `Exchange` will help to prepend
-                  "$" to the expression)
+            <deal_price>, <buy_price> 或 <sell_price> := <price>
+            <price> := str
+            - 例如 '$close', '$open', '$vwap' (直接写"close"也可以，`Exchange`会自动添加"$"前缀)
     limit_threshold : float
-        limit move 0.1 (10%) for example, long and short with same limit.
+        涨跌停限制比例，例如0.1表示10%，多头和空头使用相同的限制
 
-    Returns
+    返回值
     -------
     :class: Exchange
-    an initialized Exchange object
+    初始化后的Exchange对象
     """
 
     if limit_threshold is None:
@@ -118,36 +117,36 @@ def create_account_instance(
     pos_type: str = "Position",
 ) -> Account:
     """
-    # TODO: is very strange pass benchmark_config in the account (maybe for report)
-    # There should be a post-step to process the report.
+    # TODO: 在account中传递benchmark_config很奇怪(可能是为了报告)
+    # 应该有一个后处理步骤来处理报告
 
-    Parameters
+    参数
     ----------
     start_time
-        start time of the benchmark
+        基准开始时间
     end_time
-        end time of the benchmark
+        基准结束时间
     benchmark : str
-        the benchmark for reporting
+        用于报告的基准
     account :   Union[
                     float,
                     {
                         "cash": float,
                         "stock1": Union[
-                                        int,    # it is equal to {"amount": int}
-                                        {"amount": int, "price"(optional): float},
+                                        int,    # 等同于{"amount": int}
+                                        {"amount": int, "price"(可选): float},
                                   ]
                     },
                 ]
-        information for describing how to creating the account
-        For `float`:
-            Using Account with only initial cash
-        For `dict`:
-            key "cash" means initial cash.
-            key "stock1" means the information of first stock with amount and price(optional).
+        描述如何创建账户的信息
+        对于`float`:
+            仅使用初始现金创建Account
+        对于`dict`:
+            键"cash"表示初始现金
+            键"stock1"表示第一支股票的信息，包括数量和价格(可选)
             ...
     pos_type: str
-        Postion type.
+        持仓类型
     """
     if isinstance(account, (int, float)):
         init_cash = account
@@ -184,9 +183,9 @@ def get_strategy_executor(
     exchange_kwargs: dict = {},
     pos_type: str = "Position",
 ) -> Tuple[BaseStrategy, BaseExecutor]:
-    # NOTE:
-    # - for avoiding recursive import
-    # - typing annotations is not reliable
+    # 注意:
+    # - 为了避免循环导入
+    # - 类型注解不可靠
     from ..strategy.base import BaseStrategy  # pylint: disable=C0415
     from .executor import BaseExecutor  # pylint: disable=C0415
 
@@ -313,23 +312,23 @@ def format_decisions(
     decisions: List[BaseTradeDecision],
 ) -> Optional[Tuple[str, List[Tuple[BaseTradeDecision, Union[Tuple, None]]]]]:
     """
-    format the decisions collected by `qlib.backtest.collect_data`
-    The decisions will be organized into a tree-like structure.
+    格式化由`qlib.backtest.collect_data`收集的决策数据
+    决策将被组织成树状结构
 
-    Parameters
+    参数
     ----------
     decisions : List[BaseTradeDecision]
-        decisions collected by `qlib.backtest.collect_data`
+        由`qlib.backtest.collect_data`收集的决策列表
 
-    Returns
+    返回值
     -------
-    Tuple[str, List[Tuple[BaseTradeDecision, Union[Tuple, None]]]]:
+    Tuple[str, List[Tuple[BaseTradeDecision, Union[Tuple, None]]]:
 
-        reformat the list of decisions into a more user-friendly format
-        <decisions> :=  Tuple[<freq>, List[Tuple[<decision>, <sub decisions>]]]
-        - <sub decisions> := `<decisions> in lower level` | None
+        将决策列表重新格式化为更易读的形式
+        <decisions> :=  Tuple[<频率>, List[Tuple[<决策>, <子决策>]]
+        - <sub decisions> := `<低层级的decisions>` | None
         - <freq> := "day" | "30min" | "1min" | ...
-        - <decision> := <instance of BaseTradeDecision>
+        - <decision> := <BaseTradeDecision的实例>
     """
     if len(decisions) == 0:
         return None

@@ -116,17 +116,17 @@ class DataHandler(DataHandlerABC):
         Parameters
         ----------
         instruments :
-            The stock list to retrieve.
+            要检索的股票列表。
         start_time :
-            start_time of the original data.
+            原始数据的开始时间。
         end_time :
-            end_time of the original data.
+            原始数据的结束时间。
         data_loader : Union[dict, str, DataLoader]
-            data loader to load the data.
+            用于加载数据的数据加载器。
         init_data :
-            initialize the original data in the constructor.
+            在构造函数中初始化原始数据。
         fetch_orig : bool
-            Return the original data instead of copy if possible.
+            如果可能，返回原始数据而不是副本。
         """
 
         # Setup data loader
@@ -181,12 +181,10 @@ class DataHandler(DataHandlerABC):
         Parameters
         ----------
         enable_cache : bool
-            default value is false:
+            默认值为false：
 
-            - if `enable_cache` == True:
-
-                the processed data will be saved on disk, and handler will load the cached data from the disk directly
-                when we call `init` next time
+            - 如果`enable_cache` == True：
+                处理后的数据将保存到磁盘，下次调用`init`时处理器将直接从磁盘加载缓存数据
         """
         # Setup data.
         # _data may be with multiple column index level. The outer level indicates the feature set name

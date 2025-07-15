@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# We remove arctic from core framework of Qlib to contrib due to
-# - Arctic has very strict limitation on pandas and numpy version
+# 我们将arctic从Qlib的核心框架移至contrib目录，原因如下
+# - Arctic对pandas和numpy版本有非常严格的限制
 #    - https://github.com/man-group/arctic/pull/908
-# - pip fail to computing the right version number!!!!
-#    - Maybe we can solve this problem by poetry
+# - pip无法正确计算版本号！！！
+#    - 也许我们可以通过poetry解决此问题
 
-# FIXME: So if you want to use arctic-based provider, please install arctic manually
+# FIXME: 因此，如果你想使用基于arctic的提供器，请手动安装arctic
 # `pip install arctic` may not be enough.
 from arctic import Arctic
 import pandas as pd
@@ -23,16 +23,16 @@ class ArcticFeatureProvider(FeatureProvider):
         super().__init__()
         self.uri = uri
         # TODO:
-        # retry connecting if error occurs
-        # does it real matters?
+        # 发生错误时重试连接
+        # 这真的重要吗？
         self.retry_time = retry_time
-        # NOTE: this is especially important for TResample operator
+        # 注意：这对于TResample算子尤为重要
         self.market_transaction_time_list = market_transaction_time_list
 
     def feature(self, instrument, field, start_index, end_index, freq):
         field = str(field)[1:]
         with pymongo.MongoClient(self.uri) as client:
-            # TODO: this will result in frequently connecting the server and performance issue
+            # TODO: 这会导致频繁连接服务器并引发性能问题
             arctic = Arctic(client)
 
             if freq not in arctic.list_libraries():

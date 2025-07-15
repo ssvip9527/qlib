@@ -94,15 +94,15 @@ class DatasetH(Dataset):
         Parameters
         ----------
         handler : Union[dict, DataHandler]
-            handler could be:
+            处理器可以是：
 
-            - instance of `DataHandler`
+            - `DataHandler`的实例
 
-            - config of `DataHandler`.  Please refer to `DataHandler`
+            - `DataHandler`的配置。请参考`DataHandler`
 
         segments : dict
-            Describe the options to segment the data.
-            Here are some examples:
+            描述数据分段的选项。
+            以下是一些示例：
 
             .. code-block::
 

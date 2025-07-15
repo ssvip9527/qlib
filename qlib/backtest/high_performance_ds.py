@@ -43,10 +43,9 @@ class BaseQuote:
         field: Union[str],
         method: Optional[str] = None,
     ) -> Union[None, int, float, bool, IndexData]:
-        """get the specific field of stock data during start time and end_time,
-           and apply method to the data.
+        """获取指定股票在时间范围内的特定字段数据，并对数据应用指定方法
 
-           Example:
+           示例:
             .. code-block::
                                         $close      $volume
                 instrument  datetime
@@ -62,39 +61,40 @@ class BaseQuote:
                             2010-01-12  2788.688232  164587.937500
                             2010-01-13  2790.604004  145460.453125
 
-                this function is used for three case:
+                该方法有三种使用场景:
 
-                1. method is not None. It returns int/float/bool/None.
-                    - It will return None in one case, the method return None
+                1. method不为None时，返回int/float/bool/None
+                    - 仅当方法返回None时，该方法才会返回None
 
-                    print(get_data(stock_id="SH600000", start_time="2010-01-04", end_time="2010-01-06", field="$close", method="last"))
+                    示例:
+                        print(get_data(stock_id="SH600000", start_time="2010-01-04", end_time="2010-01-06", field="$close", method="last"))
+                    输出: 85.713585
 
-                    85.713585
+                2. method为None时，返回IndexData
+                    示例:
+                        print(get_data(stock_id="SH600000", start_time="2010-01-04", end_time="2010-01-06", field="$close", method=None))
+                    输出: IndexData([86.778313, 87.433578, 85.713585], [2010-01-04, 2010-01-05, 2010-01-06])
 
-                2. method is None. It returns IndexData.
-                    print(get_data(stock_id="SH600000", start_time="2010-01-04", end_time="2010-01-06", field="$close", method=None))
-
-                    IndexData([86.778313, 87.433578, 85.713585], [2010-01-04, 2010-01-05, 2010-01-06])
-
-        Parameters
+        参数
         ----------
         stock_id: str
+            股票代码
         start_time : Union[pd.Timestamp, str]
-            closed start time for backtest
+            回测的闭区间开始时间
         end_time : Union[pd.Timestamp, str]
-            closed end time for backtest
+            回测的闭区间结束时间
         field : str
-            the columns of data to fetch
+            要获取的数据列名
         method : Union[str, None]
-            the method apply to data.
-            e.g [None, "last", "all", "sum", "mean", "ts_data_last"]
+            应用于数据的方法
+            可选值: [None, "last", "all", "sum", "mean", "ts_data_last"]
 
-        Return
+        返回值
         ----------
         Union[None, int, float, bool, IndexData]
-            it will return None in following cases
-            - There is no stock data which meet the query criterion from data source.
-            - The `method` returns None
+            在以下情况下会返回None:
+            - 数据源中没有符合查询条件的股票数据
+            - `method`方法返回None
         """
 
         raise NotImplementedError(f"Please implement the `get_data` method")
@@ -127,13 +127,21 @@ class PandasQuote(BaseQuote):
 
 class NumpyQuote(BaseQuote):
     def __init__(self, quote_df: pd.DataFrame, freq: str, region: str = "cn") -> None:
-        """NumpyQuote
+        """NumpyQuote初始化方法
 
-        Parameters
+        参数
         ----------
         quote_df : pd.DataFrame
-            the init dataframe from qlib.
+            来自qlib的初始化数据框
+        freq : str
+            数据频率
+        region : str
+            地区代码，默认为'cn'
+        
+        属性
+        ----------
         self.data : Dict(stock_id, IndexData.DataFrame)
+            存储股票数据的字典，键为股票代码，值为IndexData.DataFrame
         """
         super().__init__(quote_df=quote_df, freq=freq)
         quote_dict = {}
@@ -182,7 +190,24 @@ class NumpyQuote(BaseQuote):
 
     @staticmethod
     def _agg_data(data: IndexData, method: str) -> Union[IndexData, np.ndarray, None]:
-        """Agg data by specific method."""
+        """根据特定方法聚合数据
+
+        参数
+        ----------
+        data : IndexData
+            待聚合的数据
+        method : str
+            聚合方法
+            
+        返回值
+        ----------
+        Union[IndexData, np.ndarray, None]
+            聚合后的数据
+        
+        注意事项
+        ----------
+        - 为什么不直接调用数据的方法？
+        """
         # FIXME: why not call the method of data directly?
         if method == "sum":
             return np.nansum(data)

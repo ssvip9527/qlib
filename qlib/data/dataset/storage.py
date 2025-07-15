@@ -11,9 +11,9 @@ from .utils import get_level_index, fetch_df_by_index, fetch_df_by_col
 
 class BaseHandlerStorage:
     """
-    Base data storage for datahandler
-    - pd.DataFrame is the default data storage format in Qlib datahandler
-    - If users want to use custom data storage, they should define subclass inherited BaseHandlerStorage, and implement the following method
+    数据处理器的基础数据存储
+    - pd.DataFrame是Qlib数据处理器中的默认数据存储格式
+    - 如果用户想要使用自定义数据存储，应定义继承自BaseHandlerStorage的子类，并实现以下方法
     """
 
     @abstractmethod
@@ -24,37 +24,37 @@ class BaseHandlerStorage:
         col_set: Union[str, List[str]] = DataHandler.CS_ALL,
         fetch_orig: bool = True,
     ) -> pd.DataFrame:
-        """fetch data from the data storage
+        """从数据存储中获取数据
 
-        Parameters
+        参数
         ----------
-        selector : Union[pd.Timestamp, slice, str]
-            describe how to select data by index
+        selector : Union[pd.Timestamp, slice, str, pd.Index]
+            描述如何通过索引选择数据
         level : Union[str, int]
-            which index level to select the data
-            - if level is None, apply selector to df directly
+            要选择数据的索引级别
+            - 如果level为None，直接将selector应用于df
         col_set : Union[str, List[str]]
-            - if isinstance(col_set, str):
-                select a set of meaningful columns.(e.g. features, columns)
-                if col_set == DataHandler.CS_RAW:
-                    the raw dataset will be returned.
-            - if isinstance(col_set, List[str]):
-                select several sets of meaningful columns, the returned data has multiple level
+            - 如果是str类型：
+                选择一组有意义的列（例如特征、标签列）
+                如果col_set == DataHandler.CS_RAW：
+                    返回原始数据集
+            - 如果是List[str]类型：
+                选择多组有意义的列，返回的数据具有多级列
         fetch_orig : bool
-            Return the original data instead of copy if possible.
+            如果可能，返回原始数据而非副本
 
-        Returns
+        返回
         -------
         pd.DataFrame
-            the dataframe fetched
+            获取到的数据框
         """
         raise NotImplementedError("fetch is method not implemented!")
 
 
 class NaiveDFStorage(BaseHandlerStorage):
     """Naive data storage for datahandler
-    - NaiveDFStorage is a naive data storage for datahandler
-    - NaiveDFStorage will input a pandas.DataFrame as and provide interface support for fetching data
+    - NaiveDFStorage是数据处理器的简单数据存储
+    - NaiveDFStorage接收pandas.DataFrame作为输入，并提供数据获取的接口支持
     """
 
     def __init__(self, df: pd.DataFrame):
@@ -67,11 +67,10 @@ class NaiveDFStorage(BaseHandlerStorage):
         col_set: Union[str, List[str]] = DataHandler.CS_ALL,
         fetch_orig: bool = True,
     ) -> pd.DataFrame:
-
-        # Following conflicts may occur
-        # - Does [20200101", "20210101"] mean selecting this slice or these two days?
-        # To solve this issue
-        #   - slice have higher priorities (except when level is none)
+        # 可能会出现以下冲突
+        # - ["20200101", "20210101"]是表示选择这个切片还是这两天？
+        # 为解决此问题
+        # - 切片具有更高优先级（当level为None时除外）
         if isinstance(selector, (tuple, list)) and level is not None:
             # when level is None, the argument will be passed in directly
             # we don't have to convert it into slice
@@ -88,16 +87,16 @@ class NaiveDFStorage(BaseHandlerStorage):
 
 class HashingStockStorage(BaseHandlerStorage):
     """Hashing data storage for datahanlder
-    - The default data storage pandas.DataFrame is too slow when randomly accessing one stock's data
-    - HashingStockStorage hashes the multiple stocks' data(pandas.DataFrame) by the key `stock_id`.
-    - HashingStockStorage hashes the pandas.DataFrame into a dict, whose key is the stock_id(str) and value this stock data(panda.DataFrame), it has the following format:
+    - 默认数据存储pandas.DataFrame在随机访问单只股票数据时速度较慢
+    - HashingStockStorage通过`stock_id`键对多只股票的数据(pandas.DataFrame)进行哈希处理
+    - HashingStockStorage将pandas.DataFrame哈希为一个字典，其键为stock_id(字符串)，值为该股票的数据(pandas.DataFrame)，格式如下：
         {
             stock1_id: stock1_data,
             stock2_id: stock2_data,
             ...
             stockn_id: stockn_data,
         }
-    - By the `fetch` method, users can access any stock data with much lower time cost than default data storage
+    - 通过`fetch`方法，用户可以以比默认数据存储低得多的时间成本访问任何股票数据
     """
 
     def __init__(self, df):
@@ -112,21 +111,21 @@ class HashingStockStorage(BaseHandlerStorage):
         return HashingStockStorage(df)
 
     def _fetch_hash_df_by_stock(self, selector, level):
-        """fetch the data with stock selector
+        """使用股票选择器获取数据
 
-        Parameters
+        参数
         ----------
         selector : Union[pd.Timestamp, slice, str]
-            describe how to select data by index
+            描述如何通过索引选择数据
         level : Union[str, int]
-            which index level to select the data
-            - if level is None, apply selector to df directly
-            - the `_fetch_hash_df_by_stock` will parse the stock selector in arg `selector`
+            要选择数据的索引级别
+            - 如果level为None，直接将selector应用于df
+            - `_fetch_hash_df_by_stock`将解析参数`selector`中的股票选择器
 
-        Returns
+        返回
         -------
         Dict
-            The dict whose key is stock_id, value is the stock's data
+            键为stock_id，值为股票数据的字典
         """
 
         stock_selector = slice(None)
@@ -143,16 +142,16 @@ class HashingStockStorage(BaseHandlerStorage):
                 stock_selector = selector
         elif level in ("instrument", self.stock_level):
             if isinstance(selector, tuple):
-                # NOTE: How could the stock level selector be a tuple?
+                # 注意：股票级别选择器怎么会是元组？
                 stock_selector = selector[0]
                 raise TypeError(
-                    "I forget why would this case appear. But I think it does not make sense. So we raise a error for that case."
+                    "我忘记为什么会出现这种情况了。但我认为这没有意义，所以为此情况引发错误。"
                 )
             elif isinstance(selector, (list, str)):
                 stock_selector = selector
 
         if not isinstance(stock_selector, (list, str)) and stock_selector != slice(None):
-            raise TypeError(f"stock selector must be type str|list, or slice(None), rather than {stock_selector}")
+            raise TypeError(f"股票选择器必须是str|list类型或slice(None)，而不是{stock_selector}")
 
         if stock_selector == slice(None):
             return self.hash_df, time_selector

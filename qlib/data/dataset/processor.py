@@ -17,14 +17,14 @@ from qlib.data import D
 
 def get_group_columns(df: pd.DataFrame, group: Union[Text, None]):
     """
-    get a group of columns from multi-index columns DataFrame
+    从多级索引列DataFrame中获取一组列
 
-    Parameters
+    参数
     ----------
     df : pd.DataFrame
-        with multi of columns.
+        具有多级列的DataFrame。
     group : str
-        the name of the feature group, i.e. the first level value of the group index.
+        特征组的名称，即组索引的第一级值。
     """
     if group is None:
         return df.columns
@@ -35,47 +35,46 @@ def get_group_columns(df: pd.DataFrame, group: Union[Text, None]):
 class Processor(Serializable):
     def fit(self, df: pd.DataFrame = None):
         """
-        learn data processing parameters
+        学习数据处理参数
 
-        Parameters
+        参数
         ----------
         df : pd.DataFrame
-            When we fit and process data with processor one by one. The fit function reiles on the output of previous
-            processor, i.e. `df`.
+            当我们使用处理器逐个拟合和处理数据时，fit函数依赖于前一个处理器的输出，即`df`。
 
         """
 
     @abc.abstractmethod
     def __call__(self, df: pd.DataFrame):
         """
-        process the data
+        处理数据
 
-        NOTE: **The processor could change the content of `df` inplace !!!!! **
-        User should keep a copy of data outside
+        注意：**处理器可能会就地修改`df`的内容！！！**
+        用户应在外部保留数据的副本
 
-        Parameters
+        参数
         ----------
         df : pd.DataFrame
-            The raw_df of handler or result from previous processor.
+            处理器的原始数据或前一个处理器的结果。
         """
 
     def is_for_infer(self) -> bool:
         """
-        Is this processor usable for inference
-        Some processors are not usable for inference.
+        此处理器是否可用于推理
+        某些处理器不可用于推理。
 
-        Returns
+        返回
         -------
         bool:
-            if it is usable for infenrece.
+            是否可用于推理。
         """
         return True
 
     def readonly(self) -> bool:
         """
-        Does the processor treat the input data readonly (i.e. does not write the input data) when processing
+        处理器在处理时是否将输入数据视为只读（即不写入输入数据）
 
-        Knowning the readonly information is helpful to the Handler to avoid uncessary copy
+        了解只读信息有助于处理器避免不必要的复制
         """
         return False
 
@@ -93,6 +92,12 @@ class Processor(Serializable):
 
 class DropnaProcessor(Processor):
     def __init__(self, fields_group=None):
+        """
+        参数
+        ----------
+        fields_group :
+            要处理的字段组名称。
+        """
         self.fields_group = fields_group
 
     def __call__(self, df):
@@ -104,15 +109,27 @@ class DropnaProcessor(Processor):
 
 class DropnaLabel(DropnaProcessor):
     def __init__(self, fields_group="label"):
+        """
+        参数
+        ----------
+        fields_group : str, 默认"label"
+            标签字段组名称。
+        """
         super().__init__(fields_group=fields_group)
 
     def is_for_infer(self) -> bool:
-        """The samples are dropped according to label. So it is not usable for inference"""
+        """根据标签删除样本，因此不可用于推理"""
         return False
 
 
 class DropCol(Processor):
     def __init__(self, col_list=[]):
+        """
+        参数
+        ----------
+        col_list : list, 默认[]
+            要删除的列名列表。
+        """
         self.col_list = col_list
 
     def __call__(self, df):
@@ -128,6 +145,14 @@ class DropCol(Processor):
 
 class FilterCol(Processor):
     def __init__(self, fields_group="feature", col_list=[]):
+        """
+        参数
+        ----------
+        fields_group : str, 默认"feature"
+            要筛选的字段组名称。
+        col_list : list, 默认[]
+            要保留的列名列表。
+        """
         self.fields_group = fields_group
         self.col_list = col_list
 
@@ -144,7 +169,7 @@ class FilterCol(Processor):
 
 
 class TanhProcess(Processor):
-    """Use tanh to process noise data"""
+    """使用tanh处理噪声数据"""
 
     def __call__(self, df):
         def tanh_denoise(data):
@@ -159,13 +184,13 @@ class TanhProcess(Processor):
 
 
 class ProcessInf(Processor):
-    """Process infinity"""
+    """处理无穷大值"""
 
     def __call__(self, df):
         def replace_inf(data):
             def process_inf(df):
                 for col in df.columns:
-                    # FIXME: Such behavior is very weird
+                    # FIXME: 这种行为非常奇怪
                     df[col] = df[col].replace([np.inf, -np.inf], df[col][~np.isinf(df[col])].mean())
                 return df
 
@@ -177,9 +202,17 @@ class ProcessInf(Processor):
 
 
 class Fillna(Processor):
-    """Process NaN"""
+    """处理NaN值"""
 
     def __init__(self, fields_group=None, fill_value=0):
+        """
+        参数
+        ----------
+        fields_group :
+            要填充的字段组名称，为None时填充所有字段。
+        fill_value : int, 默认0
+            用于填充NaN的值。
+        """
         self.fields_group = fields_group
         self.fill_value = fill_value
 
@@ -195,8 +228,18 @@ class Fillna(Processor):
 
 class MinMaxNorm(Processor):
     def __init__(self, fit_start_time, fit_end_time, fields_group=None):
-        # NOTE: correctly set the `fit_start_time` and `fit_end_time` is very important !!!
-        # `fit_end_time` **must not** include any information from the test data!!!
+        """
+        参数
+        ----------
+        fit_start_time :
+            拟合数据的开始时间。
+        fit_end_time :
+            拟合数据的结束时间。
+        fields_group :
+            要归一化的字段组名称。
+        """
+        # 注意：正确设置`fit_start_time`和`fit_end_time`非常重要！！！
+        # `fit_end_time`**绝对不能**包含测试数据的任何信息！！！
         self.fit_start_time = fit_start_time
         self.fit_end_time = fit_end_time
         self.fields_group = fields_group

@@ -41,7 +41,7 @@ class QlibCacheException(RuntimeError):
 
 
 class MemCacheUnit(abc.ABC):
-    """Memory Cache Unit."""
+    """内存缓存单元。"""
 
     def __init__(self, *args, **kwargs):
         self.size_limit = kwargs.pop("size_limit", 0)
@@ -49,14 +49,14 @@ class MemCacheUnit(abc.ABC):
         self.od = OrderedDict()
 
     def __setitem__(self, key, value):
-        # TODO: thread safe?__setitem__ failure might cause inconsistent size?
+        # TODO: 线程安全吗？__setitem__失败可能导致大小不一致？
 
-        # precalculate the size after od.__setitem__
+        # 在od.__setitem__之后预先计算大小
         self._adjust_size(key, value)
 
         self.od.__setitem__(key, value)
 
-        # move the key to end,make it latest
+        # 将键移至末尾，使其成为最新的
         self.od.move_to_end(key)
 
         if self.limited:
@@ -83,7 +83,7 @@ class MemCacheUnit(abc.ABC):
 
     @property
     def limited(self):
-        """whether memory cache is limited"""
+        """内存缓存是否有限制"""
         return self.size_limit > 0
 
     @property
@@ -134,17 +134,17 @@ class MemCacheSizeofUnit(MemCacheUnit):
 
 
 class MemCache:
-    """Memory cache."""
+    """内存缓存。"""
 
     def __init__(self, mem_cache_size_limit=None, limit_type="length"):
         """
 
-        Parameters
+        参数
         ----------
         mem_cache_size_limit:
-            cache max size.
+            缓存最大大小。
         limit_type:
-            length or sizeof; length(call fun: len), size(call fun: sys.getsizeof).
+            length或sizeof；length（调用函数：len），size（调用函数：sys.getsizeof）。
         """
 
         size_limit = C.mem_cache_size_limit if mem_cache_size_limit is None else mem_cache_size_limit
@@ -169,7 +169,7 @@ class MemCache:
         elif key == "f":
             return self.__feature_mem_cache
         else:
-            raise KeyError("Unknown memcache unit")
+            raise KeyError("未知的内存缓存单元")
 
     def clear(self):
         self.__calendar_mem_cache.clear()
@@ -182,21 +182,21 @@ class MemCacheExpire:
 
     @staticmethod
     def set_cache(mem_cache, key, value):
-        """set cache
+        """设置缓存
 
-        :param mem_cache: MemCache attribute('c'/'i'/'f').
-        :param key: cache key.
-        :param value: cache value.
+        :param mem_cache: MemCache属性('c'/'i'/'f')。
+        :param key: 缓存键。
+        :param value: 缓存值。
         """
         mem_cache[key] = value, time.time()
 
     @staticmethod
     def get_cache(mem_cache, key):
-        """get mem cache
+        """获取内存缓存
 
-        :param mem_cache: MemCache attribute('c'/'i'/'f').
-        :param key: cache key.
-        :return: cache value; if cache not exist, return None.
+        :param mem_cache: MemCache属性('c'/'i'/'f')。
+        :param key: 缓存键。
+        :return: 缓存值；如果缓存不存在，返回None。
         """
         value = None
         expire = False

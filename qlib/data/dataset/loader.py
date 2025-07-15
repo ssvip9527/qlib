@@ -71,7 +71,7 @@ class DLWParser(DataLoader):
         Parameters
         ----------
         config : Union[list, tuple, dict]
-            Config will be used to describe the fields and column names
+            用于描述字段和列名的配置
 
             .. code-block::
 
@@ -83,7 +83,7 @@ class DLWParser(DataLoader):
                 <config> := <fields_info>
 
                 <fields_info> := ["expr", ...] | (["expr", ...], ["col_name", ...])
-                # NOTE: list or tuple will be treated as the things when parsing
+                # 注意：列表或元组在解析时将被视为上述结构
         """
         self.is_group = isinstance(config, dict)
 
@@ -170,12 +170,12 @@ class QlibDataLoader(DLWParser):
             Filter pipe for the instruments
         swap_level :
             Whether to swap level of MultiIndex
-        freq:  dict or str
-            If type(config) == dict and type(freq) == str, load config data using freq.
-            If type(config) == dict and type(freq) == dict, load config[<group_name>] data using freq[<group_name>]
+        freq:  dict或str
+            如果type(config) == dict且type(freq) == str，使用freq加载配置数据。
+            如果type(config) == dict且type(freq) == dict，使用freq[<group_name>]加载config[<group_name>]数据
         inst_processors: dict | list
-            If inst_processors is not None and type(config) == dict; load config[<group_name>] data using inst_processors[<group_name>]
-            If inst_processors is a list, then it will be applied to all groups.
+            如果inst_processors不为None且type(config) == dict；使用inst_processors[<group_name>]加载config[<group_name>]数据
+            如果inst_processors是列表，则将应用于所有组。
         """
         self.filter_pipe = filter_pipe
         self.swap_level = swap_level

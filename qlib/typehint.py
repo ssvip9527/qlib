@@ -17,47 +17,47 @@ else:
 
 class InstDictConf(TypedDict):
     """
-    InstDictConf  is a Dict-based config to describe an instance
+    InstDictConf 是一个基于字典的配置，用于描述一个实例
 
-        case 1)
+        案例 1)
         {
             'class': 'ClassName',
-            'kwargs': dict, #  It is optional. {} will be used if not given
-            'model_path': path, # It is optional if module is given in the class
+            'kwargs': dict, # 可选参数。如果未提供，将使用{}
+            'model_path': path, # 如果类中已指定模块，则可选
         }
-        case 2)
+        案例 2)
         {
-            'class': <The class it self>,
-            'kwargs': dict, #  It is optional. {} will be used if not given
+            'class': <类本身>,
+            'kwargs': dict, # 可选参数。如果未提供，将使用{}
         }
     """
 
     # class: str  # because class is a keyword of Python. We have to comment it
-    kwargs: dict  # It is optional. {} will be used if not given
-    module_path: str  # It is optional if module is given in the class
+    kwargs: dict  # 可选参数。如果未提供，将使用{}
+    module_path: str  # 如果类中已指定模块，则可选
 
 
 InstConf = Union[InstDictConf, str, object, Path]
 """
-InstConf is a type to describe an instance; it will be passed into init_instance_by_config for Qlib
+InstConf是用于描述实例的类型；它将被传入Qlib的init_instance_by_config函数
 
     config : Union[str, dict, object, Path]
 
-        InstDictConf example.
-            please refer to the docs of InstDictConf
+        InstDictConf示例：
+            请参考InstDictConf的文档
 
-        str example.
-            1) specify a pickle object
-                - path like 'file:///<path to pickle file>/obj.pkl'
-            2) specify a class name
-                - "ClassName":  getattr(module, "ClassName")() will be used.
-            3) specify module path with class name
-                - "a.b.c.ClassName" getattr(<a.b.c.module>, "ClassName")() will be used.
+        字符串示例：
+            1) 指定pickle对象
+                - 路径格式如'file:///<pickle文件路径>/obj.pkl'
+            2) 指定类名
+                - "ClassName": 将使用getattr(module, "ClassName")()
+            3) 指定包含类名的模块路径
+                - "a.b.c.ClassName": 将使用getattr(<a.b.c.module>, "ClassName")()
 
-        object example:
-            instance of accept_types
+        对象示例：
+            accept_types的实例
 
-        Path example:
-            specify a pickle object
-                - it will be treated like 'file:///<path to pickle file>/obj.pkl'
+        Path示例：
+            指定pickle对象
+                - 将被视为'file:///<pickle文件路径>/obj.pkl'
 """

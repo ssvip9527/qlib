@@ -22,21 +22,33 @@ def get_benchmark_weight(
     path=None,
     freq="day",
 ):
-    """get_benchmark_weight
+    """获取基准指数的股票权重分布
 
-    get the stock weight distribution of the benchmark
+    参数
+    ----------
+    bench : str
+        基准指数代码
+    start_date : str, optional
+        开始日期
+    end_date : str, optional
+        结束日期
+    path : str, optional
+        权重数据文件路径
+    freq : str, optional
+        数据频率，默认为'day'
 
-    :param bench:
-    :param start_date:
-    :param end_date:
-    :param path:
-    :param freq:
+    返回值
+    ----------
+    pd.DataFrame
+        基准指数的权重分布数据框
+        - 每行对应一个交易日
+        - 每列对应一只股票
+        - 每个单元格表示该股票在基准中的权重
 
-    :return: The weight distribution of the the benchmark described by a pandas dataframe
-             Every row corresponds to a trading day.
-             Every column corresponds to a stock.
-             Every cell represents the strategy.
-
+    注意事项
+    ----------
+    - 权重数据存储方式需要改进
+    - 基准指数与文件名中的索引可能不一致
     """
     if not path:
         path = Path(C.dpm.get_data_uri(freq)).expanduser() / "raw" / "AIndexMembers" / "weights.csv"
@@ -54,9 +66,21 @@ def get_benchmark_weight(
 
 
 def get_stock_weight_df(positions):
-    """get_stock_weight_df
-    :param positions: Given a positions from backtest result.
-    :return:          A weight distribution for the position
+    """
+    获取投资组合的股票权重分布
+
+    参数
+    ----------
+    positions : dict
+        回测结果中的持仓字典
+        
+    返回值
+    ----------
+    pd.DataFrame
+        投资组合的权重分布数据框
+        - 每行对应一个交易日
+        - 每列对应一只股票
+        - 每个单元格表示该股票在投资组合中的权重
     """
     stock_weight = []
     index = []
@@ -70,30 +94,41 @@ def get_stock_weight_df(positions):
 
 
 def decompose_portofolio_weight(stock_weight_df, stock_group_df):
-    """decompose_portofolio_weight
+    """
+    分解投资组合权重到各分组
 
-    '''
-    :param stock_weight_df: a pandas dataframe to describe the portofolio by weight.
-                    every row corresponds to a  day
-                    every column corresponds to a stock.
-                    Here is an example below.
-                    code        SH600004  SH600006  SH600017  SH600022  SH600026  SH600037  \
-                    date
-                    2016-01-05  0.001543  0.001570  0.002732  0.001320  0.003000       NaN
-                    2016-01-06  0.001538  0.001569  0.002770  0.001417  0.002945       NaN
-                    ....
-    :param stock_group_df: a pandas dataframe to describe  the stock group.
-                    every row corresponds to a  day
-                    every column corresponds to a stock.
-                    the value in the cell repreponds the group id.
-                    Here is a example by for stock_group_df for industry. The value is the industry code
-                    instrument  SH600000  SH600004  SH600005  SH600006  SH600007  SH600008  \
-                    datetime
-                    2016-01-05  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
-                    2016-01-06  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
-                    ...
-    :return:        Two dict will be returned.  The group_weight and the stock_weight_in_group.
-                    The key is the group. The value is a Series or Dataframe to describe the weight of group or weight of stock
+    参数
+    ----------
+    stock_weight_df : pd.DataFrame
+        描述投资组合权重的数据框
+        - 每行对应一个交易日
+        - 每列对应一只股票
+        - 示例:
+            code        SH600004  SH600006  SH600017  SH600022  SH600026  SH600037  \
+            date
+            2016-01-05  0.001543  0.001570  0.002732  0.001320  0.003000       NaN
+            2016-01-06  0.001538  0.001569  0.002770  0.001417  0.002945       NaN
+    stock_group_df : pd.DataFrame
+        描述股票分组的数据框
+        - 每行对应一个交易日
+        - 每列对应一只股票
+        - 单元格值为分组ID
+        - 示例(行业分组):
+            instrument  SH600000  SH600004  SH600005  SH600006  SH600007  SH600008  \
+            datetime
+            2016-01-05  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
+            2016-01-06  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
+
+    返回值
+    ----------
+    tuple
+        包含两个字典的元组:
+        1. group_weight: 分组权重字典
+           - 键: 分组ID
+           - 值: 描述该分组权重的Series
+        2. stock_weight_in_group: 组内股票权重字典
+           - 键: 分组ID
+           - 值: 描述组内各股票权重的DataFrame
     """
     all_group = np.unique(stock_group_df.values.flatten())
     all_group = all_group[~np.isnan(all_group)]
@@ -109,48 +144,63 @@ def decompose_portofolio_weight(stock_weight_df, stock_group_df):
 
 def decompose_portofolio(stock_weight_df, stock_group_df, stock_ret_df):
     """
-    :param stock_weight_df: a pandas dataframe to describe the portofolio by weight.
-                    every row corresponds to a  day
-                    every column corresponds to a stock.
-                    Here is an example below.
-                    code        SH600004  SH600006  SH600017  SH600022  SH600026  SH600037  \
-                    date
-                    2016-01-05  0.001543  0.001570  0.002732  0.001320  0.003000       NaN
-                    2016-01-06  0.001538  0.001569  0.002770  0.001417  0.002945       NaN
-                    2016-01-07  0.001555  0.001546  0.002772  0.001393  0.002904       NaN
-                    2016-01-08  0.001564  0.001527  0.002791  0.001506  0.002948       NaN
-                    2016-01-11  0.001597  0.001476  0.002738  0.001493  0.003043       NaN
-                    ....
+    分解投资组合到分组权重和分组收益
 
-    :param stock_group_df: a pandas dataframe to describe  the stock group.
-                    every row corresponds to a  day
-                    every column corresponds to a stock.
-                    the value in the cell repreponds the group id.
-                    Here is a example by for stock_group_df for industry. The value is the industry code
-                    instrument  SH600000  SH600004  SH600005  SH600006  SH600007  SH600008  \
-                    datetime
-                    2016-01-05  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
-                    2016-01-06  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
-                    2016-01-07  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
-                    2016-01-08  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
-                    2016-01-11  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
-                    ...
+    参数
+    ----------
+    stock_weight_df : pd.DataFrame
+        描述投资组合权重的数据框
+        - 每行对应一个交易日
+        - 每列对应一只股票
+        - 示例:
+            code        SH600004  SH600006  SH600017  SH600022  SH600026  SH600037  \
+            date
+            2016-01-05  0.001543  0.001570  0.002732  0.001320  0.003000       NaN
+            2016-01-06  0.001538  0.001569  0.002770  0.001417  0.002945       NaN
+            2016-01-07  0.001555  0.001546  0.002772  0.001393  0.002904       NaN
+            2016-01-08  0.001564  0.001527  0.002791  0.001506  0.002948       NaN
+            2016-01-11  0.001597  0.001476  0.002738  0.001493  0.003043       NaN
 
-    :param stock_ret_df:   a pandas dataframe to describe the stock return.
-                    every row corresponds to a day
-                    every column corresponds to a stock.
-                    the value in the cell repreponds the return of the group.
-                    Here is a example by for stock_ret_df.
-                    instrument  SH600000  SH600004  SH600005  SH600006  SH600007  SH600008  \
-                    datetime
-                    2016-01-05  0.007795  0.022070  0.099099  0.024707  0.009473  0.016216
-                    2016-01-06 -0.032597 -0.075205 -0.098361 -0.098985 -0.099707 -0.098936
-                    2016-01-07 -0.001142  0.022544  0.100000  0.004225  0.000651  0.047226
-                    2016-01-08 -0.025157 -0.047244 -0.038567 -0.098177 -0.099609 -0.074408
-                    2016-01-11  0.023460  0.004959 -0.034384  0.018663  0.014461  0.010962
-                    ...
+    stock_group_df : pd.DataFrame
+        描述股票分组的数据框
+        - 每行对应一个交易日
+        - 每列对应一只股票
+        - 单元格值为分组ID
+        - 示例(行业分组):
+            instrument  SH600000  SH600004  SH600005  SH600006  SH600007  SH600008  \
+            datetime
+            2016-01-05  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
+            2016-01-06  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
+            2016-01-07  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
+            2016-01-08  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
+            2016-01-11  801780.0  801170.0  801040.0  801880.0  801180.0  801160.0
 
-    :return: It will decompose the portofolio to the group weight and group return.
+    stock_ret_df : pd.DataFrame
+        描述股票收益的数据框
+        - 每行对应一个交易日
+        - 每列对应一只股票
+        - 单元格值为股票收益
+        - 示例:
+            instrument  SH600000  SH600004  SH600005  SH600006  SH600007  SH600008  \
+            datetime
+            2016-01-05  0.007795  0.022070  0.099099  0.024707  0.009473  0.016216
+            2016-01-06 -0.032597 -0.075205 -0.098361 -0.098985 -0.099707 -0.098936
+            2016-01-07 -0.001142  0.022544  0.100000  0.004225  0.000651  0.047226
+            2016-01-08 -0.025157 -0.047244 -0.038567 -0.098177 -0.099609 -0.074408
+            2016-01-11  0.023460  0.004959 -0.034384  0.018663  0.014461  0.010962
+
+    返回值
+    ----------
+    tuple
+        包含两个数据框的元组:
+        1. group_weight_df: 分组权重数据框
+        2. group_ret_df: 分组收益数据框
+
+    实现逻辑
+    ----------
+    1. 首先调用decompose_portofolio_weight获取分组权重和组内股票权重
+    2. 计算每个分组的收益
+    3. 处理无权重分配时的收益为NaN的情况
     """
     all_group = np.unique(stock_group_df.values.flatten())
     all_group = all_group[~np.isnan(all_group)]
@@ -177,19 +227,33 @@ def decompose_portofolio(stock_weight_df, stock_group_df, stock_ret_df):
 
 
 def get_daily_bin_group(bench_values, stock_values, group_n):
-    """get_daily_bin_group
-    Group the values of the stocks of benchmark into several bins in a day.
-    Put the stocks into these bins.
+    """
+    根据基准股票值进行每日分组
 
-    :param bench_values: A series contains the value of stocks in benchmark.
-                         The index is the stock code.
-    :param stock_values: A series contains the value of stocks of your portofolio
-                         The index is the stock code.
-    :param group_n:      Bins will be produced
+    参数
+    ----------
+    bench_values : pd.Series
+        基准股票值序列
+        - 索引为股票代码
+    stock_values : pd.Series
+        投资组合股票值序列
+        - 索引为股票代码
+    group_n : int
+        分组数量
 
-    :return:             A series with the same size and index as the stock_value.
-                         The value in the series is the group id of the bins.
-                         The No.1 bin contains the biggest values.
+    返回值
+    ----------
+    pd.Series
+        分组结果序列
+        - 与stock_values相同大小和索引
+        - 值为分组ID(1到group_n)
+        - 第1组包含最大值
+
+    实现逻辑
+    ----------
+    1. 根据基准股票值计算分位数分割点
+    2. 将投资组合股票分配到对应分组
+    3. 处理边界值为无穷大
     """
     stock_group = stock_values.copy()
 
@@ -232,20 +296,34 @@ def brinson_pa(
     deal_price="vwap",
     freq="day",
 ):
-    """brinson profit attribution
+    """Brinson收益归因分析
 
-    :param positions: The position produced by the backtest class
-    :param bench: The benchmark for comparing. TODO: if no benchmark is set, the equal-weighted is used.
-    :param group_field: The field used to set the group for assets allocation.
-                        `industry` and `market_value` is often used.
-    :param group_method: 'category' or 'bins'. The method used to set the group for asstes allocation
-                         `bin` will split the value into `group_n` bins and each bins represents a group
-    :param group_n: . Only used when group_method == 'bins'.
+    参数
+    ----------
+    positions : dict
+        回测类产生的持仓字典
+    bench : str, optional
+        用于比较的基准指数，默认为'SH000905'
+        TODO: 如果未设置基准，则使用等权重
+    group_field : str, optional
+        用于资产分组的字段，默认为'industry'
+                        `industry`和`market_value`是常用字段
+    group_method : str, optional
+        分组方法，可选'category'或'bins'，默认为'category'
+        用于设置资产分配的分组方法
+         `bin`方法会将值分成`group_n`个区间，每个区间代表一个分组
+    group_n : int, optional
+        分组数量，仅在group_method=='bins'时使用
 
-    :return:
-        A dataframe with three columns: RAA(excess Return of Assets Allocation),  RSS(excess Return of Stock Selectino),  RTotal(Total excess Return)
-                                        Every row corresponds to a trading day, the value corresponds to the next return for this trading day
-        The middle info of brinson profit attribution
+    返回值
+    ----------
+    pd.DataFrame
+        包含三列的数据框：
+        - RAA(资产配置超额收益)
+        - RSS(个股选择超额收益)
+        - RTotal(总超额收益)
+        每行对应一个交易日，值对应下一个交易日的收益
+        Brinson收益归因分析的中间信息
     """
     # group_method will decide how to group the group_field.
     dates = sorted(positions.keys())

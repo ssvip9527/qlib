@@ -12,25 +12,25 @@ if TYPE_CHECKING:
 def get_level_index(df: pd.DataFrame, level: Union[str, int]) -> int:
     """
 
-    get the level index of `df` given `level`
+    获取给定`level`在`df`中的级别索引
 
-    Parameters
+    参数
     ----------
     df : pd.DataFrame
-        data
+        数据
     level : Union[str, int]
-        index level
+        索引级别
 
-    Returns
+    返回
     -------
     int:
-        The level index in the multiple index
+        多级索引中的级别索引
     """
     if isinstance(level, str):
         try:
             return df.index.names.index(level)
         except (AttributeError, ValueError):
-            # NOTE: If level index is not given in the data, the default level index will be ('datetime', 'instrument')
+            # 注意：如果数据中未指定级别索引，默认级别索引将为('datetime', 'instrument')
             return ("datetime", "instrument").index(level)
     elif isinstance(level, int):
         return level
@@ -45,21 +45,22 @@ def fetch_df_by_index(
     fetch_orig=True,
 ) -> pd.DataFrame:
     """
-    fetch data from `data` with `selector` and `level`
+    使用`selector`和`level`从`data`中获取数据
 
-    selector are assumed to be well processed.
-    `fetch_df_by_index` is only responsible for get the right level
+        假设selector已被正确处理。
+        `fetch_df_by_index`仅负责获取正确的级别
 
-    Parameters
+    参数
     ----------
-    selector : Union[pd.Timestamp, slice, str, list]
-        selector
+    selector : Union[pd.Timestamp, slice, str, list, pd.Index]
+        选择器
     level : Union[int, str]
-        the level to use the selector
+        应用选择器的级别
 
-    Returns
+    返回
     -------
-    Data of the given index.
+    pd.DataFrame:
+        给定索引的数据。
     """
     # level = None -> use selector directly
     if level is None or isinstance(selector, pd.MultiIndex):
@@ -91,24 +92,24 @@ def fetch_df_by_col(df: pd.DataFrame, col_set: Union[str, List[str]]) -> pd.Data
 
 def convert_index_format(df: Union[pd.DataFrame, pd.Series], level: str = "datetime") -> Union[pd.DataFrame, pd.Series]:
     """
-    Convert the format of df.MultiIndex according to the following rules:
-        - If `level` is the first level of df.MultiIndex, do nothing
-        - If `level` is the second level of df.MultiIndex, swap the level of index.
+    根据以下规则转换df.MultiIndex的格式：
+        - 如果`level`是df.MultiIndex的第一级，则不执行任何操作
+        - 如果`level`是df.MultiIndex的第二级，则交换索引级别。
 
-    NOTE:
-        the number of levels of df.MultiIndex should be 2
+    注意：
+        df.MultiIndex的级别数应为2
 
-    Parameters
+    参数
     ----------
     df : Union[pd.DataFrame, pd.Series]
-        raw DataFrame/Series
-    level : str, optional
-        the level that will be converted to the first one, by default "datetime"
+        原始DataFrame/Series
+    level : str, 可选
+        将被转换为第一级的级别，默认为"datetime"
 
-    Returns
+    返回
     -------
     Union[pd.DataFrame, pd.Series]
-        converted DataFrame/Series
+        转换后的DataFrame/Series
     """
 
     if get_level_index(df, level=level) == 1:
@@ -118,17 +119,17 @@ def convert_index_format(df: Union[pd.DataFrame, pd.Series], level: str = "datet
 
 def init_task_handler(task: dict) -> DataHandler:
     """
-    initialize the handler part of the task **inplace**
+    **就地**初始化任务的处理器部分
 
-    Parameters
+    参数
     ----------
     task : dict
-        the task to be handled
+        要处理的任务
 
-    Returns
+    返回
     -------
     Union[DataHandler, None]:
-        returns
+        返回初始化后的处理器实例
     """
     # avoid recursive import
     from .handler import DataHandler  # pylint: disable=C0415

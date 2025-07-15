@@ -13,13 +13,13 @@ from .data import Cal, DatasetD
 
 
 class BaseDFilter(abc.ABC):
-    """Dynamic Instruments Filter Abstract class
+    """动态工具过滤器抽象类
 
-    Users can override this class to construct their own filter
+    用户可以重写此类来构建自己的过滤器
 
-    Override __init__ to input filter regulations
+    重写__init__方法以输入过滤规则
 
-    Override filter_main to use the regulations to filter instruments
+    重写filter_main方法以使用规则过滤工具
     """
 
     def __init__(self):
@@ -27,53 +27,53 @@ class BaseDFilter(abc.ABC):
 
     @staticmethod
     def from_config(config):
-        """Construct an instance from config dict.
+        """从配置字典构造实例。
 
-        Parameters
+        参数
         ----------
         config : dict
-            dict of config parameters.
+            配置参数字典。
         """
-        raise NotImplementedError("Subclass of BaseDFilter must reimplement `from_config` method")
+        raise NotImplementedError("BaseDFilter的子类必须重写`from_config`方法")
 
     @abstractmethod
     def to_config(self):
-        """Construct an instance from config dict.
+        """将实例转换为配置字典。
 
-        Returns
+        返回
         ----------
         dict
-            return the dict of config parameters.
+            返回配置参数字典。
         """
-        raise NotImplementedError("Subclass of BaseDFilter must reimplement `to_config` method")
+        raise NotImplementedError("BaseDFilter的子类必须重写`to_config`方法")
 
 
 class SeriesDFilter(BaseDFilter):
-    """Dynamic Instruments Filter Abstract class to filter a series of certain features
+    """动态工具过滤器抽象类，用于过滤特定特征的序列
 
-    Filters should provide parameters:
+    过滤器应提供以下参数：
 
-    - filter start time
-    - filter end time
-    - filter rule
+    - 过滤开始时间
+    - 过滤结束时间
+    - 过滤规则
 
-    Override __init__ to assign a certain rule to filter the series.
+    重写__init__方法以分配特定规则来过滤序列。
 
-    Override _getFilterSeries to use the rule to filter the series and get a dict of {inst => series}, or override filter_main for more advanced series filter rule
+    重写_getFilterSeries方法以使用规则过滤序列并获取{工具 => 序列}的字典，或重写filter_main以实现更高级的序列过滤规则
     """
 
     def __init__(self, fstart_time=None, fend_time=None, keep=False):
-        """Init function for filter base class.
-            Filter a set of instruments based on a certain rule within a certain period assigned by fstart_time and fend_time.
+        """过滤器基类的初始化函数。
+            在fstart_time和fend_time指定的时间段内，根据特定规则过滤一组工具。
 
-        Parameters
+        参数
         ----------
         fstart_time: str
-            the time for the filter rule to start filter the instruments.
+            过滤规则开始过滤工具的时间。
         fend_time: str
-            the time for the filter rule to stop filter the instruments.
+            过滤规则停止过滤工具的时间。
         keep: bool
-            whether to keep the instruments of which features don't exist in the filter time span.
+            是否保留在过滤时间范围内没有特征数据的工具。
         """
         super(SeriesDFilter, self).__init__()
         self.filter_start_time = pd.Timestamp(fstart_time) if fstart_time else None
@@ -81,17 +81,17 @@ class SeriesDFilter(BaseDFilter):
         self.keep = keep
 
     def _getTimeBound(self, instruments):
-        """Get time bound for all instruments.
+        """获取所有工具的时间边界。
 
-        Parameters
+        参数
         ----------
         instruments: dict
-            the dict of instruments in the form {instrument_name => list of timestamp tuple}.
+            工具字典，格式为{工具名称 => 时间戳元组列表}。
 
-        Returns
+        返回
         ----------
         pd.Timestamp, pd.Timestamp
-            the lower time bound and upper time bound of all the instruments.
+            all instruments的下限时间和上限时间。
         """
         trange = Cal.calendar(freq=self.filter_freq)
         ubound, lbound = trange[0], trange[-1]
@@ -102,20 +102,20 @@ class SeriesDFilter(BaseDFilter):
         return lbound, ubound
 
     def _toSeries(self, time_range, target_timestamp):
-        """Convert the target timestamp to a pandas series of bool value within a time range.
-            Make the time inside the target_timestamp range TRUE, others FALSE.
+        """将目标时间戳转换为时区内的pandas布尔值序列。
+            将target_timestamp范围内的时间设为TRUE，其他设为FALSE。
 
-        Parameters
+        参数
         ----------
         time_range : D.calendar
-            the time range of the instruments.
+            工具的时间范围。
         target_timestamp : list
-            the list of tuple (timestamp, timestamp).
+            时间戳元组列表(timestamp, timestamp)。
 
-        Returns
+        返回
         ----------
         pd.Series
-            the series of bool value for an instrument.
+            工具的布尔值序列。
         """
         # Construct a whole dict of {date => bool}
         timestamp_series = {timestamp: False for timestamp in time_range}
@@ -127,19 +127,19 @@ class SeriesDFilter(BaseDFilter):
         return timestamp_series
 
     def _filterSeries(self, timestamp_series, filter_series):
-        """Filter the timestamp series with filter series by using element-wise AND operation of the two series.
+        """通过两个序列的元素级AND运算，使用过滤序列过滤时间戳序列。
 
-        Parameters
+        参数
         ----------
         timestamp_series : pd.Series
-            the series of bool value indicating existing time.
+            指示存在时间的布尔值序列。
         filter_series : pd.Series
-            the series of bool value indicating filter feature.
+            指示过滤特征的布尔值序列。
 
-        Returns
+        返回
         ----------
         pd.Series
-            the series of bool value indicating whether the date satisfies the filter condition and exists in target timestamp.
+            指示日期是否满足过滤条件并存在于目标时间戳中的布尔值序列。
         """
         fstart, fend = list(filter_series.keys())[0], list(filter_series.keys())[-1]
         filter_series = filter_series.astype("bool")  # Make sure the filter_series is boolean
@@ -147,17 +147,17 @@ class SeriesDFilter(BaseDFilter):
         return timestamp_series
 
     def _toTimestamp(self, timestamp_series):
-        """Convert the timestamp series to a list of tuple (timestamp, timestamp) indicating a continuous range of TRUE.
+        """将时间戳序列转换为指示连续TRUE范围的元组列表(timestamp, timestamp)。
 
-        Parameters
+        参数
         ----------
         timestamp_series: pd.Series
-            the series of bool value after being filtered.
+            过滤后的布尔值序列。
 
-        Returns
+        返回
         ----------
         list
-            the list of tuple (timestamp, timestamp).
+            时间戳元组列表(timestamp, timestamp)。
         """
         # sort the timestamp_series according to the timestamps
         timestamp_series.sort_index()
@@ -187,15 +187,15 @@ class SeriesDFilter(BaseDFilter):
         return timestamp
 
     def __call__(self, instruments, start_time=None, end_time=None, freq="day"):
-        """Call this filter to get filtered instruments list"""
+        """调用此过滤器以获取过滤后的工具列表"""
         self.filter_freq = freq
         return self.filter_main(instruments, start_time, end_time)
 
     @abstractmethod
     def _getFilterSeries(self, instruments, fstart, fend):
-        """Get filter series based on the rules assigned during the initialization and the input time range.
+        """根据初始化时分配的规则和输入时间范围获取过滤序列。
 
-        Parameters
+        参数
         ----------
         instruments : dict
             the dict of instruments to be filtered.

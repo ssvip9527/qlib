@@ -76,184 +76,329 @@ class UserFeatureStorage(FeatureStorage):
 
 
 class BaseStorage:
+    """存储基类，提供存储名称的基本实现"""
     @property
     def storage_name(self) -> str:
+        """获取存储名称
+
+        返回:
+            str: 存储名称（小写）
+        """
         return re.findall("[A-Z][^A-Z]*", self.__class__.__name__)[-2].lower()
 
 
 class CalendarStorage(BaseStorage):
     """
-    The behavior of CalendarStorage's methods and List's methods of the same name remain consistent
+    日历存储类，其方法行为与同名的List方法保持一致
     """
 
     def __init__(self, freq: str, future: bool, **kwargs):
+        """初始化日历存储
+
+        参数:
+            freq: 频率字符串
+            future: 是否包含未来数据
+            **kwargs: 其他关键字参数
+        """
         self.freq = freq
         self.future = future
         self.kwargs = kwargs
 
     @property
     def data(self) -> Iterable[CalVT]:
-        """get all data
+        """获取所有日历数据
 
-        Raises
+        返回:
+            Iterable[CalVT]: 日历数据的可迭代对象
+
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，则引发ValueError
         """
-        raise NotImplementedError("Subclass of CalendarStorage must implement `data` method")
+        raise NotImplementedError("CalendarStorage的子类必须实现`data`方法")
 
     def clear(self) -> None:
-        raise NotImplementedError("Subclass of CalendarStorage must implement `clear` method")
+        """清空日历存储数据
+
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
+        """
+        raise NotImplementedError("CalendarStorage的子类必须实现`clear`方法")
 
     def extend(self, iterable: Iterable[CalVT]) -> None:
-        raise NotImplementedError("Subclass of CalendarStorage must implement `extend` method")
+        """扩展日历存储数据
+
+        参数:
+            iterable: 包含日历数据的可迭代对象
+
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
+        """
+        raise NotImplementedError("CalendarStorage的子类必须实现`extend`方法")
 
     def index(self, value: CalVT) -> int:
-        """
-        Raises
+        """获取日历值的索引
+
+        参数:
+            value: 日历值
+
+        返回:
+            int: 日历值在存储中的索引
+
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，则引发ValueError
+        NotImplementedError: 子类必须实现此方法
         """
-        raise NotImplementedError("Subclass of CalendarStorage must implement `index` method")
+        raise NotImplementedError("CalendarStorage的子类必须实现`index`方法")
 
     def insert(self, index: int, value: CalVT) -> None:
-        raise NotImplementedError("Subclass of CalendarStorage must implement `insert` method")
+        """在指定位置插入日历值
+
+        参数:
+            index: 插入位置
+            value: 要插入的日历值
+
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
+        """
+        raise NotImplementedError("CalendarStorage的子类必须实现`insert`方法")
 
     def remove(self, value: CalVT) -> None:
-        raise NotImplementedError("Subclass of CalendarStorage must implement `remove` method")
+        raise NotImplementedError("CalendarStorage的子类必须实现`remove`方法")
 
     @overload
     def __setitem__(self, i: int, value: CalVT) -> None:
-        """x.__setitem__(i, o) <==> (x[i] = o)"""
+        """设置指定索引位置的日历值
+
+        x.__setitem__(i, o) <==> (x[i] = o)
+
+        参数:
+            i: 索引位置
+            value: 要设置的日历值
+        """
 
     @overload
     def __setitem__(self, s: slice, value: Iterable[CalVT]) -> None:
-        """x.__setitem__(s, o) <==> (x[s] = o)"""
+        """设置切片范围内的日历值
+
+        x.__setitem__(s, o) <==> (x[s] = o)
+
+        参数:
+            s: 切片对象
+            value: 要设置的日历值可迭代对象
+        """
 
     def __setitem__(self, i, value) -> None:
         raise NotImplementedError(
-            "Subclass of CalendarStorage must implement `__setitem__(i: int, o: CalVT)`/`__setitem__(s: slice, o: Iterable[CalVT])`  method"
+            "CalendarStorage的子类必须实现`__setitem__(i: int, o: CalVT)`/`__setitem__(s: slice, o: Iterable[CalVT])`方法"
         )
 
     @overload
     def __delitem__(self, i: int) -> None:
-        """x.__delitem__(i) <==> del x[i]"""
+        """删除指定索引的日历数据
+
+        x.__delitem__(i) <==> del x[i]
+        """
 
     @overload
     def __delitem__(self, i: slice) -> None:
-        """x.__delitem__(slice(start: int, stop: int, step: int)) <==> del x[start:stop:step]"""
+        """删除切片范围内的日历数据
+        x.__delitem__(slice(start: int, stop: int, step: int)) <==> del x[start:stop:step]
+        """
 
     def __delitem__(self, i) -> None:
         """
-        Raises
+        删除指定索引或切片的日历数据
+
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，则引发ValueError
         """
         raise NotImplementedError(
-            "Subclass of CalendarStorage must implement `__delitem__(i: int)`/`__delitem__(s: slice)`  method"
+            "CalendarStorage的子类必须实现`__delitem__(i: int)`/`__delitem__(s: slice)`方法"
         )
 
     @overload
     def __getitem__(self, s: slice) -> Iterable[CalVT]:
-        """x.__getitem__(slice(start: int, stop: int, step: int)) <==> x[start:stop:step]"""
+        """获取切片范围内的日历数据
+
+        x.__getitem__(slice(start: int, stop: int, step: int)) <==> x[start:stop:step]
+
+        返回:
+            Iterable[CalVT]: 日历数据的可迭代对象
+        """
 
     @overload
     def __getitem__(self, i: int) -> CalVT:
-        """x.__getitem__(i) <==> x[i]"""
+        """获取指定索引的日历数据
+
+        x.__getitem__(i) <==> x[i]
+
+        返回:
+            CalVT: 日历值
+        """
 
     def __getitem__(self, i) -> CalVT:
         """
+        获取指定索引或切片的日历数据
 
-        Raises
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
-
+            如果数据(存储)不存在，则引发ValueError
         """
         raise NotImplementedError(
-            "Subclass of CalendarStorage must implement `__getitem__(i: int)`/`__getitem__(s: slice)`  method"
+            "CalendarStorage的子类必须实现`__getitem__(i: int)`/`__getitem__(s: slice)`方法"
         )
 
     def __len__(self) -> int:
         """
+        获取日历存储的长度
 
-        Raises
+        返回:
+            int: 日历数据的数量
+
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
-
+            如果数据(存储)不存在，则引发ValueError
         """
-        raise NotImplementedError("Subclass of CalendarStorage must implement `__len__`  method")
+        raise NotImplementedError("CalendarStorage的子类必须实现`__len__`方法")
 
 
 class InstrumentStorage(BaseStorage):
+    """证券工具存储类，用于管理证券工具的相关数据"""
     def __init__(self, market: str, freq: str, **kwargs):
+        """初始化证券工具存储
+
+        参数:
+            market: 市场名称
+            freq: 频率字符串
+            **kwargs: 其他关键字参数
+        """
         self.market = market
         self.freq = freq
         self.kwargs = kwargs
 
     @property
     def data(self) -> Dict[InstKT, InstVT]:
-        """get all data
+        """获取所有证券工具数据
 
-        Raises
+        返回:
+            Dict[InstKT, InstVT]: 证券工具数据字典，键为工具代码，值为包含起止时间的列表
+
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，则引发ValueError
         """
-        raise NotImplementedError("Subclass of InstrumentStorage must implement `data` method")
+        raise NotImplementedError("InstrumentStorage的子类必须实现`data`方法")
 
     def clear(self) -> None:
-        raise NotImplementedError("Subclass of InstrumentStorage must implement `clear` method")
+        """清空证券工具存储数据
+
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
+        """
+        raise NotImplementedError("InstrumentStorage的子类必须实现`clear`方法")
 
     def update(self, *args, **kwargs) -> None:
-        """D.update([E, ]**F) -> None.  Update D from mapping/iterable E and F.
+        """更新证券工具存储数据
 
-        Notes
+        D.update([E, ]**F) -> None. 从映射/可迭代对象E和F更新D。
+
+        注意:
         ------
-            If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
+            如果提供了E且E有.keys()方法，则执行: for k in E: D[k] = E[k]
 
-            If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
+            如果提供了E但E没有.keys()方法，则执行: for (k, v) in E: D[k] = v
 
-            In either case, this is followed by: for k, v in F.items(): D[k] = v
+            在上述两种情况下，之后都会执行: for k, v in F.items(): D[k] = v
 
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
         """
-        raise NotImplementedError("Subclass of InstrumentStorage must implement `update` method")
+        raise NotImplementedError("InstrumentStorage的子类必须实现`update`方法")
 
     def __setitem__(self, k: InstKT, v: InstVT) -> None:
-        """Set self[key] to value."""
-        raise NotImplementedError("Subclass of InstrumentStorage must implement `__setitem__` method")
+        """设置指定证券工具的数据
+
+        参数:
+            k: 证券工具代码
+            v: 证券工具的起止时间列表
+
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
+        """
+        raise NotImplementedError("InstrumentStorage的子类必须实现`__setitem__`方法")
 
     def __delitem__(self, k: InstKT) -> None:
-        """Delete self[key].
+        """删除指定证券工具的数据
 
-        Raises
+        参数:
+            k: 证券工具代码
+
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，则引发ValueError
+        NotImplementedError: 子类必须实现此方法
         """
-        raise NotImplementedError("Subclass of InstrumentStorage must implement `__delitem__` method")
+        raise NotImplementedError("InstrumentStorage的子类必须实现`__delitem__`方法")
 
     def __getitem__(self, k: InstKT) -> InstVT:
-        """x.__getitem__(k) <==> x[k]"""
-        raise NotImplementedError("Subclass of InstrumentStorage must implement `__getitem__` method")
+        """获取指定证券工具的数据
+
+        x.__getitem__(k) <==> x[k]
+
+        参数:
+            k: 证券工具代码
+
+        返回:
+            InstVT: 证券工具的起止时间列表
+
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
+        """
+        raise NotImplementedError("InstrumentStorage的子类必须实现`__getitem__`方法")
 
     def __len__(self) -> int:
         """
+        获取证券工具的数量
 
-        Raises
+        返回:
+            int: 证券工具的数量
+
+        异常:
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
-
+            如果数据(存储)不存在，则引发ValueError
         """
-        raise NotImplementedError("Subclass of InstrumentStorage must implement `__len__`  method")
+        raise NotImplementedError("InstrumentStorage的子类必须实现`__len__`方法")
 
 
 class FeatureStorage(BaseStorage):
+    """特征存储类，用于管理证券特征数据"""
     def __init__(self, instrument: str, field: str, freq: str, **kwargs):
+        """初始化特征存储
+
+        参数:
+            instrument: 证券工具代码
+            field: 特征字段名称
+            freq: 频率字符串
+            **kwargs: 其他关键字参数
+        """
         self.instrument = instrument
         self.field = field
         self.freq = freq
@@ -261,57 +406,76 @@ class FeatureStorage(BaseStorage):
 
     @property
     def data(self) -> pd.Series:
-        """get all data
+        """获取所有特征数据
 
-        Notes
+        返回:
+            pd.Series: 特征数据序列
+
+        注意:
         ------
-        if data(storage) does not exist, return empty pd.Series: `return pd.Series(dtype=np.float32)`
+        如果数据(存储)不存在，返回空的pd.Series: `return pd.Series(dtype=np.float32)`
         """
-        raise NotImplementedError("Subclass of FeatureStorage must implement `data` method")
+        raise NotImplementedError("FeatureStorage的子类必须实现`data`方法")
 
     @property
     def start_index(self) -> Union[int, None]:
-        """get FeatureStorage start index
+        """获取特征存储的起始索引
 
-        Notes
+        返回:
+            Union[int, None]: 起始索引，如果数据不存在则返回None
+
+        注意:
         -----
-        If the data(storage) does not exist, return None
+        如果数据(存储)不存在，返回None
         """
-        raise NotImplementedError("Subclass of FeatureStorage must implement `start_index` method")
+        raise NotImplementedError("FeatureStorage的子类必须实现`start_index`方法")
 
     @property
     def end_index(self) -> Union[int, None]:
-        """get FeatureStorage end index
+        """获取特征存储的结束索引
 
-        Notes
+        返回:
+            Union[int, None]: 结束索引，如果数据不存在则返回None
+
+        注意:
         -----
-        The  right index of the data range (both sides are closed)
+        数据范围的右索引（闭区间）
 
-            The next  data appending point will be  `end_index + 1`
+            下一个数据追加点为 `end_index + 1`
 
-        If the data(storage) does not exist, return None
+        如果数据(存储)不存在，返回None
         """
-        raise NotImplementedError("Subclass of FeatureStorage must implement `end_index` method")
+        raise NotImplementedError("FeatureStorage的子类必须实现`end_index`方法")
 
     def clear(self) -> None:
-        raise NotImplementedError("Subclass of FeatureStorage must implement `clear` method")
+        """清空特征存储数据
+
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
+        """
+        raise NotImplementedError("FeatureStorage的子类必须实现`clear`方法")
 
     def write(self, data_array: Union[List, np.ndarray, Tuple], index: int = None):
-        """Write data_array to FeatureStorage starting from index.
+        """将数据数组写入特征存储，从指定索引开始
 
-        Notes
+        参数:
+            data_array: 要写入的数据数组，可以是列表、numpy数组或元组
+            index: 起始索引，如果为None则追加数据
+
+        注意:
         ------
-            If index is None, append data_array to feature.
+            如果index为None，则将data_array追加到特征数据末尾
 
-            If len(data_array) == 0; return
+            如果data_array长度为0，则直接返回
 
-            If (index - self.end_index) >= 1, self[end_index+1: index] will be filled with np.nan
+            如果(index - self.end_index) >= 1，则self[end_index+1: index]区间将填充np.nan
 
-        Examples
+        示例:
         ---------
             .. code-block::
 
-                feature:
+                特征数据:
                     3   4
                     4   5
                     5   6
@@ -319,7 +483,7 @@ class FeatureStorage(BaseStorage):
 
             >>> self.write([6, 7], index=6)
 
-                feature:
+                特征数据:
                     3   4
                     4   5
                     5   6
@@ -328,7 +492,7 @@ class FeatureStorage(BaseStorage):
 
             >>> self.write([8], index=9)
 
-                feature:
+                特征数据:
                     3   4
                     4   5
                     5   6
@@ -339,7 +503,7 @@ class FeatureStorage(BaseStorage):
 
             >>> self.write([1, np.nan], index=3)
 
-                feature:
+                特征数据:
                     3   1
                     4   np.nan
                     5   6
@@ -348,20 +512,29 @@ class FeatureStorage(BaseStorage):
                     8   np.nan
                     9   8
 
+        异常:
+        ------
+        NotImplementedError: 子类必须实现此方法
         """
-        raise NotImplementedError("Subclass of FeatureStorage must implement `write` method")
+        raise NotImplementedError("FeatureStorage的子类必须实现`write`方法")
 
     def rebase(self, start_index: int = None, end_index: int = None):
-        """Rebase the start_index and end_index of the FeatureStorage.
+        """重新设置特征存储的起始索引和结束索引
 
-        start_index and end_index are closed intervals: [start_index, end_index]
+        参数:
+            start_index: 新的起始索引，默认为None（使用当前起始索引）
+            end_index: 新的结束索引，默认为None（使用当前结束索引）
 
-        Examples
+        注意:
+        ------
+        start_index和end_index构成闭区间: [start_index, end_index]
+
+        示例:
         ---------
 
             .. code-block::
 
-                    feature:
+                    特征数据:
                         3   4
                         4   5
                         5   6
@@ -369,33 +542,33 @@ class FeatureStorage(BaseStorage):
 
                 >>> self.rebase(start_index=4)
 
-                    feature:
+                    特征数据:
                         4   5
                         5   6
 
                 >>> self.rebase(start_index=3)
 
-                    feature:
+                    特征数据:
                         3   np.nan
                         4   5
                         5   6
 
                 >>> self.write([3], index=3)
 
-                    feature:
+                    特征数据:
                         3   3
                         4   5
                         5   6
 
                 >>> self.rebase(end_index=4)
 
-                    feature:
+                    特征数据:
                         3   3
                         4   5
 
                 >>> self.write([6, 7, 8], index=4)
 
-                    feature:
+                    特征数据:
                         3   3
                         4   6
                         5   7
@@ -403,15 +576,18 @@ class FeatureStorage(BaseStorage):
 
                 >>> self.rebase(start_index=4, end_index=5)
 
-                    feature:
+                    特征数据:
                         4   6
                         5   7
 
+        异常:
+        ------
+        ValueError: 如果storage.start_index或storage.end_index为None（存储可能不存在）
         """
         storage_si = self.start_index
         storage_ei = self.end_index
         if storage_si is None or storage_ei is None:
-            raise ValueError("storage.start_index or storage.end_index is None, storage may not exist")
+            raise ValueError("storage.start_index或storage.end_index为None，存储可能不存在")
 
         start_index = storage_si if start_index is None else start_index
         end_index = storage_ei if end_index is None else end_index

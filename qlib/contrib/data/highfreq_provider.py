@@ -46,10 +46,10 @@ class HighFreqProvider:
         self.freq = freq
 
     def get_pre_datasets(self):
-        """Generate the training, validation and test datasets for prediction
+        """生成用于预测的训练、验证和测试数据集
 
         Returns:
-            Tuple[BaseDataset, BaseDataset, BaseDataset]: The training and test datasets
+            Tuple[BaseDataset, BaseDataset, BaseDataset]: 训练和测试数据集
         """
 
         dict_feature_path = self.feature_conf["path"]

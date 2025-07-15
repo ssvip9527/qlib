@@ -18,7 +18,7 @@ def check_transform_proc(proc_l, fit_start_time, fit_end_time):
             if "fit_start_time" in args and "fit_end_time" in args:
                 assert (
                     fit_start_time is not None and fit_end_time is not None
-                ), "Make sure `fit_start_time` and `fit_end_time` are not None."
+                ), "确保`fit_start_time`和`fit_end_time`不为None。"
                 pkwargs.update(
                     {
                         "fit_start_time": fit_start_time,
