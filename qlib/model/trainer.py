@@ -2,13 +2,18 @@
 # Licensed under the MIT License.
 
 """
-训练器(Trainer)将训练一系列任务并返回模型记录器列表。
-每个训练器包含两个步骤：``train``(创建模型记录器)和``end_train``(修改模型记录器)。
+训练器(Trainer)用于训练一系列任务并返回模型记录器列表。
+每个训练器包含两个步骤：
+1. `train` - 创建模型记录器
+2. `end_train` - 修改模型记录器
 
-这是一个称为``DelayTrainer``的概念，可用于在线模拟并行训练。
-在``DelayTrainer``中，第一步仅保存一些必要信息到模型记录器，第二步在最后完成时可以执行一些并发且耗时的操作，如模型拟合。
+DelayTrainer是一种特殊训练器，可用于在线模拟并行训练：
+- 第一步仅保存必要信息到记录器
+- 第二步在最后执行并发耗时操作(如模型拟合)
 
-``Qlib``提供两种训练器：``TrainerR``是最简单的方式，``TrainerRM``基于TaskManager来自动管理任务生命周期。
+Qlib提供两种训练器实现：
+1. TrainerR - 基础训练器
+2. TrainerRM - 基于TaskManager自动管理任务生命周期
 """
 
 import socket
@@ -107,20 +112,20 @@ def end_task_train(rec: Recorder, experiment_name: str) -> Recorder:
 
 def task_train(task_config: dict, experiment_name: str, recorder_name: str = None) -> Recorder:
     """
-    Task based training, will be divided into two steps.
+    基于任务的训练，分为两个步骤执行
 
-    Parameters
+    参数
     ----------
     task_config : dict
-        The config of a task.
+        任务配置
     experiment_name: str
-        The name of experiment
+        实验名称
     recorder_name: str
-        The name of recorder
+        记录器名称
 
-    Returns
+    返回
     ----------
-    Recorder: The instance of the recorder
+    Recorder: 记录器实例
     """
     with R.start(experiment_name=experiment_name, recorder_name=recorder_name):
         _log_task_info(task_config)
@@ -130,8 +135,8 @@ def task_train(task_config: dict, experiment_name: str, recorder_name: str = Non
 
 class Trainer:
     """
-    The trainer can train a list of models.
-    There are Trainer and DelayTrainer, which can be distinguished by when it will finish real training.
+    训练器用于训练模型列表
+    Trainer和DelayTrainer的区别在于完成实际训练的时机不同
     """
 
     def __init__(self):
@@ -154,27 +159,27 @@ class Trainer:
 
     def end_train(self, models: list, *args, **kwargs) -> list:
         """
-        Given a list of models, finished something at the end of training if you need.
-        The models may be Recorder, txt file, database, and so on.
+        给定模型列表，在训练结束时完成必要操作
+        模型可能是记录器、文本文件、数据库等
 
-        For Trainer, it does some finishing touches in this method.
-        For DelayTrainer, it finishes real training in this method.
+        对于Trainer，该方法做一些收尾工作
+        对于DelayTrainer，该方法完成实际训练
 
-        Args:
-            models: a list of models
+        参数:
+            models: 模型列表
 
-        Returns:
-            list: a list of models
+        返回:
+            list: 模型列表
         """
         # do nothing if you finished all work in `train` method
         return models
 
     def is_delay(self) -> bool:
         """
-        If Trainer will delay finishing `end_train`.
+        判断训练器是否会延迟完成`end_train`
 
-        Returns:
-            bool: if DelayTrainer
+        返回:
+            bool: 是否为DelayTrainer
         """
         return self.delay
 
@@ -183,14 +188,12 @@ class Trainer:
 
     def has_worker(self) -> bool:
         """
-        Some trainer has backend worker to support parallel training
-        This method can tell if the worker is enabled.
+        判断是否启用了并行训练的后台工作器
 
-        Returns
+        返回
         -------
         bool:
-            if the worker is enabled
-
+            工作器是否启用
         """
         return False
 
