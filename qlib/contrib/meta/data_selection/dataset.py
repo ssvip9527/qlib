@@ -46,9 +46,9 @@ class InternalData:
 
         """
 
-        # 1) prepare the prediction of proxy models
-        perf_task_tpl = deepcopy(self.task_tpl)  # this task is supposed to contains no complicated objects
-        # The only thing we want to save is the prediction
+        # 1) 准备代理模型的预测
+        perf_task_tpl = deepcopy(self.task_tpl)  # 此任务不应包含复杂对象
+        # 我们只想保存预测结果
         perf_task_tpl["record"] = ["qlib.workflow.record_temp.SignalRecord"]
 
         trainer = auto_filter_kwargs(trainer)(experiment_name=self.exp_name, **trainer_kwargs)
@@ -63,29 +63,29 @@ class InternalData:
 
         seg = perf_task_tpl["dataset"]["kwargs"]["segments"]
 
-        # We want to split the training time period into small segments.
+        # 我们希望将训练时间段分割为小的片段
         perf_task_tpl["dataset"]["kwargs"]["segments"] = {
             "train": (DatasetH.get_min_time(seg), DatasetH.get_max_time(seg)),
             "test": (None, None),
         }
 
-        # NOTE:
-        # we play a trick here
-        # treat the training segments as test to create the rolling tasks
+        # 注意：
+        # 这里使用了一个技巧
+        # 将训练片段视为测试集来创建滚动任务
         rg = RollingGen(step=self.step, test_key="train", train_key=None, task_copy_func=deepcopy_basic_type)
         gen_task = task_generator(perf_task_tpl, [rg])
 
         recorders = R.list_recorders(experiment_name=self.exp_name)
         if len(gen_task) == len(recorders):
-            get_module_logger("Internal Data").info("the data has been initialized")
+            get_module_logger("Internal Data").info("数据已初始化")
         else:
             # train new models
-            assert 0 == len(recorders), "An empty experiment is required for setup `InternalData`"
+            assert 0 == len(recorders), "设置`InternalData`需要一个空的实验"
             trainer.train(gen_task)
 
-        # 2) extract the similarity matrix
+        # 2) 提取相似度矩阵
         label_df = self.dh.fetch(col_set="label")
-        # for
+        # 循环
         recorders = R.list_recorders(experiment_name=self.exp_name)
 
         key_l = []
@@ -268,35 +268,35 @@ class MetaDatasetDS(MetaTaskDataset):
         Parameters
         ----------
         task_tpl : Union[dict, list]
-            Decide what tasks are used.
-            - dict : the task template, the prepared task is generated with `step`, `trunc_days` and `RollingGen`
-            - list : when list, use the list of tasks directly
-                     the list is supposed to be sorted according timeline
+            决定使用哪些任务。
+            - dict：任务模板，准备好的任务通过`step`、`trunc_days`和`RollingGen`生成
+            - list：当为列表时，直接使用任务列表
+                     列表应按时间线排序
         step : int
-            the rolling step
+            滚动步长
         trunc_days: int
-            days to be truncated based on the test start
+            基于测试开始时间截断的天数
         rolling_ext_days: int
-            sometimes users want to train meta models for a longer test period but with smaller rolling steps for more task samples.
-            the total length of test periods will be `step + rolling_ext_days`
+            有时用户希望为更长的测试周期训练元模型，但使用更小的滚动步长以获取更多任务样本。
+            测试周期的总长度将为`step + rolling_ext_days`
 
         exp_name : Union[str, InternalData]
-            Decide what meta_info are used for prediction.
-            - str: the name of the experiment to store the performance of data
-            - InternalData: a prepared internal data
+            决定用于预测的元信息。
+            - str：存储数据表现的实验名称
+            - InternalData：已准备好的内部数据
         segments: Union[Dict[Text, Tuple], float]
-            if the segment is a Dict
-                the segments to divide data
-                both left and right are included
-            if segments is a float:
-                the float represents the percentage of data for training
-            if segments is a string:
-                it will try its best to put its data in training and ensure that the date `segments` is in the test set
+            如果为字典
+                用于划分数据的片段
+                左右边界均包含在内
+            如果为浮点数：
+                表示用于训练的数据百分比
+            如果为字符串：
+                将尽力将数据放入训练集，并确保日期`segments`在测试集中
         hist_step_n: int
-            length of historical steps for the meta infomation
-            Number of steps of the data similarity information
+            元信息的历史步数长度
+            数据相似度信息的步数
         task_mode : str
-            Please refer to the docs of MetaTask
+            请参考MetaTask的文档
         """
         super().__init__(segments=segments)
         if isinstance(exp_name, InternalData):
@@ -304,7 +304,7 @@ class MetaDatasetDS(MetaTaskDataset):
         else:
             self.internal_data = InternalData(task_tpl, step=step, exp_name=exp_name)
             self.internal_data.setup()
-        self.task_tpl = deepcopy(task_tpl)  # FIXME: if the handler is shared, how to avoid the explosion of the memroy.
+        self.task_tpl = deepcopy(task_tpl)  # FIXME: 如果处理器被共享，如何避免内存爆炸。
         self.trunc_days = trunc_days
         self.hist_step_n = hist_step_n
         self.step = step
@@ -312,7 +312,7 @@ class MetaDatasetDS(MetaTaskDataset):
         if isinstance(task_tpl, dict):
             rg = RollingGen(
                 step=step, trunc_days=trunc_days, task_copy_func=deepcopy_basic_type
-            )  # NOTE: trunc_days is very important !!!!
+            )  # 注意：trunc_days非常重要！！！！
             task_iter = rg(task_tpl)
             if rolling_ext_days > 0:
                 self.ta = TimeAdjuster(future=True)
@@ -331,8 +331,8 @@ class MetaDatasetDS(MetaTaskDataset):
         self.task_list = []
         self.meta_task_l = []
         logger = get_module_logger("MetaDatasetDS")
-        logger.info(f"Example task for training meta model: {task_iter[0]}")
-        for t in tqdm(task_iter, desc="creating meta tasks"):
+        logger.info(f"训练元模型的示例任务: {task_iter[0]}")
+        for t in tqdm(task_iter, desc="创建元任务"):
             try:
                 self.meta_task_l.append(
                     MetaTaskDS(t, meta_info=self._prepare_meta_ipt(t), mode=task_mode, fill_method=fill_method)
@@ -344,19 +344,19 @@ class MetaDatasetDS(MetaTaskDataset):
 
     def _prepare_meta_ipt(self, task) -> pd.DataFrame:
         """
-        Please refer to `self.internal_data.setup` for detailed information about `self.internal_data.data_ic_df`
+        请参考`self.internal_data.setup`获取关于`self.internal_data.data_ic_df`的详细信息
 
-        Indices with format below can be successfully sliced by  `ic_df.loc[:end, pd.IndexSlice[:, :end]]`
+        以下格式的索引可以通过`ic_df.loc[:end, pd.IndexSlice[:, :end]]`成功切片
 
                2021-06-21 2021-06-04 .. 2021-03-22 2021-03-08
                2021-07-02 2021-06-18 .. 2021-04-02 None
 
-        Returns
+        返回
         -------
-            a pd.DataFrame with similar content below.
-            - each column corresponds to a trained model named by the training data range
-            - each row corresponds to a day of data tested by the models of the columns
-            - The rows cells that overlaps with the data used by columns are masked
+            一个类似以下内容的pd.DataFrame。
+            - 每列对应一个由训练数据范围命名的已训练模型
+            - 每行对应由列中模型测试的一天数据
+            - 与列所用数据重叠的行单元格被屏蔽
 
 
                        2009-01-05 2009-02-09 ... 2011-04-27 2011-05-26

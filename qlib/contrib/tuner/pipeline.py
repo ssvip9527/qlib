@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 
 # pylint: skip-file
 # flake8: noqa
@@ -49,8 +49,8 @@ class Pipeline:
 
     def init_tuner(self, tuner_index, tuner_config):
         """
-        Implement this method to build the tuner by config
-        return: tuner
+        实现此方法以通过配置构建调优器
+        return: 调优器实例
         """
         # 1. Add experiment config in tuner_config
         tuner_config["experiment"] = {

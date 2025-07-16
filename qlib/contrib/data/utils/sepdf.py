@@ -13,7 +13,7 @@ def align_index(df_dict, join):
     return res
 
 
-# Mocking the pd.DataFrame class
+# 模拟pd.DataFrame类
 class SepDataFrame:
     """
     （Sep）分离式DataFrame
@@ -96,7 +96,7 @@ class SepDataFrame:
         if not isinstance(item, tuple):
             self._df_dict[item] = df
         else:
-            # NOTE: corner case of MultiIndex
+            # 注意：MultiIndex的边界情况
             _df_dict_key, *col_name = item
             col_name = tuple(col_name)
             if _df_dict_key in self._df_dict:

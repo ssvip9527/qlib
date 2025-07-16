@@ -24,18 +24,18 @@ from ...data.dataset.weight import Reweighter
 
 
 class GRU(Model):
-    """GRU Model
+    """GRU模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -56,11 +56,11 @@ class GRU(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("GRU")
-        self.logger.info("GRU pytorch version...")
+        self.logger.info("GRU pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -77,7 +77,7 @@ class GRU(Model):
         self.seed = seed
 
         self.logger.info(
-            "GRU parameters setting:"
+            "GRU参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -129,7 +129,7 @@ class GRU(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.GRU_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.GRU_model.to(self.device)
@@ -151,7 +151,7 @@ class GRU(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask], weight[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -159,7 +159,7 @@ class GRU(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, data_loader):
         self.GRU_model.train()
@@ -245,18 +245,18 @@ class GRU(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # train
-        self.logger.info("training...")
+        # 训练
+        self.logger.info("训练中...")
         self.fitted = True
 
         for step in range(self.n_epochs):
             self.logger.info("Epoch%d:", step)
-            self.logger.info("training...")
+            self.logger.info("训练中...")
             self.train_epoch(train_loader)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(train_loader)
             val_loss, val_score = self.test_epoch(valid_loader)
-            self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
+            self.logger.info("训练集 %.6f, 验证集 %.6f" % (train_score, val_score))
             evals_result["train"].append(train_score)
             evals_result["valid"].append(val_score)
 
@@ -268,10 +268,10 @@ class GRU(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf @ %d" % (best_score, best_epoch))
         self.GRU_model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -280,7 +280,7 @@ class GRU(Model):
 
     def predict(self, dataset):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未拟合！")
 
         dl_test = dataset.prepare("test", col_set=["feature", "label"], data_key=DataHandlerLP.DK_I)
         dl_test.config(fillna_type="ffill+bfill")

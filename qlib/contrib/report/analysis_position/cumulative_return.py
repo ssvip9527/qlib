@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 
 import copy
 from typing import Iterable
@@ -20,13 +20,14 @@ def _get_cum_return_data_with_position(
     end_date=None,
 ):
     """
+    获取带有持仓信息的累积回报率数据
 
-    :param position:
-    :param report_normal:
-    :param label_data:
-    :param start_date:
-    :param end_date:
-    :return:
+    :param position: 持仓信息
+    :param report_normal: 常规报告数据框
+    :param label_data: 标签数据框
+    :param start_date: 起始日期
+    :param end_date: 结束日期
+    :return: 处理后的累积回报率数据
     """
     _cumulative_return_df = get_position_data(
         position=position,
@@ -93,14 +94,15 @@ def _get_figure_with_position(
     start_date=None,
     end_date=None,
 ) -> Iterable[go.Figure]:
-    """Get average analysis figures
+    """
+    获取平均分析图表
 
-    :param position: position
-    :param report_normal:
-    :param label_data:
-    :param start_date:
-    :param end_date:
-    :return:
+    :param position: 持仓信息
+    :param report_normal: 常规报告数据框
+    :param label_data: 标签数据框
+    :param start_date: 起始日期
+    :param end_date: 结束日期
+    :return: 平均分析图表的可迭代对象
     """
 
     cum_return_df = _get_cum_return_data_with_position(position, report_normal, label_data, start_date, end_date)

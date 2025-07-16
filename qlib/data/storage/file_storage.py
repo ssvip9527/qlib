@@ -19,15 +19,14 @@ logger = get_module_logger("file_storage")
 
 
 class FileStorageMixin:
-    """FileStorageMixin, applicable to FileXXXStorage
-    Subclasses need to have provider_uri, freq, storage_name, file_name attributes
-
+    """文件存储混合类，适用于FileXXXStorage
+    子类需要具有provider_uri、freq、storage_name、file_name属性
     """
 
-    # NOTE: provider_uri priority:
-    #   1. self._provider_uri : if provider_uri is provided.
-    #   2. provider_uri in qlib.config.C
-
+    # """注意：provider_uri的优先级：
+    #   1. self._provider_uri : 如果提供了provider_uri
+    #   2. qlib.config.C中的provider_uri
+    
     @property
     def provider_uri(self):
         return C["provider_uri"] if getattr(self, "_provider_uri", None) is None else self._provider_uri
@@ -63,7 +62,7 @@ class FileStorageMixin:
         return self.dpm.get_data_uri(self.freq).joinpath(f"{self.storage_name}s", self.file_name)
 
     def check(self):
-        """check self.uri
+        """检查self.uri
 
         Raises
         -------
@@ -88,7 +87,7 @@ class FileCalendarStorage(FileStorageMixin, CalendarStorage):
 
     @property
     def _freq_file(self) -> str:
-        """the freq to read from file"""
+        """从文件中读取的频率"""
         if not hasattr(self, "_freq_file_cache"):
             freq = Freq(self.freq)
             if freq not in self.support_freq:
@@ -104,10 +103,10 @@ class FileCalendarStorage(FileStorageMixin, CalendarStorage):
         return self._freq_file_cache
 
     def _read_calendar(self) -> List[CalVT]:
-        # NOTE:
-        # if we want to accelerate partial reading calendar
-        # we can add parameters like `skip_rows: int = 0, n_rows: int = None` to the interface.
-        # Currently, it is not supported for the txt-based calendar
+        # 注意：
+        # 如果想加速部分日历数据的读取
+        # 可以在接口中添加参数如`skip_rows: int = 0, n_rows: int = None`
+        # 目前基于txt的日历不支持此功能
 
         if not self.uri.exists():
             self._write_calendar(values=[])

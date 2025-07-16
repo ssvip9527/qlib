@@ -23,18 +23,18 @@ from .tcn import TemporalConvNet
 
 
 class TCN(Model):
-    """TCN Model
+    """TCN模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -56,11 +56,11 @@ class TCN(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("TCN")
         self.logger.info("TCN pytorch version...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.n_chans = n_chans
         self.kernel_size = kernel_size
@@ -78,7 +78,7 @@ class TCN(Model):
         self.seed = seed
 
         self.logger.info(
-            "TCN parameters setting:"
+            "TCN参数设置:"
             "\nd_feat : {}"
             "\nn_chans : {}"
             "\nkernel_size : {}"
@@ -160,7 +160,7 @@ class TCN(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, data_loader):
         self.TCN_model.train()
@@ -209,7 +209,7 @@ class TCN(Model):
         dl_train = dataset.prepare("train", col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
         dl_valid = dataset.prepare("valid", col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
 
-        # process nan brought by dataloader
+        # 处理数据加载器带来的NaN值
         dl_train.config(fillna_type="ffill+bfill")
         # process nan brought by dataloader
         dl_valid.config(fillna_type="ffill+bfill")
@@ -230,15 +230,15 @@ class TCN(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # train
-        self.logger.info("training...")
+        # 训练
+        self.logger.info("训练中...")
         self.fitted = True
 
         for step in range(self.n_epochs):
             self.logger.info("Epoch%d:", step)
             self.logger.info("training...")
             self.train_epoch(train_loader)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(train_loader)
             val_loss, val_score = self.test_epoch(valid_loader)
             self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
@@ -253,7 +253,7 @@ class TCN(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
 
         self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
@@ -265,7 +265,7 @@ class TCN(Model):
 
     def predict(self, dataset):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
 
         dl_test = dataset.prepare("test", col_set=["feature", "label"], data_key=DataHandlerLP.DK_I)
         dl_test.config(fillna_type="ffill+bfill")

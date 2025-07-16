@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 
 import pandas as pd
 
@@ -8,10 +8,11 @@ from ..graph import SubplotsGraph, BaseGraph
 
 def _calculate_maximum(df: pd.DataFrame, is_ex: bool = False):
     """
+    计算最大回撤的起始和结束日期
 
-    :param df:
-    :param is_ex:
-    :return:
+    :param df: 数据框
+    :param is_ex: 是否计算超额收益
+    :return: 起始日期和结束日期
     """
     if is_ex:
         end_date = df["cum_ex_return_wo_cost_mdd"].idxmin()
@@ -24,19 +25,20 @@ def _calculate_maximum(df: pd.DataFrame, is_ex: bool = False):
 
 def _calculate_mdd(series):
     """
-    Calculate mdd
+    计算最大回撤
 
-    :param series:
-    :return:
+    :param series: 序列数据
+    :return: 最大回撤序列
     """
     return series - series.cummax()
 
 
 def _calculate_report_data(df: pd.DataFrame) -> pd.DataFrame:
     """
+    计算报告所需数据
 
-    :param df:
-    :return:
+    :param df: 输入数据框
+    :return: 包含累积收益和回撤的报告数据框
     """
     index_names = df.index.names
     df.index = df.index.strftime("%Y-%m-%d")

@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 from functools import partial
 
 import pandas as pd
@@ -20,11 +20,12 @@ from ..utils import guess_plotly_rangebreaks
 
 def _group_return(pred_label: pd.DataFrame = None, reverse: bool = False, N: int = 5, **kwargs) -> tuple:
     """
+    按分组计算回报率
 
-    :param pred_label:
-    :param reverse:
-    :param N:
-    :return:
+    :param pred_label: 包含预测分数和标签的数据框
+    :param reverse: 是否反转分数排序方向
+    :param N: 分组数量
+    :return: 分组累积回报率图表和直方图
     """
     if reverse:
         pred_label["score"] *= -1
@@ -80,10 +81,11 @@ def _group_return(pred_label: pd.DataFrame = None, reverse: bool = False, N: int
 
 def _plot_qq(data: pd.Series = None, dist=stats.norm) -> go.Figure:
     """
+    绘制QQ图以检验数据分布
 
-    :param data:
-    :param dist:
-    :return:
+    :param data: 待检验的数据序列
+    :param dist: 参考分布，默认为正态分布
+    :return: QQ图的Plotly图表对象
     """
     # NOTE: plotly.tools.mpl_to_plotly not actively maintained, resulting in errors in the new version of matplotlib,
     # ref: https://github.com/plotly/plotly.py/issues/2913#issuecomment-730071567
@@ -120,15 +122,14 @@ def _pred_ic(
     pred_label: pd.DataFrame = None, methods: Sequence[Literal["IC", "Rank IC"]] = ("IC", "Rank IC"), **kwargs
 ) -> tuple:
     """
+    计算预测的信息系数(IC)及其可视化图表
 
-    :param pred_label: pd.DataFrame
-    must contain one column of realized return with name `label` and one column of predicted score names `score`.
-    :param methods: Sequence[Literal["IC", "Rank IC"]]
-    IC series to plot.
-    IC is sectional pearson correlation between label and score
-    Rank IC is the spearman correlation between label and score
-    For the Monthly IC, IC histogram, IC Q-Q plot.  Only the first type of IC will be plotted.
-    :return:
+    :param pred_label: pd.DataFrame，必须包含名为`label`的实际回报率列和名为`score`的预测分数列
+    :param methods: 要绘制的IC序列类型，可选值为["IC", "Rank IC"]的组合
+                    IC是label和score之间的截面皮尔逊相关系数
+                    Rank IC是label和score之间的斯皮尔曼相关系数
+                    月度IC、IC直方图和IC Q-Q图仅使用第一种IC类型绘制
+    :return: IC条形图、IC热力图和IC直方图
     """
     _methods_mapping = {"IC": "pearson", "Rank IC": "spearman"}
 
@@ -221,6 +222,13 @@ def _pred_ic(
 
 
 def _pred_autocorr(pred_label: pd.DataFrame, lag=1, **kwargs) -> tuple:
+    """
+    计算预测分数的自相关性
+
+    :param pred_label: 包含预测分数的数据框
+    :param lag: 滞后阶数，默认为1
+    :return: 自相关性图表
+    """
     pred = pred_label.copy()
     pred["score_last"] = pred.groupby(level="instrument", group_keys=False)["score"].shift(lag)
     ac = pred.groupby(level="datetime", group_keys=False).apply(
@@ -230,7 +238,7 @@ def _pred_autocorr(pred_label: pd.DataFrame, lag=1, **kwargs) -> tuple:
     ac_figure = ScatterGraph(
         _df,
         layout=dict(
-            title="Auto Correlation",
+            title="自相关性",
             xaxis=dict(tickangle=45, rangebreaks=kwargs.get("rangebreaks", guess_plotly_rangebreaks(_df.index))),
         ),
     ).figure
@@ -238,6 +246,14 @@ def _pred_autocorr(pred_label: pd.DataFrame, lag=1, **kwargs) -> tuple:
 
 
 def _pred_turnover(pred_label: pd.DataFrame, N=5, lag=1, **kwargs) -> tuple:
+    """
+    计算顶部和底部分组的换手率
+
+    :param pred_label: 包含预测分数的数据框
+    :param N: 分组数量，默认为5
+    :param lag: 滞后阶数，默认为1
+    :return: 换手率图表
+    """
     pred = pred_label.copy()
     pred["score_last"] = pred.groupby(level="instrument", group_keys=False)["score"].shift(lag)
     top = pred.groupby(level="datetime", group_keys=False).apply(
@@ -261,7 +277,7 @@ def _pred_turnover(pred_label: pd.DataFrame, N=5, lag=1, **kwargs) -> tuple:
     turnover_figure = ScatterGraph(
         r_df,
         layout=dict(
-            title="Top-Bottom Turnover",
+            title="顶部-底部换手率",
             xaxis=dict(tickangle=45, rangebreaks=kwargs.get("rangebreaks", guess_plotly_rangebreaks(r_df.index))),
         ),
     ).figure
@@ -269,13 +285,13 @@ def _pred_turnover(pred_label: pd.DataFrame, N=5, lag=1, **kwargs) -> tuple:
 
 
 def ic_figure(ic_df: pd.DataFrame, show_nature_day=True, **kwargs) -> go.Figure:
-    r"""IC figure
+    r"""信息系数(IC)图表
 
-    :param ic_df: ic DataFrame
-    :param show_nature_day: whether to display the abscissa of non-trading day
-    :param \*\*kwargs: contains some parameters to control plot style in plotly. Currently, supports
+    :param ic_df: IC数据框
+    :param show_nature_day: 是否显示非交易日的横坐标
+    :param \*\*kwargs: 包含控制Plotly图表样式的参数，目前支持
        - `rangebreaks`: https://plotly.com/python/time-series/#Hiding-Weekends-and-Holidays
-    :return: plotly.graph_objs.Figure
+    :return: plotly.graph_objs.Figure对象
     """
     if show_nature_day:
         date_index = pd.date_range(ic_df.index.min(), ic_df.index.max())

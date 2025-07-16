@@ -39,24 +39,24 @@ class SandwichModel(nn.Module):
     ):
         """Build a Sandwich model
 
-        Parameters
+        参数
         ----------
         fea_dim : int
-            The feature dimension
+            特征维度
         cnn_dim_1 : int
-            The hidden dimension of the first CNN
+            第一个CNN的隐藏维度
         cnn_dim_2 : int
-            The hidden dimension of the second CNN
+            第二个CNN的隐藏维度
         cnn_kernel_size : int
-            The size of convolutional kernels
+            卷积核大小
         rnn_dim_1 : int
-            The hidden dimension of the first KRNN
+            第一个KRNN的隐藏维度
         rnn_dim_2 : int
-            The hidden dimension of the second KRNN
+            第二个KRNN的隐藏维度
         rnn_dups : int
-            The number of parallel duplicates
+            并行副本数量
         rnn_layers: int
-            The number of RNN layers
+            RNN层数
         """
         super().__init__()
 
@@ -97,16 +97,16 @@ class SandwichModel(nn.Module):
 class Sandwich(Model):
     """Sandwich Model
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -131,11 +131,11 @@ class Sandwich(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("Sandwich")
         self.logger.info("Sandwich pytorch version...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.fea_dim = fea_dim
         self.cnn_dim_1 = cnn_dim_1
         self.cnn_dim_2 = cnn_dim_2

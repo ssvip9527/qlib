@@ -102,7 +102,7 @@ class HighFreqProvider:
         self._gen_data(self.backtest_conf)
 
     def _init_qlib(self, qlib_conf):
-        """initialize qlib"""
+        """初始化qlib"""
 
         qlib.init(
             region=REG_CN,
@@ -113,11 +113,11 @@ class HighFreqProvider:
         )
 
     def _prepare_calender_cache(self):
-        """preload the calendar for cache"""
+        """预加载日历以进行缓存"""
 
-        # This code used the copy-on-write feature of Linux
-        # to avoid calculating the calendar multiple times in the subprocess.
-        # This code may accelerate, but may be not useful on Windows and Mac Os
+        # 此代码利用Linux的写时复制特性
+        # 避免在子进程中多次计算日历
+        # 此代码可能会加速处理，但在Windows和Mac OS上可能无效
         Cal.calendar(freq=self.freq)
         get_calendar_day(freq=self.freq)
 
@@ -125,10 +125,10 @@ class HighFreqProvider:
         try:
             path = config.pop("path")
         except KeyError as e:
-            raise ValueError("Must specify the path to save the dataset.") from e
+            raise ValueError("必须指定保存数据集的路径。") from e
         if os.path.isfile(path):
             start = time.time()
-            self.logger.info(f"[{__name__}]Dataset exists, load from disk.")
+            self.logger.info(f"[{__name__}]数据集已存在，从磁盘加载。")
 
             # res = dataset.prepare(['train', 'valid', 'test'])
             with open(path, "rb") as f:
@@ -141,7 +141,7 @@ class HighFreqProvider:
         else:
             if not os.path.exists(os.path.dirname(path)):
                 os.makedirs(os.path.dirname(path))
-            self.logger.info(f"[{__name__}]Generating dataset")
+            self.logger.info(f"[{__name__}]正在生成数据集")
             start_time = time.time()
             self._prepare_calender_cache()
             dataset = init_instance_by_config(config)
@@ -160,7 +160,7 @@ class HighFreqProvider:
             with open(path[:-4] + "test.pkl", "wb") as f:
                 pkl.dump(testset, f)
             res = [data[i] for i in datasets]
-            self.logger.info(f"[{__name__}]Data generated, time cost: {(time.time() - start_time):.2f}")
+            self.logger.info(f"[{__name__}]数据集生成完成，耗时: {(time.time() - start_time):.2f}")
         return res
 
     def _gen_data(self, config, datasets=["train", "valid", "test"]):
@@ -170,7 +170,7 @@ class HighFreqProvider:
             raise ValueError("Must specify the path to save the dataset.") from e
         if os.path.isfile(path):
             start = time.time()
-            self.logger.info(f"[{__name__}]Dataset exists, load from disk.")
+            self.logger.info(f"[{__name__}]数据集已存在，从磁盘加载。")
 
             # res = dataset.prepare(['train', 'valid', 'test'])
             with open(path, "rb") as f:
@@ -200,7 +200,7 @@ class HighFreqProvider:
             raise ValueError("Must specify the path to save the dataset.") from e
         if os.path.isfile(path):
             start = time.time()
-            self.logger.info(f"[{__name__}]Dataset exists, load from disk.")
+            self.logger.info(f"[{__name__}]数据集已存在，从磁盘加载。")
 
             with open(path, "rb") as f:
                 dataset = pkl.load(f)
@@ -209,7 +209,7 @@ class HighFreqProvider:
             start = time.time()
             if not os.path.exists(os.path.dirname(path)):
                 os.makedirs(os.path.dirname(path))
-            self.logger.info(f"[{__name__}]Generating dataset")
+            self.logger.info(f"[{__name__}]正在生成数据集")
             self._prepare_calender_cache()
             dataset = init_instance_by_config(config)
             self.logger.info(f"[{__name__}]Dataset init, time cost: {time.time() - start:.2f}")
@@ -246,7 +246,7 @@ class HighFreqProvider:
 
         def generate_dataset(times):
             if os.path.isfile(path + times.strftime("%Y-%m-%d") + ".pkl"):
-                print("exist " + times.strftime("%Y-%m-%d"))
+                print("已存在 " + times.strftime("%Y-%m-%d"))
                 return
             self._init_qlib(self.qlib_conf)
             end_times = times + datetime.timedelta(days=1)
@@ -290,7 +290,7 @@ class HighFreqProvider:
 
         def generate_dataset(stock):
             if os.path.isfile(path + stock + ".pkl"):
-                print("exist " + stock)
+                print("已存在 " + stock)
                 return
             self._init_qlib(self.qlib_conf)
             new_dataset.handler.config(**{"instruments": [stock]})

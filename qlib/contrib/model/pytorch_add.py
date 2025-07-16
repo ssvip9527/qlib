@@ -27,20 +27,20 @@ from torch.autograd import Function
 
 
 class ADD(Model):
-    """ADD Model
+    """ADD模型
 
-    Parameters
+    参数
     ----------
      lr : float
-         learning rate
+         学习率
      d_feat : int
-         input dimensions for each time step
+         每个时间步的输入维度
      metric : str
-         the evaluation metric used in early stop
+         早停时使用的评估指标
      optimizer : str
-         optimizer name
+         优化器名称
      GPU : int
-         the GPU ID used for training
+         用于训练的GPU ID
     """
 
     def __init__(
@@ -65,11 +65,11 @@ class ADD(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("ADD")
-        self.logger.info("ADD pytorch version...")
+        self.logger.info("ADD pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -91,7 +91,7 @@ class ADD(Model):
         self.mu = mu
 
         self.logger.info(
-            "ADD parameters setting:"
+            "ADD参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -155,7 +155,7 @@ class ADD(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.ADD_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.ADD_model.to(self.device)
@@ -225,12 +225,12 @@ class ADD(Model):
         return rec_loss
 
     def get_daily_inter(self, df, shuffle=False):
-        # organize the train data into daily batches
+        # 将训练数据组织为每日批次
         daily_count = df.groupby(level=0, group_keys=False).size().values
         daily_index = np.roll(np.cumsum(daily_count), 1)
         daily_index[0] = 0
         if shuffle:
-            # shuffle data
+            # 打乱数据
             daily_shuffle = list(zip(daily_index, daily_count))
             np.random.shuffle(daily_shuffle)
             daily_index, daily_count = zip(*daily_shuffle)
@@ -302,6 +302,7 @@ class ADD(Model):
             cur_step += 1
 
     def log_metrics(self, mode, metrics):
+        # 记录指标信息
         metrics = ["{}/{}: {:.6f}".format(k, mode, v) for k, v in metrics.items()]
         metrics = ", ".join(metrics)
         self.logger.info(metrics)
@@ -312,17 +313,17 @@ class ADD(Model):
         best_epoch = 0
 
         # train
-        self.logger.info("training...")
+        self.logger.info("训练中...")
         self.fitted = True
         x_train_values = x_train.values
         y_train_values = np.squeeze(y_train.values)
         m_train_values = np.squeeze(m_train.values.astype(int))
 
         for step in range(self.n_epochs):
-            self.logger.info("Epoch%d:", step)
+            self.logger.info("第%d轮训练:", step)
             self.logger.info("training...")
             self.train_epoch(x_train_values, y_train_values, m_train_values)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_metrics = self.test_epoch(x_train, y_train, m_train)
             valid_metrics = self.test_epoch(x_valid, y_valid, m_valid)
             self.log_metrics("train", train_metrics)
@@ -340,15 +341,16 @@ class ADD(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
             self.ADD_model.before_adv_excess.step_alpha()
             self.ADD_model.before_adv_market.step_alpha()
-        self.logger.info("bootstrap_fit best score: {:.6f} @ {}".format(best_score, best_epoch))
+        self.logger.info("bootstrap_fit最佳分数: {:.6f} @ {}".format(best_score, best_epoch))
         self.ADD_model.load_state_dict(best_param)
         return best_score
 
     def gen_market_label(self, df, raw_label):
+        # 生成市场标签
         market_label = raw_label.groupby("datetime", group_keys=False).mean().squeeze()
         bins = [-np.inf, self.lo, self.hi, np.inf]
         market_label = pd.cut(market_label, bins, labels=False)
@@ -357,6 +359,7 @@ class ADD(Model):
         return df
 
     def fit_thresh(self, train_label):
+        # 计算市场标签阈值
         market_label = train_label.groupby("datetime", group_keys=False).mean().squeeze()
         self.lo, self.hi = market_label.quantile([1 / 3, 2 / 3])
 
@@ -385,17 +388,17 @@ class ADD(Model):
 
         evals_result["train"] = []
         evals_result["valid"] = []
-        # load pretrained base_model
+        # 加载预训练基础模型
 
         if self.base_model == "LSTM":
             pretrained_model = LSTMModel()
         elif self.base_model == "GRU":
             pretrained_model = GRUModel()
         else:
-            raise ValueError("unknown base model name `%s`" % self.base_model)
+            raise ValueError("未知的基础模型名称 `%s`" % self.base_model)
 
         if self.model_path is not None:
-            self.logger.info("Loading pretrained model...")
+            self.logger.info("加载预训练模型...")
             pretrained_model.load_state_dict(torch.load(self.model_path, map_location=self.device))
 
             model_dict = self.ADD_model.enc_excess.state_dict()
@@ -406,7 +409,7 @@ class ADD(Model):
             pretrained_dict = {k: v for k, v in pretrained_model.rnn.state_dict().items() if k in model_dict}
             model_dict.update(pretrained_dict)
             self.ADD_model.enc_market.load_state_dict(model_dict)
-            self.logger.info("Loading pretrained model Done...")
+            self.logger.info("预训练模型加载完成...")
 
         self.bootstrap_fit(x_train, y_train, m_train, x_valid, y_valid, m_valid)
 
@@ -440,6 +443,7 @@ class ADD(Model):
 
 
 class ADDModel(nn.Module):
+    """ADD模型的网络结构"""
     def __init__(
         self,
         d_feat=6,
@@ -477,7 +481,7 @@ class ADDModel(nn.Module):
                 for _ in range(2)
             ]
         else:
-            raise ValueError("unknown base model name `%s`" % base_model)
+            raise ValueError("未知的基础模型名称 `%s`" % base_model)
         self.dec = Decoder(d_feat, 2 * hidden_size, num_layers, dec_dropout, base_model)
 
         ctx_size = hidden_size * num_layers
@@ -525,6 +529,7 @@ class ADDModel(nn.Module):
 
 
 class Decoder(nn.Module):
+    """解码器网络"""
     def __init__(self, d_feat=6, hidden_size=128, num_layers=1, dropout=0.5, base_model="GRU"):
         super().__init__()
         self.base_model = base_model
@@ -558,6 +563,7 @@ class Decoder(nn.Module):
 
 
 class RevGradFunc(Function):
+    # 梯度反转函数
     @staticmethod
     def forward(ctx, input_, alpha_):
         ctx.save_for_backward(input_, alpha_)
@@ -576,9 +582,8 @@ class RevGradFunc(Function):
 class RevGrad(nn.Module):
     def __init__(self, gamma=0.1, gamma_clip=0.4, *args, **kwargs):
         """
-        A gradient reversal layer.
-        This layer has no parameters, and simply reverses the gradient
-        in the backward pass.
+        梯度反转层。
+        该层没有参数，仅在反向传播时反转梯度。
         """
         super().__init__(*args, **kwargs)
 

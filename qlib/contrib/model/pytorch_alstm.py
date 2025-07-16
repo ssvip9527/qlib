@@ -23,18 +23,18 @@ from ...data.dataset.handler import DataHandlerLP
 
 
 class ALSTM(Model):
-    """ALSTM Model
+    """ALSTM模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : int
-        the GPU ID used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -54,11 +54,11 @@ class ALSTM(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("ALSTM")
-        self.logger.info("ALSTM pytorch version...")
+        self.logger.info("ALSTM pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -74,7 +74,7 @@ class ALSTM(Model):
         self.seed = seed
 
         self.logger.info(
-            "ALSTM parameters setting:"
+            "ALSTM参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -124,7 +124,7 @@ class ALSTM(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.ALSTM_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.ALSTM_model.to(self.device)
@@ -143,7 +143,7 @@ class ALSTM(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -151,7 +151,7 @@ class ALSTM(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, x_train, y_train):
         x_train_values = x_train.values
@@ -178,7 +178,7 @@ class ALSTM(Model):
             self.train_optimizer.step()
 
     def test_epoch(self, data_x, data_y):
-        # prepare training data
+        # 准备训练数据
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
 
@@ -236,7 +236,7 @@ class ALSTM(Model):
         self.fitted = True
 
         for step in range(self.n_epochs):
-            self.logger.info("Epoch%d:", step)
+            self.logger.info("第%d轮训练:", step)
             self.logger.info("training...")
             self.train_epoch(x_train, y_train)
             self.logger.info("evaluating...")
@@ -292,6 +292,21 @@ class ALSTM(Model):
 
 
 class ALSTMModel(nn.Module):
+    """ALSTM模型的网络结构实现
+
+    参数
+    ----------
+    d_feat : int
+        输入特征维度
+    hidden_size : int
+        RNN隐藏层大小
+    num_layers : int
+        RNN层数
+    dropout : float
+        dropout比率
+    rnn_type : str
+        RNN类型，支持"GRU"或"LSTM"
+    """
     def __init__(self, d_feat=6, hidden_size=64, num_layers=2, dropout=0.0, rnn_type="GRU"):
         super().__init__()
         self.hid_size = hidden_size
@@ -305,7 +320,7 @@ class ALSTMModel(nn.Module):
         try:
             klass = getattr(nn, self.rnn_type.upper())
         except Exception as e:
-            raise ValueError("unknown rnn_type `%s`" % self.rnn_type) from e
+            raise ValueError("未知的rnn_type `%s`" % self.rnn_type) from e
         self.net = nn.Sequential()
         self.net.add_module("fc_in", nn.Linear(in_features=self.input_size, out_features=self.hid_size))
         self.net.add_module("act", nn.Tanh())
@@ -331,14 +346,14 @@ class ALSTMModel(nn.Module):
         self.att_net.add_module("att_softmax", nn.Softmax(dim=1))
 
     def forward(self, inputs):
-        # inputs: [batch_size, input_size*input_day]
+        # 输入: [批次大小, 输入特征数*输入天数]
         inputs = inputs.view(len(inputs), self.input_size, -1)
-        inputs = inputs.permute(0, 2, 1)  # [batch, input_size, seq_len] -> [batch, seq_len, input_size]
-        rnn_out, _ = self.rnn(self.net(inputs))  # [batch, seq_len, num_directions * hidden_size]
-        attention_score = self.att_net(rnn_out)  # [batch, seq_len, 1]
+        inputs = inputs.permute(0, 2, 1)  # [批次, 输入特征数, 序列长度] -> [批次, 序列长度, 输入特征数]
+        rnn_out, _ = self.rnn(self.net(inputs))  # [批次, 序列长度, 方向数 * 隐藏层大小]
+        attention_score = self.att_net(rnn_out)  # [批次, 序列长度, 1]
         out_att = torch.mul(rnn_out, attention_score)
         out_att = torch.sum(out_att, dim=1)
         out = self.fc_out(
             torch.cat((rnn_out[:, -1, :], out_att), dim=1)
-        )  # [batch, seq_len, num_directions * hidden_size] -> [batch, 1]
+        )  # [批次, 序列长度, 方向数 * 隐藏层大小] -> [批次, 1]
         return out[..., 0]

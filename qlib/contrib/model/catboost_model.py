@@ -15,10 +15,10 @@ from ...data.dataset.weight import Reweighter
 
 
 class CatBoostModel(Model, FeatureInt):
-    """CatBoost Model"""
+    """CatBoost模型"""
 
     def __init__(self, loss="RMSE", **kwargs):
-        # There are more options
+        # 还有更多选项
         if loss not in {"RMSE", "Logloss"}:
             raise NotImplementedError
         self._params = {"loss_function": loss}
@@ -41,15 +41,15 @@ class CatBoostModel(Model, FeatureInt):
             data_key=DataHandlerLP.DK_L,
         )
         if df_train.empty or df_valid.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError("数据集数据为空，请检查您的数据集配置。")
         x_train, y_train = df_train["feature"], df_train["label"]
         x_valid, y_valid = df_valid["feature"], df_valid["label"]
 
-        # CatBoost needs 1D array as its label
+        # CatBoost需要一维数组作为标签
         if y_train.values.ndim == 2 and y_train.values.shape[1] == 1:
             y_train_1d, y_valid_1d = np.squeeze(y_train.values), np.squeeze(y_valid.values)
         else:
-            raise ValueError("CatBoost doesn't support multi-label training")
+            raise ValueError("CatBoost不支持多标签训练")
 
         if reweighter is None:
             w_train = None
@@ -58,19 +58,19 @@ class CatBoostModel(Model, FeatureInt):
             w_train = reweighter.reweight(df_train).values
             w_valid = reweighter.reweight(df_valid).values
         else:
-            raise ValueError("Unsupported reweighter type.")
+            raise ValueError("不支持的重加权器类型。")
 
         train_pool = Pool(data=x_train, label=y_train_1d, weight=w_train)
         valid_pool = Pool(data=x_valid, label=y_valid_1d, weight=w_valid)
 
-        # Initialize the catboost model
+        # 初始化catboost模型
         self._params["iterations"] = num_boost_round
         self._params["early_stopping_rounds"] = early_stopping_rounds
         self._params["verbose_eval"] = verbose_eval
         self._params["task_type"] = "GPU" if get_gpu_device_count() > 0 else "CPU"
         self.model = CatBoost(self._params, **kwargs)
 
-        # train the model
+        # 训练模型
         self.model.fit(train_pool, eval_set=valid_pool, use_best_model=True, **kwargs)
 
         evals_result = self.model.get_evals_result()
@@ -79,16 +79,16 @@ class CatBoostModel(Model, FeatureInt):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if self.model is None:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         return pd.Series(self.model.predict(x_test.values), index=x_test.index)
 
     def get_feature_importance(self, *args, **kwargs) -> pd.Series:
-        """get feature importance
+        """获取特征重要性
 
-        Notes
+        注意
         -----
-            parameters references:
+            参数参考：
             https://catboost.ai/docs/concepts/python-reference_catboost_get_feature_importance.html#python-reference_catboost_get_feature_importance
         """
         return pd.Series(

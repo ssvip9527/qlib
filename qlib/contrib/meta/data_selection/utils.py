@@ -15,14 +15,14 @@ class ICLoss(nn.Module):
         self.skip_size = skip_size
 
     def forward(self, pred, y, idx):
-        """forward.
+        """前向传播。
         FIXME:
-        - Some times it will be a slightly different from the result from `pandas.corr()`
-        - It may be caused by the precision problem of model;
+        - 有时结果与`pandas.corr()`略有不同
+        - 这可能是由于模型的精度问题导致的；
 
-        :param pred:
-        :param y:
-        :param idx: Assume the level of the idx is (date, inst), and it is sorted
+        :param pred: 预测值
+        :param y: 标签值
+        :param idx: 假设索引级别为(date, inst)，且已排序
         """
         prev = None
         diff_point = []
@@ -58,7 +58,7 @@ class ICLoss(nn.Module):
             raise ValueError("No enough data for calculating IC")
         if skip_n > 0:
             get_module_logger("ICLoss").info(
-                f"{skip_n} days are skipped due to zero std or small scale of valid samples."
+                f"{skip_n}天因标准差为零或有效样本量过小而被跳过。"
             )
         ic_mean = ic_all / (len(diff_point) - 1 - skip_n)
         return -ic_mean  # ic loss
@@ -66,14 +66,14 @@ class ICLoss(nn.Module):
 
 def preds_to_weight_with_clamp(preds, clip_weight=None, clip_method="tanh"):
     """
-    Clip the weights.
+    裁剪权重。
 
-    Parameters
+    参数
     ----------
     clip_weight: float
-        The clip threshold.
+        裁剪阈值。
     clip_method: str
-        The clip method. Current available: "clamp", "tanh", and "sigmoid".
+        裁剪方法。当前可用："clamp"、"tanh"和"sigmoid"。
     """
     if clip_weight is not None:
         if clip_method == "clamp":
@@ -87,7 +87,7 @@ def preds_to_weight_with_clamp(preds, clip_weight=None, clip_method="tanh"):
                 weights = torch.ones_like(preds)
             else:
                 sm = nn.Sigmoid()
-                weights = sm(preds) * clip_weight  # TODO: The clip_weight is useless here.
+                weights = sm(preds) * clip_weight  # TODO: 此处clip_weight无用。
                 weights = weights / torch.sum(weights) * weights.numel()
         else:
             raise ValueError("Unknown clip_method")
@@ -98,7 +98,7 @@ def preds_to_weight_with_clamp(preds, clip_weight=None, clip_method="tanh"):
 
 class SingleMetaBase(nn.Module):
     def __init__(self, hist_n, clip_weight=None, clip_method="clamp"):
-        # method can be tanh or clamp
+        # 方法可以是tanh或clamp
         super().__init__()
         self.clip_weight = clip_weight
         if clip_method in ["tanh", "clamp"]:

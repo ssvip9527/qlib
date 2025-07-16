@@ -52,7 +52,7 @@ class BaseHandlerStorage:
 
 
 class NaiveDFStorage(BaseHandlerStorage):
-    """Naive data storage for datahandler
+    """数据处理器的Naive数据存储
     - NaiveDFStorage是数据处理器的简单数据存储
     - NaiveDFStorage接收pandas.DataFrame作为输入，并提供数据获取的接口支持
     """
@@ -86,7 +86,7 @@ class NaiveDFStorage(BaseHandlerStorage):
 
 
 class HashingStockStorage(BaseHandlerStorage):
-    """Hashing data storage for datahanlder
+    """数据处理器的Hashing数据存储
     - 默认数据存储pandas.DataFrame在随机访问单只股票数据时速度较慢
     - HashingStockStorage通过`stock_id`键对多只股票的数据(pandas.DataFrame)进行哈希处理
     - HashingStockStorage将pandas.DataFrame哈希为一个字典，其键为stock_id(字符串)，值为该股票的数据(pandas.DataFrame)，格式如下：

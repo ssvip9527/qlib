@@ -9,7 +9,7 @@ from libcpp.deque cimport deque
 
 
 cdef class Rolling:
-    """1-D array rolling"""
+    """一维数组滚动"""
     cdef int window
     cdef deque[double] barv
     cdef int na_count
@@ -25,7 +25,7 @@ cdef class Rolling:
 
 
 cdef class Mean(Rolling):
-    """1-D array rolling mean"""
+    """一维数组滚动均值"""
     cdef double vsum
     def __init__(self, int window):
         super(Mean, self).__init__(window)
@@ -47,7 +47,7 @@ cdef class Mean(Rolling):
 
 
 cdef class Slope(Rolling):
-    """1-D array rolling slope"""
+    """一维数组滚动斜率"""
     cdef double i_sum # can be used as i2_sum
     cdef double x_sum
     cdef double x2_sum
@@ -89,7 +89,7 @@ cdef class Slope(Rolling):
 
     
 cdef class Resi(Rolling):
-    """1-D array rolling residuals"""
+    """一维数组滚动残差"""
     cdef double i_sum # can be used as i2_sum
     cdef double x_sum
     cdef double x2_sum

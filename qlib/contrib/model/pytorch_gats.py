@@ -24,20 +24,20 @@ from ...contrib.model.pytorch_gru import GRUModel
 
 
 class GATs(Model):
-    """GATs Model
+    """GATs模型
 
-    Parameters
+    参数
     ----------
     lr : float
-        learning rate
+        学习率
     d_feat : int
-        input dimensions for each time step
+        每个时间步的输入维度
     metric : str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : int
-        the GPU ID used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -58,11 +58,11 @@ class GATs(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("GATs")
-        self.logger.info("GATs pytorch version...")
+        self.logger.info("GATs pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -79,7 +79,7 @@ class GATs(Model):
         self.seed = seed
 
         self.logger.info(
-            "GATs parameters setting:"
+            "GATs参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -124,15 +124,15 @@ class GATs(Model):
             dropout=self.dropout,
             base_model=self.base_model,
         )
-        self.logger.info("model:\n{:}".format(self.GAT_model))
-        self.logger.info("model size: {:.4f} MB".format(count_parameters(self.GAT_model)))
+        self.logger.info("模型:\n{:}".format(self.GAT_model))
+        self.logger.info("模型大小: {:.4f} MB".format(count_parameters(self.GAT_model)))
 
         if optimizer.lower() == "adam":
             self.train_optimizer = optim.Adam(self.GAT_model.parameters(), lr=self.lr)
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.GAT_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.GAT_model.to(self.device)
@@ -142,6 +142,7 @@ class GATs(Model):
         return self.device != torch.device("cpu")
 
     def mse(self, pred, label):
+        # 均方误差损失
         loss = (pred - label) ** 2
         return torch.mean(loss)
 
@@ -151,7 +152,7 @@ class GATs(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -159,15 +160,15 @@ class GATs(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def get_daily_inter(self, df, shuffle=False):
-        # organize the train data into daily batches
+        # 将训练数据组织为每日批次
         daily_count = df.groupby(level=0, group_keys=False).size().values
         daily_index = np.roll(np.cumsum(daily_count), 1)
         daily_index[0] = 0
         if shuffle:
-            # shuffle data
+            # 打乱数据顺序
             daily_shuffle = list(zip(daily_index, daily_count))
             np.random.shuffle(daily_shuffle)
             daily_index, daily_count = zip(*daily_shuffle)
@@ -178,7 +179,7 @@ class GATs(Model):
         y_train_values = np.squeeze(y_train.values)
         self.GAT_model.train()
 
-        # organize the train data into daily batches
+        # 将训练数据组织为每日批次
         daily_index, daily_count = self.get_daily_inter(x_train, shuffle=True)
 
         for idx, count in zip(daily_index, daily_count):
@@ -195,7 +196,7 @@ class GATs(Model):
             self.train_optimizer.step()
 
     def test_epoch(self, data_x, data_y):
-        # prepare training data
+        # 准备训练数据
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
 
@@ -204,7 +205,7 @@ class GATs(Model):
         scores = []
         losses = []
 
-        # organize the test data into daily batches
+        # 将测试数据组织为每日批次
         daily_index, daily_count = self.get_daily_inter(data_x, shuffle=False)
 
         for idx, count in zip(daily_index, daily_count):
@@ -245,16 +246,16 @@ class GATs(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # load pretrained base_model
+        # 加载预训练基础模型
         if self.base_model == "LSTM":
             pretrained_model = LSTMModel()
         elif self.base_model == "GRU":
             pretrained_model = GRUModel()
         else:
-            raise ValueError("unknown base model name `%s`" % self.base_model)
+            raise ValueError("未知的基础模型名称 `%s`" % self.base_model)
 
         if self.model_path is not None:
-            self.logger.info("Loading pretrained model...")
+            self.logger.info("加载预训练模型...")
             pretrained_model.load_state_dict(torch.load(self.model_path, map_location=self.device))
 
         model_dict = self.GAT_model.state_dict()
@@ -263,17 +264,17 @@ class GATs(Model):
         }
         model_dict.update(pretrained_dict)
         self.GAT_model.load_state_dict(model_dict)
-        self.logger.info("Loading pretrained model Done...")
+        self.logger.info("预训练模型加载完成...")
 
         # train
-        self.logger.info("training...")
+        self.logger.info("训练中...")
         self.fitted = True
 
         for step in range(self.n_epochs):
-            self.logger.info("Epoch%d:", step)
+            self.logger.info("第%d轮训练:", step)
             self.logger.info("training...")
             self.train_epoch(x_train, y_train)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(x_train, y_train)
             val_loss, val_score = self.test_epoch(x_valid, y_valid)
             self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
@@ -288,10 +289,10 @@ class GATs(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf @ %d轮" % (best_score, best_epoch))
         self.GAT_model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -300,7 +301,7 @@ class GATs(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练拟合!")
 
         x_test = dataset.prepare(segment, col_set="feature")
         index = x_test.index
@@ -308,7 +309,7 @@ class GATs(Model):
         x_values = x_test.values
         preds = []
 
-        # organize the data into daily batches
+        # 将数据组织为每日批次
         daily_index, daily_count = self.get_daily_inter(x_test, shuffle=False)
 
         for idx, count in zip(daily_index, daily_count):
@@ -324,6 +325,21 @@ class GATs(Model):
 
 
 class GATModel(nn.Module):
+    """图注意力网络模型
+
+    参数
+    ----------
+    d_feat : int
+        输入特征维度
+    hidden_size : int
+        隐藏层大小
+    num_layers : int
+        RNN层数
+    dropout : float
+        Dropout比率
+    base_model : str
+        基础RNN模型类型(GRU或LSTM)
+    """
     def __init__(self, d_feat=6, hidden_size=64, num_layers=2, dropout=0.0, base_model="GRU"):
         super().__init__()
 
@@ -344,7 +360,7 @@ class GATModel(nn.Module):
                 dropout=dropout,
             )
         else:
-            raise ValueError("unknown base model name `%s`" % base_model)
+            raise ValueError("未知的基础模型名称 `%s`" % base_model)
 
         self.hidden_size = hidden_size
         self.d_feat = d_feat
@@ -357,6 +373,7 @@ class GATModel(nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def cal_attention(self, x, y):
+        # 计算注意力权重
         x = self.transformation(x)
         y = self.transformation(y)
 
@@ -372,9 +389,9 @@ class GATModel(nn.Module):
         return att_weight
 
     def forward(self, x):
-        # x: [N, F*T]
-        x = x.reshape(len(x), self.d_feat, -1)  # [N, F, T]
-        x = x.permute(0, 2, 1)  # [N, T, F]
+        # x: [样本数, 特征数*时间步]
+        x = x.reshape(len(x), self.d_feat, -1)  # [样本数, 特征数, 时间步]
+        x = x.permute(0, 2, 1)  # [样本数, 时间步, 特征数]
         out, _ = self.rnn(x)
         hidden = out[:, -1, :]
         att_weight = self.cal_attention(hidden, hidden)

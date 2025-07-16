@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 
 import pandas as pd
 
@@ -8,17 +8,17 @@ from ....backtest.profit_attribution import get_stock_weight_df
 
 
 def parse_position(position: dict = None) -> pd.DataFrame:
-    """Parse position dict to position DataFrame
+    """将持仓字典解析为持仓数据框
 
-    :param position: position data
-    :return: position DataFrame;
+    :param position: 持仓数据
+    :return: 持仓数据框;
 
 
         .. code-block:: python
 
             position_df = parse_position(positions)
             print(position_df.head())
-            # status: 0-hold, -1-sell, 1-buy
+            # status: 0-持有, -1-卖出, 1-买入
 
                                         amount      cash      count    price status weight
             instrument  datetime

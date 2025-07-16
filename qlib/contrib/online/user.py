@@ -14,17 +14,18 @@ from ...data import D
 class User:
     def __init__(self, account, strategy, model, verbose=False):
         """
-        A user in online system, which contains account, strategy and model three module.
-            Parameter
+        在线系统中的用户，包含账户、策略和模型三个模块。
+            参数
                 account : Account()
+                    账户实例
                 strategy :
-                    a strategy instance
+                    策略实例
                 model :
                     a model instance
                 report_save_path : string
                     the path to save report. Will not save report if None
                 verbose : bool
-                    Whether to print the info during the process
+                    是否在过程中打印信息
         """
         self.logger = get_module_logger("User", level=logging.INFO)
         self.account = account
@@ -34,9 +35,10 @@ class User:
 
     def init_state(self, date):
         """
-        init state when each trading date begin
-            Parameter
+        每个交易日开始时初始化状态
+            参数
                 date : pd.Timestamp
+                    日期
         """
         self.account.init_state(today=date)
         self.strategy.init_state(trade_date=date, model=self.model, account=self.account)
@@ -44,11 +46,13 @@ class User:
 
     def get_latest_trading_date(self):
         """
-        return the latest trading date for user {user_id}
-            Parameter
+        返回用户{user_id}的最新交易日期
+            参数
                 user_id : string
-            :return
-                date : string (e.g '2018-10-08')
+                用户ID
+            返回
+                date : string (例如 '2018-10-08')
+                最新交易日期字符串
         """
         if not self.account.last_trade_date:
             return None
@@ -56,10 +60,10 @@ class User:
 
     def showReport(self, benchmark="SH000905"):
         """
-        show the newly report (mean, std, information_ratio, annualized_return)
-            Parameter
+        显示最新报告(均值、标准差、信息比率、年化收益率)
+            参数
                 benchmark : string
-                    bench that to be compared, 'SH000905' for csi500
+                    用于比较的基准，'SH000905'代表沪深500
         """
         bench = D.features([benchmark], ["$change"], disk_cache=True).loc[benchmark, "$change"]
         portfolio_metrics = self.account.portfolio_metrics.generate_portfolio_metrics_dataframe()

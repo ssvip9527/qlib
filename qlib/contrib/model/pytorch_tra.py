@@ -32,31 +32,31 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class TRAModel(Model):
     """
-    TRA Model
+    TRA模型
 
-    Args:
-        model_config (dict): model config (will be used by RNN or Transformer)
-        tra_config (dict): TRA config (will be used by TRA)
-        model_type (str): which backbone model to use (RNN/Transformer)
-        lr (float): learning rate
-        n_epochs (int): number of total epochs
-        early_stop (int): early stop when performance not improved at this step
-        update_freq (int): gradient update frequency
-        max_steps_per_epoch (int): maximum number of steps in one epoch
-        lamb (float): regularization parameter
-        rho (float): exponential decay rate for `lamb`
-        alpha (float): fusion parameter for calculating transport loss matrix
-        seed (int): random seed
-        logdir (str): local log directory
-        eval_train (bool): whether evaluate train set between epochs
-        eval_test (bool): whether evaluate test set between epochs
-        pretrain (bool): whether pretrain the backbone model before training TRA.
-            Note that only TRA will be optimized after pretraining
-        init_state (str): model init state path
-        freeze_model (bool): whether freeze backbone model parameters
-        freeze_predictors (bool): whether freeze predictors parameters
-        transport_method (str): transport method, can be none/router/oracle
-        memory_mode (str): memory mode, the same argument for MTSDatasetH
+    参数:
+        model_config (dict): 模型配置（将被RNN或Transformer使用）
+        tra_config (dict): TRA配置（将被TRA使用）
+        model_type (str): 使用的骨干模型类型（RNN/Transformer）
+        lr (float): 学习率
+        n_epochs (int): 总轮次数量
+        early_stop (int): 当性能在此步骤未提升时早停
+        update_freq (int): 梯度更新频率
+        max_steps_per_epoch (int): 每轮的最大步数
+        lamb (float): 正则化参数
+        rho (float): `lamb`的指数衰减率
+        alpha (float): 计算传输损失矩阵的融合参数
+        seed (int): 随机种子
+        logdir (str): 本地日志目录
+        eval_train (bool): 是否在轮次间评估训练集
+        eval_test (bool): 是否在轮次间评估测试集
+        pretrain (bool): 是否在训练TRA前预训练骨干模型。
+            注意：预训练后仅优化TRA
+        init_state (str): 模型初始状态路径
+        freeze_model (bool): 是否冻结骨干模型参数
+        freeze_predictors (bool): 是否冻结预测器参数
+        transport_method (str): 传输方法，可选none/router/oracle
+        memory_mode (str): 内存模式，与MTSDatasetH的参数相同
     """
 
     def __init__(
@@ -86,15 +86,15 @@ class TRAModel(Model):
     ):
         self.logger = get_module_logger("TRA")
 
-        assert memory_mode in ["sample", "daily"], "invalid memory mode"
-        assert transport_method in ["none", "router", "oracle"], f"invalid transport method {transport_method}"
-        assert transport_method == "none" or tra_config["num_states"] > 1, "optimal transport requires `num_states` > 1"
+        assert memory_mode in ["sample", "daily"], "无效的内存模式"
+        assert transport_method in ["none", "router", "oracle"], f"无效的传输方法 {transport_method}"
+        assert transport_method == "none" or tra_config["num_states"] > 1, "最优传输要求`num_states` > 1"
         assert (
             memory_mode != "daily" or tra_config["src_info"] == "TPE"
-        ), "daily transport can only support TPE as `src_info`"
+        ), "每日传输仅支持TPE作为`src_info`"
 
         if transport_method == "router" and not eval_train:
-            self.logger.warning("`eval_train` will be ignored when using TRA.router")
+            self.logger.warning("使用TRA.router时将忽略`eval_train`")
 
         if seed is not None:
             np.random.seed(seed)
@@ -135,7 +135,7 @@ class TRAModel(Model):
         self._init_model()
 
     def _init_model(self):
-        self.logger.info("init TRAModel...")
+        self.logger.info("初始化TRAModel...")
 
         self.model = eval(self.model_type)(**self.model_config).to(device)
         print(self.model)
@@ -144,29 +144,29 @@ class TRAModel(Model):
         print(self.tra)
 
         if self.init_state:
-            self.logger.warning(f"load state dict from `init_state`")
+            self.logger.warning(f"从`init_state`加载状态字典")
             state_dict = torch.load(self.init_state, map_location="cpu")
             self.model.load_state_dict(state_dict["model"])
             res = load_state_dict_unsafe(self.tra, state_dict["tra"])
             self.logger.warning(str(res))
 
         if self.reset_router:
-            self.logger.warning(f"reset TRA.router parameters")
+            self.logger.warning(f"重置TRA.router参数")
             self.tra.fc.reset_parameters()
             self.tra.router.reset_parameters()
 
         if self.freeze_model:
-            self.logger.warning(f"freeze model parameters")
+            self.logger.warning(f"冻结模型参数")
             for param in self.model.parameters():
                 param.requires_grad_(False)
 
         if self.freeze_predictors:
-            self.logger.warning(f"freeze TRA.predictors parameters")
+            self.logger.warning(f"冻结TRA.predictors参数")
             for param in self.tra.predictors.parameters():
                 param.requires_grad_(False)
 
-        self.logger.info("# model params: %d" % sum(p.numel() for p in self.model.parameters() if p.requires_grad))
-        self.logger.info("# tra params: %d" % sum(p.numel() for p in self.tra.parameters() if p.requires_grad))
+        self.logger.info("# 模型参数: %d" % sum(p.numel() for p in self.model.parameters() if p.requires_grad))
+        self.logger.info("# TRA参数: %d" % sum(p.numel() for p in self.tra.parameters() if p.requires_grad))
 
         self.optimizer = optim.Adam(list(self.model.parameters()) + list(self.tra.parameters()), lr=self.lr)
 
@@ -208,7 +208,7 @@ class TRAModel(Model):
             all_preds, choice, prob = self.tra(hidden, state)
 
             if is_pretrain or self.transport_method != "none":
-                # NOTE: use oracle transport for pre-training
+                # 注意：预训练时使用oracle传输
                 loss, pred, L, P = self.transport_fn(
                     all_preds,
                     label,
@@ -220,14 +220,14 @@ class TRAModel(Model):
                     self.alpha,
                     training=True,
                 )
-                data_set.assign_data(index, L)  # save loss to memory
+                data_set.assign_data(index, L)  # 将损失保存到内存
                 if self.use_daily_transport:  # only save for daily transport
                     P_all.append(pd.DataFrame(P.detach().cpu().numpy(), index=index))
                     prob_all.append(pd.DataFrame(prob.detach().cpu().numpy(), index=index))
                     choice_all.append(pd.DataFrame(choice.detach().cpu().numpy(), index=index))
-                decay = self.rho ** (self.global_step // 100)  # decay every 100 steps
+                decay = self.rho ** (self.global_step // 100)  # 每100步衰减一次
                 lamb = 0 if is_pretrain else self.lamb * decay
-                reg = prob.log().mul(P).sum(dim=1).mean()  # train router to predict TO assignment
+                reg = prob.log().mul(P).sum(dim=1).mean()  # 训练路由器预测TO分配
                 if self._writer is not None and not is_pretrain:
                     self._writer.add_scalar("training/router_loss", -reg.item(), self.global_step)
                     self._writer.add_scalar("training/reg_loss", loss.item(), self.global_step)
@@ -363,33 +363,33 @@ class TRAModel(Model):
             "model": copy.deepcopy(self.model.state_dict()),
             "tra": copy.deepcopy(self.tra.state_dict()),
         }
-        # train
+        # 训练
         if not is_pretrain and self.transport_method != "none":
-            self.logger.info("init memory...")
+            self.logger.info("初始化内存...")
             self.test_epoch(-1, train_set)
 
         for epoch in range(self.n_epochs):
             self.logger.info("Epoch %d:", epoch)
 
-            self.logger.info("training...")
+            self.logger.info("训练中...")
             self.train_epoch(epoch, train_set, is_pretrain=is_pretrain)
 
-            self.logger.info("evaluating...")
-            # NOTE: during evaluating, the whole memory will be refreshed
+            self.logger.info("评估中...")
+            # 注意：评估期间，整个内存将被刷新
             if not is_pretrain and (self.transport_method == "router" or self.eval_train):
                 train_set.clear_memory()  # NOTE: clear the shared memory
                 train_metrics = self.test_epoch(epoch, train_set, is_pretrain=is_pretrain, prefix="train")[0]
                 evals_result["train"].append(train_metrics)
-                self.logger.info("train metrics: %s" % train_metrics)
+                self.logger.info("训练集指标: %s" % train_metrics)
 
             valid_metrics = self.test_epoch(epoch, valid_set, is_pretrain=is_pretrain, prefix="valid")[0]
             evals_result["valid"].append(valid_metrics)
-            self.logger.info("valid metrics: %s" % valid_metrics)
+            self.logger.info("验证集指标: %s" % valid_metrics)
 
             if self.eval_test:
                 test_metrics = self.test_epoch(epoch, test_set, is_pretrain=is_pretrain, prefix="test")[0]
                 evals_result["test"].append(test_metrics)
-                self.logger.info("test metrics: %s" % test_metrics)
+                self.logger.info("测试集指标: %s" % test_metrics)
 
             if valid_metrics["IC"] > best_score:
                 best_score = valid_metrics["IC"]

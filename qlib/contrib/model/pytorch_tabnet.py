@@ -51,12 +51,12 @@ class TabnetModel(Model):
         pretrain_file=None,
     ):
         """
-        TabNet model for Qlib
+        用于Qlib的TabNet模型
 
-        Args:
-        ps: probability to generate the bernoulli mask
+        参数:
+        ps: 生成伯努利掩码的概率
         """
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.out_dim = out_dim
         self.final_out_dim = final_out_dim
@@ -103,7 +103,7 @@ class TabnetModel(Model):
             )
             self.train_optimizer = optim.SGD(self.tabnet_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器{}！".format(optimizer))
 
     @property
     def use_gpu(self):

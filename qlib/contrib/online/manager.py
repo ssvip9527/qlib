@@ -17,25 +17,25 @@ from ...utils import init_instance_by_config
 class UserManager:
     def __init__(self, user_data_path, save_report=True):
         """
-        This module is designed to manager the users in online system
-        all users' data were assumed to be saved in user_data_path
-            Parameter
+        该模块用于管理在线系统中的用户
+        所有用户数据应保存在user_data_path中
+            参数
                 user_data_path : string
-                    data path that all users' data were saved in
+                    保存所有用户数据的路径
 
-        variables:
+        变量:
             data_path : string
-                data path that all users' data were saved in
+                保存所有用户数据的路径
             users_file : string
-                A path of the file record the add_date of users
+                记录用户添加日期的文件路径
             save_report : bool
-                whether to save report after each trading process
+                是否在每次交易过程后保存报告
             users : dict{}
                 [user_id]->User()
-                the python dict save instances of User() for each user_id
+                存储每个用户ID对应的User实例的Python字典
             user_record : pd.Dataframe
                 user_id(string), add_date(string)
-                indicate the add_date for each users
+                指示每个用户的添加日期
         """
         self.data_path = pathlib.Path(user_data_path)
         self.users_file = self.data_path / "users.csv"
@@ -45,7 +45,7 @@ class UserManager:
 
     def load_users(self):
         """
-        load all users' data into manager
+        将所有用户数据加载到管理器中
         """
         self.users = {}
         self.user_record = pd.read_csv(self.users_file, index_col=0)
@@ -54,11 +54,13 @@ class UserManager:
 
     def load_user(self, user_id):
         """
-        return a instance of User() represents a user to be processed
-            Parameter
+        返回表示待处理用户的User()实例
+            参数
                 user_id : string
+                用户ID
             :return
                 user : User()
+                用户实例
         """
         account_path = self.data_path / user_id
         strategy_file = self.data_path / user_id / "strategy_{}.pickle".format(user_id)
@@ -76,9 +78,10 @@ class UserManager:
 
     def save_user_data(self, user_id):
         """
-        save a instance of User() to user data path
-            Parameter
+        将User()实例保存到用户数据路径
+            参数
                 user_id : string
+                用户ID
         """
         if not user_id in self.users:
             raise ValueError("Cannot find user {}".format(user_id))
@@ -94,13 +97,13 @@ class UserManager:
 
     def add_user(self, user_id, config_file, add_date):
         """
-        add the new user {user_id} into user data
-        will create a new folder named "{user_id}" in user data path
-            Parameter
+        将新用户{user_id}添加到用户数据中
+        将在用户数据路径中创建名为"{user_id}"的新文件夹
+            参数
                 user_id : string
                 init_cash : int
                 config_file : str/pathlib.Path()
-                   path of config file
+                   配置文件路径
         """
         config_file = pathlib.Path(config_file)
         if not config_file.exists():
@@ -134,10 +137,11 @@ class UserManager:
 
     def remove_user(self, user_id):
         """
-        remove user {user_id} in current user dataset
-        will delete the folder "{user_id}" in user data path
-            :param
+        从当前用户数据集中移除用户{user_id}
+        将删除用户数据路径中名为"{user_id}"的文件夹
+            参数
                 user_id : string
+                用户ID
         """
         user_path = self.data_path / user_id
         if not user_path.exists():

@@ -23,18 +23,18 @@ from .pytorch_utils import count_parameters
 
 
 class GRU(Model):
-    """GRU Model
+    """GRU模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -54,11 +54,11 @@ class GRU(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("GRU")
-        self.logger.info("GRU pytorch version...")
+        self.logger.info("GRU pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -74,7 +74,7 @@ class GRU(Model):
         self.seed = seed
 
         self.logger.info(
-            "GRU parameters setting:"
+            "GRU参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -124,7 +124,7 @@ class GRU(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.gru_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.gru_model.to(self.device)
@@ -143,7 +143,7 @@ class GRU(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -151,7 +151,7 @@ class GRU(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, x_train, y_train):
         x_train_values = x_train.values
@@ -178,7 +178,7 @@ class GRU(Model):
             self.train_optimizer.step()
 
     def test_epoch(self, data_x, data_y):
-        # prepare training data
+        # 准备训练数据
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
 
@@ -212,7 +212,7 @@ class GRU(Model):
         evals_result=dict(),
         save_path=None,
     ):
-        # prepare training and validation data
+        # 准备训练和验证数据
         dfs = {
             k: dataset.prepare(
                 k,
@@ -224,14 +224,14 @@ class GRU(Model):
         }
         df_train, df_valid = dfs.get("train", pd.DataFrame()), dfs.get("valid", pd.DataFrame())
 
-        # check if training data is empty
+        # 检查训练数据是否为空
         if df_train.empty:
             raise ValueError("Empty training data from dataset, please check your dataset config.")
 
         df_train = df_train.dropna()
         x_train, y_train = df_train["feature"], df_train["label"]
 
-        # check if validation data is provided
+        # 检查是否提供验证数据
         if not df_valid.empty:
             df_valid = df_valid.dropna()
             x_valid, y_valid = df_valid["feature"], df_valid["label"]
@@ -247,7 +247,7 @@ class GRU(Model):
         evals_result["valid"] = []
 
         # train
-        self.logger.info("training...")
+        self.logger.info("训练中...")
         self.fitted = True
 
         best_param = copy.deepcopy(self.gru_model.state_dict())
@@ -255,7 +255,7 @@ class GRU(Model):
             self.logger.info("Epoch%d:", step)
             self.logger.info("training...")
             self.train_epoch(x_train, y_train)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(x_train, y_train)
             evals_result["train"].append(train_score)
 
@@ -273,10 +273,10 @@ class GRU(Model):
                 else:
                     stop_steps += 1
                     if stop_steps >= self.early_stop:
-                        self.logger.info("early stop")
+                        self.logger.info("早停")
                         break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf @ %d" % (best_score, best_epoch))
         self.gru_model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -291,7 +291,7 @@ class GRU(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未拟合！")
 
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         index = x_test.index

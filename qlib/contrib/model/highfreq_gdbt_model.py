@@ -13,10 +13,10 @@ from ...model.interpret.base import LightGBMFInt
 
 
 class HFLGBModel(ModelFT, LightGBMFInt):
-    """LightGBM Model for high frequency prediction"""
+    """用于高频预测的LightGBM模型"""
 
     def __init__(self, loss="mse", **kwargs):
-        if loss not in {"mse", "binary"}:
+        if loss not in {"mse", "binary"}:  # 仅支持mse和binary损失函数
             raise NotImplementedError
         self.params = {"objective": loss, "verbosity": -1}
         self.params.update(kwargs)
@@ -24,14 +24,14 @@ class HFLGBModel(ModelFT, LightGBMFInt):
 
     def _cal_signal_metrics(self, y_test, l_cut, r_cut):
         """
-        Calcaute the signal metrics by daily level
+        按日级别计算信号指标
         """
         up_pre, down_pre = [], []
         up_alpha_ll, down_alpha_ll = [], []
         for date in y_test.index.get_level_values(0).unique():
             df_res = y_test.loc[date].sort_values("pred")
             if int(l_cut * len(df_res)) < 10:
-                warnings.warn("Warning: threhold is too low or instruments number is not enough")
+                warnings.warn("警告：阈值过低或证券数量不足")
                 continue
             top = df_res.iloc[: int(l_cut * len(df_res))]
             bottom = df_res.iloc[int(r_cut * len(df_res)) :]
@@ -56,14 +56,14 @@ class HFLGBModel(ModelFT, LightGBMFInt):
 
     def hf_signal_test(self, dataset: DatasetH, threhold=0.2):
         """
-        Test the signal in high frequency test set
+        在高频测试集上测试信号
         """
         if self.model is None:
-            raise ValueError("Model hasn't been trained yet")
+            raise ValueError("模型尚未训练")
         df_test = dataset.prepare("test", col_set=["feature", "label"], data_key=DataHandlerLP.DK_I)
         df_test.dropna(inplace=True)
         x_test, y_test = df_test["feature"], df_test["label"]
-        # Convert label into alpha
+        # 将标签转换为alpha值
         y_test[y_test.columns[0]] = y_test[y_test.columns[0]] - y_test[y_test.columns[0]].mean(level=0)
 
         res = pd.Series(self.model.predict(x_test.values), index=x_test.index)
@@ -71,25 +71,25 @@ class HFLGBModel(ModelFT, LightGBMFInt):
 
         up_p, down_p, up_a, down_a = self._cal_signal_metrics(y_test, threhold, 1 - threhold)
         print("===============================")
-        print("High frequency signal test")
+        print("高频信号测试")
         print("===============================")
-        print("Test set precision: ")
-        print("Positive precision: {}, Negative precision: {}".format(up_p, down_p))
-        print("Test Alpha Average in test set: ")
-        print("Positive average alpha: {}, Negative average alpha: {}".format(up_a, down_a))
+        print("测试集准确率: ")
+        print("正样本准确率: {}, 负样本准确率: {}".format(up_p, down_p))
+        print("测试集Alpha平均值: ")
+        print("正样本平均alpha: {}, 负样本平均alpha: {}".format(up_a, down_a))
 
     def _prepare_data(self, dataset: DatasetH):
         df_train, df_valid = dataset.prepare(
             ["train", "valid"], col_set=["feature", "label"], data_key=DataHandlerLP.DK_L
         )
         if df_train.empty or df_valid.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError("数据集数据为空，请检查您的数据集配置。")
 
         x_train, y_train = df_train["feature"], df_train["label"]
         x_valid, y_valid = df_valid["feature"], df_valid["label"]
         if y_train.values.ndim == 2 and y_train.values.shape[1] == 1:
             l_name = df_train["label"].columns[0]
-            # Convert label into alpha
+            # 将标签转换为alpha值
             df_train.loc[:, ("label", l_name)] = (
                 df_train.loc[:, ("label", l_name)]
                 - df_train.loc[:, ("label", l_name)].groupby(level=0, group_keys=False).mean()
@@ -107,7 +107,7 @@ class HFLGBModel(ModelFT, LightGBMFInt):
             x_train, y_train = df_train["feature"], df_train["label_c"].values
             x_valid, y_valid = df_valid["feature"], df_valid["label_c"].values
         else:
-            raise ValueError("LightGBM doesn't support multi-label training")
+            raise ValueError("LightGBM不支持多标签训练")
 
         dtrain = lgb.Dataset(x_train, label=y_train)
         dvalid = lgb.Dataset(x_valid, label=y_valid)
@@ -140,22 +140,22 @@ class HFLGBModel(ModelFT, LightGBMFInt):
 
     def predict(self, dataset):
         if self.model is None:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
         x_test = dataset.prepare("test", col_set="feature", data_key=DataHandlerLP.DK_I)
         return pd.Series(self.model.predict(x_test.values), index=x_test.index)
 
     def finetune(self, dataset: DatasetH, num_boost_round=10, verbose_eval=20):
         """
-        finetune model
+        微调模型
 
-        Parameters
+        参数
         ----------
         dataset : DatasetH
-            dataset for finetuning
+            用于微调的数据集
         num_boost_round : int
-            number of round to finetune model
+            微调模型的轮数
         verbose_eval : int
-            verbose level
+            详细级别
         """
         # Based on existing model and finetune by train more rounds
         dtrain, _ = self._prepare_data(dataset)

@@ -2,13 +2,13 @@
 # Licensed under the MIT License.
 
 """
-The Trainer will train a list of tasks and return a list of model recorders.
-There are two steps in each Trainer including ``train`` (make model recorder) and ``end_train`` (modify model recorder).
+训练器(Trainer)将训练一系列任务并返回模型记录器列表。
+每个训练器包含两个步骤：``train``(创建模型记录器)和``end_train``(修改模型记录器)。
 
-This is a concept called ``DelayTrainer``, which can be used in online simulating for parallel training.
-In ``DelayTrainer``, the first step is only to save some necessary info to model recorders, and the second step which will be finished in the end can do some concurrent and time-consuming operations such as model fitting.
+这是一个称为``DelayTrainer``的概念，可用于在线模拟并行训练。
+在``DelayTrainer``中，第一步仅保存一些必要信息到模型记录器，第二步在最后完成时可以执行一些并发且耗时的操作，如模型拟合。
 
-``Qlib`` offer two kinds of Trainer, ``TrainerR`` is the simplest way and ``TrainerRM`` is based on TaskManager to help manager tasks lifecycle automatically.
+``Qlib``提供两种训练器：``TrainerR``是最简单的方式，``TrainerRM``基于TaskManager来自动管理任务生命周期。
 """
 
 import socket
@@ -73,15 +73,15 @@ def _exe_task(task_config: dict):
 
 def begin_task_train(task_config: dict, experiment_name: str, recorder_name: str = None) -> Recorder:
     """
-    Begin task training to start a recorder and save the task config.
+    开始任务训练，创建记录器并保存任务配置。
 
-    Args:
-        task_config (dict): the config of a task
-        experiment_name (str): the name of experiment
-        recorder_name (str): the given name will be the recorder name. None for using rid.
+    参数:
+        task_config (dict): 任务配置
+        experiment_name (str): 实验名称
+        recorder_name (str): 记录器名称，None表示使用rid
 
-    Returns:
-        Recorder: the model recorder
+    返回:
+        Recorder: 模型记录器
     """
     with R.start(experiment_name=experiment_name, recorder_name=recorder_name):
         _log_task_info(task_config)
@@ -90,14 +90,14 @@ def begin_task_train(task_config: dict, experiment_name: str, recorder_name: str
 
 def end_task_train(rec: Recorder, experiment_name: str) -> Recorder:
     """
-    Finish task training with real model fitting and saving.
+    完成任务训练，执行实际的模型拟合和保存。
 
-    Args:
-        rec (Recorder): the recorder will be resumed
-        experiment_name (str): the name of experiment
+    参数:
+        rec (Recorder): 需要恢复的记录器
+        experiment_name (str): 实验名称
 
-    Returns:
-        Recorder: the model recorder
+    返回:
+        Recorder: 模型记录器
     """
     with R.start(experiment_name=experiment_name, recorder_id=rec.info["id"], resume=True):
         task_config = R.load_object("task")

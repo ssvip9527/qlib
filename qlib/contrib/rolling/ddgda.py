@@ -68,10 +68,10 @@ UTIL_MODEL_TYPE = Literal["linear", "gbdt"]
 
 class DDGDA(Rolling):
     """
-    It is a rolling based on DDG-DA
+    这是基于DDG-DA的滚动实现
 
-    **NOTE**
-    before running the example, please clean your previous results with following command
+    **注意**
+    运行示例前，请使用以下命令清理之前的结果
     - `rm -r mlruns`
     """
 
@@ -90,24 +90,24 @@ class DDGDA(Rolling):
     ):
         """
 
-        Parameters
+        参数
         ----------
         sim_task_model: Literal["linear", "gbdt"] = "gbdt",
-            The model for calculating similarity between data.
+            用于计算数据间相似度的模型。
         meta_1st_train_end: Optional[str]
-            the datetime of training end of the first meta_task
+            第一个元任务的训练结束时间
         alpha: float
-            Setting the L2 regularization for ridge
+            设置ridge回归的L2正则化系数
             The `alpha` is only passed to MetaModelDS (it is not passed to sim_task_model currently..)
         loss_skip_thresh: int
-            The thresh to skip the loss calculation for each day. If the number of item is less than it, it will skip the loss on that day.
+            用于跳过每日损失计算的阈值。如果项目数量小于此值，将跳过当天的损失计算。
         meta_data_proc : Optional[str]
-            How we process the meta dataset for learning meta model.
+            用于学习元模型的元数据集处理方式。
         segments : Union[float, str]
-            if segments is a float:
-                The ratio of training data in the meta task dataset
-            if segments is a string:
-                it will try its best to put its data in training and ensure that the date `segments` is in the test set
+            若segments为浮点数:
+                元任务数据集中训练数据的比例
+            若segments为字符串:
+                会尽可能将数据放入训练集，并确保日期`segments`在测试集中
         """
         # NOTE:
         # the horizon must match the meaning in the base task template
@@ -126,14 +126,14 @@ class DDGDA(Rolling):
 
     def _adjust_task(self, task: dict, astype: UTIL_MODEL_TYPE):
         """
-        Base on the original task, we need to do some extra things.
+        根据原始任务，我们需要进行一些额外处理。
 
-        For example:
-        - GBDT for calculating feature importance
-        - Linear or GBDT for calculating similarity
-        - Datset (well processed) that aligned to Linear that for meta learning
+        例如：
+        - 使用GBDT计算特征重要性
+        - 使用Linear或GBDT计算相似度
+        - 为元学习准备与Linear模型对齐的（经过良好处理的）数据集
 
-        So we may need to change the dataset and model for the special purpose and other settings remains the same.
+        因此，我们可能需要为特定目的更改数据集和模型，而其他设置保持不变。
         """
         # NOTE: here is just for aligning with previous implementation
         # It is not necessary for the current implementation

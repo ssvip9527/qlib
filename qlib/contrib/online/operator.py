@@ -27,30 +27,33 @@ from .executor import save_score_series, load_score_series
 class Operator:
     def __init__(self, client: str):
         """
-        Parameters
+        参数
         ----------
             client: str
-                The qlib client config file(.yaml)
+                qlib客户端配置文件(.yaml)
         """
         self.logger = get_module_logger("online operator", level=logging.INFO)
         self.client = client
 
     @staticmethod
     def init(client, path, date=None):
-        """Initial UserManager(), get predict date and trade date
-        Parameters
+        """初始化UserManager()，获取预测日期和交易日期
+        参数
         ----------
             client: str
-                The qlib client config file(.yaml)
+                qlib客户端配置文件(.yaml)
             path : str
-                Path to save user account.
+                保存用户账户的路径。
             date : str (YYYY-MM-DD)
-                Trade date, when the generated order list will be traded.
-        Return
+                交易日期，生成的订单列表将在该日期交易。
+        返回
         ----------
             um: UserManager()
+                用户管理器实例
             pred_date: pd.Timestamp
+                预测日期
             trade_date: pd.Timestamp
+                交易日期
         """
         qlib.init_from_yaml_conf(client)
         um = UserManager(user_data_path=pathlib.Path(path))
@@ -65,18 +68,18 @@ class Operator:
         return um, pred_date, trade_date
 
     def add_user(self, id, config, path, date):
-        """Add a new user into the a folder to run 'online' module.
+        """将新用户添加到文件夹以运行'online'模块。
 
-        Parameters
+        参数
         ----------
         id : str
-            User id, should be unique.
+            用户ID，应唯一。
         config : str
-            The file path (yaml) of user config
+            用户配置文件路径(yaml)
         path : str
-            Path to save user account.
+            保存用户账户的路径。
         date : str (YYYY-MM-DD)
-            The date that user account was added.
+            用户账户添加的日期。
         """
         create_user_folder(path)
         qlib.init_from_yaml_conf(self.client)
@@ -87,27 +90,27 @@ class Operator:
         um.add_user(user_id=id, config_file=config, add_date=add_date)
 
     def remove_user(self, id, path):
-        """Remove user from folder used in 'online' module.
+        """从'online'模块使用的文件夹中移除用户。
 
-        Parameters
+        参数
         ----------
         id : str
-            User id, should be unique.
+            用户ID，应唯一。
         path : str
-            Path to save user account.
+            保存用户账户的路径。
         """
         um = UserManager(user_data_path=path)
         um.remove_user(user_id=id)
 
     def generate(self, date, path):
-        """Generate order list that will be traded at 'date'.
+        """生成将在'date'进行交易的订单列表。
 
-        Parameters
+        参数
         ----------
         date : str (YYYY-MM-DD)
-            Trade date, when the generated order list will be traded.
+            交易日期，生成的订单列表将在该日期交易。
         path : str
-            Path to save user account.
+            保存用户账户的路径。
         """
         um, pred_date, trade_date = self.init(self.client, path, date)
         for user_id, user in um.users.items():
@@ -136,16 +139,16 @@ class Operator:
             um.save_user_data(user_id)
 
     def execute(self, date, exchange_config, path):
-        """Execute the orderlist at 'date'.
+        """在'date'执行订单列表。
 
-        Parameters
+        参数
         ----------
            date : str (YYYY-MM-DD)
-               Trade date, that the generated order list will be traded.
+               交易日期，生成的订单列表将在该日期交易。
            exchange_config: str
-               The file path (yaml) of exchange config
+               交易所配置文件路径(yaml)
            path : str
-               Path to save user account.
+               保存用户账户的路径。
         """
         um, pred_date, trade_date = self.init(self.client, path, date)
         for user_id, user in um.users.items():
@@ -170,17 +173,17 @@ class Operator:
             self.logger.info("execute order list at {} for {}".format(trade_date.date(), user_id))
 
     def update(self, date, path, type="SIM"):
-        """Update account at 'date'.
+        """在'date'更新账户。
 
-        Parameters
+        参数
         ----------
         date : str (YYYY-MM-DD)
-            Trade date, that the generated order list will be traded.
+            交易日期，生成的订单列表将在该日期交易。
         path : str
-            Path to save user account.
+            保存用户账户的路径。
         type : str
-            which executor was been used to execute the order list
-            'SIM': SimulatorExecutor()
+            用于执行订单列表的执行器类型
+            'SIM': 模拟执行器(SimulatorExecutor)
         """
         if type not in ["SIM", "YC"]:
             raise ValueError("type is invalid, {}".format(type))
@@ -211,26 +214,25 @@ class Operator:
             self.logger.info("Update account state {} for {}".format(trade_date, user_id))
 
     def simulate(self, id, config, exchange_config, start, end, path, bench="SH000905"):
-        """Run the ( generate_trade_decision -> execute_order_list -> update_account) process everyday
-            from start date to end date.
+        """从开始日期到结束日期，每天运行(生成交易决策->执行订单列表->更新账户)流程。
 
-        Parameters
+        参数
         ----------
         id : str
-            user id, need to be unique
+            用户ID，需唯一
         config : str
-            The file path (yaml) of user config
+            用户配置文件路径(yaml)
         exchange_config: str
-            The file path (yaml) of exchange config
+            交易所配置文件路径(yaml)
         start : str "YYYY-MM-DD"
-            The start date to run the online simulate
+            运行在线模拟的开始日期
         end : str "YYYY-MM-DD"
-            The end date to run the online simulate
+            运行在线模拟的结束日期
         path : str
-            Path to save user account.
+            保存用户账户的路径。
         bench : str
-            The benchmark that our result compared with.
-            'SH000905' for csi500, 'SH000300' for csi300
+            用于比较结果的基准。
+            'SH000905'代表沪深500，'SH000300'代表沪深300
         """
         # Clear the current user if exists, then add a new user.
         create_user_folder(path)
@@ -282,17 +284,17 @@ class Operator:
         self.show(id, path, bench)
 
     def show(self, id, path, bench="SH000905"):
-        """show the newly report (mean, std, information_ratio, annualized_return)
+        """显示最新报告(均值、标准差、信息比率、年化收益率)
 
-        Parameters
+        参数
         ----------
         id : str
-            user id, need to be unique
+            用户ID，需唯一
         path : str
-            Path to save user account.
+            保存用户账户的路径。
         bench : str
-            The benchmark that our result compared with.
-            'SH000905' for csi500, 'SH000300' for csi300
+            用于比较结果的基准。
+            'SH000905'代表沪深500，'SH000300'代表沪深300
         """
         um = self.init(self.client, path, None)[0]
         if id not in um.users:

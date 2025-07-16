@@ -1,10 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-This module is responsible for analysing data
+此模块负责数据分析
 
-Assumptions
-- The analyse each feature individually
+假设条件
+- 每个特征单独分析
 
 """
 import pandas as pd

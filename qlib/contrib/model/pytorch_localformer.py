@@ -46,7 +46,7 @@ class LocalformerModel(Model):
         seed=None,
         **kwargs,
     ):
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_model = d_model
         self.dropout = dropout
         self.n_epochs = n_epochs
@@ -73,7 +73,7 @@ class LocalformerModel(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.model.parameters(), lr=self.lr, weight_decay=self.reg)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.model.to(self.device)
@@ -127,7 +127,7 @@ class LocalformerModel(Model):
             self.train_optimizer.step()
 
     def test_epoch(self, data_x, data_y):
-        # prepare training data
+        # 准备训练数据
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
 
@@ -180,7 +180,7 @@ class LocalformerModel(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # train
+        # 训练
         self.logger.info("training...")
         self.fitted = True
 

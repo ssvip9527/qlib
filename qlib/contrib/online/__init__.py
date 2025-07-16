@@ -7,15 +7,15 @@ TODO:
 - Online needs that the model have such method
     def get_data_with_date(self, date, **kwargs):
         """
-        Will be called in online module
-        need to return the data that used to predict the label (score) of stocks at date.
+        将在在线模块中被调用
+        需要返回用于预测指定日期股票标签（分数）的数据。
 
         :param
             date: pd.Timestamp
-                predict date
+                预测日期
         :return:
-            data: the input data that used to predict the label (score) of stocks at predict date.
+            data: 用于预测指定日期股票标签（分数）的输入数据。
         """
-        raise NotImplementedError("get_data_with_date for this model is not implemented.")
+        raise NotImplementedError("此模型尚未实现get_data_with_date方法。")
 
 '''

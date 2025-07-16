@@ -1,7 +1,7 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 """
-This strategy is not well maintained
+此策略未得到良好维护
 """
 
 
@@ -26,15 +26,14 @@ class SoftTopkStrategy(WeightStrategyBase):
         **kwargs,
     ):
         """
-        Parameters
+        参数
         ----------
         topk : int
-            top-N stocks to buy
+            要购买的前N只股票
         risk_degree : float
-            position percentage of total value buy_method:
-
-                rank_fill: assign the weight stocks that rank high first(1/topk max)
-                average_fill: assign the weight to the stocks rank high averagely.
+            总价值的持仓百分比。buy_method 选项：
+                rank_fill: 优先为排名靠前的股票分配权重（最大1/topk）
+                average_fill: 为排名靠前的股票平均分配权重。
         """
         super(SoftTopkStrategy, self).__init__(
             model, dataset, order_generator_cls_or_obj, trade_exchange, level_infra, common_infra, **kwargs
@@ -46,30 +45,27 @@ class SoftTopkStrategy(WeightStrategyBase):
 
     def get_risk_degree(self, trade_step=None):
         """get_risk_degree
-        Return the proportion of your total value you will used in investment.
-        Dynamically risk_degree will result in Market timing
+        返回将用于投资的总价值比例。动态调整risk_degree将导致市场择时。
         """
-        # It will use 95% amount of your total value by default
+        # 默认情况下，将使用您总价值的95%
         return self.risk_degree
 
     def generate_target_weight_position(self, score, current, trade_start_time, trade_end_time):
         """
-        Parameters
+        参数
         ----------
         score:
-            pred score for this trade date, pd.Series, index is stock_id, contain 'score' column
+            该交易日的预测分数，pd.Series类型，索引为股票ID，包含'score'列
         current:
-            current position, use Position() class
+            当前持仓，使用Position()类
         trade_date:
-            trade date
+            交易日
 
-            generate target position from score for this date and the current position
-
-            The cache is not considered in the position
+            根据当日分数和当前持仓生成目标持仓。
+            持仓中未考虑缓存。
         """
         # TODO:
-        # If the current stock list is more than topk(eg. The weights are modified
-        # by risk control), the weight will not be handled correctly.
+        # 如果当前股票列表超过topk（例如权重被风险控制修改），权重将无法正确处理。
         buy_signal_stocks = set(score.sort_values(ascending=False).iloc[: self.topk].index)
         cur_stock_weight = current.get_stock_weight_dict(only_stock=True)
 

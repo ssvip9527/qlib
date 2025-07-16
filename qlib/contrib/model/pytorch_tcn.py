@@ -24,20 +24,20 @@ from .tcn import TemporalConvNet
 
 
 class TCN(Model):
-    """TCN Model
+    """TCN模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     n_chans: int
-        number of channels
+        通道数量
     metric: str
-        the evaluation metric used in early stop
+        早停使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -58,11 +58,11 @@ class TCN(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("TCN")
         self.logger.info("TCN pytorch version...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.n_chans = n_chans
         self.kernel_size = kernel_size
@@ -79,7 +79,7 @@ class TCN(Model):
         self.seed = seed
 
         self.logger.info(
-            "TCN parameters setting:"
+            "TCN参数设置:"
             "\nd_feat : {}"
             "\nn_chans : {}"
             "\nkernel_size : {}"
@@ -132,7 +132,7 @@ class TCN(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.tcn_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.tcn_model.to(self.device)
@@ -151,7 +151,7 @@ class TCN(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -159,7 +159,7 @@ class TCN(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, x_train, y_train):
         x_train_values = x_train.values

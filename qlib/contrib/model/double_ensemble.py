@@ -13,7 +13,7 @@ from ...log import get_module_logger
 
 
 class DEnsembleModel(Model, FeatureInt):
-    """Double Ensemble Model"""
+    """双集成模型"""
 
     def __init__(
         self,
@@ -33,8 +33,8 @@ class DEnsembleModel(Model, FeatureInt):
         early_stopping_rounds=None,
         **kwargs,
     ):
-        self.base_model = base_model  # "gbm" or "mlp", specifically, we use lgbm for "gbm"
-        self.num_models = num_models  # the number of sub-models
+        self.base_model = base_model  # "gbm"或"mlp"，具体地，我们使用lgbm作为"gbm"
+        self.num_models = num_models  # 子模型数量
         self.enable_sr = enable_sr
         self.enable_fs = enable_fs
         self.alpha1 = alpha1
@@ -42,21 +42,21 @@ class DEnsembleModel(Model, FeatureInt):
         self.bins_sr = bins_sr
         self.bins_fs = bins_fs
         self.decay = decay
-        if sample_ratios is None:  # the default values for sample_ratios
+        if sample_ratios is None:  # sample_ratios的默认值
             sample_ratios = [0.8, 0.7, 0.6, 0.5, 0.4]
-        if sub_weights is None:  # the default values for sub_weights
+        if sub_weights is None:  # sub_weights的默认值
             sub_weights = [1] * self.num_models
         if not len(sample_ratios) == bins_fs:
-            raise ValueError("The length of sample_ratios should be equal to bins_fs.")
+            raise ValueError("sample_ratios的长度应等于bins_fs。")
         self.sample_ratios = sample_ratios
         if not len(sub_weights) == num_models:
-            raise ValueError("The length of sub_weights should be equal to num_models.")
+            raise ValueError("sub_weights的长度应等于num_models。")
         self.sub_weights = sub_weights
         self.epochs = epochs
         self.logger = get_module_logger("DEnsembleModel")
-        self.logger.info("Double Ensemble Model...")
-        self.ensemble = []  # the current ensemble model, a list contains all the sub-models
-        self.sub_features = []  # the features for each sub model in the form of pandas.Index
+        self.logger.info("双集成模型...")
+        self.ensemble = []  # 当前集成模型，包含所有子模型的列表
+        self.sub_features = []  # 每个子模型的特征，格式为pandas.Index
         self.params = {"objective": loss}
         self.params.update(kwargs)
         self.loss = loss
@@ -67,25 +67,25 @@ class DEnsembleModel(Model, FeatureInt):
             ["train", "valid"], col_set=["feature", "label"], data_key=DataHandlerLP.DK_L
         )
         if df_train.empty or df_valid.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError("数据集数据为空，请检查您的数据集配置。")
         x_train, y_train = df_train["feature"], df_train["label"]
-        # initialize the sample weights
+        # 初始化样本权重
         N, F = x_train.shape
         weights = pd.Series(np.ones(N, dtype=float))
-        # initialize the features
+        # 初始化特征
         features = x_train.columns
         pred_sub = pd.DataFrame(np.zeros((N, self.num_models), dtype=float), index=x_train.index)
-        # train sub-models
+        # 训练子模型
         for k in range(self.num_models):
             self.sub_features.append(features)
-            self.logger.info("Training sub-model: ({}/{})".format(k + 1, self.num_models))
+            self.logger.info("训练子模型：({}/{}) ".format(k + 1, self.num_models))
             model_k = self.train_submodel(df_train, df_valid, weights, features)
             self.ensemble.append(model_k)
-            # no further sample re-weight and feature selection needed for the last sub-model
+            # 最后一个子模型不需要进一步的样本重加权和特征选择
             if k + 1 == self.num_models:
                 break
 
-            self.logger.info("Retrieving loss curve and loss values...")
+            self.logger.info("获取损失曲线和损失值...")
             loss_curve = self.retrieve_loss_curve(model_k, df_train, features)
             pred_k = self.predict_sub(model_k, df_train, features)
             pred_sub.iloc[:, k] = pred_k
@@ -95,11 +95,11 @@ class DEnsembleModel(Model, FeatureInt):
             loss_values = pd.Series(self.get_loss(y_train.values.squeeze(), pred_ensemble.values))
 
             if self.enable_sr:
-                self.logger.info("Sample re-weighting...")
+                self.logger.info("样本重加权...")
                 weights = self.sample_reweight(loss_curve, loss_values, k + 1)
 
             if self.enable_fs:
-                self.logger.info("Feature selection...")
+                self.logger.info("特征选择...")
                 features = self.feature_selection(df_train, loss_values)
 
     def train_submodel(self, df_train, df_valid, weights, features):
@@ -109,7 +109,7 @@ class DEnsembleModel(Model, FeatureInt):
         callbacks = [lgb.log_evaluation(20), lgb.record_evaluation(evals_result)]
         if self.early_stopping_rounds:
             callbacks.append(lgb.early_stopping(self.early_stopping_rounds))
-            self.logger.info("Training with early_stopping...")
+            self.logger.info("使用早停法训练...")
 
         model = lgb.train(
             self.params,
@@ -127,11 +127,11 @@ class DEnsembleModel(Model, FeatureInt):
         x_train, y_train = df_train["feature"].loc[:, features], df_train["label"]
         x_valid, y_valid = df_valid["feature"].loc[:, features], df_valid["label"]
 
-        # Lightgbm need 1D array as its label
+        # LightGBM需要一维数组作为标签
         if y_train.values.ndim == 2 and y_train.values.shape[1] == 1:
             y_train, y_valid = np.squeeze(y_train.values), np.squeeze(y_valid.values)
         else:
-            raise ValueError("LightGBM doesn't support multi-label training")
+            raise ValueError("LightGBM不支持多标签训练")
 
         dtrain = lgb.Dataset(x_train, label=y_train, weight=weights)
         dvalid = lgb.Dataset(x_valid, label=y_valid)
@@ -139,32 +139,31 @@ class DEnsembleModel(Model, FeatureInt):
 
     def sample_reweight(self, loss_curve, loss_values, k_th):
         """
-        the SR module of Double Ensemble
-        :param loss_curve: the shape is NxT
-        the loss curve for the previous sub-model, where the element (i, t) if the error on the i-th sample
-        after the t-th iteration in the training of the previous sub-model.
-        :param loss_values: the shape is N
-        the loss of the current ensemble on the i-th sample.
-        :param k_th: the index of the current sub-model, starting from 1
+        双集成的样本重加权（SR）模块
+        :param loss_curve: 形状为NxT
+        前一个子模型的损失曲线，其中元素(i, t)是在前一个子模型训练的第t次迭代后，第i个样本的误差。
+        :param loss_values: 形状为N
+        当前集成模型在第i个样本上的损失。
+        :param k_th: 当前子模型的索引，从1开始
         :return: weights
-        the weights for all the samples.
+        所有样本的权重。
         """
-        # normalize loss_curve and loss_values with ranking
+        # 使用排序归一化损失曲线和损失值
         loss_curve_norm = loss_curve.rank(axis=0, pct=True)
         loss_values_norm = (-loss_values).rank(pct=True)
 
-        # calculate l_start and l_end from loss_curve
+        # 从损失曲线计算l_start和l_end
         N, T = loss_curve.shape
         part = np.maximum(int(T * 0.1), 1)
         l_start = loss_curve_norm.iloc[:, :part].mean(axis=1)
         l_end = loss_curve_norm.iloc[:, -part:].mean(axis=1)
 
-        # calculate h-value for each sample
+        # 计算每个样本的h值
         h1 = loss_values_norm
         h2 = (l_end / l_start).rank(pct=True)
         h = pd.DataFrame({"h_value": self.alpha1 * h1 + self.alpha2 * h2})
 
-        # calculate weights
+        # 计算权重
         h["bins"] = pd.cut(h["h_value"], self.bins_sr)
         h_avg = h.groupby("bins", group_keys=False, observed=False)["h_value"].mean()
         weights = pd.Series(np.zeros(N, dtype=float))
@@ -174,11 +173,11 @@ class DEnsembleModel(Model, FeatureInt):
 
     def feature_selection(self, df_train, loss_values):
         """
-        the FS module of Double Ensemble
-        :param df_train: the shape is NxF
-        :param loss_values: the shape is N
-        the loss of the current ensemble on the i-th sample.
-        :return: res_feat: in the form of pandas.Index
+        双集成的特征选择（FS）模块
+        :param df_train: 形状为NxF
+        :param loss_values: 形状为N
+        当前集成模型在第i个样本上的损失。
+        :return: res_feat: pandas.Index格式
 
         """
         x_train, y_train = df_train["feature"], df_train["label"]
@@ -187,7 +186,7 @@ class DEnsembleModel(Model, FeatureInt):
         g = pd.DataFrame({"g_value": np.zeros(F, dtype=float)})
         M = len(self.ensemble)
 
-        # shuffle specific columns and calculate g-value for each feature
+        # 打乱特定列并计算每个特征的g值
         x_train_tmp = x_train.copy()
         for i_f, feat in enumerate(features):
             x_train_tmp.loc[:, feat] = np.random.permutation(x_train_tmp.loc[:, feat].values)
@@ -203,13 +202,13 @@ class DEnsembleModel(Model, FeatureInt):
             g.loc[i_f, "g_value"] = np.mean(loss_feat - loss_values) / (np.std(loss_feat - loss_values) + 1e-7)
             x_train_tmp.loc[:, feat] = x_train.loc[:, feat].copy()
 
-        # one column in train features is all-nan # if g['g_value'].isna().any()
+        # 训练特征中的某一列全为NaN # 如果g['g_value']存在缺失值
         g["g_value"].replace(np.nan, 0, inplace=True)
 
-        # divide features into bins_fs bins
+        # 将特征分为bins_fs个区间
         g["bins"] = pd.cut(g["g_value"], self.bins_fs)
 
-        # randomly sample features from bins to construct the new features
+        # 从区间中随机采样特征以构建新特征集
         res_feat = []
         sorted_bins = sorted(g["bins"].unique(), reverse=True)
         for i_b, b in enumerate(sorted_bins):
@@ -222,17 +221,17 @@ class DEnsembleModel(Model, FeatureInt):
         if self.loss == "mse":
             return (label - pred) ** 2
         else:
-            raise ValueError("not implemented yet")
+            raise ValueError("尚未实现")
 
     def retrieve_loss_curve(self, model, df_train, features):
         if self.base_model == "gbm":
             num_trees = model.num_trees()
             x_train, y_train = df_train["feature"].loc[:, features], df_train["label"]
-            # Lightgbm need 1D array as its label
+            # Lightgbm需要一维数组作为标签
             if y_train.values.ndim == 2 and y_train.values.shape[1] == 1:
                 y_train = np.squeeze(y_train.values)
             else:
-                raise ValueError("LightGBM doesn't support multi-label training")
+                raise ValueError("LightGBM不支持多标签训练")
 
             N = x_train.shape[0]
             loss_curve = pd.DataFrame(np.zeros((N, num_trees)))
@@ -241,12 +240,12 @@ class DEnsembleModel(Model, FeatureInt):
                 pred_tree += model.predict(x_train.values, start_iteration=i_tree, num_iteration=1)
                 loss_curve.iloc[:, i_tree] = self.get_loss(y_train, pred_tree)
         else:
-            raise ValueError("not implemented yet")
+            raise ValueError("尚未实现")
         return loss_curve
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if self.ensemble is None:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         pred = pd.Series(np.zeros(x_test.shape[0]), index=x_test.index)
         for i_sub, submodel in enumerate(self.ensemble):
@@ -264,11 +263,11 @@ class DEnsembleModel(Model, FeatureInt):
         return pred_sub
 
     def get_feature_importance(self, *args, **kwargs) -> pd.Series:
-        """get feature importance
+        """获取特征重要性
 
-        Notes
+        注意
         -----
-            parameters reference:
+            参数参考：
             https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.Booster.html?highlight=feature_importance#lightgbm.Booster.feature_importance
         """
         res = []

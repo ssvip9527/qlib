@@ -409,70 +409,70 @@ class ExpressionProvider(abc.ABC):
 
     @abc.abstractmethod
     def expression(self, instrument, field, start_time=None, end_time=None, freq="day") -> pd.Series:
-        """Get Expression data.
+        """获取表达式数据
 
-        The responsibility of `expression`
-        - parse the `field` and `load` the according data.
-        - When loading the data, it should handle the time dependency of the data. `get_expression_instance` is commonly used in this method
+        `expression`方法的职责：
+        - 解析`field`并加载相应数据
+        - 加载数据时应处理数据的时间依赖性，通常会使用`get_expression_instance`方法
 
-        Parameters
+        参数
         ----------
         instrument : str
-            a certain instrument.
+            特定标的
         field : str
-            a certain field of feature.
+            特征的特定字段
         start_time : str
-            start of the time range.
+            时间范围开始
         end_time : str
-            end of the time range.
+            时间范围结束
         freq : str
-            time frequency, available: year/quarter/month/week/day.
+            时间频率，可选：year/quarter/month/week/day
 
-        Returns
+        返回
         -------
         pd.Series
-            data of a certain expression
+            特定表达式的数据
 
-            The data has two types of format
+            数据有两种格式：
 
-            1) expression with datetime index
+            1) 带日期时间索引的表达式
 
-            2) expression with integer index
+            2) 带整数索引的表达式
 
-                - because the datetime is not as good as
+                - 因为日期时间格式不如
         """
         raise NotImplementedError("Subclass of ExpressionProvider must implement `Expression` method")
 
 
 class DatasetProvider(abc.ABC):
-    """Dataset provider class
+    """数据集提供者类
 
-    Provide Dataset data.
+    提供数据集数据
     """
 
     @abc.abstractmethod
     def dataset(self, instruments, fields, start_time=None, end_time=None, freq="day", inst_processors=[]):
-        """Get dataset data.
+        """获取数据集数据
 
-        Parameters
+        参数
         ----------
         instruments : list or dict
-            list/dict of instruments or dict of stockpool config.
+            标的列表/字典或股票池配置字典
         fields : list
-            list of feature instances.
+            特征实例列表
         start_time : str
-            start of the time range.
+            时间范围开始
         end_time : str
-            end of the time range.
+            时间范围结束
         freq : str
-            time frequency.
+            时间频率
         inst_processors:  Iterable[Union[dict, InstProcessor]]
-            the operations performed on each instrument
+            对每个标的执行的操作
 
-        Returns
+        返回
         ----------
         pd.DataFrame
-            a pandas dataframe with <instrument, datetime> index.
+            带有<instrument, datetime>索引的pandas数据框
         """
         raise NotImplementedError("Subclass of DatasetProvider must implement `Dataset` method")
 
@@ -487,23 +487,22 @@ class DatasetProvider(abc.ABC):
         inst_processors=[],
         **kwargs,
     ):
-        """Get task uri, used when generating rabbitmq task in qlib_server
+        """获取任务URI，用于在qlib_server中生成rabbitmq任务
 
-        Parameters
+        参数
         ----------
         instruments : list or dict
-            list/dict of instruments or dict of stockpool config.
+            标的列表/字典或股票池配置字典
         fields : list
-            list of feature instances.
+            特征实例列表
         start_time : str
-            start of the time range.
+            时间范围开始
         end_time : str
-            end of the time range.
+            时间范围结束
         freq : str
-            time frequency.
+            时间频率
         disk_cache : int
-            whether to skip(0)/use(1)/replace(2) disk_cache.
-
+            是否跳过(0)/使用(1)/替换(2)磁盘缓存
         """
         # TODO: qlib-server support inst_processors
         return DiskDatasetCache._uri(instruments, fields, start_time, end_time, freq, disk_cache, inst_processors)

@@ -1,8 +1,8 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 
 """
-This order generator is for strategies based on WeightStrategyBase
+此订单生成器用于基于WeightStrategyBase的策略
 """
 from ...backtest.position import Position
 from ...backtest.exchange import Exchange
@@ -25,21 +25,21 @@ class OrderGenerator:
     ) -> list:
         """generate_order_list_from_target_weight_position
 
-        :param current: The current position
+        :param current: 当前持仓
         :type current: Position
-        :param trade_exchange:
+        :param trade_exchange: 交易所
         :type trade_exchange: Exchange
-        :param target_weight_position: {stock_id : weight}
+        :param target_weight_position: {股票ID : 权重}
         :type target_weight_position: dict
-        :param risk_degree:
+        :param risk_degree: 风险度
         :type risk_degree: float
-        :param pred_start_time:
+        :param pred_start_time: 预测开始时间
         :type pred_start_time: pd.Timestamp
-        :param pred_end_time:
+        :param pred_end_time: 预测结束时间
         :type pred_end_time: pd.Timestamp
-        :param trade_start_time:
+        :param trade_start_time: 交易开始时间
         :type trade_start_time: pd.Timestamp
-        :param trade_end_time:
+        :param trade_end_time: 交易结束时间
         :type trade_end_time: pd.Timestamp
 
         :rtype: list
@@ -48,7 +48,7 @@ class OrderGenerator:
 
 
 class OrderGenWInteract(OrderGenerator):
-    """Order Generator With Interact"""
+    """带交互功能的订单生成器"""
 
     def generate_order_list_from_target_weight_position(
         self,
@@ -63,26 +63,25 @@ class OrderGenWInteract(OrderGenerator):
     ) -> list:
         """generate_order_list_from_target_weight_position
 
-        No adjustment for for the nontradable share.
-        All the tadable value is assigned to the tadable stock according to the weight.
-        if interact == True, will use the price at trade date to generate order list
-        else, will only use the price before the trade date to generate order list
+        不对非流通股进行调整。所有可交易价值根据权重分配给可交易股票。
+        如果interact == True，将使用交易日价格生成订单列表
+        否则，仅使用交易日之前的价格生成订单列表
 
-        :param current:
+        :param current: 当前持仓
         :type current: Position
-        :param trade_exchange:
+        :param trade_exchange: 交易所
         :type trade_exchange: Exchange
-        :param target_weight_position:
+        :param target_weight_position: 目标权重持仓
         :type target_weight_position: dict
-        :param risk_degree:
+        :param risk_degree: 风险度
         :type risk_degree: float
-        :param pred_start_time:
+        :param pred_start_time: 预测开始时间
         :type pred_start_time: pd.Timestamp
-        :param pred_end_time:
+        :param pred_end_time: 预测结束时间
         :type pred_end_time: pd.Timestamp
-        :param trade_start_time:
+        :param trade_start_time: 交易开始时间
         :type trade_start_time: pd.Timestamp
-        :param trade_end_time:
+        :param trade_end_time: 交易结束时间
         :type trade_end_time: pd.Timestamp
 
         :rtype: list
@@ -90,7 +89,7 @@ class OrderGenWInteract(OrderGenerator):
         if target_weight_position is None:
             return []
 
-        # calculate current_tradable_value
+        # 计算当前可交易价值
         current_amount_dict = current.get_stock_amount_dict()
 
         current_total_value = trade_exchange.calculate_amount_position_value(

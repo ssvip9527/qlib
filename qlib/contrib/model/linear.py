@@ -15,14 +15,14 @@ from ...data.dataset.handler import DataHandlerLP
 
 
 class LinearModel(Model):
-    """Linear Model
+    """线性模型
 
-    Solve one of the following regression problems:
-        - `ols`: min_w |y - Xw|^2_2
-        - `nnls`: min_w |y - Xw|^2_2, s.t. w >= 0
-        - `ridge`: min_w |y - Xw|^2_2 + \alpha*|w|^2_2
-        - `lasso`: min_w |y - Xw|^2_2 + \alpha*|w|_1
-    where `w` is the regression coefficient.
+    解决以下回归问题之一：
+        - `ols`: 最小化 |y - Xw|^2_2
+        - `nnls`: 最小化 |y - Xw|^2_2，约束条件 w >= 0
+        - `ridge`: 最小化 |y - Xw|^2_2 + \alpha*|w|^2_2
+        - `lasso`: 最小化 |y - Xw|^2_2 + \alpha*|w|_1
+    其中 `w` 是回归系数。
     """
 
     OLS = "ols"
@@ -32,22 +32,22 @@ class LinearModel(Model):
 
     def __init__(self, estimator="ols", alpha=0.0, fit_intercept=False, include_valid: bool = False):
         """
-        Parameters
+        参数
         ----------
         estimator : str
-            which estimator to use for linear regression
+            用于线性回归的估计器类型
         alpha : float
-            l1 or l2 regularization parameter
+            l1或l2正则化参数
         fit_intercept : bool
-            whether fit intercept
+            是否拟合截距项
         include_valid: bool
-            Should the validation data be included for training?
-            The validation data should be included
+            是否将验证集数据包含在训练中？
+            应包含验证集数据
         """
-        assert estimator in [self.OLS, self.NNLS, self.RIDGE, self.LASSO], f"unsupported estimator `{estimator}`"
+        assert estimator in [self.OLS, self.NNLS, self.RIDGE, self.LASSO], f"不支持的估计器 `{estimator}`"
         self.estimator = estimator
 
-        assert alpha == 0 or estimator in [self.RIDGE, self.LASSO], f"alpha is only supported in `ridge`&`lasso`"
+        assert alpha == 0 or estimator in [self.RIDGE, self.LASSO], f"alpha仅在`ridge`和`lasso`中支持"
         self.alpha = alpha
 
         self.fit_intercept = fit_intercept
@@ -62,10 +62,10 @@ class LinearModel(Model):
                 df_valid = dataset.prepare("valid", col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
                 df_train = pd.concat([df_train, df_valid])
             except KeyError:
-                get_module_logger("LinearModel").info("include_valid=True, but valid does not exist")
+                get_module_logger("LinearModel").info("include_valid=True，但验证集不存在")
         df_train = df_train.dropna()
         if df_train.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError("数据集数据为空，请检查您的数据集配置。")
         if reweighter is not None:
             w: pd.Series = reweighter.reweight(df_train)
             w = w.values
@@ -95,7 +95,7 @@ class LinearModel(Model):
 
     def _fit_nnls(self, X, y, w=None):
         if w is not None:
-            raise NotImplementedError("TODO: support nnls with weight")  # TODO
+            raise NotImplementedError("TODO: 支持带权重的nnls")  # TODO
         if self.fit_intercept:
             X = np.c_[X, np.ones(len(X))]  # NOTE: mem copy
         coef = nnls(X, y)[0]
@@ -108,6 +108,6 @@ class LinearModel(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if self.coef_ is None:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         return pd.Series(x_test.values @ self.coef_ + self.intercept_, index=x_test.index)

@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 
 
 from .signal_strategy import (

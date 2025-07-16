@@ -275,21 +275,21 @@ class PairOperator(ExpressionOps):
 
 
 class NpPairOperator(PairOperator):
-    """Numpy Pair-wise operator
+    """Numpy成对运算符
 
-    Parameters
+    参数
     ----------
     feature_left : Expression
-        feature instance or numeric value
+        特征实例或数值
     feature_right : Expression
-        feature instance or numeric value
+        特征实例或数值
     func : str
-        operator function
+        运算符函数
 
-    Returns
+    返回
     ----------
     Feature:
-        two features' operation output
+        两个特征的运算结果
     """
 
     def __init__(self, feature_left, feature_right, func):
@@ -334,19 +334,19 @@ class NpPairOperator(PairOperator):
 
 
 class Power(NpPairOperator):
-    """Power Operator
+    """幂运算符
 
-    Parameters
+    参数
     ----------
     feature_left : Expression
-        feature instance
+        特征实例
     feature_right : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     Feature:
-        The bases in feature_left raised to the exponents in feature_right
+        feature_left的基数乘以feature_right的指数
     """
 
     def __init__(self, feature_left, feature_right):
@@ -354,19 +354,19 @@ class Power(NpPairOperator):
 
 
 class Add(NpPairOperator):
-    """Add Operator
+    """加法运算符
 
-    Parameters
+    参数
     ----------
     feature_left : Expression
-        feature instance
+        特征实例
     feature_right : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     Feature:
-        two features' sum
+        两个特征的和
     """
 
     def __init__(self, feature_left, feature_right):
@@ -374,19 +374,19 @@ class Add(NpPairOperator):
 
 
 class Sub(NpPairOperator):
-    """Subtract Operator
+    """减法运算符
 
-    Parameters
+    参数
     ----------
     feature_left : Expression
-        feature instance
+        特征实例
     feature_right : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     Feature:
-        two features' subtraction
+        两个特征的差
     """
 
     def __init__(self, feature_left, feature_right):
@@ -394,19 +394,19 @@ class Sub(NpPairOperator):
 
 
 class Mul(NpPairOperator):
-    """Multiply Operator
+    """乘法运算符
 
-    Parameters
+    参数
     ----------
     feature_left : Expression
-        feature instance
+        特征实例
     feature_right : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     Feature:
-        two features' product
+        两个特征的乘积
     """
 
     def __init__(self, feature_left, feature_right):

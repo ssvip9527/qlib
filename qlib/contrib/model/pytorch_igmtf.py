@@ -25,18 +25,18 @@ from ...contrib.model.pytorch_gru import GRUModel
 
 
 class IGMTF(Model):
-    """IGMTF Model
+    """IGMTF模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -57,11 +57,11 @@ class IGMTF(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("IGMTF")
-        self.logger.info("IMGTF pytorch version...")
+        self.logger.info("IGMTF PyTorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -78,7 +78,7 @@ class IGMTF(Model):
         self.seed = seed
 
         self.logger.info(
-            "IGMTF parameters setting:"
+            "IGMTF参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -131,7 +131,7 @@ class IGMTF(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.igmtf_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.igmtf_model.to(self.device)
@@ -150,7 +150,7 @@ class IGMTF(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -166,15 +166,15 @@ class IGMTF(Model):
         if self.metric == ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def get_daily_inter(self, df, shuffle=False):
-        # organize the train data into daily batches
+        # 将训练数据组织为每日批次
         daily_count = df.groupby(level=0, group_keys=False).size().values
         daily_index = np.roll(np.cumsum(daily_count), 1)
         daily_index[0] = 0
         if shuffle:
-            # shuffle data
+            # 打乱数据顺序
             daily_shuffle = list(zip(daily_index, daily_count))
             np.random.shuffle(daily_shuffle)
             daily_index, daily_count = zip(*daily_shuffle)

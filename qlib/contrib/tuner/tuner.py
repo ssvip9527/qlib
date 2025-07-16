@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 
 # pylint: skip-file
 # flake8: noqa
@@ -59,24 +59,24 @@ class Tuner:
     @abstractmethod
     def objective(self, params):
         """
-        Implement this method to give an optimization factor using parameters in space.
-        :return: {'loss': a factor for optimization, float type,
-                  'status': the status of this evaluation step, STATUS_OK or STATUS_FAIL}.
+        实现此方法以使用搜索空间中的参数给出优化因子。
+        :return: {'loss': 优化因子，浮点型,
+                  'status': 此评估步骤的状态，STATUS_OK或STATUS_FAIL}。
         """
         pass
 
     @abstractmethod
     def setup_space(self):
         """
-        Implement this method to setup the searching space of tuner.
-        :return: searching space, dict type.
+        实现此方法以设置调优器的搜索空间。
+        :return: 搜索空间，字典类型。
         """
         pass
 
     @abstractmethod
     def save_local_best_params(self):
         """
-        Implement this method to save the best parameters of this tuner.
+        实现此方法以保存此调优器的最佳参数。
         """
         pass
 

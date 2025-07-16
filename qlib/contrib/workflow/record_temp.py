@@ -1,5 +1,5 @@
 #  Copyright (c) Microsoft Corporation.
-#  Licensed under the MIT License.
+#  根据MIT许可证授权
 
 import logging
 import pandas as pd
@@ -18,8 +18,8 @@ logger = get_module_logger("workflow", logging.INFO)
 
 class MultiSegRecord(RecordTemp):
     """
-    This is the multiple segments signal record class that generates the signal prediction.
-    This class inherits the ``RecordTemp`` class.
+    这是用于生成信号预测的多段信号记录类。
+    该类继承自``RecordTemp``类。
     """
 
     def __init__(self, model, dataset, recorder=None):
@@ -59,8 +59,8 @@ class MultiSegRecord(RecordTemp):
 
 class SignalMseRecord(RecordTemp):
     """
-    This is the Signal MSE Record class that computes the mean squared error (MSE).
-    This class inherits the ``SignalMseRecord`` class.
+    这是用于计算均方误差（MSE）的信号MSE记录类。
+    该类继承自``SignalMseRecord``类。
     """
 
     artifact_path = "sig_analysis"

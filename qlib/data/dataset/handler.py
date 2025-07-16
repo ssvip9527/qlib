@@ -25,29 +25,29 @@ DATA_KEY_TYPE = Literal["raw", "infer", "learn"]
 
 class DataHandlerABC(Serializable):
     """
-    Interface for data handler.
+    数据处理器接口。
 
-    This class does not assume the internal data structure of the data handler.
-    It only defines the interface for external users (uses DataFrame as the internal data structure).
+    此类不假设数据处理器的内部数据结构。
+    它仅为外部用户定义接口（使用DataFrame作为内部数据结构）。
 
-    In the future, the data handler's more detailed implementation should be refactored. Here are some guidelines:
+    未来，数据处理器的更详细实现应进行重构。以下是一些指导原则：
 
-    It covers several components:
+    它包含几个组件：
 
-    - [data loader] -> internal representation of the data -> data preprocessing -> interface adaptor for the fetch interface
-    - The workflow to combine them all:
-      The workflow may be very complicated. DataHandlerLP is one of the practices, but it can't satisfy all the requirements.
-      So leaving the flexibility to the user to implement the workflow is a more reasonable choice.
+    - [数据加载器] -> 数据的内部表示 -> 数据预处理 -> 获取接口的适配器
+    - 组合所有组件的工作流程：
+      工作流程可能非常复杂。DataHandlerLP是其中一种实践，但无法满足所有需求。
+      因此，为用户提供实现工作流程的灵活性是更合理的选择。
     """
 
     def __init__(self, *args, **kwargs):  # pylint: disable=W0246
         """
-        We should define how to get ready for the fetching.
+        我们应该定义如何为数据获取做好准备。
         """
         super().__init__(*args, **kwargs)
 
-    CS_ALL = "__all"  # return all columns with single-level index column
-    CS_RAW = "__raw"  # return raw data with multi-level index column
+    CS_ALL = "__all"  # 返回具有单级索引列的所有列
+    CS_RAW = "__raw"  # 返回具有多级索引列的原始数据
 
     # data key
     DK_R: DATA_KEY_TYPE = "raw"
@@ -67,25 +67,25 @@ class DataHandlerABC(Serializable):
 
 class DataHandler(DataHandlerABC):
     """
-    The motivation of DataHandler:
+    DataHandler的设计动机：
 
-    - It provides an implementation of BaseDataHandler that we implement with:
-        - Handling responses with an internal loaded DataFrame
-        - The DataFrame is loaded by a data loader.
+    - 它提供了BaseDataHandler的一种实现，具体包括：
+        - 使用内部加载的DataFrame处理响应
+        - DataFrame由数据加载器加载
 
-    The steps to using a handler
-    1. initialized data handler  (call by `init`).
-    2. use the data.
+    使用处理器的步骤：
+    1. 初始化数据处理器（通过`init`调用）。
+    2. 使用数据。
 
 
-    The data handler try to maintain a handler with 2 level.
-    `datetime` & `instruments`.
+    数据处理器尝试维护具有两级索引的处理器：
+    `datetime`（日期时间）和`instruments`（标的）。
 
-    Any order of the index level can be supported (The order will be implied in the data).
-    The order  <`datetime`, `instruments`> will be used when the dataframe index name is missed.
+    支持任何顺序的索引级别（顺序将由数据暗示）。
+    当数据框索引名称缺失时，将使用<`datetime`, `instruments`>顺序。
 
-    Example of the data:
-    The multi-index of the columns is optional.
+    数据示例：
+    列的多级索引是可选的。
 
     .. code-block:: text
 
@@ -113,7 +113,7 @@ class DataHandler(DataHandlerABC):
         fetch_orig=True,
     ):
         """
-        Parameters
+        参数
         ----------
         instruments :
             要检索的股票列表。
@@ -153,12 +153,11 @@ class DataHandler(DataHandlerABC):
 
     def config(self, **kwargs):
         """
-        configuration of data.
-        # what data to be loaded from data source
+        数据配置。
+        # 从数据源加载哪些数据
 
-        This method will be used when loading pickled handler from dataset.
-        The data will be initialized with different time range.
-
+        此方法将在从数据集加载序列化的处理器时使用。
+        数据将使用不同的时间范围进行初始化。
         """
         attr_list = {"instruments", "start_time", "end_time"}
         for k, v in kwargs.items():
@@ -173,12 +172,12 @@ class DataHandler(DataHandlerABC):
 
     def setup_data(self, enable_cache: bool = False):
         """
-        Set Up the data in case of running initialization for multiple time
+        设置数据，以防多次运行初始化
 
-        It is responsible for maintaining following variable
+        负责维护以下变量：
         1) self._data
 
-        Parameters
+        参数
         ----------
         enable_cache : bool
             默认值为false：
@@ -186,10 +185,10 @@ class DataHandler(DataHandlerABC):
             - 如果`enable_cache` == True：
                 处理后的数据将保存到磁盘，下次调用`init`时处理器将直接从磁盘加载缓存数据
         """
-        # Setup data.
-        # _data may be with multiple column index level. The outer level indicates the feature set name
+        # 设置数据。
+        # _data可能具有多级列索引。外层级别表示特征集名称
         with TimeInspector.logt("Loading data"):
-            # make sure the fetch method is based on an index-sorted pd.DataFrame
+            # 确保fetch方法基于索引排序的pd.DataFrame
             self._data = lazy_sort_index(self.data_loader.load(self.instruments, self.start_time, self.end_time))
         # TODO: cache
 
@@ -203,63 +202,63 @@ class DataHandler(DataHandlerABC):
         proc_func: Optional[Callable] = None,
     ) -> pd.DataFrame:
         """
-        fetch data from underlying data source
+        从底层数据源获取数据
 
-        Design motivation:
-        - providing a unified interface for underlying data.
-        - Potential to make the interface more friendly.
-        - User can improve performance when fetching data in this extra layer
+        设计动机：
+        - 为底层数据提供统一接口
+        - 潜在地使接口更友好
+        - 用户可以在此额外层中提高数据获取性能
 
-        Parameters
+        参数
         ----------
         selector : Union[pd.Timestamp, slice, str]
-            describe how to select data by index
-            It can be categories as following
+            描述如何按索引选择数据
+            可以分为以下几类：
 
-            - fetch single index
-            - fetch a range of index
+            - 获取单个索引
+            - 获取索引范围
 
-                - a slice range
-                - pd.Index for specific indexes
+                - 切片范围
+                - 特定索引的pd.Index
 
-            Following conflicts may occur
+            可能出现以下冲突：
 
-            - Does ["20200101", "20210101"] mean selecting this slice or these two days?
+            - ["20200101", "20210101"]是表示选择此切片还是这两天？
 
-                - slice have higher priorities
+                - 切片具有更高优先级
 
         level : Union[str, int]
-            which index level to select the data
+            选择数据的索引级别
 
         col_set : Union[str, List[str]]
 
-            - if isinstance(col_set, str):
+            - 如果是str类型：
 
-                select a set of meaningful, pd.Index columns.(e.g. features, columns)
+                选择一组有意义的pd.Index列（例如特征、列）
 
-                - if col_set == CS_RAW:
+                - 如果col_set == CS_RAW：
 
-                    the raw dataset will be returned.
+                    将返回原始数据集
 
-            - if isinstance(col_set, List[str]):
+            - 如果是List[str]类型：
 
-                select several sets of meaningful columns, the returned data has multiple levels
+                选择几组有意义的列，返回的数据具有多级索引
 
         proc_func: Callable
 
-            - Give a hook for processing data before fetching
-            - An example to explain the necessity of the hook:
+            - 提供在获取数据前处理数据的钩子
+            - 解释此钩子必要性的示例：
 
-                - A Dataset learned some processors to process data which is related to data segmentation
-                - It will apply them every time when preparing data.
-                - The learned processor require the dataframe remains the same format when fitting and applying
-                - However the data format will change according to the parameters.
-                - So the processors should be applied to the underlayer data.
+                - 数据集学习了一些与数据分割相关的处理器
+                - 每次准备数据时都会应用它们
+                - 学习到的处理器要求数据框在拟合和应用时保持相同格式
+                - 然而数据格式会根据参数变化
+                - 因此处理器应应用于底层数据
 
         squeeze : bool
-            whether squeeze columns and index
+            是否压缩列和索引
 
-        Returns
+        返回
         -------
         pd.DataFrame.
         """
@@ -283,20 +282,20 @@ class DataHandler(DataHandlerABC):
         squeeze: bool = False,
         proc_func: Callable = None,
     ):
-        # This method is extracted for sharing in subclasses
+        # 此方法被提取出来供子类共享
         from .storage import BaseHandlerStorage  # pylint: disable=C0415
 
-        # Following conflicts may occur
-        # - Does [20200101", "20210101"] mean selecting this slice or these two days?
-        # To solve this issue
-        #   - slice have higher priorities (except when level is none)
+        # 可能出现以下冲突
+        # - ["20200101", "20210101"]是表示选择此切片还是这两天？
+        # 为解决此问题
+        #   - 切片具有更高优先级（除非level为None）
         if isinstance(selector, (tuple, list)) and level is not None:
-            # when level is None, the argument will be passed in directly
-            # we don't have to convert it into slice
+            # 当level为None时，参数将直接传入
+            # 无需转换为切片
             try:
                 selector = slice(*selector)
             except ValueError:
-                get_module_logger("DataHandlerLP").info(f"Fail to converting to query to slice. It will used directly")
+                get_module_logger("DataHandlerLP").info(f"无法将查询转换为切片。将直接使用")
 
         if isinstance(data_storage, pd.DataFrame):
             data_df = data_storage

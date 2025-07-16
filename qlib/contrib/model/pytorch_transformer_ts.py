@@ -43,7 +43,7 @@ class TransformerModel(Model):
         seed=None,
         **kwargs,
     ):
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_model = d_model
         self.dropout = dropout
         self.n_epochs = n_epochs
@@ -58,7 +58,7 @@ class TransformerModel(Model):
         self.device = torch.device("cuda:%d" % GPU if torch.cuda.is_available() and GPU >= 0 else "cpu")
         self.seed = seed
         self.logger = get_module_logger("TransformerModel")
-        self.logger.info("Naive Transformer:" "\nbatch_size : {}" "\ndevice : {}".format(self.batch_size, self.device))
+        self.logger.info("朴素Transformer:" "\nbatch_size : {}" "\ndevice : {}".format(self.batch_size, self.device))
 
         if self.seed is not None:
             np.random.seed(self.seed)
@@ -70,7 +70,7 @@ class TransformerModel(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.model.parameters(), lr=self.lr, weight_decay=self.reg)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}\!".format(optimizer))
 
         self.fitted = False
         self.model.to(self.device)
@@ -89,7 +89,7 @@ class TransformerModel(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -97,7 +97,7 @@ class TransformerModel(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, data_loader):
         self.model.train()
@@ -144,10 +144,10 @@ class TransformerModel(Model):
         dl_valid = dataset.prepare("valid", col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
 
         if dl_train.empty or dl_valid.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError("数据集数据为空，请检查您的数据集配置。")
 
-        dl_train.config(fillna_type="ffill+bfill")  # process nan brought by dataloader
-        dl_valid.config(fillna_type="ffill+bfill")  # process nan brought by dataloader
+        dl_train.config(fillna_type="ffill+bfill")  # 处理数据加载器带来的NaN值
+        dl_valid.config(fillna_type="ffill+bfill")  # 处理数据加载器带来的NaN值
 
         train_loader = DataLoader(
             dl_train, batch_size=self.batch_size, shuffle=True, num_workers=self.n_jobs, drop_last=True
@@ -165,15 +165,15 @@ class TransformerModel(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # train
-        self.logger.info("training...")
+        # 训练
+        self.logger.info("训练中...")
         self.fitted = True
 
         for step in range(self.n_epochs):
             self.logger.info("Epoch%d:", step)
-            self.logger.info("training...")
+            self.logger.info("训练中...")
             self.train_epoch(train_loader)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(train_loader)
             val_loss, val_score = self.test_epoch(valid_loader)
             self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
@@ -188,10 +188,10 @@ class TransformerModel(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数：%.6lf @ %d" % (best_score, best_epoch))
         self.model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 

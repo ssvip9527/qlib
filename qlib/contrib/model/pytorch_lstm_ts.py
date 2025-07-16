@@ -23,18 +23,18 @@ from ...data.dataset.weight import Reweighter
 
 
 class LSTM(Model):
-    """LSTM Model
+    """LSTM模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -55,11 +55,11 @@ class LSTM(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("LSTM")
         self.logger.info("LSTM pytorch version...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -76,7 +76,7 @@ class LSTM(Model):
         self.seed = seed
 
         self.logger.info(
-            "LSTM parameters setting:"
+            "LSTM参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -125,7 +125,7 @@ class LSTM(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.LSTM_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.LSTM_model.to(self.device)
@@ -147,7 +147,7 @@ class LSTM(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask], weight[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -155,7 +155,7 @@ class LSTM(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask], weight=None)
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, data_loader):
         self.LSTM_model.train()

@@ -32,21 +32,21 @@ from ...model.utils import ConcatDataset
 
 class GeneralPTNN(Model):
     """
-    Motivation:
-        We want to provide a Qlib General Pytorch Model Adaptor
-        You can reuse it for all kinds of Pytorch models.
-        It should include the training and predict process
+    动机:
+        提供一个Qlib通用Pytorch模型适配器
+        可重用该适配器适配各种Pytorch模型
+        包含训练和预测流程
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -70,11 +70,11 @@ class GeneralPTNN(Model):
             "dropout": 0.0,
         },
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("GeneralPTNN")
-        self.logger.info("GeneralPTNN pytorch version...")
+        self.logger.info("GeneralPTNN pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.n_epochs = n_epochs
         self.lr = lr
         self.metric = metric
@@ -91,7 +91,7 @@ class GeneralPTNN(Model):
         self.dnn_model = init_instance_by_config({"class": pt_model_uri, "kwargs": pt_model_kwargs})
 
         self.logger.info(
-            "GeneralPTNN parameters setting:"
+            "GeneralPTNN参数设置:"
             "\nn_epochs : {}"
             "\nlr : {}"
             "\nmetric : {}"
@@ -135,7 +135,7 @@ class GeneralPTNN(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.dnn_model.parameters(), lr=self.lr, weight_decay=weight_decay)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         # === ReduceLROnPlateau learning rate scheduler ===
         self.lr_scheduler = ReduceLROnPlateau(
@@ -161,7 +161,7 @@ class GeneralPTNN(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask].view(-1, 1), weight[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -169,21 +169,21 @@ class GeneralPTNN(Model):
         if self.metric in ("", "loss"):
             return self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def _get_fl(self, data: torch.Tensor):
         """
-        get feature and label from data
-        - Handle the different data shape of time series and tabular data
+        从数据中获取特征和标签
+        - 处理时间序列数据和表格数据的不同形状
 
-        Parameters
+        参数
         ----------
         data : torch.Tensor
-            input data which maybe 3 dimension or 2 dimension
-            - 3dim: [batch_size, time_step, feature_dim]
-            - 2dim: [batch_size, feature_dim]
+            输入数据，可能是3维或2维
+            - 3维: [批次大小, 时间步, 特征维度]
+            - 2维: [批次大小, 特征维度]
 
-        Returns
+        返回
         -------
         Tuple[torch.Tensor, torch.Tensor]
         """

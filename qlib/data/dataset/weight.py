@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 
 
 class Reweighter:

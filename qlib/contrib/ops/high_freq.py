@@ -12,20 +12,20 @@ from qlib.utils.time import time_to_day_index
 
 def get_calendar_day(freq="1min", future=False):
     """
-    Load High-Freq Calendar Date Using Memcache.
-    !!!NOTE: Loading the calendar is quite slow. So loading calendar before start multiprocessing will make it faster.
+    使用内存缓存加载高频日历日期。
+    !!!注意: 加载日历相当慢。因此在开始多进程之前加载日历会使其更快。
 
-    Parameters
+    参数
     ----------
     freq : str
-        frequency of read calendar file.
+        读取日历文件的频率。
     future : bool
-        whether including future trading day.
+        是否包含未来交易日。
 
-    Returns
+    返回
     -------
     _calendar:
-        array of date.
+        日期数组。
     """
     flag = f"{freq}_future_{future}_day"
     if flag in H["c"]:
@@ -37,7 +37,7 @@ def get_calendar_day(freq="1min", future=False):
 
 
 def get_calendar_minute(freq="day", future=False):
-    """Load High-Freq Calendar Minute Using Memcache"""
+    """使用内存缓存加载高频日历分钟数据"""
     flag = f"{freq}_future_{future}_day"
     if flag in H["c"]:
         _calendar = H["c"][flag]
@@ -48,26 +48,26 @@ def get_calendar_minute(freq="day", future=False):
 
 
 class DayCumsum(ElemOperator):
-    """DayCumsum Operator during start time and end time.
+    """DayCumsum操作符，在开始时间和结束时间期间计算累积和。
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
     start : str
-        the start time of backtest in one day.
-        !!!NOTE: "9:30" means the time period of (9:30, 9:31) is in transaction.
+        日内回测的开始时间。
+        !!!注意: "9:30"表示时间段(9:30, 9:31)在交易中。
     end : str
-        the end time of backtest in one day.
-        !!!NOTE: "14:59" means the time period of (14:59, 15:00) is in transaction,
-                but (15:00, 15:01) is not.
-        So start="9:30" and end="14:59" means trading all day.
+        日内回测的结束时间。
+        !!!注意: "14:59"表示时间段(14:59, 15:00)在交易中，
+                但(15:00, 15:01)不在交易中。
+        因此start="9:30"和end="14:59"表示全天交易。
 
-    Returns
+    返回
     ----------
     feature:
-        a series of that each value equals the cumsum value during start time and end time.
-        Otherwise, the value is zero.
+        一个序列，其中每个值等于开始时间和结束时间期间的累积和值。
+        否则，值为零。
     """
 
     def __init__(self, feature, start: str = "9:30", end: str = "14:59", data_granularity: int = 1):
@@ -75,10 +75,10 @@ class DayCumsum(ElemOperator):
         self.start = datetime.strptime(start, "%H:%M")
         self.end = datetime.strptime(end, "%H:%M")
 
-        self.morning_open = datetime.strptime("9:30", "%H:%M")
-        self.morning_close = datetime.strptime("11:30", "%H:%M")
-        self.noon_open = datetime.strptime("13:00", "%H:%M")
-        self.noon_close = datetime.strptime("15:00", "%H:%M")
+        self.morning_open = datetime.strptime("9:30", "%H:%M")  # 上午开盘时间
+        self.morning_close = datetime.strptime("11:30", "%H:%M")  # 上午收盘时间
+        self.noon_open = datetime.strptime("13:00", "%H:%M")  # 下午开盘时间
+        self.noon_close = datetime.strptime("15:00", "%H:%M")  # 下午收盘时间
 
         self.data_granularity = data_granularity
         self.start_id = time_to_day_index(self.start) // self.data_granularity
@@ -86,11 +86,23 @@ class DayCumsum(ElemOperator):
         assert 240 % self.data_granularity == 0
 
     def period_cusum(self, df):
+        """计算指定时间段内的累积和
+
+        参数
+        ----------
+        df : pd.DataFrame
+            输入数据
+
+        返回
+        ----------
+        df : pd.DataFrame
+            处理后的累积和数据
+        """
         df = df.copy()
         assert len(df) == 240 // self.data_granularity
-        df.iloc[0 : self.start_id] = 0
-        df = df.cumsum()
-        df.iloc[self.end_id + 1 : 240 // self.data_granularity] = 0
+        df.iloc[0 : self.start_id] = 0  # 开始时间前的值设为0
+        df = df.cumsum()  # 计算累积和
+        df.iloc[self.end_id + 1 : 240 // self.data_granularity] = 0  # 结束时间后的值设为0
         return df
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -100,17 +112,17 @@ class DayCumsum(ElemOperator):
 
 
 class DayLast(ElemOperator):
-    """DayLast Operator
+    """DayLast操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a series of that each value equals the last value of its day
+        一个序列，其中每个值等于其所在日的最后一个值
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -120,17 +132,17 @@ class DayLast(ElemOperator):
 
 
 class FFillNan(ElemOperator):
-    """FFillNan Operator
+    """FFillNan操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a forward fill nan feature
+        前向填充NaN的特征
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -139,17 +151,17 @@ class FFillNan(ElemOperator):
 
 
 class BFillNan(ElemOperator):
-    """BFillNan Operator
+    """BFillNan操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a backfoward fill nan feature
+        后向填充NaN的特征
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -158,17 +170,17 @@ class BFillNan(ElemOperator):
 
 
 class Date(ElemOperator):
-    """Date Operator
+    """Date操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        a series of that each value is the date corresponding to feature.index
+        一个序列，其中每个值是与feature.index对应的日期
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -178,19 +190,19 @@ class Date(ElemOperator):
 
 
 class Select(PairOperator):
-    """Select Operator
+    """Select操作符
 
-    Parameters
+    参数
     ----------
     feature_left : Expression
-        feature instance, select condition
+        特征实例，选择条件
     feature_right : Expression
-        feature instance, select value
+        特征实例，选择值
 
-    Returns
+    返回
     ----------
     feature:
-        value(feature_right) that meets the condition(feature_left)
+        满足条件(feature_left)的value(feature_right)
 
     """
 
@@ -201,17 +213,17 @@ class Select(PairOperator):
 
 
 class IsNull(ElemOperator):
-    """IsNull Operator
+    """IsNull操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        A series indicating whether the feature is nan
+        指示特征是否为nan的序列
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -220,17 +232,17 @@ class IsNull(ElemOperator):
 
 
 class IsInf(ElemOperator):
-    """IsInf Operator
+    """IsInf操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
+        特征实例
 
-    Returns
+    返回
     ----------
     feature:
-        A series indicating whether the feature is inf
+        指示特征是否为inf的序列
     """
 
     def _load_internal(self, instrument, start_index, end_index, freq):
@@ -239,21 +251,21 @@ class IsInf(ElemOperator):
 
 
 class Cut(ElemOperator):
-    """Cut Operator
+    """Cut操作符
 
-    Parameters
+    参数
     ----------
     feature : Expression
-        feature instance
-    l : int
-        l > 0, delete the first l elements of feature (default is None, which means 0)
-    r : int
-        r < 0, delete the last -r elements of feature (default is None, which means 0)
-    Returns
+        特征实例
+    left : int
+        left > 0，删除特征的前left个元素（默认为None，表示0）
+    right : int
+        right < 0，删除特征的后-right个元素（默认为None，表示0）
+    返回
     ----------
     feature:
-        A series with the first l and last -r elements deleted from the feature.
-        Note: It is deleted from the raw data, not the sliced data
+        从特征中删除前left个和后-right个元素的序列。
+        注意：是从原始数据中删除，而不是从切片数据中
     """
 
     def __init__(self, feature, left=None, right=None):

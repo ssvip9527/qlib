@@ -36,48 +36,47 @@ class BaseSignalStrategy(BaseStrategy, ABC):
         **kwargs,
     ):
         """
-        Parameters
+        参数
         -----------
         signal :
-            the information to describe a signal. Please refer to the docs of `qlib.backtest.signal.create_signal_from`
-            the decision of the strategy will base on the given signal
+            描述信号的信息。请参考`qlib.backtest.signal.create_signal_from`的文档
+            策略的决策将基于给定的信号
         risk_degree : float
-            position percentage of total value.
+            总价值的持仓百分比
         trade_exchange : Exchange
-            exchange that provides market info, used to deal order and generate report
-            - If `trade_exchange` is None, self.trade_exchange will be set with common_infra
-            - It allowes different trade_exchanges is used in different executions.
-            - For example:
-                - In daily execution, both daily exchange and minutely are usable, but the daily exchange is recommended because it runs faster.
-                - In minutely execution, the daily exchange is not usable, only the minutely exchange is recommended.
-
+            提供市场信息的交易所，用于处理订单和生成报告
+            - 如果`trade_exchange`为None，self.trade_exchange将通过common_infra设置
+            - 允许在不同的执行中使用不同的trade_exchange
+            - 例如：
+                - 在日频执行中，日频和分钟频交易所都可用，但推荐使用日频交易所，因为它运行更快
+                - 在分钟频执行中，日频交易所不可用，只推荐使用分钟频交易所
         """
         super().__init__(level_infra=level_infra, common_infra=common_infra, trade_exchange=trade_exchange, **kwargs)
 
         self.risk_degree = risk_degree
 
-        # This is trying to be compatible with previous version of qlib task config
+        # 这是为了兼容旧版本的qlib任务配置
         if model is not None and dataset is not None:
-            warnings.warn("`model` `dataset` is deprecated; use `signal`.", DeprecationWarning)
+            warnings.warn("`model` `dataset`已弃用；请使用`signal`", DeprecationWarning)
             signal = model, dataset
 
         self.signal: Signal = create_signal_from(signal)
 
     def get_risk_degree(self, trade_step=None):
-        """get_risk_degree
-        Return the proportion of your total value you will use in investment.
-        Dynamically risk_degree will result in Market timing.
+        """获取风险度
+        返回你将用于投资的总价值比例
+        动态风险度将导致市场择时
         """
-        # It will use 95% amount of your total value by default
+        # 默认使用总价值的95%
         return self.risk_degree
 
 
 class TopkDropoutStrategy(BaseSignalStrategy):
     # TODO:
-    # 1. Supporting leverage the get_range_limit result from the decision
-    # 2. Supporting alter_outer_trade_decision
-    # 3. Supporting checking the availability of trade decision
-    # 4. Regenerate results with forbid_all_trade_at_limit set to false and flip the default to false, as it is consistent with reality.
+    # 1. 支持从决策中获取range_limit结果
+    # 2. 支持修改外部交易决策
+    # 3. 支持检查交易决策的可用性
+    # 4. 将forbid_all_trade_at_limit设为false重新生成结果，并将其默认值改为false，因为这与现实一致
     def __init__(
         self,
         *,
@@ -91,40 +90,39 @@ class TopkDropoutStrategy(BaseSignalStrategy):
         **kwargs,
     ):
         """
-        Parameters
+        参数
         -----------
         topk : int
-            the number of stocks in the portfolio.
+            投资组合中的股票数量
         n_drop : int
-            number of stocks to be replaced in each trading date.
+            每个交易日要替换的股票数量
         method_sell : str
-            dropout method_sell, random/bottom.
+            卖出方法，random/bottom
         method_buy : str
-            dropout method_buy, random/top.
+            买入方法，random/top
         hold_thresh : int
-            minimum holding days
-            before sell stock , will check current.get_stock_count(order.stock_id) >= self.hold_thresh.
+            最小持有天数
+            在卖出股票前，会检查current.get_stock_count(order.stock_id) >= self.hold_thresh
         only_tradable : bool
-            will the strategy only consider the tradable stock when buying and selling.
+            策略是否只考虑可交易股票
 
-            if only_tradable:
+            如果only_tradable为True:
 
-                strategy will make decision with the tradable state of the stock info and avoid buy and sell them.
+                策略将根据股票的可交易状态做出决策，避免买卖不可交易股票
 
-            else:
+            否则:
 
-                strategy will make buy sell decision without checking the tradable state of the stock.
+                策略将在不考虑股票可交易状态的情况下做出买卖决策
         forbid_all_trade_at_limit : bool
-            if forbid all trades when limit_up or limit_down reached.
+            是否在达到涨跌停时禁止所有交易
 
-            if forbid_all_trade_at_limit:
+            如果forbid_all_trade_at_limit为True:
 
-                strategy will not do any trade when price reaches limit up/down, even not sell at limit up nor buy at
-                limit down, though allowed in reality.
+                当价格达到涨跌停时，策略不会进行任何交易，即使在现实中允许在涨停卖出和在跌停买入
 
-            else:
+            否则:
 
-                strategy will sell at limit up and buy ad limit down.
+                策略将在涨停卖出和在跌停买入
         """
         super().__init__(**kwargs)
         self.topk = topk
@@ -297,9 +295,9 @@ class TopkDropoutStrategy(BaseSignalStrategy):
 
 class WeightStrategyBase(BaseSignalStrategy):
     # TODO:
-    # 1. Supporting leverage the get_range_limit result from the decision
-    # 2. Supporting alter_outer_trade_decision
-    # 3. Supporting checking the availability of trade decision
+    # 1. 支持从决策中获取range_limit结果
+    # 2. 支持修改外部交易决策
+    # 3. 支持检查交易决策的可用性
     def __init__(
         self,
         *,
@@ -308,17 +306,17 @@ class WeightStrategyBase(BaseSignalStrategy):
     ):
         """
         signal :
-            the information to describe a signal. Please refer to the docs of `qlib.backtest.signal.create_signal_from`
-            the decision of the strategy will base on the given signal
+            描述信号的信息。请参考`qlib.backtest.signal.create_signal_from`的文档
+            策略的决策将基于给定的信号
         trade_exchange : Exchange
-            exchange that provides market info, used to deal order and generate report
+            提供市场信息的交易所，用于处理订单和生成报告
 
-            - If `trade_exchange` is None, self.trade_exchange will be set with common_infra
-            - It allowes different trade_exchanges is used in different executions.
-            - For example:
+            - 如果`trade_exchange`为None，self.trade_exchange将通过common_infra设置
+            - 允许在不同的执行中使用不同的trade_exchange
+            - 例如：
 
-                - In daily execution, both daily exchange and minutely are usable, but the daily exchange is recommended because it runs faster.
-                - In minutely execution, the daily exchange is not usable, only the minutely exchange is recommended.
+                - 在日频执行中，日频和分钟频交易所都可用，但推荐使用日频交易所，因为它运行更快
+                - 在分钟频执行中，日频交易所不可用，只推荐使用分钟频交易所
         """
         super().__init__(**kwargs)
 
@@ -329,14 +327,14 @@ class WeightStrategyBase(BaseSignalStrategy):
 
     def generate_target_weight_position(self, score, current, trade_start_time, trade_end_time):
         """
-        Generate target position from score for this date and the current position.The cash is not considered in the position
+        从分数生成目标持仓位置。现金不考虑在持仓中
 
-        Parameters
+        参数
         -----------
         score : pd.Series
-            pred score for this trade date, index is stock_id, contain 'score' column.
+            当前交易日的预测分数，索引为stock_id，包含'score'列
         current : Position()
-            current position.
+            当前持仓
         trade_start_time: pd.Timestamp
         trade_end_time: pd.Timestamp
         """
@@ -344,9 +342,9 @@ class WeightStrategyBase(BaseSignalStrategy):
 
     def generate_trade_decision(self, execute_result=None):
         # generate_trade_decision
-        # generate_target_weight_position() and generate_order_list_from_target_weight_position() to generate order_list
+        # 使用generate_target_weight_position()和generate_order_list_from_target_weight_position()生成订单列表
 
-        # get the number of trading step finished, trade_step can be [0, 1, 2, ..., trade_len - 1]
+        # 获取已完成的交易步骤数，trade_step可以是[0, 1, 2, ..., trade_len - 1]
         trade_step = self.trade_calendar.get_trade_step()
         trade_start_time, trade_end_time = self.trade_calendar.get_step_time(trade_step)
         pred_start_time, pred_end_time = self.trade_calendar.get_step_time(trade_step, shift=1)
@@ -354,7 +352,7 @@ class WeightStrategyBase(BaseSignalStrategy):
         if pred_score is None:
             return TradeDecisionWO([], self)
         current_temp = copy.deepcopy(self.trade_position)
-        assert isinstance(current_temp, Position)  # Avoid InfPosition
+        assert isinstance(current_temp, Position)  # 避免InfPosition
 
         target_weight_position = self.generate_target_weight_position(
             score=pred_score, current=current_temp, trade_start_time=trade_start_time, trade_end_time=trade_end_time
@@ -373,13 +371,12 @@ class WeightStrategyBase(BaseSignalStrategy):
 
 
 class EnhancedIndexingStrategy(WeightStrategyBase):
-    """Enhanced Indexing Strategy
+    """增强指数策略
 
-    Enhanced indexing combines the arts of active management and passive management,
-    with the aim of outperforming a benchmark index (e.g., S&P 500) in terms of
-    portfolio return while controlling the risk exposure (a.k.a. tracking error).
+    增强指数策略结合了主动管理和被动管理的艺术，
+    旨在控制风险敞口（又称跟踪误差）的同时超越基准指数（如标普500）的投资组合回报。
 
-    Users need to prepare their risk model data like below:
+    用户需要准备如下的风险模型数据：
 
     .. code-block:: text
 
@@ -388,14 +385,14 @@ class EnhancedIndexingStrategy(WeightStrategyBase):
         ├────── factor_exp.{csv|pkl|h5}
         ├────── factor_cov.{csv|pkl|h5}
         ├────── specific_risk.{csv|pkl|h5}
-        ├────── blacklist.{csv|pkl|h5}  # optional
+        ├────── blacklist.{csv|pkl|h5}  # 可选
 
-    The risk model data can be obtained from risk data provider. You can also use
-    `qlib.model.riskmodel.structured.StructuredCovEstimator` to prepare these data.
+    风险模型数据可以从风险数据提供商处获取。你也可以使用
+    `qlib.model.riskmodel.structured.StructuredCovEstimator`来准备这些数据。
 
-    Args:
-        riskmodel_path (str): risk model path
-        name_mapping (dict): alternative file names
+    参数:
+        riskmodel_path (str): 风险模型路径
+        name_mapping (dict): 替代文件名
     """
 
     FACTOR_EXP_NAME = "factor_exp.pkl"
@@ -434,6 +431,15 @@ class EnhancedIndexingStrategy(WeightStrategyBase):
         self._riskdata_cache = {}
 
     def get_risk_data(self, date):
+        """
+        获取指定日期的风险数据
+        
+        参数:
+            date: 日期
+            
+        返回:
+            因子暴露矩阵、因子协方差矩阵、特定风险向量、股票列表、黑名单
+        """
         if date in self._riskdata_cache:
             return self._riskdata_cache[date]
 
@@ -446,7 +452,7 @@ class EnhancedIndexingStrategy(WeightStrategyBase):
         specific_risk = load_dataset(root + "/" + self.specific_risk_path, index_col=[0])
 
         if not factor_exp.index.equals(specific_risk.index):
-            # NOTE: for stocks missing specific_risk, we always assume it has the highest volatility
+            # 注意：对于缺少特定风险的股票，我们总是假设它具有最高的波动性
             specific_risk = specific_risk.reindex(factor_exp.index, fill_value=specific_risk.max())
 
         universe = factor_exp.index.tolist()
@@ -460,47 +466,59 @@ class EnhancedIndexingStrategy(WeightStrategyBase):
         return self._riskdata_cache[date]
 
     def generate_target_weight_position(self, score, current, trade_start_time, trade_end_time):
+        """
+        生成目标持仓权重
+        
+        参数:
+            score: 预测分数
+            current: 当前持仓
+            trade_start_time: 交易开始时间
+            trade_end_time: 交易结束时间
+            
+        返回:
+            目标持仓权重字典
+        """
         trade_date = trade_start_time
-        pre_date = get_pre_trading_date(trade_date, future=True)  # previous trade date
+        pre_date = get_pre_trading_date(trade_date, future=True)  # 上一个交易日
 
-        # load risk data
+        # 加载风险数据
         outs = self.get_risk_data(pre_date)
         if outs is None:
-            self.logger.warning(f"no risk data for {pre_date:%Y-%m-%d}, skip optimization")
+            self.logger.warning(f"没有找到{pre_date:%Y-%m-%d}的风险数据，跳过优化")
             return None
         factor_exp, factor_cov, specific_risk, universe, blacklist = outs
 
-        # transform score
-        # NOTE: for stocks missing score, we always assume they have the lowest score
+        # 转换分数
+        # 注意：对于缺少分数的股票，我们总是假设它们具有最低的分数
         score = score.reindex(universe).fillna(score.min()).values
 
-        # get current weight
-        # NOTE: if a stock is not in universe, its current weight will be zero
+        # 获取当前权重
+        # 注意：如果股票不在universe中，其当前权重将为零
         cur_weight = current.get_stock_weight_dict(only_stock=False)
         cur_weight = np.array([cur_weight.get(stock, 0) for stock in universe])
-        assert all(cur_weight >= 0), "current weight has negative values"
-        cur_weight = cur_weight / self.get_risk_degree(trade_date)  # sum of weight should be risk_degree
+        assert all(cur_weight >= 0), "当前权重包含负值"
+        cur_weight = cur_weight / self.get_risk_degree(trade_date)  # 权重总和应为risk_degree
         if cur_weight.sum() > 1 and self.verbose:
-            self.logger.warning(f"previous total holdings excess risk degree (current: {cur_weight.sum()})")
+            self.logger.warning(f"先前总持仓超过风险度(当前: {cur_weight.sum()})")
 
-        # load bench weight
+        # 加载基准权重
         bench_weight = D.features(
             D.instruments("all"), [f"${self.market}_weight"], start_time=pre_date, end_time=pre_date
         ).squeeze()
         bench_weight.index = bench_weight.index.droplevel(level="datetime")
         bench_weight = bench_weight.reindex(universe).fillna(0).values
 
-        # whether stock tradable
-        # NOTE: currently we use last day volume to check whether tradable
+        # 检查股票是否可交易
+        # 注意：目前我们使用前一天的成交量来检查是否可交易
         tradable = D.features(D.instruments("all"), ["$volume"], start_time=pre_date, end_time=pre_date).squeeze()
         tradable.index = tradable.index.droplevel(level="datetime")
         tradable = tradable.reindex(universe).gt(0).values
         mask_force_hold = ~tradable
 
-        # mask force sell
+        # 强制卖出标记
         mask_force_sell = np.array([stock in blacklist for stock in universe], dtype=bool)
 
-        # optimize
+        # 优化
         weight = self.optimizer(
             r=score,
             F=factor_exp,
@@ -515,8 +533,8 @@ class EnhancedIndexingStrategy(WeightStrategyBase):
         target_weight_position = {stock: weight for stock, weight in zip(universe, weight) if weight > 0}
 
         if self.verbose:
-            self.logger.info("trade date: {:%Y-%m-%d}".format(trade_date))
-            self.logger.info("number of holding stocks: {}".format(len(target_weight_position)))
-            self.logger.info("total holding weight: {:.6f}".format(weight.sum()))
+            self.logger.info("交易日期: {:%Y-%m-%d}".format(trade_date))
+            self.logger.info("持仓股票数量: {}".format(len(target_weight_position)))
+            self.logger.info("总持仓权重: {:.6f}".format(weight.sum()))
 
         return target_weight_position

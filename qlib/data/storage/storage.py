@@ -20,17 +20,18 @@ logger = get_module_logger("storage")
 
 """
 If the user is only using it in `qlib`, you can customize Storage to implement only the following methods:
+如果用户仅在 `qlib` 中使用，可以自定义 Storage 仅实现以下方法：
 
 class UserCalendarStorage(CalendarStorage):
 
     @property
     def data(self) -> Iterable[CalVT]:
-        '''get all data
+        '''get获取所有数据
 
         Raises
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，抛出ValueError
         '''
         raise NotImplementedError("Subclass of CalendarStorage must implement `data` method")
 
@@ -39,12 +40,12 @@ class UserInstrumentStorage(InstrumentStorage):
 
     @property
     def data(self) -> Dict[InstKT, InstVT]:
-        '''get all data
+        '''get获取所有数据
 
         Raises
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，抛出ValueError
         '''
         raise NotImplementedError("Subclass of InstrumentStorage must implement `data` method")
 
@@ -448,16 +449,16 @@ class FeatureStorage(BaseStorage):
         raise NotImplementedError("FeatureStorage的子类必须实现`end_index`方法")
 
     def clear(self) -> None:
-        """清空特征存储数据
+        '''清空特征存储数据
 
         异常:
         ------
         NotImplementedError: 子类必须实现此方法
-        """
+        '''
         raise NotImplementedError("FeatureStorage的子类必须实现`clear`方法")
 
     def write(self, data_array: Union[List, np.ndarray, Tuple], index: int = None):
-        """将数据数组写入特征存储，从指定索引开始
+        '''将数据数组写入特征存储，从指定索引开始
 
         参数:
             data_array: 要写入的数据数组，可以是列表、numpy数组或元组
@@ -515,11 +516,11 @@ class FeatureStorage(BaseStorage):
         异常:
         ------
         NotImplementedError: 子类必须实现此方法
-        """
+        '''
         raise NotImplementedError("FeatureStorage的子类必须实现`write`方法")
 
     def rebase(self, start_index: int = None, end_index: int = None):
-        """重新设置特征存储的起始索引和结束索引
+        '''重新设置特征存储的起始索引和结束索引
 
         参数:
             start_index: 新的起始索引，默认为None（使用当前起始索引）
@@ -583,7 +584,7 @@ class FeatureStorage(BaseStorage):
         异常:
         ------
         ValueError: 如果storage.start_index或storage.end_index为None（存储可能不存在）
-        """
+        '''
         storage_si = self.start_index
         storage_ei = self.end_index
         if storage_si is None or storage_ei is None:
@@ -617,15 +618,15 @@ class FeatureStorage(BaseStorage):
             self.rewrite(self[: end_index + 1].values, start_index)
 
     def rewrite(self, data: Union[List, np.ndarray, Tuple], index: int):
-        """overwrite all data in FeatureStorage with data
+        '''用新数据完全重写特征存储
 
-        Parameters
+        参数
         ----------
         data: Union[List, np.ndarray, Tuple]
-            data
+            要写入的数据
         index: int
-            data start index
-        """
+            数据起始索引
+        '''
         self.clear()
         self.write(data, index)
 
@@ -633,7 +634,7 @@ class FeatureStorage(BaseStorage):
     def __getitem__(self, s: slice) -> pd.Series:
         """x.__getitem__(slice(start: int, stop: int, step: int)) <==> x[start:stop:step]
 
-        Returns
+        返回
         -------
             pd.Series(values, index=pd.RangeIndex(start, len(values))
         """
@@ -659,12 +660,12 @@ class FeatureStorage(BaseStorage):
         )
 
     def __len__(self) -> int:
-        """
+        '''
 
         Raises
         ------
         ValueError
-            If the data(storage) does not exist, raise ValueError
+            如果数据(存储)不存在，抛出ValueError
 
-        """
+        '''
         raise NotImplementedError("Subclass of FeatureStorage must implement `__len__`  method")

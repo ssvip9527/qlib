@@ -14,20 +14,20 @@ from .utils import get_level_index
 
 class Dataset(Serializable):
     """
-    Preparing data for model training and inferencing.
+    为模型训练和推理准备数据。
     """
 
     def __init__(self, **kwargs):
         """
-        init is designed to finish following steps:
+        初始化旨在完成以下步骤：
 
-        - init the sub instance and the state of the dataset(info to prepare the data)
-            - The name of essential state for preparing data should not start with '_' so that it could be serialized on disk when serializing.
+        - 初始化子实例和数据集的状态（准备数据所需的信息）
+            - 用于准备数据的基本状态名称不应以'_'开头，以便在序列化时可以保存到磁盘。
 
-        - setup data
-            - The data related attributes' names should start with '_' so that it will not be saved on disk when serializing.
+        - 设置数据
+            - 数据相关属性的名称应以'_'开头，以便在序列化时不会保存到磁盘。
 
-        The data could specify the info to calculate the essential data for preparation
+        数据可以指定计算准备所需基本数据的信息
         """
         self.setup_data(**kwargs)
         super().__init__()
@@ -55,30 +55,27 @@ class Dataset(Serializable):
 
     def prepare(self, **kwargs) -> object:
         """
-        The type of dataset depends on the model. (It could be pd.DataFrame, pytorch.DataLoader, etc.)
-        The parameters should specify the scope for the prepared data
-        The method should:
-        - process the data
+        数据集的类型取决于模型（可以是pd.DataFrame、pytorch.DataLoader等）。
+        参数应指定准备数据的范围。
+        该方法应：
+        - 处理数据
+        - 返回处理后的数据
 
-        - return the processed data
-
-        Returns
+        返回
         -------
         object:
-            return the object
+            返回处理后的对象
         """
 
 
 class DatasetH(Dataset):
     """
-    Dataset with Data(H)andler
+    带有数据处理器(DataHandler)的数据集。
 
-    User should try to put the data preprocessing functions into handler.
-    Only following data processing functions should be placed in Dataset:
-
-    - The processing is related to specific model.
-
-    - The processing is related to data split.
+    用户应尝试将数据预处理函数放入处理器中。
+    只有以下数据处理函数应放在数据集中：
+    - 与特定模型相关的处理
+    - 与数据拆分相关的处理
     """
 
     def __init__(

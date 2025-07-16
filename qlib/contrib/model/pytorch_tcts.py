@@ -22,18 +22,18 @@ from ...data.dataset.handler import DataHandlerLP
 
 
 class TCTS(Model):
-    """TCTS Model
+    """TCTS模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -60,11 +60,11 @@ class TCTS(Model):
         lowest_valid_performance=0.993,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("TCTS")
         self.logger.info("TCTS pytorch version...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -88,7 +88,7 @@ class TCTS(Model):
         self._weight_optimizer = weight_optimizer
 
         self.logger.info(
-            "TCTS parameters setting:"
+            "TCTS参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -209,7 +209,7 @@ class TCTS(Model):
             self.weight_optimizer.step()
 
     def test_epoch(self, data_x, data_y):
-        # prepare training data
+        # 准备训练数据
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
 
@@ -244,7 +244,7 @@ class TCTS(Model):
             data_key=DataHandlerLP.DK_L,
         )
         if df_train.empty or df_valid.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError("数据集数据为空，请检查您的数据集配置。")
 
         x_train, y_train = df_train["feature"], df_train["label"]
         x_valid, y_valid = df_valid["feature"], df_valid["label"]
@@ -255,7 +255,7 @@ class TCTS(Model):
         best_loss = np.inf
         while best_loss > self.lowest_valid_performance:
             if best_loss < np.inf:
-                print("Failed! Start retraining.")
+                print("失败！开始重新训练。")
                 self.seed = random.randint(0, 1000)  # reset random seed
 
             if self.seed is not None:
@@ -295,13 +295,13 @@ class TCTS(Model):
         elif self._fore_optimizer.lower() == "gd":
             self.fore_optimizer = optim.SGD(self.fore_model.parameters(), lr=self.fore_lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(self._fore_optimizer))
+            raise NotImplementedError("不支持优化器 {}\!".format(self._fore_optimizer))
         if self._weight_optimizer.lower() == "adam":
             self.weight_optimizer = optim.Adam(self.weight_model.parameters(), lr=self.weight_lr)
         elif self._weight_optimizer.lower() == "gd":
             self.weight_optimizer = optim.SGD(self.weight_model.parameters(), lr=self.weight_lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(self._weight_optimizer))
+            raise NotImplementedError("不支持优化器 {}\!".format(self._weight_optimizer))
 
         self.fitted = False
         self.fore_model.to(self.device)
@@ -312,16 +312,16 @@ class TCTS(Model):
         stop_round = 0
 
         for epoch in range(self.n_epochs):
-            print("Epoch:", epoch)
+            print("轮次：", epoch)
 
-            print("training...")
+            print("训练中...")
             self.train_epoch(x_train, y_train, x_valid, y_valid)
-            print("evaluating...")
+            print("评估中...")
             val_loss = self.test_epoch(x_valid, y_valid)
             test_loss = self.test_epoch(x_test, y_test)
 
             if verbose:
-                print("valid %.6f, test %.6f" % (val_loss, test_loss))
+                print("验证集 %.6f, 测试集 %.6f" % (val_loss, test_loss))
 
             if val_loss < best_loss:
                 best_loss = val_loss
@@ -333,10 +333,10 @@ class TCTS(Model):
             else:
                 stop_round += 1
                 if stop_round >= self.early_stop:
-                    print("early stop")
+                    print("早停")
                     break
 
-        print("best loss:", best_loss, "@", best_epoch)
+        print("最佳损失：", best_loss, "@", best_epoch)
         best_param = torch.load(save_path + "_fore_model.bin", map_location=self.device)
         self.fore_model.load_state_dict(best_param)
         best_param = torch.load(save_path + "_weight_model.bin", map_location=self.device)
@@ -350,7 +350,7 @@ class TCTS(Model):
 
     def predict(self, dataset):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
 
         x_test = dataset.prepare("test", col_set="feature")
         index = x_test.index

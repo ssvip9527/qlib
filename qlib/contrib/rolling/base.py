@@ -23,30 +23,30 @@ from qlib.workflow.task.utils import replace_task_handler_with_cache
 
 class Rolling:
     """
-    The motivation of Rolling Module
-    - It only focus **offlinely** turn a specific task to rollinng
-    - To make the implementation easier, following factors are ignored.
-        - The tasks is dependent (e.g. time series).
+    滚动模块的动机
+    - 它仅专注于**离线**将特定任务转换为滚动任务
+    - 为简化实现，忽略了以下因素：
+        - 任务之间的依赖性（例如时间序列）
 
-    Related modules and difference from me:
-    - MetaController: It is learning how to handle a task (e.g. learning to learn).
-        - But rolling is about how to split a single task into tasks in time series and run them.
-    - OnlineStrategy: It is focusing on serving a model, the model can be updated time dependently in time.
-        - Rolling is much simpler and is only for testing rolling models offline. It does not want to share the interface with OnlineStrategy.
+    相关模块及与本模块的区别：
+    - MetaController：它学习如何处理任务（例如学习如何学习）。
+        - 但滚动模块关注的是如何将单个任务拆分为时间序列中的多个任务并运行它们。
+    - OnlineStrategy：它专注于模型服务，可以随时间更新模型。
+        - 滚动模块更简单，仅用于离线测试滚动模型。它不希望与OnlineStrategy共享接口。
 
-    The code about rolling is shared in `task_generator` & `RollingGen` level between me and the above modules
-    But it is for different purpose, so other parts are not shared.
+    滚动相关的代码在`task_generator`和`RollingGen`级别与上述模块共享
+    但由于用途不同，其他部分不共享。
 
 
     .. code-block:: shell
 
-        # here is an typical use case of the module.
-        python -m qlib.contrib.rolling.base --conf_path <path to the yaml> run
+        # 以下是本模块的典型使用示例
+        python -m qlib.contrib.rolling.base --conf_path <yaml文件路径> run
 
-    **NOTE**
-    before running the example, please clean your previous results with following command
+    **注意**
+    运行示例前，请使用以下命令清理之前的结果：
     - `rm -r mlruns`
-    - Because it is very hard to permanently delete a experiment (it will be moved into .trash and raise error when creating experiment with same name).
+    - 因为很难永久删除实验（它会被移到.trash目录，并在创建同名实验时引发错误）。
 
     """
 

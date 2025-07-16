@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 
 from typing import Iterable
 
@@ -17,12 +17,13 @@ def _get_risk_analysis_data_with_report(
     # report_long_short_df: pd.DataFrame,
     date: pd.Timestamp,
 ) -> pd.DataFrame:
-    """Get risk analysis data with report
+    """
+    获取带有报告的风险分析数据
 
-    :param report_normal_df: report data
-    :param report_long_short_df: report data
-    :param date: date string
-    :return:
+    :param report_normal_df: 报告数据框
+    :param report_long_short_df: 报告数据框（已注释）
+    :param date: 日期字符串
+    :return: 风险分析数据框
     """
 
     analysis = dict()
@@ -42,10 +43,11 @@ def _get_risk_analysis_data_with_report(
 
 
 def _get_all_risk_analysis(risk_df: pd.DataFrame) -> pd.DataFrame:
-    """risk_df to standard
+    """
+    将风险数据框转换为标准格式
 
-    :param risk_df: risk data
-    :return:
+    :param risk_df: 风险数据框
+    :return: 标准格式的风险分析数据框
     """
     if risk_df is None:
         return pd.DataFrame()
@@ -165,9 +167,9 @@ def risk_analysis_graph(
     report_long_short_df: pd.DataFrame = None,
     show_notebook: bool = True,
 ) -> Iterable[py.Figure]:
-    """Generate analysis graph and monthly analysis
+    """生成分析图表和月度分析
 
-        Example:
+        示例:
 
 
             .. code-block:: python
@@ -180,8 +182,8 @@ def risk_analysis_graph(
                 from qlib.contrib.evaluate import risk_analysis
                 from qlib.contrib.strategy import TopkDropoutStrategy
 
-                # init qlib
-                qlib.init(provider_uri=<qlib data dir>)
+                # 初始化qlib
+                qlib.init(provider_uri=<qlib数据目录>)
 
                 CSI300_BENCH = "SH000300"
                 FREQ = "day"
@@ -212,14 +214,14 @@ def risk_analysis_graph(
                     },
                 }
 
-                # strategy object
+                # 策略对象
                 strategy_obj = TopkDropoutStrategy(**STRATEGY_CONFIG)
-                # executor object
-                executor_obj = executor.SimulatorExecutor(**EXECUTOR_CONFIG)
-                # backtest
+                # 执行器对象
+                executor_obj = executor.SimulatorExecutor(** EXECUTOR_CONFIG)
+                # 回测
                 portfolio_metric_dict, indicator_dict = backtest(executor=executor_obj, strategy=strategy_obj, **backtest_config)
                 analysis_freq = "{0}{1}".format(*Freq.parse(FREQ))
-                # backtest info
+                # 回测信息
                 report_normal_df, positions_normal = portfolio_metric_dict.get(analysis_freq)
                 analysis = dict()
                 analysis["excess_return_without_cost"] = risk_analysis(
@@ -234,7 +236,7 @@ def risk_analysis_graph(
 
 
 
-    :param analysis_df: analysis data, index is **pd.MultiIndex**; columns names is **[risk]**.
+    :param analysis_df: 分析数据，索引为**pd.MultiIndex**；列名为**[risk]**.
 
 
             .. code-block:: python
@@ -252,7 +254,7 @@ def risk_analysis_graph(
                                            max_drawdown      -0.088263
 
 
-    :param report_normal_df: **df.index.name** must be **date**, df.columns must contain **return**, **turnover**, **cost**, **bench**.
+    :param report_normal_df: **df.index.name**必须为**date**，df.columns必须包含**return**、**turnover**、**cost**、**bench**.
 
 
             .. code-block:: python
@@ -266,7 +268,7 @@ def risk_analysis_graph(
                 2017-01-10  -0.000416   0.000440    -0.003350   0.208396
 
 
-    :param report_long_short_df: **df.index.name** must be **date**, df.columns contain **long**, **short**, **long_short**.
+    :param report_long_short_df: **df.index.name**必须为**date**，df.columns包含**long**、**short**、**long_short**.
 
 
             .. code-block:: python
@@ -280,10 +282,10 @@ def risk_analysis_graph(
                 2017-01-10  0.000824    -0.001944   -0.001120
 
 
-    :param show_notebook: Whether to display graphics in a notebook, default **True**.
-        If True, show graph in notebook
-        If False, return graph figure
-    :return:
+    :param show_notebook: 是否在notebook中显示图形，默认为**True**.
+        若为True，在notebook中显示图形
+        若为False，返回图形对象
+    :return: 图形对象列表
     """
     _figure_list = list(_get_risk_analysis_figure(analysis_df)) + list(
         _get_monthly_risk_analysis_figure(

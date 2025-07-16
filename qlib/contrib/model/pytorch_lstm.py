@@ -22,18 +22,18 @@ from ...data.dataset.handler import DataHandlerLP
 
 
 class LSTM(Model):
-    """LSTM Model
+    """LSTM模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        用于早停的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -53,11 +53,11 @@ class LSTM(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("LSTM")
-        self.logger.info("LSTM pytorch version...")
+        self.logger.info("LSTM PyTorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -73,7 +73,7 @@ class LSTM(Model):
         self.seed = seed
 
         self.logger.info(
-            "LSTM parameters setting:"
+            "LSTM参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -120,7 +120,7 @@ class LSTM(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.lstm_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.lstm_model.to(self.device)
@@ -139,7 +139,7 @@ class LSTM(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知的损失函数`%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -147,7 +147,7 @@ class LSTM(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知的评估指标`%s`" % self.metric)
 
     def train_epoch(self, x_train, y_train):
         x_train_values = x_train.values
@@ -174,7 +174,7 @@ class LSTM(Model):
             self.train_optimizer.step()
 
     def test_epoch(self, data_x, data_y):
-        # prepare training data
+        # 准备训练数据
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
 
@@ -227,17 +227,17 @@ class LSTM(Model):
         evals_result["valid"] = []
 
         # train
-        self.logger.info("training...")
+        self.logger.info("开始训练...")
         self.fitted = True
 
         for step in range(self.n_epochs):
-            self.logger.info("Epoch%d:", step)
-            self.logger.info("training...")
+            self.logger.info("第%d轮训练:", step)
+            self.logger.info("训练中...")
             self.train_epoch(x_train, y_train)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(x_train, y_train)
             val_loss, val_score = self.test_epoch(x_valid, y_valid)
-            self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
+            self.logger.info("训练集分数: %.6f, 验证集分数: %.6f" % (train_score, val_score))
             evals_result["train"].append(train_score)
             evals_result["valid"].append(val_score)
 
@@ -249,10 +249,10 @@ class LSTM(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停触发")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf 出现在第%d轮" % (best_score, best_epoch))
         self.lstm_model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -261,7 +261,7 @@ class LSTM(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练!")
 
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         index = x_test.index
@@ -284,6 +284,19 @@ class LSTM(Model):
 
 
 class LSTMModel(nn.Module):
+    """LSTM模型的网络结构实现
+
+    参数
+    ----------
+    d_feat : int
+        输入特征维度
+    hidden_size : int
+        隐藏层大小
+    num_layers : int
+        LSTM层数
+    dropout : float
+        dropout比率
+    """
     def __init__(self, d_feat=6, hidden_size=64, num_layers=2, dropout=0.0):
         super().__init__()
 
@@ -299,8 +312,8 @@ class LSTMModel(nn.Module):
         self.d_feat = d_feat
 
     def forward(self, x):
-        # x: [N, F*T]
-        x = x.reshape(len(x), self.d_feat, -1)  # [N, F, T]
-        x = x.permute(0, 2, 1)  # [N, T, F]
+        # x: [样本数, 特征数*时间步]
+        x = x.reshape(len(x), self.d_feat, -1)  # [样本数, 特征数, 时间步]
+        x = x.permute(0, 2, 1)  # [样本数, 时间步, 特征数]
         out, _ = self.rnn(x)
         return self.fc_out(out[:, -1, :]).squeeze()

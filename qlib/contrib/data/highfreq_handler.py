@@ -149,14 +149,14 @@ class HighFreqGeneralHandler(DataHandlerLP):
         template_paused = f"Cut({{0}}, {self.day_length * 2}, None)"
 
         def get_normalized_price_feature(price_field, shift=0):
-            # norm with the close price of 237th minute of yesterday.
+            # 使用昨日第237分钟的收盘价进行归一化
             if shift == 0:
                 template_norm = f"{{0}}/DayLast(Ref({{1}}, {self.day_length * 2}))"
             else:
                 template_norm = f"Ref({{0}}, " + str(shift) + f")/DayLast(Ref({{1}}, {self.day_length}))"
 
             template_fillnan = "FFillNan({0})"
-            # calculate -> ffill -> remove paused
+            # 计算 -> 前向填充 -> 移除停牌时段
             feature_ops = template_paused.format(
                 template_fillnan.format(
                     template_norm.format(template_if.format("$close", price_field), template_fillnan.format("$close"))
@@ -172,7 +172,7 @@ class HighFreqGeneralHandler(DataHandlerLP):
             fields.append(get_normalized_price_feature(column_name, self.day_length))
             names.append(column_name + "_1")
 
-        # calculate and fill nan with 0
+        # 计算并将NaN填充为0
         fields += [
             template_paused.format(
                 "If(IsNull({0}), 0, {0})".format(
@@ -348,14 +348,14 @@ class HighFreqOrderHandler(DataHandlerLP):
         template_paused = "Select(Gt($paused_num, 1.001), {0})"
 
         def get_normalized_price_feature(price_field, shift=0):
-            # norm with the close price of 237th minute of yesterday.
+            # 使用昨日第237分钟的收盘价进行归一化
             if shift == 0:
                 template_norm = "{0}/DayLast(Ref({1}, 243))"
             else:
                 template_norm = "Ref({0}, " + str(shift) + ")/DayLast(Ref({1}, 243))"
 
             template_fillnan = "FFillNan({0})"
-            # calculate -> ffill -> remove paused
+            # 计算 -> 前向填充 -> 移除停牌时段
             feature_ops = template_paused.format(
                 template_fillnan.format(
                     template_norm.format(template_if.format("$close", price_field), template_fillnan.format("$close"))
@@ -364,14 +364,14 @@ class HighFreqOrderHandler(DataHandlerLP):
             return feature_ops
 
         def get_normalized_vwap_price_feature(price_field, shift=0):
-            # norm with the close price of 237th minute of yesterday.
+            # 使用昨日第237分钟的收盘价进行归一化
             if shift == 0:
                 template_norm = "{0}/DayLast(Ref({1}, 243))"
             else:
                 template_norm = "Ref({0}, " + str(shift) + ")/DayLast(Ref({1}, 243))"
 
             template_fillnan = "FFillNan({0})"
-            # calculate -> ffill -> remove paused
+            # 计算 -> 前向填充 -> 移除停牌时段
             feature_ops = template_paused.format(
                 template_fillnan.format(
                     template_norm.format(
@@ -404,7 +404,7 @@ class HighFreqOrderHandler(DataHandlerLP):
         fields += [get_normalized_price_feature("$ask", 240)]
         names += ["$bid_1", "$ask_1"]
 
-        # calculate and fill nan with 0
+        # 计算并将NaN填充为0
 
         def get_volume_feature(volume_field, shift=0):
             template_gzero = "If(Ge({0}, 0), {0}, 0)"

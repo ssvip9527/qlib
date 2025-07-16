@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 
 # pylint: skip-file
 # flake8: noqa
@@ -20,7 +20,7 @@ args_parser.add_argument(
     "--config_path",
     required=True,
     type=str,
-    help="config path indicates where to load yaml config.",
+    help="配置文件路径，指定从何处加载YAML配置。",
 )
 
 args = args_parser.parse_args()

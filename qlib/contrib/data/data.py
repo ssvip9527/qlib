@@ -8,7 +8,7 @@
 #    - 也许我们可以通过poetry解决此问题
 
 # FIXME: 因此，如果你想使用基于arctic的提供器，请手动安装arctic
-# `pip install arctic` may not be enough.
+# `pip install arctic` 可能不够。
 from arctic import Arctic
 import pandas as pd
 import pymongo

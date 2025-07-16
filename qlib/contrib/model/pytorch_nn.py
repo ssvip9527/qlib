@@ -36,21 +36,21 @@ from torch.nn import DataParallel
 
 
 class DNNModelPytorch(Model):
-    """DNN Model
-    Parameters
+    """DNN模型
+    参数
     ----------
     input_dim : int
-        input dimension
+        输入维度
     output_dim : int
-        output dimension
+        输出维度
     layers : tuple
-        layer sizes
+        层大小
     lr : float
-        learning rate
+        学习率
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : int
-        the GPU ID used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -77,11 +77,11 @@ class DNNModelPytorch(Model):
         valid_key=DataHandlerLP.DK_L,
         # TODO: Infer Key is a more reasonable key. But it requires more detailed processing on label processing
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("DNNModelPytorch")
         self.logger.info("DNN pytorch version...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.lr = lr
         self.max_steps = max_steps
         self.batch_size = batch_size
@@ -102,7 +102,7 @@ class DNNModelPytorch(Model):
         self.best_step = None
 
         self.logger.info(
-            "DNN parameters setting:"
+            "DNN参数设置:"
             f"\nlr : {lr}"
             f"\nmax_steps : {max_steps}"
             f"\nbatch_size : {batch_size}"
@@ -124,7 +124,7 @@ class DNNModelPytorch(Model):
             torch.manual_seed(self.seed)
 
         if loss not in {"mse", "binary"}:
-            raise NotImplementedError("loss {} is not supported!".format(loss))
+            raise NotImplementedError("不支持损失函数 {}!".format(loss))
         self._scorer = mean_squared_error if loss == "mse" else roc_auc_score
 
         if init_model is None:
@@ -143,10 +143,10 @@ class DNNModelPytorch(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.dnn_model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         if scheduler == "default":
-            # In torch version 2.7.0, the verbose parameter has been removed. Reference Link:
+            # 在torch 2.7.0版本中，verbose参数已被移除。参考链接：
             # https://github.com/pytorch/pytorch/pull/147301/files#diff-036a7470d5307f13c9a6a51c3a65dd014f00ca02f476c545488cd856bea9bcf2L1313
             if str(torch.__version__).split("+", maxsplit=1)[0] <= "2.6.0":
                 # Reduce learning rate when loss has stopped decrease

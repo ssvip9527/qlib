@@ -14,10 +14,10 @@ from qlib.workflow import R
 
 
 class LGBModel(ModelFT, LightGBMFInt):
-    """LightGBM Model"""
+    """LightGBM模型"""
 
     def __init__(self, loss="mse", early_stopping_rounds=50, num_boost_round=1000, **kwargs):
-        if loss not in {"mse", "binary"}:
+        if loss not in {"mse", "binary"}:  # 仅支持mse和binary损失函数
             raise NotImplementedError
         self.params = {"objective": loss, "verbosity": -1}
         self.params.update(kwargs)
@@ -27,8 +27,8 @@ class LGBModel(ModelFT, LightGBMFInt):
 
     def _prepare_data(self, dataset: DatasetH, reweighter=None) -> List[Tuple[lgb.Dataset, str]]:
         """
-        The motivation of current version is to make validation optional
-        - train segment is necessary;
+        当前版本的目的是使验证可选
+        - 训练段是必需的；
         """
         ds_l = []
         assert "train" in dataset.segments
@@ -36,21 +36,21 @@ class LGBModel(ModelFT, LightGBMFInt):
             if key in dataset.segments:
                 df = dataset.prepare(key, col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
                 if df.empty:
-                    raise ValueError("Empty data from dataset, please check your dataset config.")
+                    raise ValueError("数据集数据为空，请检查您的数据集配置。")
                 x, y = df["feature"], df["label"]
 
-                # Lightgbm need 1D array as its label
+                # LightGBM需要一维数组作为标签
                 if y.values.ndim == 2 and y.values.shape[1] == 1:
                     y = np.squeeze(y.values)
                 else:
-                    raise ValueError("LightGBM doesn't support multi-label training")
+                    raise ValueError("LightGBM不支持多标签训练")
 
                 if reweighter is None:
                     w = None
                 elif isinstance(reweighter, Reweighter):
                     w = reweighter.reweight(df)
                 else:
-                    raise ValueError("Unsupported reweighter type.")
+                    raise ValueError("不支持的重加权器类型。")
                 ds_l.append((lgb.Dataset(x.values, label=y, weight=w), key))
         return ds_l
 
@@ -71,7 +71,7 @@ class LGBModel(ModelFT, LightGBMFInt):
         early_stopping_callback = lgb.early_stopping(
             self.early_stopping_rounds if early_stopping_rounds is None else early_stopping_rounds
         )
-        # NOTE: if you encounter error here. Please upgrade your lightgbm
+        # 注意：如果此处遇到错误，请升级您的lightgbm
         verbose_eval_callback = lgb.log_evaluation(period=verbose_eval)
         evals_result_callback = lgb.record_evaluation(evals_result)
         self.model = lgb.train(
@@ -91,22 +91,22 @@ class LGBModel(ModelFT, LightGBMFInt):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if self.model is None:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         return pd.Series(self.model.predict(x_test.values), index=x_test.index)
 
     def finetune(self, dataset: DatasetH, num_boost_round=10, verbose_eval=20, reweighter=None):
         """
-        finetune model
+        微调模型
 
-        Parameters
+        参数
         ----------
         dataset : DatasetH
-            dataset for finetuning
+            用于微调的数据集
         num_boost_round : int
-            number of round to finetune model
+            微调模型的轮数
         verbose_eval : int
-            verbose level
+            详细级别
         """
         # Based on existing model and finetune by train more rounds
         dtrain, _ = self._prepare_data(dataset, reweighter)  # pylint: disable=W0632

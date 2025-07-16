@@ -1,5 +1,5 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 根据MIT许可证授权。
 
 
 import warnings
@@ -12,16 +12,16 @@ from .base import BaseOptimizer
 
 
 class PortfolioOptimizer(BaseOptimizer):
-    """Portfolio Optimizer
+    """投资组合优化器
 
-    The following optimization algorithms are supported:
-        - `gmv`: Global Minimum Variance Portfolio
-        - `mvo`: Mean Variance Optimized Portfolio
-        - `rp`: Risk Parity
-        - `inv`: Inverse Volatility
+    以下优化算法受支持：
+        - `gmv`: 全局最小方差投资组合
+        - `mvo`: 均值方差优化投资组合
+        - `rp`: 风险平价
+        - `inv`: 逆波动率
 
-    Note:
-        This optimizer always assumes full investment and no-shorting.
+    注意：
+        此优化器始终假设全额投资且不允许卖空。
     """
 
     OPT_GMV = "gmv"
@@ -39,13 +39,13 @@ class PortfolioOptimizer(BaseOptimizer):
         tol: float = 1e-8,
     ):
         """
-        Args:
-            method (str): portfolio optimization method
-            lamb (float): risk aversion parameter (larger `lamb` means more focus on return)
-            delta (float): turnover rate limit
-            alpha (float): l2 norm regularizer
-            scale_return (bool): if to scale alpha to match the volatility of the covariance matrix
-            tol (float): tolerance for optimization termination
+        参数:
+            method (str): 投资组合优化方法
+            lamb (float): 风险厌恶参数（lamb越大表示越关注收益）
+            delta (float): 换手率限制
+            alpha (float): L2范数正则化系数
+            scale_return (bool): 是否缩放收益以匹配协方差矩阵的波动率
+            tol (float): 优化终止的容差
         """
         assert method in [self.OPT_GMV, self.OPT_MVO, self.OPT_RP, self.OPT_INV], f"method `{method}` is not supported"
         self.method = method

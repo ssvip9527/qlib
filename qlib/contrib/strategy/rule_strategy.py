@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 from pathlib import Path
 import warnings
 import numpy as np
@@ -20,18 +20,17 @@ from qlib.backtest.utils import get_start_end_idx
 
 
 class TWAPStrategy(BaseStrategy):
-    """TWAP Strategy for trading
+    """TWAP交易策略
 
-    NOTE:
-        - This TWAP strategy will celling round when trading. This will make the TWAP trading strategy produce the order
-          earlier when the total trade unit of amount is less than the trading step
+    注意：
+        - 此TWAP策略在交易时会向上取整。当总交易单位数量小于交易步骤时，这将使TWAP交易策略更早生成订单
     """
 
     def reset(self, outer_trade_decision: BaseTradeDecision = None, **kwargs):
         """
-        Parameters
+        参数
         ----------
-        outer_trade_decision : BaseTradeDecision, optional
+        outer_trade_decision : BaseTradeDecision, 可选
         """
 
         super(TWAPStrategy, self).reset(outer_trade_decision=outer_trade_decision, **kwargs)
@@ -41,28 +40,28 @@ class TWAPStrategy(BaseStrategy):
                 self.trade_amount_remain[order.stock_id] = order.amount
 
     def generate_trade_decision(self, execute_result=None):
-        # NOTE:  corner cases!!!
+        # 注意：边界情况！！！
         # - If using upperbound round, please don't sell the amount which should in next step
         #   - the coordinate of the amount between steps is hard to be dealt between steps in the same level. It
         #     is easier to be dealt in upper steps
 
-        # strategy is not available. Give an empty decision
+        # 策略不可用，返回空决策
         if len(self.outer_trade_decision.get_decision()) == 0:
             return TradeDecisionWO(order_list=[], strategy=self)
 
-        # get the number of trading step finished, trade_step can be [0, 1, 2, ..., trade_len - 1]
+        # 获取已完成的交易步骤数量，trade_step可以是[0, 1, 2, ..., trade_len - 1]
         trade_step = self.trade_calendar.get_trade_step()
-        # get the total count of trading step
+        # 获取交易步骤的总数量
         start_idx, end_idx = get_start_end_idx(self.trade_calendar, self.outer_trade_decision)
         trade_len = end_idx - start_idx + 1
 
         if trade_step < start_idx or trade_step > end_idx:
-            # It is not time to start trading or trading has ended.
+            # 尚未到开始交易时间或交易已结束。
             return TradeDecisionWO(order_list=[], strategy=self)
 
         rel_trade_step = trade_step - start_idx  # trade_step relative to start_idx (number of steps has already passed)
 
-        # update the order amount
+        # 更新订单数量
         if execute_result is not None:
             for order, _, _, _ in execute_result:
                 self.trade_amount_remain[order.stock_id] -= order.deal_amount
@@ -70,33 +69,32 @@ class TWAPStrategy(BaseStrategy):
         trade_start_time, trade_end_time = self.trade_calendar.get_step_time(trade_step)
         order_list = []
         for order in self.outer_trade_decision.get_decision():
-            # Don't peek the future information, so we use check_stock_suspended instead of is_stock_tradable
-            # necessity of this
-            # - if stock is suspended, the quote values of stocks is NaN. The following code will raise error when
-            # encountering NaN factor
+            # 不偷看未来信息，因此使用check_stock_suspended而非is_stock_tradable
+            # 此操作的必要性
+            # - 如果股票停牌，股票的行情值为NaN。后续代码遇到NaN因子时会引发错误
             if self.trade_exchange.check_stock_suspended(
                 stock_id=order.stock_id, start_time=trade_start_time, end_time=trade_end_time
             ):
                 continue
 
-            # the expected trade amount after current step
+            # 当前步骤后预期的交易数量
             amount_expect = order.amount / trade_len * (rel_trade_step + 1)
 
-            # remain amount
+            # 剩余数量
             amount_remain = self.trade_amount_remain[order.stock_id]
 
-            # the amount has already been finished now.
+            # 现已完成的数量
             amount_finished = order.amount - amount_remain
 
-            # the expected amount of current step
+            # 当前步骤的预期数量
             amount_delta = amount_expect - amount_finished
 
             _amount_trade_unit = self.trade_exchange.get_amount_of_trade_unit(
                 stock_id=order.stock_id, start_time=order.start_time, end_time=order.end_time
             )
 
-            # round the amount_delta by trade_unit and clip by remain
-            # NOTE: this could be more than expected.
+            # 按交易单位对amount_delta取整并按剩余数量裁剪
+            # 注意：这可能会超过预期值。
             if _amount_trade_unit is None:
                 # divide the order into equal parts, and trade one part
                 amount_delta_target = amount_delta

@@ -27,16 +27,16 @@ from ...data.dataset.handler import DataHandlerLP
 
 class CNNEncoderBase(nn.Module):
     def __init__(self, input_dim, output_dim, kernel_size, device):
-        """Build a basic CNN encoder
+        """构建基础的CNN编码器
 
-        Parameters
+        参数
         ----------
         input_dim : int
-            The input dimension
+            输入维度
         output_dim : int
-            The output dimension
+            输出维度
         kernel_size : int
-            The size of convolutional kernels
+            卷积核大小
         """
         super().__init__()
 
@@ -45,21 +45,21 @@ class CNNEncoderBase(nn.Module):
         self.kernel_size = kernel_size
         self.device = device
 
-        # set padding to ensure the same length
-        # it is correct only when kernel_size is odd, dilation is 1, stride is 1
+        # 设置padding以确保长度相同
+        # 仅当kernel_size为奇数、dilation为1、stride为1时正确
         self.conv = nn.Conv1d(input_dim, output_dim, kernel_size, padding=(kernel_size - 1) // 2)
 
     def forward(self, x):
         """
-        Parameters
+        参数
         ----------
         x : torch.Tensor
-            input data
+            输入数据
 
-        Returns
+        返回
         -------
         torch.Tensor
-            Updated representations
+            更新后的表示
         """
 
         # input shape: [batch_size, seq_len*input_dim]
@@ -73,18 +73,18 @@ class CNNEncoderBase(nn.Module):
 
 class KRNNEncoderBase(nn.Module):
     def __init__(self, input_dim, output_dim, dup_num, rnn_layers, dropout, device):
-        """Build K parallel RNNs
+        """构建K个并行的RNN
 
-        Parameters
+        参数
         ----------
         input_dim : int
-            The input dimension
+            输入维度
         output_dim : int
-            The output dimension
+            输出维度
         dup_num : int
-            The number of parallel RNNs
+            并行RNN的数量
         rnn_layers: int
-            The number of RNN layers
+            RNN的层数
         """
         super().__init__()
 
@@ -101,17 +101,17 @@ class KRNNEncoderBase(nn.Module):
 
     def forward(self, x):
         """
-        Parameters
+        参数
         ----------
         x : torch.Tensor
-            Input data
+            输入数据
         n_id : torch.Tensor
-            Node indices
+            节点索引
 
-        Returns
+        返回
         -------
         torch.Tensor
-            Updated representations
+            更新后的表示
         """
 
         # input shape: [batch_size, seq_len, input_dim]
@@ -137,22 +137,22 @@ class CNNKRNNEncoder(nn.Module):
     def __init__(
         self, cnn_input_dim, cnn_output_dim, cnn_kernel_size, rnn_output_dim, rnn_dup_num, rnn_layers, dropout, device
     ):
-        """Build an encoder composed of CNN and KRNN
+        """构建由CNN和KRNN组成的编码器
 
-        Parameters
+        参数
         ----------
         cnn_input_dim : int
-            The input dimension of CNN
+            CNN的输入维度
         cnn_output_dim : int
-            The output dimension of CNN
+            CNN的输出维度
         cnn_kernel_size : int
-            The size of convolutional kernels
+            卷积核大小
         rnn_output_dim : int
-            The output dimension of KRNN
+            KRNN的输出维度
         rnn_dup_num : int
-            The number of parallel duplicates for KRNN
+            KRNN的并行副本数量
         rnn_layers : int
-            The number of RNN layers
+            RNN的层数
         """
         super().__init__()
 
@@ -161,17 +161,17 @@ class CNNKRNNEncoder(nn.Module):
 
     def forward(self, x):
         """
-        Parameters
+        参数
         ----------
         x : torch.Tensor
-            Input data
+            输入数据
         n_id : torch.Tensor
-            Node indices
+            节点索引
 
-        Returns
+        返回
         -------
         torch.Tensor
-            Updated representations
+            更新后的表示
         """
         cnn_out = self.cnn_encoder(x)
         krnn_out = self.krnn_encoder(cnn_out)
@@ -181,22 +181,22 @@ class CNNKRNNEncoder(nn.Module):
 
 class KRNNModel(nn.Module):
     def __init__(self, fea_dim, cnn_dim, cnn_kernel_size, rnn_dim, rnn_dups, rnn_layers, dropout, device, **params):
-        """Build a KRNN model
+        """构建KRNN模型
 
-        Parameters
+        参数
         ----------
         fea_dim : int
-            The feature dimension
+            特征维度
         cnn_dim : int
-            The hidden dimension of CNN
+            CNN的隐藏维度
         cnn_kernel_size : int
-            The size of convolutional kernels
+            卷积核大小
         rnn_dim : int
-            The hidden dimension of KRNN
+            KRNN的隐藏维度
         rnn_dups : int
-            The number of parallel duplicates
+            并行副本数量
         rnn_layers: int
-            The number of RNN layers
+            RNN的层数
         """
         super().__init__()
 

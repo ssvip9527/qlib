@@ -21,18 +21,18 @@ from qlib.utils import get_or_create_path
 
 
 class ADARNN(Model):
-    """ADARNN Model
+    """ADARNN模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停法中使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -58,12 +58,12 @@ class ADARNN(Model):
         seed=None,
         **_,
     ):
-        # Set logger.
+        # 设置日志记录器。
         self.logger = get_module_logger("ADARNN")
-        self.logger.info("ADARNN pytorch version...")
+        self.logger.info("ADARNN pytorch版本...")
         os.environ["CUDA_VISIBLE_DEVICES"] = str(GPU)
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -85,7 +85,7 @@ class ADARNN(Model):
         self.seed = seed
 
         self.logger.info(
-            "ADARNN parameters setting:"
+            "ADARNN参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -141,7 +141,7 @@ class ADARNN(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.model.to(self.device)
@@ -156,12 +156,12 @@ class ADARNN(Model):
         dist_mat = torch.zeros(self.num_layers, self.len_seq).to(self.device)
         out_weight_list = None
         for data_all in zip(*train_loader_list):
-            #  for data_all in zip(*train_loader_list):
+            # 遍历train_loader_list中的所有数据
             self.train_optimizer.zero_grad()
             list_feat = []
             list_label = []
             for data in data_all:
-                # feature :[36, 24, 6]
+                # 特征形状: [36, 24, 6]
                 feature, label_reg = data[0].to(self.device).float(), data[1].to(self.device).float()
                 list_feat.append(feature)
                 list_label.append(label_reg)
@@ -212,7 +212,7 @@ class ADARNN(Model):
 
     @staticmethod
     def calc_all_metrics(pred):
-        """pred is a pandas dataframe that has two attributes: score (pred) and label (real)"""
+        """pred是一个包含'score'（预测值）和'label'（真实值）的DataFrame"""
         res = {}
         ic = pred.groupby(level="datetime", group_keys=False).apply(lambda x: x.label.corr(x.score))
         rank_ic = pred.groupby(level="datetime", group_keys=False).apply(
@@ -262,17 +262,17 @@ class ADARNN(Model):
         evals_result["valid"] = []
 
         # train
-        self.logger.info("training...")
+        self.logger.info("训练中...")
         self.fitted = True
         best_score = -np.inf
         best_epoch = 0
         weight_mat, dist_mat = None, None
 
         for step in range(self.n_epochs):
-            self.logger.info("Epoch%d:", step)
+            self.logger.info("第%d轮训练:", step)
             self.logger.info("training...")
             weight_mat, dist_mat = self.train_AdaRNN(train_loader_list, step, dist_mat, weight_mat)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_metrics = self.test_epoch(df_train)
             valid_metrics = self.test_epoch(df_valid)
             self.log_metrics("train: ", train_metrics)
@@ -290,10 +290,10 @@ class ADARNN(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf @ %d轮" % (best_score, best_epoch))
         self.model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -303,7 +303,7 @@ class ADARNN(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练拟合!")
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         return self.infer(x_test)
 
@@ -371,7 +371,7 @@ def get_index(num_domain=2):
 
 class AdaRNN(nn.Module):
     """
-    model_type:  'Boosting', 'AdaRNN'
+    model_type:  'Boosting'或'AdaRNN'
     """
 
     def __init__(
@@ -406,7 +406,7 @@ class AdaRNN(nn.Module):
             in_size = hidden
         self.features = nn.Sequential(*features)
 
-        if use_bottleneck is True:  # finance
+        if use_bottleneck is True:  # 金融领域
             self.bottleneck = nn.Sequential(
                 nn.Linear(n_hiddens[-1], bottleneck_width),
                 nn.Linear(bottleneck_width, bottleneck_width),
@@ -438,11 +438,13 @@ class AdaRNN(nn.Module):
             self.init_layers()
 
     def init_layers(self):
+        # 初始化网络层参数
         for i in range(len(self.hiddens)):
             self.gate[i].weight.data.normal_(0, 0.05)
             self.gate[i].bias.data.fill_(0.0)
 
     def forward_pre_train(self, x, len_win=0):
+        # 预训练阶段前向传播
         out = self.gru_features(x)
         fea = out[0]  # [2N,L,H]
         if self.use_bottleneck is True:
@@ -472,6 +474,7 @@ class AdaRNN(nn.Module):
         return fc_out, loss_transfer, out_weight_list
 
     def gru_features(self, x, predict=False):
+        # GRU特征提取
         x_input = x
         out = None
         out_lis = []
@@ -486,6 +489,7 @@ class AdaRNN(nn.Module):
         return out, out_lis, out_weight_list
 
     def process_gate_weight(self, out, index):
+        # 计算门控权重
         x_s = out[0 : int(out.shape[0] // 2)]
         x_t = out[out.shape[0] // 2 : out.shape[0]]
         x_all = torch.cat((x_s, x_t), 2)
@@ -497,13 +501,14 @@ class AdaRNN(nn.Module):
 
     @staticmethod
     def get_features(output_list):
+        # 提取源域和目标域特征
         fea_list_src, fea_list_tar = [], []
         for fea in output_list:
             fea_list_src.append(fea[0 : fea.size(0) // 2])
             fea_list_tar.append(fea[fea.size(0) // 2 :])
         return fea_list_src, fea_list_tar
 
-    # For Boosting-based
+    # 基于Boosting的前向传播
     def forward_Boosting(self, x, weight_mat=None):
         out = self.gru_features(x)
         fea = out[0]
@@ -529,7 +534,7 @@ class AdaRNN(nn.Module):
                 dist_mat[i, j] = loss_trans
         return fc_out, loss_transfer, dist_mat, weight
 
-    # For Boosting-based
+    # 更新Boosting权重
     def update_weight_Boosting(self, weight_mat, dist_old, dist_new):
         epsilon = 1e-5
         dist_old = dist_old.detach()
@@ -554,21 +559,21 @@ class AdaRNN(nn.Module):
 class TransferLoss:
     def __init__(self, loss_type="cosine", input_dim=512, GPU=0):
         """
-        Supported loss_type: mmd(mmd_lin), mmd_rbf, coral, cosine, kl, js, mine, adv
+        支持的loss_type: mmd(mmd_lin), mmd_rbf, coral, cosine, kl, js, mine, adv
         """
         self.loss_type = loss_type
         self.input_dim = input_dim
         self.device = torch.device("cuda:%d" % GPU if torch.cuda.is_available() and GPU >= 0 else "cpu")
 
     def compute(self, X, Y):
-        """Compute adaptation loss
+        """计算适应损失
 
-        Arguments:
-            X {tensor} -- source matrix
-            Y {tensor} -- target matrix
+        参数:
+            X {tensor} -- 源域矩阵
+            Y {tensor} -- 目标域矩阵
 
-        Returns:
-            [tensor] -- transfer loss
+        返回:
+            [tensor] -- 迁移损失
         """
         loss = None
         if self.loss_type in ("mmd_lin", "mmd"):
@@ -605,6 +610,7 @@ def cosine(source, target):
 
 
 class ReverseLayerF(Function):
+    # 反向梯度层，用于领域自适应
     @staticmethod
     def forward(ctx, x, alpha):
         ctx.alpha = alpha
@@ -617,6 +623,7 @@ class ReverseLayerF(Function):
 
 
 class Discriminator(nn.Module):
+    """判别器网络，用于区分源域和目标域特征"""
     def __init__(self, input_dim=256, hidden_dim=256):
         super(Discriminator, self).__init__()
         self.input_dim = input_dim
@@ -632,8 +639,9 @@ class Discriminator(nn.Module):
 
 
 def adv(source, target, device, input_dim=256, hidden_dim=512):
+    # 对抗性损失计算
     domain_loss = nn.BCELoss()
-    # !!! Pay attention to .cuda !!!
+    # !!! 注意使用.cuda() !!!
     adv_net = Discriminator(input_dim, hidden_dim).to(device)
     domain_src = torch.ones(len(source)).to(device)
     domain_tar = torch.zeros(len(target)).to(device)
@@ -648,6 +656,7 @@ def adv(source, target, device, input_dim=256, hidden_dim=512):
 
 
 def CORAL(source, target, device):
+    # CORAL损失计算（相关对齐损失）
     d = source.size(1)
     ns, nt = source.size(0), target.size(0)
 
@@ -667,6 +676,13 @@ def CORAL(source, target, device):
 
 
 class MMD_loss(nn.Module):
+    """最大均值差异损失
+
+    参数:
+        kernel_type: 核函数类型，可选'linear'或'rbf'
+        kernel_mul: 核函数带宽乘数
+        kernel_num: 核函数数量
+    """
     def __init__(self, kernel_type="linear", kernel_mul=2.0, kernel_num=5):
         super(MMD_loss, self).__init__()
         self.kernel_num = kernel_num
@@ -714,6 +730,7 @@ class MMD_loss(nn.Module):
 
 
 class Mine_estimator(nn.Module):
+    """互信息神经估计器"""
     def __init__(self, input_dim=2048, hidden_dim=512):
         super(Mine_estimator, self).__init__()
         self.mine_model = Mine(input_dim, hidden_dim)
@@ -728,6 +745,7 @@ class Mine_estimator(nn.Module):
 
 
 class Mine(nn.Module):
+    """互信息神经网络"""
     def __init__(self, input_dim=2048, hidden_dim=512):
         super(Mine, self).__init__()
         self.fc1_x = nn.Linear(input_dim, hidden_dim)
@@ -741,6 +759,7 @@ class Mine(nn.Module):
 
 
 def pairwise_dist(X, Y):
+    # 计算成对距离矩阵
     n, d = X.shape
     m, _ = Y.shape
     assert d == Y.shape[1]
@@ -750,6 +769,7 @@ def pairwise_dist(X, Y):
 
 
 def pairwise_dist_np(X, Y):
+    # NumPy版本的成对距离计算
     n, d = X.shape
     m, _ = Y.shape
     assert d == Y.shape[1]
@@ -761,6 +781,7 @@ def pairwise_dist_np(X, Y):
 
 
 def pa(X, Y):
+    # 计算成对距离
     XY = np.dot(X, Y.T)
     XX = np.sum(np.square(X), axis=1)
     XX = np.transpose([XX])
@@ -771,6 +792,7 @@ def pa(X, Y):
 
 
 def kl_div(source, target):
+    # KL散度计算
     if len(source) < len(target):
         target = target[: len(source)]
     elif len(source) > len(target):
@@ -781,6 +803,7 @@ def kl_div(source, target):
 
 
 def js(source, target):
+    # JS散度计算
     if len(source) < len(target):
         target = target[: len(source)]
     elif len(source) > len(target):

@@ -9,7 +9,7 @@ from libcpp.vector cimport vector
 
 
 cdef class Expanding:
-    """1-D array expanding"""
+    """一维数组扩展"""
     cdef vector[double] barv
     cdef int na_count
     def __init__(self):
@@ -20,7 +20,7 @@ cdef class Expanding:
 
 
 cdef class Mean(Expanding):
-    """1-D array expanding mean"""
+    """一维数组扩展均值"""
     cdef double vsum
     def __init__(self):
         super(Mean, self).__init__()
@@ -36,7 +36,7 @@ cdef class Mean(Expanding):
 
 
 cdef class Slope(Expanding):
-    """1-D array expanding slope"""
+    """一维数组扩展斜率"""
     cdef double x_sum
     cdef double x2_sum
     cdef double y_sum
@@ -64,7 +64,7 @@ cdef class Slope(Expanding):
 
 
 cdef class Resi(Expanding):
-    """1-D array expanding residuals"""
+    """一维数组扩展残差"""
     cdef double x_sum
     cdef double x2_sum
     cdef double y_sum
@@ -96,7 +96,7 @@ cdef class Resi(Expanding):
 
 
 cdef class Rsquare(Expanding):
-    """1-D array expanding rsquare"""
+    """一维数组扩展R平方"""
     cdef double x_sum
     cdef double x2_sum
     cdef double y_sum

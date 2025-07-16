@@ -45,7 +45,7 @@ class TransformerModel(Model):
         seed=None,
         **kwargs,
     ):
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_model = d_model
         self.dropout = dropout
         self.n_epochs = n_epochs
@@ -60,7 +60,7 @@ class TransformerModel(Model):
         self.device = torch.device("cuda:%d" % GPU if torch.cuda.is_available() and GPU >= 0 else "cpu")
         self.seed = seed
         self.logger = get_module_logger("TransformerModel")
-        self.logger.info("Naive Transformer:" "\nbatch_size : {}" "\ndevice : {}".format(self.batch_size, self.device))
+        self.logger.info("朴素Transformer:" "\nbatch_size : {}" "\ndevice : {}".format(self.batch_size, self.device))
 
         if self.seed is not None:
             np.random.seed(self.seed)
@@ -72,7 +72,7 @@ class TransformerModel(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.model.parameters(), lr=self.lr, weight_decay=self.reg)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}\!".format(optimizer))
 
         self.fitted = False
         self.model.to(self.device)
@@ -91,7 +91,7 @@ class TransformerModel(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -99,7 +99,7 @@ class TransformerModel(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, x_train, y_train):
         x_train_values = x_train.values
@@ -126,7 +126,7 @@ class TransformerModel(Model):
             self.train_optimizer.step()
 
     def test_epoch(self, data_x, data_y):
-        # prepare training data
+        # 准备训练数据
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
 
@@ -166,7 +166,7 @@ class TransformerModel(Model):
             data_key=DataHandlerLP.DK_L,
         )
         if df_train.empty or df_valid.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError("数据集数据为空，请检查您的数据集配置。")
 
         x_train, y_train = df_train["feature"], df_train["label"]
         x_valid, y_valid = df_valid["feature"], df_valid["label"]
@@ -179,15 +179,15 @@ class TransformerModel(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # train
-        self.logger.info("training...")
+        # 训练
+        self.logger.info("训练中...")
         self.fitted = True
 
         for step in range(self.n_epochs):
             self.logger.info("Epoch%d:", step)
-            self.logger.info("training...")
+            self.logger.info("训练中...")
             self.train_epoch(x_train, y_train)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(x_train, y_train)
             val_loss, val_score = self.test_epoch(x_valid, y_valid)
             self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
@@ -202,10 +202,10 @@ class TransformerModel(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数：%.6lf @ %d" % (best_score, best_epoch))
         self.model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -251,7 +251,7 @@ class PositionalEncoding(nn.Module):
         self.register_buffer("pe", pe)
 
     def forward(self, x):
-        # [T, N, F]
+        # [时间步长, 批次大小, 特征维度]
         return x + self.pe[: x.size(0), :]
 
 
@@ -267,11 +267,11 @@ class Transformer(nn.Module):
         self.d_feat = d_feat
 
     def forward(self, src):
-        # src [N, F*T] --> [N, T, F]
+        # 输入张量 [批次大小, 特征数*时间步长] --> [批次大小, 时间步长, 特征数]
         src = src.reshape(len(src), self.d_feat, -1).permute(0, 2, 1)
         src = self.feature_layer(src)
 
-        # src [N, T, F] --> [T, N, F], [60, 512, 8]
+        # 输入张量 [批次大小, 时间步长, 特征数] --> [时间步长, 批次大小, 特征数], 例如 [60, 512, 8]
         src = src.transpose(1, 0)  # not batch first
 
         mask = None
@@ -279,7 +279,7 @@ class Transformer(nn.Module):
         src = self.pos_encoder(src)
         output = self.transformer_encoder(src, mask)  # [60, 512, 8]
 
-        # [T, N, F] --> [N, T*F]
+        # [时间步长, 批次大小, 特征数] --> [批次大小, 时间步长*特征数]
         output = self.decoder_layer(output.transpose(1, 0)[:, -1, :])  # [512, 1]
 
         return output.squeeze()

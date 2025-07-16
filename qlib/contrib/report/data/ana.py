@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-Here we have a comprehensive set of analysis classes.
+这里提供了一套全面的分析类。
 
-Here is an example.
+以下是使用示例：
 
 .. code-block:: python
 

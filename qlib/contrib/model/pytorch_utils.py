@@ -6,16 +6,16 @@ import torch.nn as nn
 
 def count_parameters(models_or_parameters, unit="m"):
     """
-    This function is to obtain the storage size unit of a (or multiple) models.
+    此函数用于获取一个（或多个）模型的参数量（以指定存储单位表示）。
 
-    Parameters
+    参数
     ----------
-    models_or_parameters : PyTorch model(s) or a list of parameters.
-    unit : the storage size unit.
+    models_or_parameters : PyTorch模型或参数列表。
+    unit : 存储大小单位。
 
-    Returns
+    返回值
     -------
-    The number of parameters of the given model(s) or parameters.
+    给定模型或参数的参数量。
     """
     if isinstance(models_or_parameters, nn.Module):
         counts = sum(v.numel() for v in models_or_parameters.parameters())

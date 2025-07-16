@@ -33,13 +33,13 @@ class TimeReweighter(Reweighter):
         w_s = pd.Series(1.0, index=data.index)
         for k, w in self.time_weight.items():
             w_s.loc[slice(*k)] = w
-        logger.info(f"Reweighting result: {w_s}")
+        logger.info(f"重加权结果: {w_s}")
         return w_s
 
 
 class MetaModelDS(MetaTaskModel):
     """
-    The meta-model for meta-learning-based data selection.
+    基于元学习的数据选择元模型。
     """
 
     def __init__(
@@ -57,7 +57,7 @@ class MetaModelDS(MetaTaskModel):
     ):
         """
         loss_skip_size: int
-            The number of threshold to skip the loss calculation for each day.
+            每天跳过损失计算的阈值数量。
         """
         self.step = step
         self.hist_step_n = hist_step_n
@@ -136,19 +136,19 @@ class MetaModelDS(MetaTaskModel):
 
     def fit(self, meta_dataset: MetaDatasetDS):
         """
-        The meta-learning-based data selection interacts directly with meta-dataset due to the close-form proxy measurement.
+        基于元学习的数据选择由于闭式代理测量而直接与元数据集交互。
 
-        Parameters
+        参数
         ----------
         meta_dataset : MetaDatasetDS
-            The meta-model takes the meta-dataset for its training process.
+            元模型将元数据集用于其训练过程。
         """
 
         if not self.fitted:
             for k in set(["lr", "step", "hist_step_n", "clip_method", "clip_weight", "criterion", "max_epoch"]):
                 R.log_params(**{k: getattr(self, k)})
 
-        # FIXME: get test tasks for just checking the performance
+        # FIXME: 获取测试任务仅用于检查性能
         phases = ["train", "test"]
         meta_tasks_l = meta_dataset.prepare_tasks(phases)
 
@@ -185,7 +185,7 @@ class MetaModelDS(MetaTaskModel):
         weights = self.tn.twm(meta_ipt["time_perf"])
 
         weight_s = pd.Series(weights.detach().cpu().numpy(), index=task.meta_info.columns)
-        task = copy.copy(task.task)  # NOTE: this is a shallow copy.
+        task = copy.copy(task.task)  # 注意：这是一个浅拷贝。
         task["reweighter"] = TimeReweighter(weight_s)
         return task
 

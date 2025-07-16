@@ -1,9 +1,9 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 """
-This module is not a necessary part of Qlib.
-They are just some tools for convenience
-It is should not imported into the core part of qlib
+此模块并非Qlib的必要组成部分。
+它们只是一些方便使用的工具。
+不应将其导入到Qlib的核心部分。
 """
 import torch
 import numpy as np

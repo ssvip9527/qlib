@@ -1,5 +1,5 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 根据MIT许可证授权。
 
 import numpy as np
 import cvxpy as cp
@@ -15,25 +15,25 @@ logger = get_module_logger("EnhancedIndexingOptimizer")
 
 class EnhancedIndexingOptimizer(BaseOptimizer):
     """
-    Portfolio Optimizer for Enhanced Indexing
+    增强型指数化投资组合优化器
 
-    Notations:
-        w0: current holding weights
-        wb: benchmark weight
-        r: expected return
-        F: factor exposure
-        cov_b: factor covariance
-        var_u: residual variance (diagonal)
-        lamb: risk aversion parameter
-        delta: total turnover limit
-        b_dev: benchmark deviation limit
-        f_dev: factor deviation limit
+    符号说明:
+        w0: 当前持仓权重
+        wb: 基准权重
+        r: 预期收益
+        F: 因子暴露度
+        cov_b: 因子协方差
+        var_u: 残差方差（对角线矩阵）
+        lamb: 风险厌恶参数
+        delta: 总换手率限制
+        b_dev: 基准偏离度限制
+        f_dev: 因子偏离度限制
 
-    Also denote:
-        d = w - wb: benchmark deviation
-        v = d @ F: factor deviation
+    另定义:
+        d = w - wb: 基准偏离
+        v = d @ F: 因子偏离
 
-    The optimization problem for enhanced indexing:
+    增强型指数化的优化问题:
         max_w  d @ r - lamb * (v @ cov_b @ v + var_u @ d**2)
         s.t.   w >= 0
                sum(w) == 1

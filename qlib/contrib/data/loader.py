@@ -2,7 +2,7 @@ from qlib.data.dataset.loader import QlibDataLoader
 
 
 class Alpha360DL(QlibDataLoader):
-    """Dataloader to get Alpha360"""
+    """用于获取Alpha360的数据集加载器"""
 
     def __init__(self, config=None, **kwargs):
         _config = {
@@ -79,22 +79,22 @@ class Alpha158DL(QlibDataLoader):
             "rolling": {},
         }
     ):
-        """create factors from config
+        """根据配置创建因子
 
         config = {
-            'kbar': {}, # whether to use some hard-code kbar features
-            'price': { # whether to use raw price features
-                'windows': [0, 1, 2, 3, 4], # use price at n days ago
-                'feature': ['OPEN', 'HIGH', 'LOW'] # which price field to use
+            'kbar': {}, # 是否使用一些硬编码的K线特征
+            'price': { # 是否使用原始价格特征
+                'windows': [0, 1, 2, 3, 4], # 使用n天前的价格
+                'feature': ['OPEN', 'HIGH', 'LOW'] # 要使用的价格字段
             },
-            'volume': { # whether to use raw volume features
-                'windows': [0, 1, 2, 3, 4], # use volume at n days ago
+            'volume': { # 是否使用原始成交量特征
+                'windows': [0, 1, 2, 3, 4], # 使用n天前的成交量
             },
-            'rolling': { # whether to use rolling operator based features
-                'windows': [5, 10, 20, 30, 60], # rolling windows size
-                'include': ['ROC', 'MA', 'STD'], # rolling operator to use
-                #if include is None we will use default operators
-                'exclude': ['RANK'], # rolling operator not to use
+            'rolling': { # 是否使用基于滚动窗口算子的特征
+                'windows': [5, 10, 20, 30, 60], # 滚动窗口大小
+                'include': ['ROC', 'MA', 'STD'], # 要使用的滚动算子
+                # 如果include为None，将使用默认算子
+                'exclude': ['RANK'], # 不使用的滚动算子
             }
         }
         """
@@ -138,8 +138,8 @@ class Alpha158DL(QlibDataLoader):
             windows = config["rolling"].get("windows", [5, 10, 20, 30, 60])
             include = config["rolling"].get("include", None)
             exclude = config["rolling"].get("exclude", [])
-            # `exclude` in dataset config unnecessary filed
-            # `include` in dataset config necessary field
+            # 数据集中的`exclude`是不必要的字段
+            # 数据集中的`include`是必要的字段
 
             def use(x):
                 return x not in exclude and (include is None or x in include)

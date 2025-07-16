@@ -22,15 +22,15 @@ class BaseGraph:
     ):
         """
 
-        :param df:
-        :param layout:
-        :param graph_kwargs:
-        :param name_dict:
+        :param df: 数据DataFrame
+        :param layout: 图表布局配置
+        :param graph_kwargs: 图表参数
+        :param name_dict: 名称映射字典
         :param kwargs:
             layout: dict
-                go.Layout parameters
+                go.Layout的参数
             graph_kwargs: dict
-                Graph parameters, eg: go.Bar(**graph_kwargs)
+                图表参数，例如：go.Bar(**graph_kwargs)
         """
         self._df = df
 
@@ -200,9 +200,9 @@ class HistogramGraph(BaseGraph):
 
 
 class SubplotsGraph:
-    """Create subplots same as df.plot(subplots=True)
+    """创建与 df.plot(subplots=True) 相同的子图
 
-    Simple package for `plotly.tools.subplots`
+    `plotly.tools.subplots` 的简单封装
     """
 
     def __init__(
@@ -217,55 +217,54 @@ class SubplotsGraph:
     ):
         """
 
-        :param df: pd.DataFrame
+        :param df: 数据表格（pd.DataFrame）
 
-        :param kind_map: dict, subplots graph kind and kwargs
-            eg: dict(kind='ScatterGraph', kwargs=dict())
+        :param kind_map: 字典，子图类型及参数
+            例如: dict(kind='ScatterGraph', kwargs=dict())
 
-        :param layout: `go.Layout` parameters
+        :param layout: `go.Layout` 的参数
 
-        :param sub_graph_layout: Layout of each graphic, similar to 'layout'
+        :param sub_graph_layout: 每个子图的布局，与 'layout' 类似
 
-        :param sub_graph_data: Instantiation parameters for each sub-graphic
-            eg: [(column_name, instance_parameters), ]
+        :param sub_graph_data: 每个子图的实例化参数
+            例如: [(column_name, instance_parameters), ]
 
-            column_name: str or go.Figure
+            column_name: 字符串或 go.Figure 对象
 
-            Instance_parameters:
+            实例化参数:
 
-                - row: int, the row where the graph is located
+                - row: 整数，子图所在的行
 
-                - col: int, the col where the graph is located
+                - col: 整数，子图所在的列
 
-                - name: str, show name, default column_name in 'df'
+                - name: 字符串，显示名称，默认为 df 中的列名
 
-                - kind: str, graph kind, default `kind` param, eg: bar, scatter, ...
+                - kind: 字符串，图表类型，默认为 `kind` 参数，例如: bar, scatter, ...
 
-                - graph_kwargs: dict, graph kwargs, default {}, used in `go.Bar(**graph_kwargs)`
+                - graph_kwargs: 字典，图表参数，默认为 {}，用于 `go.Bar(**graph_kwargs)`
 
-        :param subplots_kwargs: `plotly.tools.make_subplots` original parameters
+        :param subplots_kwargs: `plotly.tools.make_subplots` 的原始参数
 
-                - shared_xaxes: bool, default False
+                - shared_xaxes: 布尔值，是否共享 x 轴，默认为 False
 
-                - shared_yaxes: bool, default False
+                - shared_yaxes: 布尔值，是否共享 y 轴，默认为 False
 
-                - vertical_spacing: float, default 0.3 / rows
+                - vertical_spacing: 浮点数，垂直间距，默认为 0.3 / 行数
 
-                - subplot_titles: list, default []
-                    If `sub_graph_data` is None, will generate 'subplot_titles' according to `df.columns`,
-                    this field will be discarded
-
-
-                - specs: list, see `make_subplots` docs
-
-                - rows: int, Number of rows in the subplot grid, default 1
-                    If `sub_graph_data` is None, will generate 'rows' according to `df`, this field will be discarded
-
-                - cols: int, Number of cols in the subplot grid, default 1
-                    If `sub_graph_data` is None, will generate 'cols' according to `df`, this field will be discarded
+                - subplot_titles: 列表，子图标题，默认为 []
+                    若 `sub_graph_data` 为 None，将根据 `df.columns` 生成标题，此参数将被忽略
 
 
-        :param kwargs:
+                - specs: 列表，详见 `make_subplots` 文档
+
+                - rows: 整数，子图网格的行数，默认为 1
+                    若 `sub_graph_data` 为 None，将根据 df 生成行数，此参数将被忽略
+
+                - cols: 整数，子图网格的列数，默认为 1
+                    若 `sub_graph_data` 为 None，将根据 df 生成列数，此参数将被忽略
+
+
+        :param kwargs: 其他参数
 
         """
 
@@ -294,8 +293,9 @@ class SubplotsGraph:
 
     def _init_sub_graph_data(self):
         """
+        初始化子图数据
 
-        :return:
+        :return: None
         """
         self._sub_graph_data = []
         self._subplot_titles = []
@@ -320,10 +320,11 @@ class SubplotsGraph:
 
     def _init_subplots_kwargs(self):
         """
+        初始化子图参数
 
-        :return:
+        :return: None
         """
-        # Default cols, rows
+        # 默认列数、行数
         _cols = 2
         _rows = math.ceil(len(self._df.columns) / 2)
         self._subplots_kwargs = dict()
@@ -337,8 +338,9 @@ class SubplotsGraph:
 
     def _init_figure(self):
         """
+        初始化图表对象
 
-        :return:
+        :return: None
         """
         self._figure = make_subplots(**self._subplots_kwargs)
 
@@ -375,7 +377,7 @@ class SubplotsGraph:
             for k, v in self._sub_graph_layout.items():
                 self._figure["layout"][k].update(v)
 
-        # NOTE: Use the default theme from plotly version 3.x: template=None
+        # 注意: 使用 plotly 3.x 版本的默认主题: template=None
         self._figure["layout"].update(template=None)
         self._figure["layout"].update(self._layout)
 

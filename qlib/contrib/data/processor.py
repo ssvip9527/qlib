@@ -124,6 +124,6 @@ class ConfigSectionProcessor(Processor):
 
         df[selected_cols] = df_focus.values
 
-        TimeInspector.log_cost_time("Finished preprocessing data.")
+        TimeInspector.log_cost_time("数据预处理完成。")
 
         return df

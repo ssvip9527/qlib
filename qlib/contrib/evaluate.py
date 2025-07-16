@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# 根据MIT许可证授权
 
 from __future__ import division
 from __future__ import print_function
@@ -25,25 +25,25 @@ logger = get_module_logger("Evaluate")
 
 
 def risk_analysis(r, N: int = None, freq: str = "day", mode: Literal["sum", "product"] = "sum"):
-    """Risk Analysis
-    NOTE:
-    The calculation of annualized return is different from the definition of annualized return.
-    It is implemented by design.
-    Qlib tries to cumulate returns by summation instead of production to avoid the cumulated curve being skewed exponentially.
-    All the calculation of annualized returns follows this principle in Qlib.
+    """风险分析
+    注意：
+    年化收益率的计算方式与年化收益率的定义有所不同。
+    这是有意为之的设计实现。
+    Qlib尝试通过求和而非乘积来累积收益，以避免累积曲线呈指数型扭曲。
+    Qlib中所有年化收益率的计算均遵循此原则。
 
-    Parameters
+    参数
     ----------
     r : pandas.Series
-        daily return series.
+        日收益率序列。
     N: int
-        scaler for annualizing information_ratio (day: 252, week: 50, month: 12), at least one of `N` and `freq` should exist
+        信息比率年化的缩放因子（日度：252，周度：50，月度：12），`N`和`freq`至少需存在一个
     freq: str
-        analysis frequency used for calculating the scaler, at least one of `N` and `freq` should exist
+        用于计算缩放因子的分析频率，`N`和`freq`至少需存在一个
     mode: Literal["sum", "product"]
-        the method by which returns are accumulated:
-        - "sum": Arithmetic accumulation (linear returns).
-        - "product": Geometric accumulation (compounded returns).
+        收益累积方式：
+        - "sum": 算术累积（线性收益）。
+        - "product": 几何累积（复利收益）。
     """
 
     def cal_risk_analysis_scaler(freq):

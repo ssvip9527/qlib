@@ -25,20 +25,20 @@ from ...contrib.model.pytorch_gru import GRUModel
 
 
 class HIST(Model):
-    """HIST Model
+    """HIST模型
 
-    Parameters
+    参数
     ----------
     lr : float
-        learning rate
+        学习率
     d_feat : int
-        input dimensions for each time step
+        每个时间步的输入维度
     metric : str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -61,11 +61,11 @@ class HIST(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("HIST")
-        self.logger.info("HIST pytorch version...")
+        self.logger.info("HIST pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -84,7 +84,7 @@ class HIST(Model):
         self.seed = seed
 
         self.logger.info(
-            "HIST parameters setting:"
+            "HIST参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -138,7 +138,7 @@ class HIST(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.HIST_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.HIST_model.to(self.device)
@@ -157,7 +157,7 @@ class HIST(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -173,15 +173,15 @@ class HIST(Model):
         if self.metric == ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def get_daily_inter(self, df, shuffle=False):
-        # organize the train data into daily batches
+        # 将训练数据组织为每日批次
         daily_count = df.groupby(level=0, group_keys=False).size().values
         daily_index = np.roll(np.cumsum(daily_count), 1)
         daily_index[0] = 0
         if shuffle:
-            # shuffle data
+            # 打乱数据
             daily_shuffle = list(zip(daily_index, daily_count))
             np.random.shuffle(daily_shuffle)
             daily_index, daily_count = zip(*daily_shuffle)
@@ -212,7 +212,7 @@ class HIST(Model):
             self.train_optimizer.step()
 
     def test_epoch(self, data_x, data_y, stock_index):
-        # prepare training data
+        # 准备训练数据
         stock2concept_matrix = np.load(self.stock2concept)
         x_values = data_x.values
         y_values = np.squeeze(data_y.values)
@@ -223,7 +223,7 @@ class HIST(Model):
         scores = []
         losses = []
 
-        # organize the test data into daily batches
+        # 将测试数据组织为每日批次
         daily_index, daily_count = self.get_daily_inter(data_x, shuffle=False)
 
         for idx, count in zip(daily_index, daily_count):
@@ -276,16 +276,16 @@ class HIST(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # load pretrained base_model
+        # 加载预训练基础模型
         if self.base_model == "LSTM":
             pretrained_model = LSTMModel()
         elif self.base_model == "GRU":
             pretrained_model = GRUModel()
         else:
-            raise ValueError("unknown base model name `%s`" % self.base_model)
+            raise ValueError("未知基础模型名称 `%s`" % self.base_model)
 
         if self.model_path is not None:
-            self.logger.info("Loading pretrained model...")
+            self.logger.info("加载预训练模型...")
             pretrained_model.load_state_dict(torch.load(self.model_path))
 
         model_dict = self.HIST_model.state_dict()
@@ -294,18 +294,18 @@ class HIST(Model):
         }
         model_dict.update(pretrained_dict)
         self.HIST_model.load_state_dict(model_dict)
-        self.logger.info("Loading pretrained model Done...")
+        self.logger.info("加载预训练模型完成...")
 
         # train
-        self.logger.info("training...")
+        self.logger.info("训练中...")
         self.fitted = True
 
         for step in range(self.n_epochs):
             self.logger.info("Epoch%d:", step)
-            self.logger.info("training...")
+            self.logger.info("训练中...")
             self.train_epoch(x_train, y_train, stock_index_train)
 
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(x_train, y_train, stock_index_train)
             val_loss, val_score = self.test_epoch(x_valid, y_valid, stock_index_valid)
             self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
@@ -320,16 +320,16 @@ class HIST(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf @ %d" % (best_score, best_epoch))
         self.HIST_model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未拟合!")
 
         stock2concept_matrix = np.load(self.stock2concept)
         stock_index = np.load(self.stock_index, allow_pickle=True).item()
@@ -346,7 +346,7 @@ class HIST(Model):
         x_values = df_test.values
         preds = []
 
-        # organize the data into daily batches
+        # 将数据组织为每日批次
         daily_index, daily_count = self.get_daily_inter(df_test, shuffle=False)
 
         for idx, count in zip(daily_index, daily_count):
@@ -386,7 +386,7 @@ class HISTModel(nn.Module):
                 dropout=dropout,
             )
         else:
-            raise ValueError("unknown base model name `%s`" % base_model)
+            raise ValueError("未知基础模型名称 `%s`" % base_model)
 
         self.fc_es = nn.Linear(hidden_size, hidden_size)
         torch.nn.init.xavier_uniform_(self.fc_es.weight)

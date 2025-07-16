@@ -180,18 +180,18 @@ class SFM_Model(nn.Module):
 class SFM(Model):
     """SFM Model
 
-    Parameters
+    参数
     ----------
     input_dim : int
-        input dimension
+        输入维度
     output_dim : int
-        output dimension
+        输出维度
     lr : float
-        learning rate
+        学习率
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : int
-        the GPU ID used for training
+        用于训练的GPU ID
     """
 
     def __init__(

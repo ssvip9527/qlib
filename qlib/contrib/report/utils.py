@@ -6,28 +6,28 @@ import pandas as pd
 
 def sub_fig_generator(sub_figsize=(3, 3), col_n=10, row_n=1, wspace=None, hspace=None, sharex=False, sharey=False):
     """sub_fig_generator.
-    it will return a generator, each row contains <col_n> sub graph
+    生成一个生成器，每行包含<col_n>个子图
 
-    FIXME: Known limitation:
-    - The last row will not be plotted automatically, please plot it outside the function
+    FIXME: 已知限制：
+    - 最后一行不会自动绘制，请在函数外部处理
 
-    Parameters
+    参数
     ----------
     sub_figsize :
-        the figure size of each subgraph in <col_n> * <row_n> subgraphs
+        <col_n> * <row_n>个子图中每个子图的尺寸
     col_n :
-        the number of subgraph in each row;  It will generating a new graph after generating <col_n> of subgraphs.
+        每行的子图数量；生成<col_n>个子图后将创建新图形
     row_n :
-        the number of subgraph in each column
+        每列的子图数量
     wspace :
-        the width of the space for subgraphs in each row
+        每行子图之间的宽度间隔
     hspace :
-        the height of blank space for subgraphs in each column
-        You can try 0.3 if you feel it is too crowded
+        每列子图之间的高度间隔
+        如果觉得拥挤，可以尝试设置为0.3
 
-    Returns
+    返回值
     -------
-    It will return graphs with the shape of <col_n> each iter (it is squeezed).
+    每次迭代返回形状为<col_n>的图形（已压缩）。
     """
     assert col_n > 1
 

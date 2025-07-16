@@ -19,12 +19,12 @@ log = get_module_logger("utils")
 
 def load_instance(file_path):
     """
-    load a pickle file
-        Parameter
+    加载pickle文件
+        参数
            file_path : string / pathlib.Path()
-                path of file to be loaded
-        :return
-            An instance loaded from file
+                要加载的文件路径
+        返回
+            从文件加载的实例
     """
     file_path = pathlib.Path(file_path)
     if not file_path.exists():
@@ -36,12 +36,12 @@ def load_instance(file_path):
 
 def save_instance(instance, file_path):
     """
-    save(dump) an instance to a pickle file
-        Parameter
+    将实例保存(序列化)到pickle文件
+        参数
             instance :
-                data to be dumped
+                要序列化的数据
             file_path : string / pathlib.Path()
-                path of file to be dumped
+                要保存的文件路径
     """
     file_path = pathlib.Path(file_path)
     with file_path.open("wb") as fr:
@@ -49,6 +49,12 @@ def save_instance(instance, file_path):
 
 
 def create_user_folder(path):
+    """
+    创建用户文件夹（如果不存在）
+        参数
+            path : string / pathlib.Path()
+                要创建的文件夹路径
+    """
     path = pathlib.Path(path)
     if path.exists():
         return
@@ -59,18 +65,25 @@ def create_user_folder(path):
 
 def prepare(um, today, user_id, exchange_config=None):
     """
-    1. Get the dates that need to do trading till today for user {user_id}
-        dates[0] indicate the latest trading date of User{user_id},
-        if User{user_id} haven't do trading before, than dates[0] presents the init date of User{user_id}.
-    2. Set the exchange with exchange_config file
+    1. 获取用户{user_id}截至今天需要进行交易的日期
+        dates[0]表示User{user_id}的最新交易日期，
+        如果User{user_id}之前未进行过交易，则dates[0]表示User{user_id}的初始日期。
+    2. 使用exchange_config文件设置交易所
 
-        Parameter
+        参数
             um : UserManager()
+                用户管理器实例
             today : pd.Timestamp()
+                今天的日期
             user_id : str
-        :return
+                用户ID
+            exchange_config : str, optional
+                交易所配置文件路径
+        返回
             dates : list of pd.Timestamp
+                交易日期列表
             trade_exchange : Exchange()
+                交易所实例
     """
     # get latest trading date for {user_id}
     # if is None, indicate it haven't traded, then last trading date is init date of {user_id}

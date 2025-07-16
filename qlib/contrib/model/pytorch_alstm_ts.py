@@ -26,18 +26,18 @@ from ...data.dataset.weight import Reweighter
 
 
 class ALSTM(Model):
-    """ALSTM Model
+    """ALSTM模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        用于早停的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : int
-        the GPU ID used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -58,11 +58,11 @@ class ALSTM(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("ALSTM")
-        self.logger.info("ALSTM pytorch version...")
+        self.logger.info("ALSTM PyTorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -79,7 +79,7 @@ class ALSTM(Model):
         self.seed = seed
 
         self.logger.info(
-            "ALSTM parameters setting:"
+            "ALSTM参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -123,15 +123,15 @@ class ALSTM(Model):
             num_layers=self.num_layers,
             dropout=self.dropout,
         )
-        self.logger.info("model:\n{:}".format(self.ALSTM_model))
-        self.logger.info("model size: {:.4f} MB".format(count_parameters(self.ALSTM_model)))
+        self.logger.info("模型:\n{:}".format(self.ALSTM_model))
+        self.logger.info("模型大小: {:.4f} MB".format(count_parameters(self.ALSTM_model)))
 
         if optimizer.lower() == "adam":
             self.train_optimizer = optim.Adam(self.ALSTM_model.parameters(), lr=self.lr)
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.ALSTM_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("优化器{}不受支持!").format(optimizer)
 
         self.fitted = False
         self.ALSTM_model.to(self.device)
@@ -153,7 +153,7 @@ class ALSTM(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask], weight[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知的损失函数`%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -165,7 +165,7 @@ class ALSTM(Model):
             weight = torch.ones_like(label)
             return -self.mse(pred[mask], label[mask], weight[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知的评估指标`%s`" % self.metric)
 
     def train_epoch(self, data_loader):
         self.ALSTM_model.train()
@@ -251,18 +251,18 @@ class ALSTM(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # train
-        self.logger.info("training...")
+        # 训练
+        self.logger.info("开始训练...")
         self.fitted = True
 
         for step in range(self.n_epochs):
-            self.logger.info("Epoch%d:", step)
-            self.logger.info("training...")
+            self.logger.info("第%d轮训练:", step)
+            self.logger.info("训练中...")
             self.train_epoch(train_loader)
-            self.logger.info("evaluating...")
+            self.logger.info("评估中...")
             train_loss, train_score = self.test_epoch(train_loader)
             val_loss, val_score = self.test_epoch(valid_loader)
-            self.logger.info("train %.6f, valid %.6f" % (train_score, val_score))
+            self.logger.info("训练集分数: %.6f, 验证集分数: %.6f" % (train_score, val_score))
             evals_result["train"].append(train_score)
             evals_result["valid"].append(val_score)
 
@@ -274,10 +274,10 @@ class ALSTM(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停触发")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf 出现在第%d轮" % (best_score, best_epoch))
         self.ALSTM_model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -286,7 +286,7 @@ class ALSTM(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
 
         dl_test = dataset.prepare(segment, col_set=["feature", "label"], data_key=DataHandlerLP.DK_I)
         dl_test.config(fillna_type="ffill+bfill")
@@ -306,6 +306,21 @@ class ALSTM(Model):
 
 
 class ALSTMModel(nn.Module):
+    """ALSTM模型的网络结构实现
+
+    参数
+    ----------
+    d_feat : int
+        输入特征维度
+    hidden_size : int
+        RNN隐藏层大小
+    num_layers : int
+        RNN层数
+    dropout : float
+        dropout比率
+    rnn_type : str
+        RNN类型，支持"GRU"或"LSTM"
+    """
     def __init__(self, d_feat=6, hidden_size=64, num_layers=2, dropout=0.0, rnn_type="GRU"):
         super().__init__()
         self.hid_size = hidden_size
@@ -319,7 +334,7 @@ class ALSTMModel(nn.Module):
         try:
             klass = getattr(nn, self.rnn_type.upper())
         except Exception as e:
-            raise ValueError("unknown rnn_type `%s`" % self.rnn_type) from e
+            raise ValueError("未知的rnn_type `%s`" % self.rnn_type) from e
         self.net = nn.Sequential()
         self.net.add_module("fc_in", nn.Linear(in_features=self.input_size, out_features=self.hid_size))
         self.net.add_module("act", nn.Tanh())
@@ -345,11 +360,11 @@ class ALSTMModel(nn.Module):
         self.att_net.add_module("att_softmax", nn.Softmax(dim=1))
 
     def forward(self, inputs):
-        rnn_out, _ = self.rnn(self.net(inputs))  # [batch, seq_len, num_directions * hidden_size]
-        attention_score = self.att_net(rnn_out)  # [batch, seq_len, 1]
+        rnn_out, _ = self.rnn(self.net(inputs))  # [批次, 序列长度, 方向数 * 隐藏层大小]
+        attention_score = self.att_net(rnn_out)  # [批次, 序列长度, 1]
         out_att = torch.mul(rnn_out, attention_score)
         out_att = torch.sum(out_att, dim=1)
         out = self.fc_out(
             torch.cat((rnn_out[:, -1, :], out_att), dim=1)
-        )  # [batch, seq_len, num_directions * hidden_size] -> [batch, 1]
+        )  # [批次, 序列长度, 方向数 * 隐藏层大小] -> [批次, 1]
         return out[..., 0]

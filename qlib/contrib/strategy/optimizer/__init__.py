@@ -1,5 +1,5 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 根据MIT许可证授权。
 
 from .base import BaseOptimizer
 from .optimizer import PortfolioOptimizer

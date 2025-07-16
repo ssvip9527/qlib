@@ -226,7 +226,7 @@ class MTSDatasetH(DatasetH):
         obj._index = self._index
         obj._memory = self._memory
         obj._zeros = self._zeros
-        # update index for this batch
+        # 更新此批次的索引
         date_index = self._index.get_level_values(1)
         obj._batch_slices = self._batch_slices[(date_index >= start_date) & (date_index <= end_date)]
         mask = (self._daily_index.values >= start_date) & (self._daily_index.values <= end_date)
@@ -296,13 +296,13 @@ class MTSDatasetH(DatasetH):
             daily_count = []  # store number of samples for each day
 
             for j in indices[i : i + batch_size]:
-                # 常规采样: self.batch_size > 0 => slices is a list => slices_subset is a slice
-                # 按日采样: self.batch_size < 0 => slices is a nested list => slices_subset is a list
+                # 常规采样: self.batch_size > 0 => slices 是列表 => slices_subset 是切片
+                # 按日采样: self.batch_size < 0 => slices 是嵌套列表 => slices_subset 是列表
                 slices_subset = slices[j]
 
-                # daily sampling
-                # each slices_subset contains a list of slices for multiple stocks
-                # NOTE: daily sampling is used in 1) eval mode, 2) train mode with self.batch_size < 0
+                # 按日采样
+                # 每个slices_subset包含多个股票的切片列表
+                # 注意：按日采样用于1)评估模式，2)self.batch_size < 0的训练模式
                 if self.batch_size < 0:
                     # 存储每日索引
                     idx = self._daily_index.index[j]  # daily_index.index is the index of the original data
@@ -320,7 +320,7 @@ class MTSDatasetH(DatasetH):
                     daily_count.append(len(slices_subset))
 
                 # 常规采样
-                # each slices_subset is a single slice
+                # 每个slices_subset是单个切片
                 # 注意：常规采样用于self.batch_size > 0的训练模式
                 else:
                     slices_subset = [slices_subset]

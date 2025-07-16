@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 
 import pandas as pd
 
@@ -9,9 +9,10 @@ from ..utils import guess_plotly_rangebreaks
 
 def _get_score_ic(pred_label: pd.DataFrame):
     """
+    获取分数的IC值
 
-    :param pred_label:
-    :return:
+    :param pred_label: 包含预测分数和标签的数据框
+    :return: 包含IC和Rank IC的数据框
     """
     concat_data = pred_label.copy()
     concat_data.dropna(axis=0, how="any", inplace=True)
@@ -23,9 +24,9 @@ def _get_score_ic(pred_label: pd.DataFrame):
 
 
 def score_ic_graph(pred_label: pd.DataFrame, show_notebook: bool = True, **kwargs) -> [list, tuple]:
-    """score IC
+    """分数IC图表
 
-        Example:
+        示例:
 
 
             .. code-block:: python
@@ -39,7 +40,7 @@ def score_ic_graph(pred_label: pd.DataFrame, show_notebook: bool = True, **kwarg
                 analysis_position.score_ic_graph(pred_label)
 
 
-    :param pred_label: index is **pd.MultiIndex**, index name is **[instrument, datetime]**; columns names is **[score, label]**.
+    :param pred_label: 索引为**pd.MultiIndex**，索引名称为**[instrument, datetime]**；列名为**[score, label]**.
 
 
             .. code-block:: python

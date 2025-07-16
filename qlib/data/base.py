@@ -208,37 +208,36 @@ class Expression(abc.ABC):
 
     @abc.abstractmethod
     def get_longest_back_rolling(self):
-        """Get the longest length of historical data the feature has accessed
+        """获取特征需要访问的最长历史数据长度
 
-        This is designed for getting the needed range of the data to calculate
-        the features in specific range at first.  However, situations like
-        Ref(Ref($close, -1), 1) can not be handled rightly.
+        该方法设计用于预先获取计算特定范围内特征所需的数据范围。
+        但类似Ref(Ref($close, -1), 1)的情况无法正确处理。
 
-        So this will only used for detecting the length of historical data needed.
+        因此该方法仅用于检测所需的历史数据长度。
         """
         # TODO: forward operator like Ref($close, -1) is not supported yet.
         raise NotImplementedError("This function must be implemented in your newly defined feature")
 
     @abc.abstractmethod
     def get_extended_window_size(self):
-        """get_extend_window_size
+        """获取扩展窗口大小
 
-        For to calculate this Operator in range[start_index, end_index]
-        We have to get the *leaf feature* in
-        range[start_index - lft_etd, end_index + rght_etd].
+        为了在范围[start_index, end_index]内计算该运算符，
+        我们需要获取*叶子特征*在范围
+        [start_index - lft_etd, end_index + rght_etd]内的值。
 
-        Returns
+        返回
         ----------
         (int, int)
-            lft_etd, rght_etd
+            左扩展长度, 右扩展长度
         """
         raise NotImplementedError("This function must be implemented in your newly defined feature")
 
 
 class Feature(Expression):
-    """Static Expression
+    """静态表达式
 
-    This kind of feature will load data from provider
+    此类特征将从数据提供者加载数据
     """
 
     def __init__(self, name=None):
@@ -274,8 +273,7 @@ class PFeature(Feature):
 
 
 class ExpressionOps(Expression):
-    """Operator Expression
+    """运算符表达式
 
-    This kind of feature will use operator for feature
-    construction on the fly.
+    此类特征将动态使用运算符进行特征构建。
     """

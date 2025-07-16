@@ -269,11 +269,14 @@ class MinMaxNorm(Processor):
 
 
 class ZScoreNorm(Processor):
-    """ZScore Normalization"""
+    """ZScore标准化
+
+    对数据进行ZScore标准化处理：(x - mean) / std
+    """
 
     def __init__(self, fit_start_time, fit_end_time, fields_group=None):
-        # NOTE: correctly set the `fit_start_time` and `fit_end_time` is very important !!!
-        # `fit_end_time` **must not** include any information from the test data!!!
+        # 注意：正确设置`fit_start_time`和`fit_end_time`非常重要！！！
+        # `fit_end_time`绝对不能包含测试数据的任何信息！！！
         self.fit_start_time = fit_start_time
         self.fit_end_time = fit_end_time
         self.fields_group = fields_group
@@ -284,10 +287,10 @@ class ZScoreNorm(Processor):
         self.mean_train = np.nanmean(df[cols].values, axis=0)
         self.std_train = np.nanstd(df[cols].values, axis=0)
         self.ignore = self.std_train == 0
-        # To improve the speed, we set the value of `std_train` to `1` for the columns that do not need to be processed,
-        # and the value of `mean_train` to `0`, when using `(x - mean_train) / std_train` for uniform calculation,
-        # the columns that do not need to be processed will be calculated by `(x - 0) / 1`,
-        # as you can see, the columns that do not need to be processed, will not be affected.
+        # 为了提高速度，对于不需要处理的列，我们将`std_train`设为1，`mean_train`设为0
+        # 这样在使用`(x - mean_train) / std_train`统一计算时
+        # 不需要处理的列将被计算为`(x - 0) / 1`
+        # 可以看到，不需要处理的列不会受到影响
         for _i, _con in enumerate(self.ignore):
             if _con:
                 self.std_train[_i] = 1
@@ -303,19 +306,19 @@ class ZScoreNorm(Processor):
 
 
 class RobustZScoreNorm(Processor):
-    """Robust ZScore Normalization
+    """鲁棒ZScore标准化
 
-    Use robust statistics for Z-Score normalization:
-        mean(x) = median(x)
-        std(x) = MAD(x) * 1.4826
+    使用鲁棒统计量进行ZScore标准化：
+        均值(x) = 中位数(x)
+        标准差(x) = 中位数绝对偏差(MAD) * 1.4826
 
-    Reference:
-        https://en.wikipedia.org/wiki/Median_absolute_deviation.
+    参考:
+        https://en.wikipedia.org/wiki/Median_absolute_deviation
     """
 
     def __init__(self, fit_start_time, fit_end_time, fields_group=None, clip_outlier=True):
-        # NOTE: correctly set the `fit_start_time` and `fit_end_time` is very important !!!
-        # `fit_end_time` **must not** include any information from the test data!!!
+        # 注意：正确设置`fit_start_time`和`fit_end_time`非常重要！！！
+        # `fit_end_time`绝对不能包含测试数据的任何信息！！！
         self.fit_start_time = fit_start_time
         self.fit_end_time = fit_end_time
         self.fields_group = fields_group
@@ -341,7 +344,10 @@ class RobustZScoreNorm(Processor):
 
 
 class CSZScoreNorm(Processor):
-    """Cross Sectional ZScore Normalization"""
+    """横截面ZScore标准化
+
+    对每个时间点的横截面数据进行ZScore标准化处理
+    """
 
     def __init__(self, fields_group=None, method="zscore"):
         self.fields_group = fields_group
@@ -367,26 +373,25 @@ class CSZScoreNorm(Processor):
 
 
 class CSRankNorm(Processor):
-    """
-    Cross Sectional Rank Normalization.
-    "Cross Sectional" is often used to describe data operations.
-    The operations across different stocks are often called Cross Sectional Operation.
+    """横截面排名标准化
 
-    For example, CSRankNorm is an operation that grouping the data by each day and rank `across` all the stocks in each day.
+    "横截面"通常用于描述数据操作。
+    对不同股票的操作通常称为横截面操作。
 
-    Explanation about 3.46 & 0.5
+    例如，CSRankNorm是按天分组并对每天的所有股票进行排名操作。
+
+    关于3.46和0.5的解释：
 
     .. code-block:: python
 
         import numpy as np
         import pandas as pd
-        x = np.random.random(10000)  # for any variable
-        x_rank = pd.Series(x).rank(pct=True)  # if it is converted to rank, it will be a uniform distributed
-        x_rank_norm = (x_rank - x_rank.mean()) / x_rank.std()  # Normally, we will normalize it to make it like normal distribution
+        x = np.random.random(10000)  # 任意变量
+        x_rank = pd.Series(x).rank(pct=True)  # 转换为排名后将是均匀分布
+        x_rank_norm = (x_rank - x_rank.mean()) / x_rank.std()  # 通常我们会将其标准化为正态分布
 
-        x_rank.mean()   # accounts for 0.5
-        1 / x_rank.std()  # accounts for 3.46
-
+        x_rank.mean()   # 对应0.5
+        1 / x_rank.std()  # 对应3.46
     """
 
     def __init__(self, fields_group=None):
@@ -403,7 +408,10 @@ class CSRankNorm(Processor):
 
 
 class CSZFillna(Processor):
-    """Cross Sectional Fill Nan"""
+    """横截面填充缺失值
+
+    对每个时间点的横截面数据填充缺失值为该时间点的均值
+    """
 
     def __init__(self, fields_group=None):
         self.fields_group = fields_group
@@ -415,7 +423,10 @@ class CSZFillna(Processor):
 
 
 class HashStockFormat(Processor):
-    """Process the storage of from df into hasing stock format"""
+    """将数据框处理为哈希股票存储格式
+
+    将DataFrame转换为HashingStockStorage格式
+    """
 
     def __call__(self, df: pd.DataFrame):
         from .storage import HashingStockStorage  # pylint: disable=C0415
@@ -424,10 +435,10 @@ class HashStockFormat(Processor):
 
 
 class TimeRangeFlt(InstProcessor):
-    """
-    This is a filter to filter stock.
-    Only keep the data that exist from start_time to end_time (the existence in the middle is not checked.)
-    WARNING:  It may induce leakage!!!
+    """股票时间范围过滤器
+
+    只保留从start_time到end_time存在的数据(不检查中间是否存在)
+    警告：可能导致数据泄露！！！
     """
 
     def __init__(
@@ -437,15 +448,15 @@ class TimeRangeFlt(InstProcessor):
         freq: str = "day",
     ):
         """
-        Parameters
+        参数
         ----------
         start_time : Optional[Union[pd.Timestamp, str]]
-            The data must start earlier (or equal) than `start_time`
-            None indicates data will not be filtered based on `start_time`
+            数据必须早于(或等于)`start_time`开始
+            None表示不基于`start_time`过滤数据
         end_time : Optional[Union[pd.Timestamp, str]]
-            similar to start_time
+            类似于start_time
         freq : str
-            The frequency of the calendar
+            日历频率
         """
         # Align to calendar before filtering
         cal = D.calendar(start_time=start_time, end_time=end_time, freq=freq)

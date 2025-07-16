@@ -42,20 +42,20 @@ class DailyBatchSampler(Sampler):
 
 
 class GATs(Model):
-    """GATs Model
+    """GATs模型
 
-    Parameters
+    参数
     ----------
     lr : float
-        learning rate
+        学习率
     d_feat : int
-        input dimensions for each time step
+        每个时间步的输入维度
     metric : str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : int
-        the GPU ID used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -77,11 +77,11 @@ class GATs(Model):
         seed=None,
         **kwargs,
     ):
-        # Set logger.
+        # 设置日志器。
         self.logger = get_module_logger("GATs")
-        self.logger.info("GATs pytorch version...")
+        self.logger.info("GATs pytorch版本...")
 
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_feat = d_feat
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -99,7 +99,7 @@ class GATs(Model):
         self.seed = seed
 
         self.logger.info(
-            "GATs parameters setting:"
+            "GATs参数设置:"
             "\nd_feat : {}"
             "\nhidden_size : {}"
             "\nnum_layers : {}"
@@ -152,7 +152,7 @@ class GATs(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.GAT_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.GAT_model.to(self.device)
@@ -171,7 +171,7 @@ class GATs(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -179,15 +179,15 @@ class GATs(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def get_daily_inter(self, df, shuffle=False):
-        # organize the train data into daily batches
+        # 将训练数据组织为每日批次
         daily_count = df.groupby(level=0, group_keys=False).size().values
         daily_index = np.roll(np.cumsum(daily_count), 1)
         daily_index[0] = 0
         if shuffle:
-            # shuffle data
+            # 打乱数据
             daily_shuffle = list(zip(daily_index, daily_count))
             np.random.shuffle(daily_shuffle)
             daily_index, daily_count = zip(*daily_shuffle)
@@ -284,7 +284,7 @@ class GATs(Model):
         self.fitted = True
 
         for step in range(self.n_epochs):
-            self.logger.info("Epoch%d:", step)
+            self.logger.info("第%d轮训练:", step)
             self.logger.info("training...")
             self.train_epoch(train_loader)
             self.logger.info("evaluating...")
@@ -302,10 +302,10 @@ class GATs(Model):
             else:
                 stop_steps += 1
                 if stop_steps >= self.early_stop:
-                    self.logger.info("early stop")
+                    self.logger.info("早停触发")
                     break
 
-        self.logger.info("best score: %.6lf @ %d" % (best_score, best_epoch))
+        self.logger.info("最佳分数: %.6lf 出现在第%d轮" % (best_score, best_epoch))
         self.GAT_model.load_state_dict(best_param)
         torch.save(best_param, save_path)
 
@@ -314,7 +314,7 @@ class GATs(Model):
 
     def predict(self, dataset):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练!")
 
         dl_test = dataset.prepare("test", col_set=["feature", "label"], data_key=DataHandlerLP.DK_I)
         dl_test.config(fillna_type="ffill+bfill")
@@ -336,6 +336,21 @@ class GATs(Model):
 
 
 class GATModel(nn.Module):
+    """GAT模型的网络结构实现
+
+    参数
+    ----------
+    d_feat : int
+        输入特征维度
+    hidden_size : int
+        隐藏层大小
+    num_layers : int
+        网络层数
+    dropout : float
+        dropout比率
+    base_model : str
+        基础模型类型，支持"GRU"或"LSTM"
+    """
     def __init__(self, d_feat=6, hidden_size=64, num_layers=2, dropout=0.0, base_model="GRU"):
         super().__init__()
 
@@ -356,7 +371,7 @@ class GATModel(nn.Module):
                 dropout=dropout,
             )
         else:
-            raise ValueError("unknown base model name `%s`" % base_model)
+            raise ValueError("未知的基础模型名称`%s`" % base_model)
 
         self.hidden_size = hidden_size
         self.d_feat = d_feat
@@ -369,25 +384,51 @@ class GATModel(nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def cal_attention(self, x, y):
+        """计算注意力权重
+
+        参数
+        ----------
+        x : torch.Tensor
+            输入特征张量
+        y : torch.Tensor
+            输入特征张量
+
+        返回
+        -------
+        torch.Tensor
+            注意力权重矩阵
+        """
         x = self.transformation(x)
         y = self.transformation(y)
 
-        sample_num = x.shape[0]
-        dim = x.shape[1]
+        sample_num = x.shape[0]  # 样本数量
+        dim = x.shape[1]  # 特征维度
         e_x = x.expand(sample_num, sample_num, dim)
         e_y = torch.transpose(e_x, 0, 1)
         attention_in = torch.cat((e_x, e_y), 2).view(-1, dim * 2)
-        self.a_t = torch.t(self.a)
+        self.a_t = torch.t(self.a)  # 转置注意力参数
         attention_out = self.a_t.mm(torch.t(attention_in)).view(sample_num, sample_num)
         attention_out = self.leaky_relu(attention_out)
         att_weight = self.softmax(attention_out)
         return att_weight
 
     def forward(self, x):
+        """前向传播过程
+
+        参数
+        ----------
+        x : torch.Tensor
+            输入特征张量，形状为[批次, 时间步, 特征数]
+
+        返回
+        -------
+        torch.Tensor
+            模型预测结果
+        """
         out, _ = self.rnn(x)
-        hidden = out[:, -1, :]
+        hidden = out[:, -1, :]  # 获取最后一个时间步的隐藏状态
         att_weight = self.cal_attention(hidden, hidden)
-        hidden = att_weight.mm(hidden) + hidden
+        hidden = att_weight.mm(hidden) + hidden  # 注意力加权求和并残差连接
         hidden = self.fc(hidden)
         hidden = self.leaky_relu(hidden)
         return self.fc_out(hidden).squeeze()

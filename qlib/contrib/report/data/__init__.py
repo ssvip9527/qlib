@@ -2,6 +2,6 @@
 # Licensed under the MIT License.
 
 """
-This module is designed to analysis data
+此模块用于数据分析
 
 """

@@ -33,7 +33,7 @@ def calc_long_short_prec(
     date_col :
         日期列
 
-    Returns
+    返回
     -------
     (pd.Series, pd.Series)
         时间维度上的多头准确率和空头准确率
@@ -126,7 +126,7 @@ def pred_autocorr(pred: pd.Series, lag=1, inst_col="instrument", date_col="datet
                             2016-01-06   -0.021801
                             2016-01-07   -0.065230
                             2016-01-08   -0.062465
-    :type pred: pd.Series
+    :类型 pred: pd.Series
     :param lag: 滞后阶数
     """
     if isinstance(pred, pd.DataFrame):

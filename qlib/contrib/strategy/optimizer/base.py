@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 根据MIT许可证授权。
 
 import abc
 
 
 class BaseOptimizer(abc.ABC):
-    """Construct portfolio with a optimization related method"""
+    """使用优化相关方法构建投资组合"""
 
     @abc.abstractmethod
     def __call__(self, *args, **kwargs) -> object:
-        """Generate a optimized portfolio allocation"""
+        """生成优化的投资组合配置"""

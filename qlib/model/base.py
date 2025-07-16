@@ -8,41 +8,40 @@ from ..data.dataset.weight import Reweighter
 
 
 class BaseModel(Serializable, metaclass=abc.ABCMeta):
-    """Modeling things"""
+    """基础模型类"""
 
     @abc.abstractmethod
     def predict(self, *args, **kwargs) -> object:
-        """Make predictions after modeling things"""
+        """模型训练完成后进行预测"""
 
     def __call__(self, *args, **kwargs) -> object:
-        """leverage Python syntactic sugar to make the models' behaviors like functions"""
+        """利用Python语法糖使模型行为像函数一样"""
         return self.predict(*args, **kwargs)
 
 
 class Model(BaseModel):
-    """Learnable Models"""
+    """可学习模型"""
 
     def fit(self, dataset: Dataset, reweighter: Reweighter):
         """
-        Learn model from the base model
+        从基础模型学习模型
 
         .. note::
 
-            The attribute names of learned model should `not` start with '_'. So that the model could be
-            dumped to disk.
+            学习模型的属性名称不应以'_'开头，以便模型可以序列化到磁盘。
 
-        The following code example shows how to retrieve `x_train`, `y_train` and `w_train` from the `dataset`:
+        以下代码示例展示如何从dataset获取`x_train`、`y_train`和`w_train`:
 
             .. code-block:: Python
 
-                # get features and labels
+                # 获取特征和标签
                 df_train, df_valid = dataset.prepare(
                     ["train", "valid"], col_set=["feature", "label"], data_key=DataHandlerLP.DK_L
                 )
                 x_train, y_train = df_train["feature"], df_train["label"]
                 x_valid, y_valid = df_valid["feature"], df_valid["label"]
 
-                # get weights
+                # 获取权重
                 try:
                     wdf_train, wdf_valid = dataset.prepare(["train", "valid"], col_set=["weight"],
                                                            data_key=DataHandlerLP.DK_L)
@@ -51,60 +50,60 @@ class Model(BaseModel):
                     w_train = pd.DataFrame(np.ones_like(y_train.values), index=y_train.index)
                     w_valid = pd.DataFrame(np.ones_like(y_valid.values), index=y_valid.index)
 
-        Parameters
+        参数
         ----------
         dataset : Dataset
-            dataset will generate the processed data from model training.
+            数据集将生成模型训练所需的处理后的数据
 
         """
         raise NotImplementedError()
 
     @abc.abstractmethod
     def predict(self, dataset: Dataset, segment: Union[Text, slice] = "test") -> object:
-        """give prediction given Dataset
+        """根据数据集进行预测
 
-        Parameters
+        参数
         ----------
         dataset : Dataset
-            dataset will generate the processed dataset from model training.
+            数据集将生成模型训练所需的处理后的数据
 
         segment : Text or slice
-            dataset will use this segment to prepare data. (default=test)
+            数据集将使用该片段准备数据 (默认="test")
 
-        Returns
+        返回
         -------
-        Prediction results with certain type such as `pandas.Series`.
+        预测结果，类型可能为`pandas.Series`等
         """
         raise NotImplementedError()
 
 
 class ModelFT(Model):
-    """Model (F)ine(t)unable"""
+    """可微调模型"""
 
     @abc.abstractmethod
     def finetune(self, dataset: Dataset):
-        """finetune model based given dataset
+        """基于给定数据集微调模型
 
-        A typical use case of finetuning model with qlib.workflow.R
+        使用qlib.workflow.R微调模型的典型用例:
 
         .. code-block:: python
 
-            # start exp to train init model
+            # 开始实验训练初始模型
             with R.start(experiment_name="init models"):
                 model.fit(dataset)
                 R.save_objects(init_model=model)
                 rid = R.get_recorder().id
 
-            # Finetune model based on previous trained model
+            # 基于之前训练的模型进行微调
             with R.start(experiment_name="finetune model"):
                 recorder = R.get_recorder(recorder_id=rid, experiment_name="init models")
                 model = recorder.load_object("init_model")
                 model.finetune(dataset, num_boost_round=10)
 
 
-        Parameters
+        参数
         ----------
         dataset : Dataset
-            dataset will generate the processed dataset from model training.
+            数据集将生成模型训练所需的处理后的数据
         """
         raise NotImplementedError()

@@ -44,7 +44,7 @@ class LocalformerModel(Model):
         seed=None,
         **kwargs,
     ):
-        # set hyper-parameters.
+        # 设置超参数。
         self.d_model = d_model
         self.dropout = dropout
         self.n_epochs = n_epochs
@@ -73,7 +73,7 @@ class LocalformerModel(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.model.parameters(), lr=self.lr, weight_decay=self.reg)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}!".format(optimizer))
 
         self.fitted = False
         self.model.to(self.device)
@@ -92,7 +92,7 @@ class LocalformerModel(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -100,7 +100,7 @@ class LocalformerModel(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知评估指标 `%s`" % self.metric)
 
     def train_epoch(self, data_loader):
         self.model.train()
@@ -167,7 +167,7 @@ class LocalformerModel(Model):
         evals_result["train"] = []
         evals_result["valid"] = []
 
-        # train
+        # 训练
         self.logger.info("training...")
         self.fitted = True
 
