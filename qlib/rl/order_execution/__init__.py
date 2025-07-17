@@ -1,9 +1,9 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 """
-Currently it supports single-asset order execution.
-Multi-asset is on the way.
+当前支持单一资产订单执行。
+多资产支持正在开发中。
 """
 
 from .interpreter import (

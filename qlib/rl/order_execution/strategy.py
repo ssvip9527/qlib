@@ -1,5 +1,5 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -52,12 +52,12 @@ def fill_missing_data(
     original_data: np.ndarray,
     fill_method: Callable = np.nanmedian,
 ) -> np.ndarray:
-    """Fill missing data.
+    """填充缺失数据。
 
-    Parameters
+    参数
     ----------
     original_data
-        Original data without missing values.
+        原始数据(不含缺失值)。
     fill_method
         Method used to fill the missing data.
 

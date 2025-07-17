@@ -10,9 +10,9 @@ from qlib.model.base import BaseModel
 
 
 class RiskModel(BaseModel):
-    """Risk Model
+    """风险模型
 
-    A risk model is used to estimate the covariance matrix of stock returns.
+    用于估计股票收益的协方差矩阵。
     """
 
     MASK_NAN = "mask"
@@ -21,10 +21,10 @@ class RiskModel(BaseModel):
 
     def __init__(self, nan_option: str = "ignore", assume_centered: bool = False, scale_return: bool = True):
         """
-        Args:
-            nan_option (str): nan handling option (`ignore`/`mask`/`fill`).
-            assume_centered (bool): whether the data is assumed to be centered.
-            scale_return (bool): whether scale returns as percentage.
+        参数:
+            nan_option (str): NaN值处理选项(`ignore`/`mask`/`fill`)。
+            assume_centered (bool): 是否假设数据已中心化。
+            scale_return (bool): 是否将收益率缩放为百分比。
         """
         # nan
         assert nan_option in [
@@ -45,15 +45,15 @@ class RiskModel(BaseModel):
         return_decomposed_components=False,
     ) -> Union[pd.DataFrame, np.ndarray, tuple]:
         """
-        Args:
-            X (pd.Series, pd.DataFrame or np.ndarray): data from which to estimate the covariance,
-                with variables as columns and observations as rows.
-            return_corr (bool): whether return the correlation matrix.
-            is_price (bool): whether `X` contains price (if not assume stock returns).
-            return_decomposed_components (bool): whether return decomposed components of the covariance matrix.
+        参数:
+            X (pd.Series, pd.DataFrame or np.ndarray): 用于估计协方差的数据，
+                变量为列，观测为行。
+            return_corr (bool): 是否返回相关矩阵。
+            is_price (bool): `X`是否包含价格数据(否则假设为股票收益)。
+            return_decomposed_components (bool): 是否返回协方差矩阵的分解成分。
 
-        Returns:
-            pd.DataFrame or np.ndarray: estimated covariance (or correlation).
+        返回:
+            pd.DataFrame or np.ndarray: 估计的协方差(或相关)矩阵。
         """
         assert (
             not return_corr or not return_decomposed_components
@@ -111,17 +111,17 @@ class RiskModel(BaseModel):
         return pd.DataFrame(S, index=columns, columns=columns)
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
-        """covariance estimation implementation
+        """协方差估计实现
 
-        This method should be overridden by child classes.
+        此方法应由子类重写。
 
-        By default, this method implements the empirical covariance estimation.
+        默认实现经验协方差估计。
 
-        Args:
-            X (np.ndarray): data matrix containing multiple variables (columns) and observations (rows).
+        参数:
+            X (np.ndarray): 包含多个变量(列)和观测(行)的数据矩阵。
 
-        Returns:
-            np.ndarray: covariance matrix.
+        返回:
+            np.ndarray: 协方差矩阵。
         """
         xTx = np.asarray(X.T.dot(X))
         N = len(X)
@@ -131,10 +131,10 @@ class RiskModel(BaseModel):
         return xTx / N
 
     def _preprocess(self, X: np.ndarray) -> Union[np.ndarray, np.ma.MaskedArray]:
-        """handle nan and centerize data
+        """处理NaN值并中心化数据
 
-        Note:
-            if `nan_option='mask'` then the returned array will be `np.ma.MaskedArray`.
+        注意:
+            如果`nan_option='mask'`则返回的数组将是`np.ma.MaskedArray`。
         """
         # handle nan
         if self.nan_option == self.FILL_NAN:

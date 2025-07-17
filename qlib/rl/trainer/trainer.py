@@ -29,64 +29,63 @@ T = TypeVar("T")
 
 class Trainer:
     """
-    Utility to train a policy on a particular task.
+    用于在特定任务上训练策略的工具。
 
-    Different from traditional DL trainer, the iteration of this trainer is "collect",
-    rather than "epoch", or "mini-batch".
-    In each collect, :class:`Collector` collects a number of policy-env interactions, and accumulates
-    them into a replay buffer. This buffer is used as the "data" to train the policy.
-    At the end of each collect, the policy is *updated* several times.
+    与传统深度学习训练器不同，此训练器的迭代单位是"收集"(collect)，
+    而非"epoch"或"mini-batch"。
+    每次收集时，:class:`Collector`会收集一定数量的策略-环境交互数据，
+    并累积到回放缓冲区中。此缓冲区用作训练策略的"数据"。
+    每次收集结束时，策略会被*更新*多次。
 
-    The API has some resemblence with `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/>`__,
-    but it's essentially different because this trainer is built for RL applications, and thus
-    most configurations are under RL context.
-    We are still looking for ways to incorporate existing trainer libraries, because it looks like
-    big efforts to build a trainer as powerful as those libraries, and also, that's not our primary goal.
+    API与`PyTorch Lightning <https://pytorch-lightning.readthedocs.io/>`__有些相似，
+    但由于此训练器专为RL应用构建，大多数配置都在RL上下文中，
+    因此本质上不同。
+    我们仍在寻找整合现有训练器库的方法，因为构建与这些库同样强大的训练器
+    需要大量工作，且这不是我们的主要目标。
 
-    It's essentially different
-    `tianshou's built-in trainers <https://tianshou.readthedocs.io/en/master/api/tianshou.trainer.html>`__,
-    as it's far much more complicated than that.
+    与`tianshou的内置训练器 <https://tianshou.readthedocs.io/en/master/api/tianshou.trainer.html>`__
+    也完全不同，因为此实现要复杂得多。
 
-    Parameters
+    参数
     ----------
     max_iters
-        Maximum iterations before stopping.
+        停止前的最大迭代次数。
     val_every_n_iters
-        Perform validation every n iterations (i.e., training collects).
+        每n次迭代(即训练收集)执行一次验证。
     logger
-        Logger to record the backtest results. Logger must be present because
-        without logger, all information will be lost.
+        记录回测结果的日志记录器。必须提供日志记录器，
+        否则所有信息都将丢失。
     finite_env_type
-        Type of finite env implementation.
+        有限环境实现类型。
     concurrency
-        Parallel workers.
+        并行工作进程数。
     fast_dev_run
-        Create a subset for debugging.
-        How this is implemented depends on the implementation of training vessel.
-        For :class:`~qlib.rl.vessel.TrainingVessel`, if greater than zero,
-        a random subset sized ``fast_dev_run`` will be used
-        instead of ``train_initial_states`` and ``val_initial_states``.
+        创建用于调试的子集。
+        具体实现取决于训练容器的实现方式。
+        对于:class:`~qlib.rl.vessel.TrainingVessel`，如果大于零，
+        将使用大小为``fast_dev_run``的随机子集
+        替代``train_initial_states``和``val_initial_states``。
     """
 
     should_stop: bool
-    """Set to stop the training."""
+    """设置为true可停止训练。"""
 
     metrics: dict
-    """Numeric metrics of produced in train/val/test.
-    In the middle of training / validation, metrics will be of the latest episode.
-    When each iteration of training / validation finishes, metrics will be the aggregation
-    of all episodes encountered in this iteration.
+    """训练/验证/测试中产生的数值指标。
+    在训练/验证过程中，指标来自最新的一轮(episode)。
+    当每次训练/验证迭代完成时，指标将是该迭代中
+    所有轮次(episode)的聚合结果。
 
-    Cleared on every new iteration of training.
+    每次新训练迭代开始时会被清空。
 
-    In fit, validation metrics will be prefixed with ``val/``.
+    在fit过程中，验证指标会以``val/``为前缀。
     """
 
     current_iter: int
-    """Current iteration (collect) of training."""
+    """当前训练迭代(收集)次数。"""
 
     loggers: List[LogWriter]
-    """A list of log writers."""
+    """日志记录器列表。"""
 
     def __init__(
         self,
@@ -121,9 +120,9 @@ class Trainer:
         self.vessel: TrainingVesselBase = cast(TrainingVesselBase, None)
 
     def initialize(self):
-        """Initialize the whole training process.
+        """初始化整个训练过程。
 
-        The states here should be synchronized with state_dict.
+        此处的状态应与state_dict保持同步。
         """
         self.should_stop = False
         self.current_iter = 0
@@ -131,16 +130,16 @@ class Trainer:
         self.current_stage = "train"
 
     def initialize_iter(self):
-        """Initialize one iteration / collect."""
+        """初始化一次迭代/收集。"""
         self.metrics = {}
 
     def state_dict(self) -> dict:
-        """Putting every states of current training into a dict, at best effort.
+        """尽可能将当前训练的所有状态存入字典。
 
-        It doesn't try to handle all the possible kinds of states in the middle of one training collect.
-        For most cases at the end of each iteration, things should be usually correct.
+        它不会尝试处理一次训练收集中间可能出现的所有状态类型。
+        对于大多数情况，在每次迭代结束时，结果通常是正确的。
 
-        Note that it's also intended behavior that replay buffer data in the collector will be lost.
+        注意，收集器中回放缓冲区数据的丢失是预期行为。
         """
         return {
             "vessel": self.vessel.state_dict(),
@@ -161,7 +160,7 @@ class Trainer:
         return state_dict
 
     def load_state_dict(self, state_dict: dict) -> None:
-        """Load all states into current trainer."""
+        """将所有状态加载到当前训练器中。"""
         self.vessel.load_state_dict(state_dict["vessel"])
         for name, callback in self.named_callbacks().items():
             callback.load_state_dict(state_dict["callbacks"][name])
@@ -174,26 +173,26 @@ class Trainer:
         self.metrics = state_dict["metrics"]
 
     def named_callbacks(self) -> Dict[str, Callback]:
-        """Retrieve a collection of callbacks where each one has a name.
-        Useful when saving checkpoints.
+        """获取带有名称的回调函数集合。
+        在保存检查点时很有用。
         """
         return _named_collection(self.callbacks)
 
     def named_loggers(self) -> Dict[str, LogWriter]:
-        """Retrieve a collection of loggers where each one has a name.
-        Useful when saving checkpoints.
+        """获取带有名称的日志记录器集合。
+        在保存检查点时很有用。
         """
         return _named_collection(self.loggers)
 
     def fit(self, vessel: TrainingVesselBase, ckpt_path: Path | None = None) -> None:
-        """Train the RL policy upon the defined simulator.
+        """在定义的模拟器上训练RL策略。
 
-        Parameters
+        参数
         ----------
         vessel
-            A bundle of all elements used in training.
+            训练中使用的所有元素的集合。
         ckpt_path
-            Load a pre-trained / paused training checkpoint.
+            加载预pre-trained / paused的训练检查点。
         """
         self.vessel = vessel
         vessel.assign_trainer(self)
@@ -249,14 +248,14 @@ class Trainer:
         self._call_callback_hooks("on_fit_end")
 
     def test(self, vessel: TrainingVesselBase) -> None:
-        """Test the RL policy against the simulator.
+        """在模拟器上测试RL策略。
 
-        The simulator will be fed with data generated in ``test_seed_iterator``.
+        模拟器将使用``test_seed_iterator``生成的数据。
 
-        Parameters
+        参数
         ----------
         vessel
-            A bundle of all related elements.
+            所有相关元素的集合。
         """
         self.vessel = vessel
         vessel.assign_trainer(self)
@@ -272,7 +271,7 @@ class Trainer:
         self._call_callback_hooks("on_test_end")
 
     def venv_from_iterator(self, iterator: Iterable[InitialStateType]) -> FiniteVectorEnv:
-        """Create a vectorized environment from iterator and the training vessel."""
+        """从迭代器和训练容器创建向量化环境。"""
 
         def env_factory():
             # FIXME: state_interpreter and action_interpreter are stateful (having a weakref of env),

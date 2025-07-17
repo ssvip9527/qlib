@@ -17,23 +17,21 @@ PolicyActType = TypeVar("PolicyActType")
 
 
 class Interpreter:
-    """Interpreter is a media between states produced by simulators and states needed by RL policies.
-    Interpreters are two-way:
+    """解释器是模拟器产生的状态与强化学习策略所需状态之间的媒介。
+    解释器是双向的：
 
-    1. From simulator state to policy state (aka observation), see :class:`StateInterpreter`.
-    2. From policy action to action accepted by simulator, see :class:`ActionInterpreter`.
+    1. 从模拟器状态到策略状态（又称观测），参见:class:`StateInterpreter`。
+    2. 从策略动作到模拟器接受的动作，参见:class:`ActionInterpreter`。
 
-    Inherit one of the two sub-classes to define your own interpreter.
-    This super-class is only used for isinstance check.
+    通过继承这两个子类之一来定义自己的解释器。
+    此基类仅用于类型检查。
 
-    Interpreters are recommended to be stateless, meaning that storing temporary information with ``self.xxx``
-    in interpreter is anti-pattern. In future, we might support register some interpreter-related
-    states by calling ``self.env.register_state()``, but it's not planned for first iteration.
+    建议解释器设计为无状态，即在解释器中使用``self.xxx``存储临时信息是反模式。未来可能支持通过调用``self.env.register_state()``注册解释器相关状态，但第一版暂不支持。
     """
 
 
 class StateInterpreter(Generic[StateType, ObsType], Interpreter):
-    """State Interpreter that interpret execution result of qlib executor into rl env state"""
+    """状态解释器，将qlib执行器的执行结果解释为强化学习环境状态"""
 
     @property
     def observation_space(self) -> gym.Space:
@@ -50,22 +48,22 @@ class StateInterpreter(Generic[StateType, ObsType], Interpreter):
         _gym_space_contains(self.observation_space, obs)
 
     def interpret(self, simulator_state: StateType) -> ObsType:
-        """Interpret the state of simulator.
+        """解释模拟器的状态。
 
-        Parameters
+        参数
         ----------
         simulator_state
-            Retrieved with ``simulator.get_state()``.
+            通过``simulator.get_state()``获取的模拟器状态。
 
-        Returns
+        返回
         -------
-        State needed by policy. Should conform with the state space defined in ``observation_space``.
+        策略所需的状态，应符合``observation_space``中定义的状态空间。
         """
-        raise NotImplementedError("interpret is not implemented!")
+        raise NotImplementedError("interpret方法未实现!")
 
 
 class ActionInterpreter(Generic[StateType, PolicyActType, ActType], Interpreter):
-    """Action Interpreter that interpret rl agent action into qlib orders"""
+    """动作解释器，将强化学习智能体的动作解释为qlib订单"""
 
     @property
     def action_space(self) -> gym.Space:
@@ -78,31 +76,31 @@ class ActionInterpreter(Generic[StateType, PolicyActType, ActType], Interpreter)
         return obs
 
     def validate(self, action: PolicyActType) -> None:
-        """Validate whether an action belongs to the pre-defined action space."""
+        """验证动作是否属于预定义的动作空间。"""
         _gym_space_contains(self.action_space, action)
 
     def interpret(self, simulator_state: StateType, action: PolicyActType) -> ActType:
-        """Convert the policy action to simulator action.
+        """将策略动作转换为模拟器动作。
 
-        Parameters
+        参数
         ----------
         simulator_state
-            Retrieved with ``simulator.get_state()``.
+            通过``simulator.get_state()``获取的模拟器状态。
         action
-            Raw action given by policy.
+            策略给出的原始动作。
 
-        Returns
+        返回
         -------
-        The action needed by simulator,
+        模拟器所需的动作。
         """
-        raise NotImplementedError("interpret is not implemented!")
+        raise NotImplementedError("interpret方法未实现!")
 
 
 def _gym_space_contains(space: gym.Space, x: Any) -> None:
-    """Strengthened version of gym.Space.contains.
-    Giving more diagnostic information on why validation fails.
+    """gym.Space.contains的增强版本。
+    提供更多关于验证失败原因的诊断信息。
 
-    Throw exception rather than returning true or false.
+    抛出异常而非返回true或false。
     """
     if isinstance(space, spaces.Dict):
         if not isinstance(x, dict) or len(x) != len(space):
@@ -132,10 +130,11 @@ def _gym_space_contains(space: gym.Space, x: Any) -> None:
 
 
 class GymSpaceValidationError(Exception):
+    """Gym空间验证异常，当观测值或动作不符合预定义空间时抛出。"""
     def __init__(self, message: str, space: gym.Space, x: Any) -> None:
         self.message = message
         self.space = space
         self.x = x
 
     def __str__(self) -> str:
-        return f"{self.message}\n  Space: {self.space}\n  Sample: {self.x}"
+        return f"{self.message}\n  空间: {self.space}\n  样本: {self.x}"

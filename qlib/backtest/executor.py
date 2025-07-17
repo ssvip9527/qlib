@@ -130,10 +130,10 @@ class BaseExecutor:
         self.level_infra.reset_infra(common_infra=self.common_infra)
 
         if common_infra.has("trade_account"):
-            # NOTE: there is a trick in the code.
-            # shallow copy is used instead of deepcopy.
-            # 1. So positions are shared
-            # 2. Others are not shared, so each level has it own metrics (portfolio and trading metrics)
+            # 注意: 代码中有个技巧
+            # 使用浅拷贝而不是深拷贝
+            # 1. 这样仓位是共享的
+            # 2. 其他不共享，所以每个层级有自己的指标(组合和交易指标)
             self.trade_account: Account = (
                 copy.copy(common_infra.get("trade_account"))
                 if copy_trade_account
@@ -403,9 +403,9 @@ class NestedExecutor(BaseExecutor):
         execute_result = []
         inner_order_indicators = []
         decision_list = []
-        # NOTE:
-        # - this is necessary to calculating the steps in sub level
-        # - more detailed information will be set into trade decision
+        # 注意：
+        # - 这对于计算子层级的步骤是必要的
+        # - 更详细的信息将被设置到交易决策中
         self._init_sub_trading(trade_decision)
 
         _inner_execute_result = None
@@ -420,29 +420,26 @@ class NestedExecutor(BaseExecutor):
 
             sub_cal: TradeCalendarManager = self.inner_executor.trade_calendar
 
-            # NOTE: make sure get_start_end_idx is after `self._update_trade_decision`
+            # 注意：确保get_start_end_idx在`self._update_trade_decision`之后调用
             start_idx, end_idx = get_start_end_idx(sub_cal, trade_decision)
             if not self._align_range_limit or start_idx <= sub_cal.get_trade_step() <= end_idx:
                 # if force align the range limit, skip the steps outside the decision range limit
 
                 res = self.inner_strategy.generate_trade_decision(_inner_execute_result)
 
-                # NOTE: !!!!!
-                # the two lines below is for a special case in RL
-                # To solve the conflicts below
-                # - Normally, user will create a strategy and embed it into Qlib's executor and simulator interaction
-                #   loop For a _nested qlib example_, (Qlib Strategy) <=> (Qlib Executor[(inner Qlib Strategy) <=>
-                #   (inner Qlib Executor)])
-                # - However, RL-based framework has it's own script to run the loop
-                #   For an _RL learning example_, (RL Policy) <=> (RL Env[(inner Qlib Executor)])
-                # To make it possible to run  _nested qlib example_ and _RL learning example_ together, the solution
-                # below is proposed
-                # - The entry script follow the example of  _RL learning example_ to be compatible with all kinds of
-                #   RL Framework
-                # - Each step of (RL Env) will make (inner Qlib Executor) one step forward
-                #     - (inner Qlib Strategy) is a proxy strategy, it will give the program control right to (RL Env)
-                #       by `yield from` and wait for the action from the policy
-                # So the two lines below is the implementation of yielding control rights
+                # 注意：!!!!!
+                # 下面两行代码是针对RL的特殊情况
+                # 用于解决以下冲突：
+                # - 通常用户会创建一个策略并嵌入到Qlib的执行器和模拟器交互循环中
+                #   例如一个嵌套Qlib示例：(Qlib策略) <=> (Qlib执行器[(内部Qlib策略) <=> (内部Qlib执行器)])
+                # - 然而基于RL的框架有自己的脚本来运行循环
+                #   例如一个RL学习示例：(RL策略) <=> (RL环境[(内部Qlib执行器)])
+                # 为了使嵌套Qlib示例和RL学习示例能够一起运行，提出以下解决方案：
+                # - 入口脚本遵循RL学习示例的格式，以兼容各种RL框架
+                # - RL环境的每一步都会让内部Qlib执行器前进一步
+                #     - 内部Qlib策略是一个代理策略，它会通过`yield from`将程序控制权交给RL环境
+                #       并等待策略的动作
+                # 所以下面两行代码是实现控制权转移
                 if isinstance(res, GeneratorType):
                     res = yield from res
 
@@ -450,10 +447,10 @@ class NestedExecutor(BaseExecutor):
 
                 trade_decision.mod_inner_decision(_inner_trade_decision)  # propagate part of decision information
 
-                # NOTE sub_cal.get_step_time() must be called before collect_data in case of step shifting
+                # 注意：必须在collect_data之前调用sub_cal.get_step_time()，以防步骤偏移
                 decision_list.append((_inner_trade_decision, *sub_cal.get_step_time()))
 
-                # NOTE: Trade Calendar will step forward in the follow line
+                # 注意：交易日历将在下一行前进
                 _inner_execute_result = yield from self.inner_executor.collect_data(
                     trade_decision=_inner_trade_decision,
                     level=level + 1,

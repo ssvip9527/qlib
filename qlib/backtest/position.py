@@ -1,5 +1,5 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -28,13 +28,13 @@ class BasePosition:
 
     def skip_update(self) -> bool:
         """
-        Should we skip updating operation for this position
-        For example, updating is meaningless for InfPosition
+        是否应该跳过该持仓的更新操作
+        例如，对于InfPosition来说更新是无意义的
 
-        Returns
+        返回
         -------
         bool:
-            should we skip the updating operator
+            是否应该跳过更新操作
         """
         return False
 
@@ -177,12 +177,12 @@ class BasePosition:
 
     def add_count_all(self, bar: str) -> None:
         """
-        Will be called at the end of each bar on each level
+        将在每个级别的每个bar结束时调用
 
-        Parameters
+        参数
         ----------
         bar :
-            The level to be updated
+            要更新的级别
         """
         raise NotImplementedError(f"Please implement the `add_count_all` method")
 
@@ -227,36 +227,36 @@ class BasePosition:
 
 
 class Position(BasePosition):
-    """Position
+    """持仓类
 
-    current state of position
-    a typical example is :{
+    当前持仓状态
+    典型示例: {
       <instrument_id>: {
-        'count': <how many days the security has been hold>,
-        'amount': <the amount of the security>,
-        'price': <the close price of security in the last trading day>,
-        'weight': <the security weight of total position value>,
+        'count': <该证券已持有的天数>,
+        'amount': <该证券的数量>,
+        'price': <该证券上一交易日的收盘价>,
+        'weight': <该证券在总持仓价值中的权重>,
       },
     }
     """
 
     def __init__(self, cash: float = 0, position_dict: Dict[str, Union[Dict[str, float], float]] = {}) -> None:
-        """Init position by cash and position_dict.
+        """通过现金和position_dict初始化持仓
 
-        Parameters
+        参数
         ----------
         cash : float, optional
-            initial cash in account, by default 0
+            账户初始现金，默认为0
         position_dict : Dict[
                             stock_id,
                             Union[
-                                int,  # it is equal to {"amount": int}
-                                {"amount": int, "price"(optional): float},
+                                int,  # 等同于{"amount": int}
+                                {"amount": int, "price"(可选): float},
                             ]
                         ]
-            initial stocks with parameters amount and price,
-            if there is no price key in the dict of stocks, it will be filled by _fill_stock_value.
-            by default {}.
+            初始股票及其数量和价格参数,
+            如果股票字典中没有price键，将通过_fill_stock_value填充。
+            默认为{}。
         """
         super().__init__()
 
@@ -276,16 +276,16 @@ class Position(BasePosition):
             pass
 
     def fill_stock_value(self, start_time: Union[str, pd.Timestamp], freq: str, last_days: int = 30) -> None:
-        """fill the stock value by the close price of latest last_days from qlib.
+        """通过qlib获取最近last_days的收盘价填充股票价值
 
-        Parameters
+        参数
         ----------
         start_time :
-            the start time of backtest.
+            回测开始时间
         freq : str
-            Frequency
+            频率
         last_days : int, optional
-            the days to get the latest close price, by default 30.
+            获取最近收盘价的天数，默认为30
         """
         stock_list = []
         for stock, value in self.position.items():
@@ -321,16 +321,16 @@ class Position(BasePosition):
 
     def _init_stock(self, stock_id: str, amount: float, price: float | None = None) -> None:
         """
-        initialization the stock in current position
+        初始化当前持仓中的股票
 
-        Parameters
+        参数
         ----------
         stock_id :
-            the id of the stock
+            股票ID
         amount : float
-            the amount of the stock
+            股票数量
         price :
-             the price when buying the init stock
+            初始买入股票时的价格
         """
         self.position[stock_id] = {}
         self.position[stock_id]["amount"] = amount
@@ -428,7 +428,7 @@ class Position(BasePosition):
         return self.position[code]["amount"] if code in self.position else 0
 
     def get_stock_count(self, code: str, bar: str) -> float:
-        """the days the account has been hold, it may be used in some special strategies"""
+        """账户持有该股票的天数，可能用于某些特殊策略"""
         if f"count_{bar}" in self.position[code]:
             return self.position[code][f"count_{bar}"]
         else:
@@ -444,7 +444,7 @@ class Position(BasePosition):
         return cash
 
     def get_stock_amount_dict(self) -> dict:
-        """generate stock amount dict {stock_id : amount of stock}"""
+        """生成股票数量字典 {stock_id : 股票数量}"""
         d = {}
         stock_list = self.get_stock_list()
         for stock_code in stock_list:
@@ -452,12 +452,12 @@ class Position(BasePosition):
         return d
 
     def get_stock_weight_dict(self, only_stock: bool = False) -> dict:
-        """get_stock_weight_dict
-        generate stock weight dict {stock_id : value weight of stock in the position}
-        it is meaningful in the beginning or the end of each trade date
+        """获取股票权重字典
+        generate stock weight dict {stock_id : 股票在持仓中的价值权重}
+        在每个交易日的开始或结束时才有意义
 
-        :param only_stock: If only_stock=True, the weight of each stock in total stock will be returned
-                           If only_stock=False, the weight of each stock in total assets(stock + cash) will be returned
+        :param only_stock: 如果only_stock=True，返回每只股票在股票总额中的权重
+                           如果only_stock=False，返回每只股票在总资产(股票+现金)中的权重
         """
         if only_stock:
             position_value = self.calculate_stock_value()
@@ -500,13 +500,13 @@ class Position(BasePosition):
 
 class InfPosition(BasePosition):
     """
-    Position with infinite cash and amount.
+    具有无限现金和股票数量的持仓类
 
-    This is useful for generating random orders.
+    用于生成随机订单。
     """
 
     def skip_update(self) -> bool:
-        """Updating state is meaningless for InfPosition"""
+        """更新状态对InfPosition无意义"""
         return True
 
     def check_stock(self, stock_id: str) -> bool:
@@ -521,10 +521,10 @@ class InfPosition(BasePosition):
 
     def calculate_stock_value(self) -> float:
         """
-        Returns
+        返回
         -------
         float:
-            infinity stock value
+            无限大的股票价值
         """
         return np.inf
 
@@ -535,7 +535,7 @@ class InfPosition(BasePosition):
         raise NotImplementedError(f"InfPosition doesn't support stock list position")
 
     def get_stock_price(self, code: str) -> float:
-        """the price of the inf position is meaningless"""
+        """无限持仓的价格无意义"""
         return np.nan
 
     def get_stock_amount(self, code: str) -> float:

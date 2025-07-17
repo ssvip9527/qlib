@@ -32,11 +32,11 @@ class SeedIteratorNotAvailable(BaseException):
 
 
 class TrainingVesselBase(Generic[InitialStateType, StateType, ActType, ObsType, PolicyActType]):
-    """A ship that contains simulator, interpreter, and policy, will be sent to trainer.
-    This class controls algorithm-related parts of training, while trainer is responsible for runtime part.
+    """包含模拟器、解释器和策略的容器，将被发送给训练器。
+    此类控制训练中与算法相关的部分，而训练器负责运行时部分。
 
-    The ship also defines the most important logic of the core training part,
-    and (optionally) some callbacks to insert customized logics at specific events.
+    该容器还定义了核心训练部分最重要的逻辑，
+    以及(可选)一些回调函数用于在特定事件插入自定义逻辑。
     """
 
     simulator_fn: Callable[[InitialStateType], Simulator[InitialStateType, StateType, ActType]]
@@ -50,29 +50,29 @@ class TrainingVesselBase(Generic[InitialStateType, StateType, ActType, ObsType, 
         self.trainer = weakref.proxy(trainer)  # type: ignore
 
     def train_seed_iterator(self) -> ContextManager[Iterable[InitialStateType]] | Iterable[InitialStateType]:
-        """Override this to create a seed iterator for training.
-        If the iterable is a context manager, the whole training will be invoked in the with-block,
-        and the iterator will be automatically closed after the training is done."""
+        """重写此方法以创建训练用的种子迭代器。
+        如果可迭代对象是上下文管理器，整个训练将在with块中调用，
+        并且迭代器会在训练完成后自动关闭。"""
         raise SeedIteratorNotAvailable("Seed iterator for training is not available.")
 
     def val_seed_iterator(self) -> ContextManager[Iterable[InitialStateType]] | Iterable[InitialStateType]:
-        """Override this to create a seed iterator for validation."""
+        """重写此方法以创建验证用的种子迭代器。"""
         raise SeedIteratorNotAvailable("Seed iterator for validation is not available.")
 
     def test_seed_iterator(self) -> ContextManager[Iterable[InitialStateType]] | Iterable[InitialStateType]:
-        """Override this to create a seed iterator for testing."""
+        """重写此方法以创建测试用的种子迭代器。"""
         raise SeedIteratorNotAvailable("Seed iterator for testing is not available.")
 
     def train(self, vector_env: BaseVectorEnv) -> Dict[str, Any]:
-        """Implement this to train one iteration. In RL, one iteration usually refers to one collect."""
+        """实现此方法以进行一次训练迭代。在RL中，一次迭代通常指一次收集。"""
         raise NotImplementedError()
 
     def validate(self, vector_env: FiniteVectorEnv) -> Dict[str, Any]:
-        """Implement this to validate the policy once."""
+        """实现此方法以对策略进行一次验证。"""
         raise NotImplementedError()
 
     def test(self, vector_env: FiniteVectorEnv) -> Dict[str, Any]:
-        """Implement this to evaluate the policy on test environment once."""
+        """实现此方法以在测试环境中评估策略一次。"""
         raise NotImplementedError()
 
     def log(self, name: str, value: Any) -> None:
@@ -87,29 +87,29 @@ class TrainingVesselBase(Generic[InitialStateType, StateType, ActType, ObsType, 
             self.log(name, value)
 
     def state_dict(self) -> Dict:
-        """Return a checkpoint of current vessel state."""
+        """返回当前容器状态的检查点。"""
         return {"policy": self.policy.state_dict()}
 
     def load_state_dict(self, state_dict: Dict) -> None:
-        """Restore a checkpoint from a previously saved state dict."""
+        """从之前保存的状态字典恢复检查点。"""
         self.policy.load_state_dict(state_dict["policy"])
 
 
 class TrainingVessel(TrainingVesselBase):
-    """The default implementation of training vessel.
+    """训练容器的默认实现。
 
-    ``__init__`` accepts a sequence of initial states so that iterator can be created.
-    ``train``, ``validate``, ``test`` each do one collect (and also update in train).
-    By default, the train initial states will be repeated infinitely during training,
-    and collector will control the number of episodes for each iteration.
-    In validation and testing, the val / test initial states will be used exactly once.
+    ``__init__``接受初始状态序列以便创建迭代器。
+    ``train``、``validate``、``test``各执行一次收集(训练中还包含更新)。
+    默认情况下，训练初始状态会在训练期间无限重复，
+    收集器会控制每次迭代的轮次(episode)数量。
+    在验证和测试中，验证/测试初始状态将仅使用一次。
 
-    Extra hyper-parameters (only used in train) include:
+    额外超参数(仅用于训练)包括:
 
-    - ``buffer_size``: Size of replay buffer.
-    - ``episode_per_iter``: Episodes per collect at training. Can be overridden by fast dev run.
-    - ``update_kwargs``: Keyword arguments appearing in ``policy.update``.
-      For example, ``dict(repeat=10, batch_size=64)``.
+    - ``buffer_size``: 回放缓冲区大小
+    - ``episode_per_iter``: 每次训练收集的轮次数量。可被快速开发模式覆盖。
+    - ``update_kwargs``: 传递给``policy.update``的关键字参数。
+      例如``dict(repeat=10, batch_size=64)``。
     """
 
     def __init__(
@@ -162,8 +162,8 @@ class TrainingVessel(TrainingVesselBase):
         return super().test_seed_iterator()
 
     def train(self, vector_env: FiniteVectorEnv) -> Dict[str, Any]:
-        """Create a collector and collects ``episode_per_iter`` episodes.
-        Update the policy on the collected replay buffer.
+        """创建收集器并收集``episode_per_iter``轮次(episodes)。
+        在收集的回放缓冲区上更新策略。
         """
         self.policy.train()
 

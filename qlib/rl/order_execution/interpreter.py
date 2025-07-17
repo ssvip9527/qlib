@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ from qlib.utils import init_instance_by_config
 
 
 def canonicalize(value: int | float | np.ndarray | pd.DataFrame | dict) -> np.ndarray | dict:
-    """To 32-bit numeric types. Recursively."""
+    """转换为32位数值类型(递归处理)。"""
     if isinstance(value, pd.DataFrame):
         return value.to_numpy()
     if isinstance(value, (float, np.floating)) or (isinstance(value, np.ndarray) and value.dtype.kind == "f"):
@@ -54,7 +54,7 @@ class FullHistoryObs(TypedDict):
 
 
 class DummyStateInterpreter(StateInterpreter[SAOEState, dict]):
-    """Dummy interpreter for policies that do not need inputs (for example, AllOne)."""
+    """用于不需要输入的策略的虚拟解释器(例如AllOne策略)。"""
 
     def interpret(self, state: SAOEState) -> dict:
         # TODO: A fake state, used to pass `check_nan_observation`. Find a better way in the future.
@@ -66,19 +66,19 @@ class DummyStateInterpreter(StateInterpreter[SAOEState, dict]):
 
 
 class FullHistoryStateInterpreter(StateInterpreter[SAOEState, FullHistoryObs]):
-    """The observation of all the history, including today (until this moment), and yesterday.
+    """包含所有历史数据的观察值，包括今天(直到当前时刻)和昨天的数据。
 
-    Parameters
+    参数
     ----------
     max_step
-        Total number of steps (an upper-bound estimation). For example, 390min / 30min-per-step = 13 steps.
+        总步数(上限估计)。例如390分钟/每步30分钟=13步。
     data_ticks
-        Equal to the total number of records. For example, in SAOE per minute,
-        the total ticks is the length of day in minutes.
+        等于总记录数。例如在每分钟的SAOE中，
+        总ticks数就是一天中的分钟数。
     data_dim
-        Number of dimensions in data.
+        数据的维度数。
     processed_data_provider
-        Provider of the processed data.
+        处理数据的提供者。
     """
 
     def __init__(
@@ -162,10 +162,10 @@ class CurrentStateObs(TypedDict):
 
 
 class CurrentStepStateInterpreter(StateInterpreter[SAOEState, CurrentStateObs]):
-    """The observation of current step.
+    """当前步骤的观察值。
 
-    Used when policy only depends on the latest state, but not history.
-    The key list is not full. You can add more if more information is needed by your policy.
+    用于策略仅依赖于最新状态而不依赖历史的情况。
+    键列表不完整，如果您的策略需要更多信息可以添加。
     """
 
     def __init__(self, max_step: int) -> None:
@@ -197,17 +197,17 @@ class CurrentStepStateInterpreter(StateInterpreter[SAOEState, CurrentStateObs]):
 
 
 class CategoricalActionInterpreter(ActionInterpreter[SAOEState, int, float]):
-    """Convert a discrete policy action to a continuous action, then multiplied by ``order.amount``.
+    """将离散策略动作转换为连续动作，然后乘以``order.amount``。
 
-    Parameters
+    参数
     ----------
     values
-        It can be a list of length $L$: $[a_1, a_2, \\ldots, a_L]$.
-        Then when policy givens decision $x$, $a_x$ times order amount is the output.
-        It can also be an integer $n$, in which case the list of length $n+1$ is auto-generated,
-        i.e., $[0, 1/n, 2/n, \\ldots, n/n]$.
+        可以是长度为$L$的列表：$[a_1, a_2, \ldots, a_L]$。
+        当策略给出决策$x$时，输出为$a_x$乘以订单数量。
+        也可以是一个整数$n$，此时会自动生成长度为$n+1$的列表，
+        即$[0, 1/n, 2/n, \ldots, n/n]$。
     max_step
-        Total number of steps (an upper-bound estimation). For example, 390min / 30min-per-step = 13 steps.
+        总步数(上限估计)。例如390分钟/每步30分钟=13步。
     """
 
     def __init__(self, values: int | List[float], max_step: Optional[int] = None) -> None:
@@ -231,12 +231,12 @@ class CategoricalActionInterpreter(ActionInterpreter[SAOEState, int, float]):
 
 
 class TwapRelativeActionInterpreter(ActionInterpreter[SAOEState, float, float]):
-    """Convert a continuous ratio to deal amount.
+    """将连续比率转换为交易数量。
 
-    The ratio is relative to TWAP on the remainder of the day.
-    For example, there are 5 steps left, and the left position is 300.
-    With TWAP strategy, in each position, 60 should be traded.
-    When this interpreter receives action $a$, its output is $60 \\cdot a$.
+    该比率相对于当天剩余时间的TWAP策略。
+    例如，剩余5个步骤，剩余头寸为300。
+    使用TWAP策略，每个步骤应交易60。
+    当此解释器收到动作$a$时，其输出为$60 \cdot a$。
     """
 
     @property

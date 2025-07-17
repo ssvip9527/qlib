@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -15,15 +15,15 @@ __all__ = ["PAPenaltyReward"]
 
 
 class PAPenaltyReward(Reward[SAOEState]):
-    """Encourage higher PAs, but penalize stacking all the amounts within a very short time.
-    Formally, for each time step, the reward is :math:`(PA_t * vol_t / target - vol_t^2 * penalty)`.
+    """鼓励更高的PA(价格优势)，但对在短时间内堆积所有交易量进行惩罚。
+    形式上，每个时间步的奖励是 :math:`(PA_t * vol_t / target - vol_t^2 * penalty)`。
 
-    Parameters
+    参数
     ----------
     penalty
-        The penalty for large volume in a short time.
+        短时间内大交易量的惩罚系数。
     scale
-        The weight used to scale up or down the reward.
+        用于放大或缩小奖励的权重。
     """
 
     def __init__(self, penalty: float = 100.0, scale: float = 1.0) -> None:
@@ -51,16 +51,16 @@ class PAPenaltyReward(Reward[SAOEState]):
 
 
 class PPOReward(Reward[SAOEState]):
-    """Reward proposed by paper "An End-to-End Optimal Trade Execution Framework based on Proximal Policy Optimization".
+    """基于论文《基于近端策略优化的端到端最优交易执行框架》提出的奖励函数。
 
-    Parameters
+    参数
     ----------
     max_step
-        Maximum number of steps.
+        最大步数。
     start_time_index
-        First time index that allowed to trade.
+        允许交易的最早时间索引。
     end_time_index
-        Last time index that allowed to trade.
+        允许交易的最晚时间索引。
     """
 
     def __init__(self, max_step: int, start_time_index: int = 0, end_time_index: int = 239) -> None:

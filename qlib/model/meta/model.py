@@ -9,53 +9,53 @@ from .dataset import MetaTaskDataset
 
 class MetaModel(metaclass=abc.ABCMeta):
     """
-    The meta-model guiding the model learning.
+    指导模型学习的元模型。
 
-    The word `Guiding` can be categorized into two types based on the stage of model learning
-    - The definition of learning tasks:  Please refer to docs of `MetaTaskModel`
-    - Controlling the learning process of models: Please refer to the docs of `MetaGuideModel`
+    `Guiding`一词根据模型学习阶段可分为两种类型:
+    - 学习任务的定义: 请参考`MetaTaskModel`的文档
+    - 控制模型的学习过程: 请参考`MetaGuideModel`的文档
     """
 
     @abc.abstractmethod
     def fit(self, *args, **kwargs):
         """
-        The training process of the meta-model.
+        元模型的训练过程。
         """
 
     @abc.abstractmethod
     def inference(self, *args, **kwargs) -> object:
         """
-        The inference process of the meta-model.
+        元模型的推理过程。
 
-        Returns
+        返回
         -------
         object:
-            Some information to guide the model learning
+            用于指导模型学习的一些信息
         """
 
 
 class MetaTaskModel(MetaModel):
     """
-    This type of meta-model deals with base task definitions. The meta-model creates tasks for training new base forecasting models after it is trained. `prepare_tasks` directly modifies the task definitions.
+    这类元模型处理基础任务定义。元模型在训练后会创建用于训练新基础预测模型的任务。`prepare_tasks`直接修改任务定义。
     """
 
     def fit(self, meta_dataset: MetaTaskDataset):
         """
-        The MetaTaskModel is expected to get prepared MetaTask from meta_dataset.
-        And then it will learn knowledge from the meta tasks
+        MetaTaskModel预期从meta_dataset获取准备好的MetaTask。
+        然后它将从元任务中学习知识
         """
         raise NotImplementedError(f"Please implement the `fit` method")
 
     def inference(self, meta_dataset: MetaTaskDataset) -> List[dict]:
         """
-        MetaTaskModel will make inference on the meta_dataset
-        The MetaTaskModel is expected to get prepared MetaTask from meta_dataset.
-        Then it will create modified task with Qlib format which can be executed by Qlib trainer.
+        MetaTaskModel将对meta_dataset进行推理
+        MetaTaskModel预期从meta_dataset获取准备好的MetaTask。
+        然后它将创建可被Qlib训练器执行的Qlib格式的修改后任务。
 
-        Returns
+        返回
         -------
         List[dict]:
-            A list of modified task definitions.
+            修改后的任务定义列表。
 
         """
         raise NotImplementedError(f"Please implement the `inference` method")
@@ -63,7 +63,7 @@ class MetaTaskModel(MetaModel):
 
 class MetaGuideModel(MetaModel):
     """
-    This type of meta-model aims to guide the training process of the base model. The meta-model interacts with the base forecasting models during their training process.
+    这类元模型旨在指导基础模型的训练过程。元模型在基础预测模型训练过程中与其交互。
     """
 
     @abc.abstractmethod

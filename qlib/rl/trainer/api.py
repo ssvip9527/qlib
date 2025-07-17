@@ -26,28 +26,28 @@ def train(
     vessel_kwargs: Dict[str, Any],
     trainer_kwargs: Dict[str, Any],
 ) -> None:
-    """Train a policy with the parallelism provided by RL framework.
+    """使用RL框架提供的并行能力训练策略。
 
-    Experimental API. Parameters might change shortly.
+    实验性API，参数可能会变更。
 
-    Parameters
+    参数
     ----------
     simulator_fn
-        Callable receiving initial seed, returning a simulator.
+        接收初始种子并返回模拟器的可调用对象。
     state_interpreter
-        Interprets the state of simulators.
+        解释模拟器状态。
     action_interpreter
-        Interprets the policy actions.
+        解释策略动作。
     initial_states
-        Initial states to iterate over. Every state will be run exactly once.
+        初始状态集合，每个状态将恰好运行一次。
     policy
-        Policy to train against.
+        待训练的策略。
     reward
-        Reward function.
+        奖励函数。
     vessel_kwargs
-        Keyword arguments passed to :class:`TrainingVessel`, like ``episode_per_iter``.
+        传递给:class:`TrainingVessel`的关键字参数，如``episode_per_iter``。
     trainer_kwargs
-        Keyword arguments passed to :class:`Trainer`, like ``finite_env_type``, ``concurrency``.
+        传递给:class:`Trainer`的关键字参数，如``finite_env_type``, ``concurrency``。
     """
 
     vessel = TrainingVessel(
@@ -74,32 +74,30 @@ def backtest(
     finite_env_type: FiniteEnvType = "subproc",
     concurrency: int = 2,
 ) -> None:
-    """Backtest with the parallelism provided by RL framework.
+    """使用RL框架提供的并行能力进行回测。
 
-    Experimental API. Parameters might change shortly.
+    实验性API，参数可能会变更。
 
-    Parameters
+    参数
     ----------
     simulator_fn
-        Callable receiving initial seed, returning a simulator.
+        接收初始种子并返回模拟器的可调用对象。
     state_interpreter
-        Interprets the state of simulators.
+        解释模拟器状态。
     action_interpreter
-        Interprets the policy actions.
+        解释策略动作。
     initial_states
-        Initial states to iterate over. Every state will be run exactly once.
+        初始状态集合，每个状态将恰好运行一次。
     policy
-        Policy to test against.
+        待测试的策略。
     logger
-        Logger to record the backtest results. Logger must be present because
-        without logger, all information will be lost.
+        记录回测结果的日志器。必须提供日志器，否则所有信息都将丢失。
     reward
-        Optional reward function. For backtest, this is for testing the rewards
-        and logging them only.
+        可选的奖励函数。对于回测，仅用于测试和记录奖励。
     finite_env_type
-        Type of finite env implementation.
+        有限环境实现类型。
     concurrency
-        Parallel workers.
+        并行工作线程数。
     """
 
     vessel = TrainingVessel(

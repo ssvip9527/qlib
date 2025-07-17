@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 from __future__ import annotations
 
 import argparse
@@ -71,9 +71,8 @@ class LazyLoadDataset(Dataset):
         date = pd.Timestamp(str(row["date"]))
 
         if self._ticks_index is None:
-            # TODO: We only load ticks index once based on the assumption that ticks index of different dates
-            # TODO: in one experiment are all the same. If that assumption is not hold, we need to load ticks index
-            # TODO: of all dates.
+            # 注意：我们仅加载一次ticks索引，基于实验中不同日期的ticks索引都相同的假设
+            # 如果该假设不成立，则需要加载所有日期的ticks索引
 
             data = load_handler_intraday_processed_data(
                 data_dir=self._data_dir,

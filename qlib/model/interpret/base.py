@@ -1,8 +1,8 @@
 #  Copyright (c) Microsoft Corporation.
-#  Licensed under the MIT License.
+# MIT许可证授权。
 
 """
-Interfaces to interpret models
+模型解释接口
 """
 
 import pandas as pd
@@ -10,32 +10,31 @@ from abc import abstractmethod
 
 
 class FeatureInt:
-    """Feature (Int)erpreter"""
+    """特征解释器"""
 
     @abstractmethod
     def get_feature_importance(self) -> pd.Series:
-        """get feature importance
+        """获取特征重要性
 
-        Returns
+        返回
         -------
-            The index is the feature name.
-
-            The greater the value, the higher importance.
+            索引是特征名称。
+            值越大，重要性越高。
         """
 
 
 class LightGBMFInt(FeatureInt):
-    """LightGBM (F)eature (Int)erpreter"""
+    """LightGBM特征解释器"""
 
     def __init__(self):
         self.model = None
 
     def get_feature_importance(self, *args, **kwargs) -> pd.Series:
-        """get feature importance
+        """获取特征重要性
 
-        Notes
+        说明
         -----
-            parameters reference:
+            参数参考:
             https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.Booster.html?highlight=feature_importance#lightgbm.Booster.feature_importance
         """
         return pd.Series(

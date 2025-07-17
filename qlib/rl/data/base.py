@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -9,10 +9,9 @@ import pandas as pd
 
 class BaseIntradayBacktestData:
     """
-    Raw market data that is often used in backtesting (thus called BacktestData).
+    常用于回测的原始市场数据（因此称为回测数据）。
 
-    Base class for all types of backtest data. Currently, each type of simulator has its corresponding backtest
-    data type.
+    所有类型回测数据的基类。目前，每种类型的模拟器都有其对应的回测数据类型。
     """
 
     @abstractmethod
@@ -37,23 +36,22 @@ class BaseIntradayBacktestData:
 
 
 class BaseIntradayProcessedData:
-    """Processed market data after data cleanup and feature engineering.
+    """经过数据清洗和特征工程处理后的市场数据。
 
-    It contains both processed data for "today" and "yesterday", as some algorithms
-    might use the market information of the previous day to assist decision making.
+    它包含“今日”和“昨日”的处理数据，因为某些算法可能会使用前一天的市场信息来辅助决策。
     """
 
     today: pd.DataFrame
-    """Processed data for "today".
-    Number of records must be ``time_length``, and columns must be ``feature_dim``."""
+    """“今日”的处理数据。
+    记录数必须为 ``time_length``，列数必须为 ``feature_dim``。"""
 
     yesterday: pd.DataFrame
-    """Processed data for "yesterday".
-    Number of records must be ``time_length``, and columns must be ``feature_dim``."""
+    """“昨日”的处理数据。
+    记录数必须为 ``time_length``，列数必须为 ``feature_dim``。"""
 
 
 class ProcessedDataProvider:
-    """Provider of processed data"""
+    """处理后数据的提供器"""
 
     def get_data(
         self,

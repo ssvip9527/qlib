@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""Callbacks to insert customized recipes during the training.
-Mimicks the hooks of Keras / PyTorch-Lightning, but tailored for the context of RL.
+"""在训练过程中插入自定义逻辑的回调函数。
+模仿Keras/PyTorch-Lightning的钩子机制，但针对RL场景定制。
 """
 
 from __future__ import annotations
@@ -30,64 +30,64 @@ _logger = get_module_logger(__name__)
 
 
 class Callback:
-    """Base class of all callbacks."""
+    """所有回调函数的基类。"""
 
     def on_fit_start(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called before the whole fit process begins."""
+        """在整个训练过程开始前调用。"""
 
     def on_fit_end(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called after the whole fit process ends."""
+        """在整个训练过程结束后调用。"""
 
     def on_train_start(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called when each collect for training begins."""
+        """每次训练数据收集开始时调用。"""
 
     def on_train_end(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called when the training ends.
-        To access all outputs produced during training, cache the data in either trainer and vessel,
-        and post-process them in this hook.
+        """训练结束时调用。
+        要访问训练期间产生的所有输出，可在trainer或vessel中缓存数据，
+        并在此钩子中进行后处理。
         """
 
     def on_validate_start(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called when every run for validation begins."""
+        """每次验证运行开始时调用。"""
 
     def on_validate_end(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called when the validation ends."""
+        """验证结束时调用。"""
 
     def on_test_start(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called when every run of testing begins."""
+        """每次测试运行时调用。"""
 
     def on_test_end(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called when the testing ends."""
+        """测试结束时调用。"""
 
     def on_iter_start(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called when every iteration (i.e., collect) starts."""
+        """每次迭代(即数据收集)开始时调用。"""
 
     def on_iter_end(self, trainer: Trainer, vessel: TrainingVesselBase) -> None:
-        """Called upon every end of iteration.
-        This is called **after** the bump of ``current_iter``,
-        when the previous iteration is considered complete.
+        """每次迭代结束时调用。
+        在``current_iter``递增**之后**调用，
+        表示前一次迭代已完成。
         """
 
     def state_dict(self) -> Any:
-        """Get a state dict of the callback for pause and resume."""
+        """获取回调函数的状态字典用于暂停和恢复。"""
 
     def load_state_dict(self, state_dict: Any) -> None:
-        """Resume the callback from a saved state dict."""
+        """从保存的状态字典恢复回调函数。"""
 
 
 class EarlyStopping(Callback):
-    """Stop training when a monitored metric has stopped improving.
+    """当监控指标停止改善时停止训练。
 
-    The earlystopping callback will be triggered each time validation ends.
-    It will examine the metrics produced in validation,
-    and get the metric with name ``monitor` (``monitor`` is ``reward`` by default),
-    to check whether it's no longer increasing / decreasing.
-    It takes ``min_delta`` and ``patience`` if applicable.
-    If it's found to be not increasing / decreasing any more.
-    ``trainer.should_stop`` will be set to true,
-    and the training terminates.
+    每次验证结束时触发早停回调。
+    它会检查验证产生的指标，
+    获取名为``monitor``的指标(默认为``reward``)，
+    判断其是否不再增加/减少。
+    根据``min_delta``和``patience``参数决定是否停止。
+    如果发现指标不再改善，
+    则设置``trainer.should_stop``为true，
+    终止训练过程。
 
-    Implementation reference: https://github.com/keras-team/keras/blob/v2.9.0/keras/callbacks.py#L1744-L1893
+    实现参考: https://github.com/keras-team/keras/blob/v2.9.0/keras/callbacks.py#L1744-L1893
     """
 
     def __init__(
@@ -183,7 +183,7 @@ class EarlyStopping(Callback):
 
 
 class MetricsWriter(Callback):
-    """Dump training metrics to file."""
+    """将训练指标写入文件。"""
 
     def __init__(self, dirpath: Path) -> None:
         self.dirpath = dirpath
@@ -201,35 +201,35 @@ class MetricsWriter(Callback):
 
 
 class Checkpoint(Callback):
-    """Save checkpoints periodically for persistence and recovery.
+    """定期保存检查点以实现持久化和恢复。
 
-    Reference: https://github.com/PyTorchLightning/pytorch-lightning/blob/bfa8b7be/pytorch_lightning/callbacks/model_checkpoint.py
+    参考: https://github.com/PyTorchLightning/pytorch-lightning/blob/bfa8b7be/pytorch_lightning/callbacks/model_checkpoint.py
 
-    Parameters
+    参数
     ----------
     dirpath
-        Directory to save the checkpoint file.
+        保存检查点文件的目录。
     filename
-        Checkpoint filename. Can contain named formatting options to be auto-filled.
-        For example: ``{iter:03d}-{reward:.2f}.pth``.
-        Supported argument names are:
+        检查点文件名。可包含命名格式化选项自动填充。
+        例如: ``{iter:03d}-{reward:.2f}.pth``。
+        支持的参数名有:
 
-        - iter (int)
-        - metrics in ``trainer.metrics``
-        - time string, in the format of ``%Y%m%d%H%M%S``
+        - iter (整数)
+        - trainer.metrics中的指标
+        - 时间字符串，格式为``%Y%m%d%H%M%S``
     save_latest
-        Save the latest checkpoint in ``latest.pth``.
-        If ``link``, ``latest.pth`` will be created as a softlink.
-        If ``copy``, ``latest.pth`` will be stored as an individual copy.
-        Set to none to disable this.
+        在``latest.pth``中保存最新检查点。
+        如果为``link``，``latest.pth``将创建为软链接。
+        如果为``copy``，``latest.pth``将保存为独立副本。
+        设为none可禁用此功能。
     every_n_iters
-        Checkpoints are saved at the end of every n iterations of training,
-        after validation if applicable.
+        每n次训练迭代结束时保存检查点，
+        如果有验证则在验证后保存。
     time_interval
-        Maximum time (seconds) before checkpoints save again.
+        再次保存检查点的最大时间间隔(秒)。
     save_on_fit_end
-        Save one last checkpoint at the end to fit.
-        Do nothing if a checkpoint is already saved there.
+        在训练结束时保存最后一个检查点。
+        如果该位置已有检查点则不执行任何操作。
     """
 
     def __init__(

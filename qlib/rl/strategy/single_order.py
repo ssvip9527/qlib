@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from qlib.strategy.base import BaseStrategy
 
 
 class SingleOrderStrategy(BaseStrategy):
-    """Strategy used to generate a trade decision with exactly one order."""
+    """用于生成只包含一个订单的交易决策的策略。"""
 
     def __init__(
         self,

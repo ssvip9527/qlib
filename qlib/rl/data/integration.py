@@ -1,9 +1,9 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 """
-TODO: This file is used to integrate NeuTrader with Qlib to run the existing projects.
-TODO: The implementation here is kind of adhoc. It is better to design a more uniformed & general implementation.
+TODO: 此文件用于将NeuTrader与Qlib集成以运行现有项目。
+TODO: 此处的实现较为临时。最好设计一个更统一和通用的实现。
 """
 
 from __future__ import annotations
@@ -16,14 +16,14 @@ from qlib.contrib.ops.high_freq import BFillNan, Cut, Date, DayCumsum, DayLast, 
 
 
 def init_qlib(qlib_config: dict) -> None:
-    """Initialize necessary resource to launch the workflow, including data direction, feature columns, etc..
+    """初始化启动工作流所需的资源，包括数据路径、特征列等。
 
-    Parameters
+    参数
     ----------
     qlib_config:
-        Qlib configuration.
+        Qlib配置。
 
-        Example::
+        示例::
 
             {
                 "provider_uri_day": DATA_ROOT_DIR / "qlib_1d",
@@ -78,5 +78,5 @@ def init_qlib(qlib_config: dict) -> None:
         provider_uri=provider_uri_map,
         kernels=1,
         redis_port=-1,
-        clear_mem_cache=False,  # init_qlib will be called for multiple times. Keep the cache for improving performance
+        clear_mem_cache=False,  # init_qlib将被多次调用。保留缓存以提高性能
     )

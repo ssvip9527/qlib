@@ -24,20 +24,20 @@ SEED_INTERATOR_MISSING = "_missing_"
 
 
 class InfoDict(TypedDict):
-    """The type of dict that is used in the 4th return value of ``env.step()``."""
+    """用于``env.step()``第四个返回值的字典类型。"""
 
     aux_info: dict
-    """Any information depends on auxiliary info collector."""
+    """依赖于辅助信息收集器的任何信息。"""
     log: Dict[str, Any]
-    """Collected by LogCollector."""
+    """由LogCollector收集的信息。"""
 
 
 class EnvWrapperStatus(TypedDict):
     """
-    This is the status data structure used in EnvWrapper.
-    The fields here are in the semantics of RL.
-    For example, ``obs`` means the observation fed into policy.
-    ``action`` means the raw action returned by policy.
+    EnvWrapper中使用的状态数据结构。
+    这里的字段采用RL语义。
+    例如，``obs``表示输入策略的观测值，
+    ``action``表示策略返回的原始动作。
     """
 
     cur_step: int
@@ -52,42 +52,40 @@ class EnvWrapper(
     gym.Env[ObsType, PolicyActType],
     Generic[InitialStateType, StateType, ActType, ObsType, PolicyActType],
 ):
-    """Qlib-based RL environment, subclassing ``gym.Env``.
-    A wrapper of components, including simulator, state-interpreter, action-interpreter, reward.
+    """基于Qlib的RL环境，继承自``gym.Env``。
+    组件包装器，包含模拟器、状态解释器、动作解释器和奖励函数。
 
-    This is what the framework of simulator - interpreter - policy looks like in RL training.
-    All the components other than policy needs to be assembled into a single object called "environment".
-    The "environment" are replicated into multiple workers, and (at least in tianshou's implementation),
-    one single policy (agent) plays against a batch of environments.
+    这是RL训练中模拟器-解释器-策略框架的体现。
+    除策略外的所有组件需要组装成一个称为"环境"的对象。
+    "环境"被复制到多个工作进程，在tianshou实现中，
+    单个策略(agent)与一批环境交互。
 
-    Parameters
+    参数
     ----------
     simulator_fn
-        A callable that is the simulator factory.
-        When ``seed_iterator`` is present, the factory should take one argument,
-        that is the seed (aka initial state).
-        Otherwise, it should take zero argument.
+        模拟器工厂函数。
+        当``seed_iterator``存在时，工厂函数接受一个参数(种子/初始状态)，
+        否则不接受参数。
     state_interpreter
-        State-observation converter.
+        状态-观测转换器。
     action_interpreter
-        Policy-simulator action converter.
+        策略-模拟器动作转换器。
     seed_iterator
-        An iterable of seed. With the help of :class:`qlib.rl.utils.DataQueue`,
-        environment workers in different processes can share one ``seed_iterator``.
+        种子迭代器。借助:class:`qlib.rl.utils.DataQueue`，
+        不同进程的环境工作器可以共享一个``seed_iterator``。
     reward_fn
-        A callable that accepts the StateType and returns a float (at least in single-agent case).
+        接受StateType并返回浮点数的可调用对象(至少单智能体情况下)。
     aux_info_collector
-        Collect auxiliary information. Could be useful in MARL.
+        收集辅助信息，在MARL中可能有用。
     logger
-        Log collector that collects the logs. The collected logs are sent back to main process,
-        via the return value of ``env.step()``.
+        日志收集器，收集的日志通过``env.step()``返回值传回主进程。
 
-    Attributes
+    属性
     ----------
     status : EnvWrapperStatus
-        Status indicator. All terms are in *RL language*.
-        It can be used if users care about data on the RL side.
-        Can be none when no trajectory is available.
+        状态指示器，所有术语采用*RL语言*。
+        当用户关心RL侧数据时可以使用。
+        没有轨迹时可能为None。
     """
 
     simulator: Simulator[InitialStateType, StateType, ActType]
@@ -145,8 +143,8 @@ class EnvWrapper(
 
     def reset(self, **kwargs: Any) -> ObsType:
         """
-        Try to get a state from state queue, and init the simulator with this state.
-        If the queue is exhausted, generate an invalid (nan) observation.
+        尝试从状态队列获取状态，并用此状态初始化模拟器。
+        如果队列耗尽，则生成无效(nan)观测值。
         """
 
         try:
@@ -193,9 +191,9 @@ class EnvWrapper(
             return generate_nan_observation(self.observation_space)
 
     def step(self, policy_action: PolicyActType, **kwargs: Any) -> Tuple[ObsType, float, bool, InfoDict]:
-        """Environment step.
+        """环境步骤。
 
-        See the code along with comments to get a sequence of things happening here.
+        结合代码和注释查看此处发生的事件序列。
         """
 
         if self.seed_iterator is None:

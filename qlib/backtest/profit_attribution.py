@@ -1,7 +1,7 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation
+# MIT许可证授权
 """
-This module is not well maintained.
+该模块维护状态不佳
 """
 
 import datetime
@@ -338,8 +338,7 @@ def brinson_pa(
     if not deal_price.startswith("$"):
         deal_price = "$" + deal_price
 
-    # FIXME: In current version.  Some attributes(such as market_value) of some
-    # suspend stock is NAN. So we have to get more date to forward fill the NAN
+    # 注意：当前版本中，某些停牌股票的属性(如市值)为NAN，因此需要获取更多日期数据向前填充NAN
     shift_start_date = start_date - datetime.timedelta(days=250)
     instruments = D.list_instruments(
         D.instruments(market="all"),
@@ -358,7 +357,7 @@ def brinson_pa(
     stock_df.columns = [group_field, "deal_price"]
 
     stock_group_field = stock_df[group_field].unstack().T
-    # FIXME: some attributes of some suspend stock is NAN.
+    # 注意：某些停牌股票的属性为NAN
     stock_group_field = stock_group_field.fillna(method="ffill")
     stock_group_field = stock_group_field.loc[start_date:end_date]
 
@@ -367,9 +366,9 @@ def brinson_pa(
     deal_price_df = stock_df["deal_price"].unstack().T
     deal_price_df = deal_price_df.fillna(method="ffill")
 
-    # NOTE:
-    # The return will be slightly different from the of the return in the report.
-    # Here the position are adjusted at the end of the trading day with close
+    # 注意：
+    # 这里的收益率与报告中的收益率会略有不同
+    # 此处持仓是在交易日结束时以收盘价调整的
     stock_ret = (deal_price_df - deal_price_df.shift(1)) / deal_price_df.shift(1)
     stock_ret = stock_ret.shift(-1).loc[start_date:end_date]
 

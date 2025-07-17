@@ -22,35 +22,35 @@ __all__ = ["DataQueue"]
 
 
 class DataQueue(Generic[T]):
-    """Main process (producer) produces data and stores them in a queue.
-    Sub-processes (consumers) can retrieve the data-points from the queue.
-    Data-points are generated via reading items from ``dataset``.
+    """主进程(生产者)生成数据并存储在队列中。
+    子进程(消费者)可以从队列中获取数据点。
+    数据点通过从``dataset``读取项生成。
 
-    :class:`DataQueue` is ephemeral. You must create a new DataQueue
-    when the ``repeat`` is exhausted.
+    :class:`DataQueue`是临时性的。当``repeat``耗尽时，
+    必须创建一个新的DataQueue。
 
-    See the documents of :class:`qlib.rl.utils.FiniteVectorEnv` for more background.
+    更多背景请参阅:class:`qlib.rl.utils.FiniteVectorEnv`文档。
 
-    Parameters
+    参数
     ----------
     dataset
-        The dataset to read data from. Must implement ``__len__`` and ``__getitem__``.
+        从中读取数据的数据集。必须实现``__len__``和``__getitem__``。
     repeat
-        Iterate over the data-points for how many times. Use ``-1`` to iterate forever.
+        数据点迭代次数。使用``-1``表示无限迭代。
     shuffle
-        If ``shuffle`` is true, the items will be read in random order.
+        如果为True，项将以随机顺序读取。
     producer_num_workers
-        Concurrent workers for data-loading.
+        数据加载的并发工作线程数。
     queue_maxsize
-        Maximum items to put into queue before it jams.
+        队列阻塞前可放入的最大项数。
 
-    Examples
+    示例
     --------
     >>> data_queue = DataQueue(my_dataset)
     >>> with data_queue:
     ...     ...
 
-    In worker:
+    在工作进程中:
 
     >>> for data in data_queue:
     ...     print(data)

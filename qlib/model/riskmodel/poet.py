@@ -4,9 +4,9 @@ from qlib.model.riskmodel import RiskModel
 
 
 class POETCovEstimator(RiskModel):
-    """Principal Orthogonal Complement Thresholding Estimator (POET)
+    """主正交补阈值估计器(POET)
 
-    Reference:
+    参考文献:
         [1] Fan, J., Liao, Y., & Mincheva, M. (2013). Large covariance estimation by thresholding principal orthogonal complements.
             Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), 603–680. https://doi.org/10.1111/rssb.12016
         [2] http://econweb.rutgers.edu/yl1114/papers/poet/POET.m
@@ -18,14 +18,14 @@ class POETCovEstimator(RiskModel):
 
     def __init__(self, num_factors: int = 0, thresh: float = 1.0, thresh_method: str = "soft", **kwargs):
         """
-        Args:
-            num_factors (int): number of factors (if set to zero, no factor model will be used).
-            thresh (float): the positive constant for thresholding.
-            thresh_method (str): thresholding method, which can be
-                - 'soft': soft thresholding.
-                - 'hard': hard thresholding.
-                - 'scad': scad thresholding.
-            kwargs: see `RiskModel` for more information.
+        参数:
+            num_factors (int): 因子数量(如果设置为零，则不使用因子模型)。
+            thresh (float): 阈值处理的正常数。
+            thresh_method (str): 阈值处理方法，可以是
+                - 'soft': 软阈值。
+                - 'hard': 硬阈值。
+                - 'scad': scad阈值。
+            kwargs: 更多参数请参见`RiskModel`。
         """
         super().__init__(**kwargs)
 

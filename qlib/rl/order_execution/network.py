@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -17,14 +17,13 @@ __all__ = ["Recurrent"]
 
 
 class Recurrent(nn.Module):
-    """The network architecture proposed in `OPD <https://seqml.github.io/opd/opd_aaai21_supplement.pdf>`_.
+    """`OPD <https://seqml.github.io/opd/opd_aaai21_supplement.pdf>`_中提出的网络架构。
 
-    At every time step the input of policy network is divided into two parts,
-    the public variables and the private variables. which are handled by ``raw_rnn``
-    and ``pri_rnn`` in this network, respectively.
+    在每个时间步，策略网络的输入分为两部分：
+    公共变量和私有变量，分别由本网络中的``raw_rnn``和``pri_rnn``处理。
 
-    One minor difference is that, in this implementation, we don't assume the direction to be fixed.
-    Thus, another ``dire_fc`` is added to produce an extra direction-related feature.
+    一个小的区别是，在此实现中，我们不假设方向是固定的。
+    因此添加了另一个``dire_fc``来生成额外的方向相关特征。
     """
 
     def __init__(
@@ -98,7 +97,7 @@ class Recurrent(nn.Module):
 
     def forward(self, batch: Batch) -> torch.Tensor:
         """
-        Input should be a dict (at least) containing:
+        输入应该是一个至少包含以下内容的字典：
 
         - data_processed: [N, T, C]
         - cur_step: [N]  (int)

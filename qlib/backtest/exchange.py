@@ -251,7 +251,7 @@ class Exchange:
     LT_NONE = "none"  # none:  there is no trading limitation
 
     def _get_limit_type(self, limit_threshold: Union[tuple, float, None]) -> str:
-        """get limit type"""
+        """获取限制类型"""
         if isinstance(limit_threshold, tuple):
             return self.LT_TP_EXP
         elif isinstance(limit_threshold, float):

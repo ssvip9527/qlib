@@ -7,16 +7,16 @@ from ...utils import init_instance_by_config
 
 class MetaTask:
     """
-    A single meta-task, a meta-dataset contains a list of them.
-    It serves as a component as in MetaDatasetDS
+    单个元任务，元数据集包含一个元任务列表。
+    它作为MetaDatasetDS中的一个组件。
 
-    The data processing is different
+    数据处理方式不同:
 
-    - the processed input may be different between training and testing
+    - 训练和测试时的处理输入可能不同
 
-        - When training, the X, y, X_test, y_test in training tasks are necessary (# PROC_MODE_FULL #)
-          but not necessary in test tasks. (# PROC_MODE_TEST #)
-        - When the meta model can be transferred into other dataset, only meta_info is necessary  (# PROC_MODE_TRANSFER #)
+        - 训练时，训练任务中的X、y、X_test、y_test是必要的(# PROC_MODE_FULL #)
+          但在测试任务中不是必须的。(# PROC_MODE_TEST #)
+        - 当元模型可以迁移到其他数据集时，只需要meta_info (# PROC_MODE_TRANSFER #)
     """
 
     PROC_MODE_FULL = "full"
@@ -25,19 +25,19 @@ class MetaTask:
 
     def __init__(self, task: dict, meta_info: object, mode: str = PROC_MODE_FULL):
         """
-        The `__init__` func is responsible for
+        `__init__`函数负责:
 
-        - store the task
-        - store the origin input data for
-        - process the input data for meta data
+        - 存储任务
+        - 存储原始输入数据
+        - 处理元数据的输入数据
 
-        Parameters
+        参数
         ----------
         task : dict
-            the task to be enhanced by meta model
+            需要被元模型增强的任务
 
         meta_info : object
-            the input for meta model
+            元模型的输入
         """
         self.task = task
         self.meta_info = meta_info  # the original meta input information, it will be processed later
@@ -48,7 +48,7 @@ class MetaTask:
 
     def get_meta_input(self) -> object:
         """
-        Return the **processed** meta_info
+        返回**处理后的**meta_info
         """
         return self.meta_info
 

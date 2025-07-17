@@ -46,22 +46,22 @@ def _log_task_info(task_config: dict):
 
 def _exe_task(task_config: dict):
     rec = R.get_recorder()
-    # model & dataset initialization
+    # 模型和数据集初始化
     model: Model = init_instance_by_config(task_config["model"], accept_types=Model)
     dataset: Dataset = init_instance_by_config(task_config["dataset"], accept_types=Dataset)
     reweighter: Reweighter = task_config.get("reweighter", None)
-    # model training
+    # 模型训练
     auto_filter_kwargs(model.fit)(dataset, reweighter=reweighter)
     R.save_objects(**{"params.pkl": model})
-    # this dataset is saved for online inference. So the concrete data should not be dumped
+    # 此数据集保存用于在线推理，因此不应转储具体数据
     dataset.config(dump_all=False, recursive=True)
     R.save_objects(**{"dataset": dataset})
-    # fill placehorder
+    # 填充占位符
     placehorder_value = {"<MODEL>": model, "<DATASET>": dataset}
     task_config = fill_placeholder(task_config, placehorder_value)
-    # generate records: prediction, backtest, and analysis
+    # 生成记录：预测、回测和分析
     records = task_config.get("record", [])
-    if isinstance(records, dict):  # prevent only one dict
+    if isinstance(records, dict):  # 防止只有一个字典
         records = [records]
     for record in records:
         # Some recorder require the parameter `model` and `dataset`.
@@ -144,16 +144,20 @@ class Trainer:
 
     def train(self, tasks: list, *args, **kwargs) -> list:
         """
-        Given a list of task definitions, begin training, and return the models.
+        给定任务定义列表，开始训练并返回模型。
 
-        For Trainer, it finishes real training in this method.
-        For DelayTrainer, it only does some preparation in this method.
+        对于Trainer，此方法完成实际训练。
+        对于DelayTrainer，此方法仅做准备工作。
 
-        Args:
-            tasks: a list of tasks
+        参数:
+            tasks (list): 任务定义列表
 
-        Returns:
-            list: a list of models
+        返回:
+            list: 模型列表
+
+        注意:
+            - 对于`Trainer`，此方法将直接训练模型
+            - 对于`DelayTrainer`，此方法仅做训练准备
         """
         raise NotImplementedError(f"Please implement the `train` method.")
 
@@ -199,25 +203,24 @@ class Trainer:
 
     def worker(self):
         """
-        start the worker
+        启动工作进程
 
-        Raises
-        ------
-        NotImplementedError:
-            If the worker is not supported
+        异常:
+            NotImplementedError: 如果不支持工作进程
         """
         raise NotImplementedError(f"Please implement the `worker` method")
 
 
 class TrainerR(Trainer):
     """
-    Trainer based on (R)ecorder.
-    It will train a list of tasks and return a list of model recorders in a linear way.
+    基于记录器(R)的训练器
+    以线性方式训练任务列表并返回模型记录器列表
 
-    Assumption: models were defined by `task` and the results will be saved to `Recorder`.
+    假设：模型由`task`定义，结果将保存到`Recorder`
     """
 
     # Those tag will help you distinguish whether the Recorder has finished traning
+    # 这些标签将帮助你区分 Recorder 是否已完成训练
     STATUS_KEY = "train_status"
     STATUS_BEGIN = "begin_task_train"
     STATUS_END = "end_task_train"
@@ -230,12 +233,12 @@ class TrainerR(Trainer):
         default_rec_name: Optional[str] = None,
     ):
         """
-        Init TrainerR.
+        初始化TrainerR
 
-        Args:
-            experiment_name (str, optional): the default name of experiment.
-            train_func (Callable, optional): default training method. Defaults to `task_train`.
-            call_in_subproc (bool): call the process in subprocess to force memory release
+        参数:
+            experiment_name (str, optional): 默认实验名称
+            train_func (Callable, optional): 默认训练方法，默认为`task_train`
+            call_in_subproc (bool): 在子进程中调用以强制释放内存
         """
         super().__init__()
         self.experiment_name = experiment_name
@@ -247,16 +250,16 @@ class TrainerR(Trainer):
         self, tasks: list, train_func: Optional[Callable] = None, experiment_name: Optional[str] = None, **kwargs
     ) -> List[Recorder]:
         """
-        Given a list of `tasks` and return a list of trained Recorder. The order can be guaranteed.
+        给定任务列表并返回训练好的记录器列表，顺序可以保证。
 
-        Args:
-            tasks (list): a list of definitions based on `task` dict
-            train_func (Callable): the training method which needs at least `tasks` and `experiment_name`. None for the default training method.
-            experiment_name (str): the experiment name, None for use default name.
-            kwargs: the params for train_func.
+        参数:
+            tasks (list): 基于任务字典的定义列表
+            train_func (Callable): 训练方法，至少需要tasks和experiment_name参数。None表示使用默认训练方法。
+            experiment_name (str): 实验名称，None表示使用默认名称。
+            kwargs: train_func的参数。
 
-        Returns:
-            List[Recorder]: a list of Recorders
+        返回:
+            List[Recorder]: 记录器列表
         """
         if isinstance(tasks, dict):
             tasks = [tasks]
@@ -278,13 +281,13 @@ class TrainerR(Trainer):
 
     def end_train(self, models: list, **kwargs) -> List[Recorder]:
         """
-        Set STATUS_END tag to the recorders.
+        为记录器设置STATUS_END标签
 
-        Args:
-            models (list): a list of trained recorders.
+        参数:
+            models (list): 训练好的记录器列表
 
-        Returns:
-            List[Recorder]: the same list as the param.
+        返回:
+            List[Recorder]: 与参数相同的列表
         """
         if isinstance(models, Recorder):
             models = [models]
@@ -295,19 +298,19 @@ class TrainerR(Trainer):
 
 class DelayTrainerR(TrainerR):
     """
-    A delayed implementation based on TrainerR, which means `train` method may only do some preparation and `end_train` method can do the real model fitting.
+    基于TrainerR的延迟实现，意味着`train`方法可能只做准备工作，而`end_train`方法完成实际的模型拟合
     """
 
     def __init__(
         self, experiment_name: str = None, train_func=begin_task_train, end_train_func=end_task_train, **kwargs
     ):
         """
-        Init TrainerRM.
+        初始化TrainerRM
 
-        Args:
-            experiment_name (str): the default name of experiment.
-            train_func (Callable, optional): default train method. Defaults to `begin_task_train`.
-            end_train_func (Callable, optional): default end_train method. Defaults to `end_task_train`.
+        参数:
+            experiment_name (str): 默认实验名称
+            train_func (Callable, optional): 默认训练方法，默认为`begin_task_train`
+            end_train_func (Callable, optional): 默认结束训练方法，默认为`end_task_train`
         """
         super().__init__(experiment_name, train_func, **kwargs)
         self.end_train_func = end_train_func
@@ -315,17 +318,17 @@ class DelayTrainerR(TrainerR):
 
     def end_train(self, models, end_train_func=None, experiment_name: str = None, **kwargs) -> List[Recorder]:
         """
-        Given a list of Recorder and return a list of trained Recorder.
-        This class will finish real data loading and model fitting.
+        给定记录器列表并返回训练好的记录器列表
+        该类将完成实际的数据加载和模型拟合
 
-        Args:
-            models (list): a list of Recorder, the tasks have been saved to them
-            end_train_func (Callable, optional): the end_train method which needs at least `recorders` and `experiment_name`. Defaults to None for using self.end_train_func.
-            experiment_name (str): the experiment name, None for use default name.
-            kwargs: the params for end_train_func.
+        参数:
+            models (list): 记录器列表，任务已保存到其中
+            end_train_func (Callable, optional): 结束训练方法，至少需要`recorders`和`experiment_name`参数，默认为None表示使用self.end_train_func
+            experiment_name (str): 实验名称，None表示使用默认名称
+            kwargs: end_train_func的参数
 
-        Returns:
-            List[Recorder]: a list of Recorders
+        返回:
+            List[Recorder]: 记录器列表
         """
         if isinstance(models, Recorder):
             models = [models]
@@ -343,10 +346,10 @@ class DelayTrainerR(TrainerR):
 
 class TrainerRM(Trainer):
     """
-    Trainer based on (R)ecorder and Task(M)anager.
-    It can train a list of tasks and return a list of model recorders in a multiprocessing way.
+    基于记录器(R)和任务管理器(M)的训练器
+    可以以多进程方式训练任务列表并返回模型记录器列表
 
-    Assumption: `task` will be saved to TaskManager and `task` will be fetched and trained from TaskManager
+    假设：`task`将保存到TaskManager，并且`task`将从TaskManager获取并训练
     """
 
     # Those tag will help you distinguish whether the Recorder has finished traning
@@ -366,15 +369,15 @@ class TrainerRM(Trainer):
         default_rec_name: Optional[str] = None,
     ):
         """
-        Init TrainerR.
+        初始化TrainerR
 
-        Args:
-            experiment_name (str): the default name of experiment.
-            task_pool (str): task pool name in TaskManager. None for use same name as experiment_name.
-            train_func (Callable, optional): default training method. Defaults to `task_train`.
+        参数:
+            experiment_name (str): 默认实验名称
+            task_pool (str): TaskManager中的任务池名称，None表示使用与experiment_name相同的名称
+            train_func (Callable, optional): 默认训练方法，默认为`task_train`
             skip_run_task (bool):
-                If skip_run_task == True:
-                Only run_task in the worker. Otherwise skip run_task.
+                如果skip_run_task == True:
+                仅在worker中运行run_task，否则跳过run_task
         """
 
         super().__init__()
@@ -395,21 +398,21 @@ class TrainerRM(Trainer):
         **kwargs,
     ) -> List[Recorder]:
         """
-        Given a list of `tasks` and return a list of trained Recorder. The order can be guaranteed.
+        给定任务列表并返回训练好的记录器列表，顺序可以保证。
 
-        This method defaults to a single process, but TaskManager offered a great way to parallel training.
-        Users can customize their train_func to realize multiple processes or even multiple machines.
+        此方法默认为单进程，但TaskManager提供了并行训练的强大方式。
+        用户可以自定义train_func实现多进程甚至多机器训练。
 
-        Args:
-            tasks (list): a list of definitions based on `task` dict
-            train_func (Callable): the training method which needs at least `tasks` and `experiment_name`. None for the default training method.
-            experiment_name (str): the experiment name, None for use default name.
-            before_status (str): the tasks in before_status will be fetched and trained. Can be STATUS_WAITING, STATUS_PART_DONE.
-            after_status (str): the tasks after trained will become after_status. Can be STATUS_WAITING, STATUS_PART_DONE.
-            kwargs: the params for train_func.
+        参数:
+            tasks (list): 基于任务字典的定义列表
+            train_func (Callable): 训练方法，至少需要tasks和experiment_name参数。None表示使用默认训练方法。
+            experiment_name (str): 实验名称，None表示使用默认名称。
+            before_status (str): 处于before_status状态的任务将被获取并训练。可以是STATUS_WAITING, STATUS_PART_DONE。
+            after_status (str): 训练后的任务将变为after_status状态。可以是STATUS_WAITING, STATUS_PART_DONE。
+            kwargs: train_func的参数。
 
-        Returns:
-            List[Recorder]: a list of Recorders
+        返回:
+            List[Recorder]: 记录器列表
         """
         if isinstance(tasks, dict):
             tasks = [tasks]
@@ -452,13 +455,13 @@ class TrainerRM(Trainer):
 
     def end_train(self, recs: list, **kwargs) -> List[Recorder]:
         """
-        Set STATUS_END tag to the recorders.
+        为记录器设置STATUS_END标签。
 
-        Args:
-            recs (list): a list of trained recorders.
+        参数:
+            recs (list): 训练好的记录器列表。
 
-        Returns:
-            List[Recorder]: the same list as the param.
+        返回:
+            List[Recorder]: 与参数相同的列表。
         """
         if isinstance(recs, Recorder):
             recs = [recs]
@@ -472,11 +475,11 @@ class TrainerRM(Trainer):
         experiment_name: str = None,
     ):
         """
-        The multiprocessing method for `train`. It can share a same task_pool with `train` and can run in other progress or other machines.
+        `train`方法的多进程实现。可以与`train`共享同一个task_pool，并能在其他进程或其他机器上运行。
 
-        Args:
-            train_func (Callable): the training method which needs at least `tasks` and `experiment_name`. None for the default training method.
-            experiment_name (str): the experiment name, None for use default name.
+        参数:
+            train_func (Callable): 训练方法，至少需要tasks和experiment_name参数。None表示使用默认训练方法。
+            experiment_name (str): 实验名称，None表示使用默认名称。
         """
         if train_func is None:
             train_func = self.train_func
@@ -493,7 +496,7 @@ class TrainerRM(Trainer):
 
 class DelayTrainerRM(TrainerRM):
     """
-    A delayed implementation based on TrainerRM, which means `train` method may only do some preparation and `end_train` method can do the real model fitting.
+    基于TrainerRM的延迟实现，意味着`train`方法可能只做准备工作，而`end_train`方法完成实际模型拟合。
 
     """
 
@@ -507,17 +510,17 @@ class DelayTrainerRM(TrainerRM):
         **kwargs,
     ):
         """
-        Init DelayTrainerRM.
+        初始化DelayTrainerRM。
 
-        Args:
-            experiment_name (str): the default name of experiment.
-            task_pool (str): task pool name in TaskManager. None for use same name as experiment_name.
-            train_func (Callable, optional): default train method. Defaults to `begin_task_train`.
-            end_train_func (Callable, optional): default end_train method. Defaults to `end_task_train`.
+        参数:
+            experiment_name (str): 默认实验名称。
+            task_pool (str): TaskManager中的任务池名称。None表示使用与experiment_name相同的名称。
+            train_func (Callable, optional): 默认训练方法。默认为`begin_task_train`。
+            end_train_func (Callable, optional): 默认结束训练方法。默认为`end_task_train`。
             skip_run_task (bool):
-                If skip_run_task == True:
-                Only run_task in the worker. Otherwise skip run_task.
-                E.g. Starting trainer on a CPU VM and then waiting tasks to be finished on GPU VMs.
+                如果skip_run_task == True:
+                仅在worker中运行run_task。否则跳过run_task。
+                例如：在CPU虚拟机上启动训练器，然后等待任务在GPU虚拟机上完成。
         """
         super().__init__(experiment_name, task_pool, train_func, **kwargs)
         self.end_train_func = end_train_func
@@ -526,15 +529,15 @@ class DelayTrainerRM(TrainerRM):
 
     def train(self, tasks: list, train_func=None, experiment_name: str = None, **kwargs) -> List[Recorder]:
         """
-        Same as `train` of TrainerRM, after_status will be STATUS_PART_DONE.
+        与TrainerRM的`train`方法相同，after_status将为STATUS_PART_DONE。
 
-        Args:
-            tasks (list): a list of definition based on `task` dict
-            train_func (Callable): the train method which need at least `tasks` and `experiment_name`. Defaults to None for using self.train_func.
-            experiment_name (str): the experiment name, None for use default name.
+        参数:
+            tasks (list): 基于任务字典的定义列表
+            train_func (Callable): 训练方法，至少需要tasks和experiment_name参数。None表示使用self.train_func。
+            experiment_name (str): 实验名称，None表示使用默认名称。
 
-        Returns:
-            List[Recorder]: a list of Recorders
+        返回:
+            List[Recorder]: 记录器列表
         """
         if isinstance(tasks, dict):
             tasks = [tasks]
@@ -554,17 +557,17 @@ class DelayTrainerRM(TrainerRM):
 
     def end_train(self, recs, end_train_func=None, experiment_name: str = None, **kwargs) -> List[Recorder]:
         """
-        Given a list of Recorder and return a list of trained Recorder.
-        This class will finish real data loading and model fitting.
+        给定记录器列表并返回训练好的记录器列表。
+        此类将完成实际数据加载和模型拟合。
 
-        Args:
-            recs (list): a list of Recorder, the tasks have been saved to them.
-            end_train_func (Callable, optional): the end_train method which need at least `recorders` and `experiment_name`. Defaults to None for using self.end_train_func.
-            experiment_name (str): the experiment name, None for use default name.
-            kwargs: the params for end_train_func.
+        参数:
+            recs (list): 记录器列表，任务已保存到其中。
+            end_train_func (Callable, optional): 结束训练方法，至少需要recorders和experiment_name参数。None表示使用self.end_train_func。
+            experiment_name (str): 实验名称，None表示使用默认名称。
+            kwargs: end_train_func的参数。
 
-        Returns:
-            List[Recorder]: a list of Recorders
+        返回:
+            List[Recorder]: 记录器列表
         """
         if isinstance(recs, Recorder):
             recs = [recs]
@@ -598,11 +601,11 @@ class DelayTrainerRM(TrainerRM):
 
     def worker(self, end_train_func=None, experiment_name: str = None):
         """
-        The multiprocessing method for `end_train`. It can share a same task_pool with `end_train` and can run in other progress or other machines.
+        `end_train`方法的多进程实现。可以与`end_train`共享同一个task_pool，并能在其他进程或其他机器上运行。
 
-        Args:
-            end_train_func (Callable, optional): the end_train method which need at least `recorders` and `experiment_name`. Defaults to None for using self.end_train_func.
-            experiment_name (str): the experiment name, None for use default name.
+        参数:
+            end_train_func (Callable, optional): 结束训练方法，至少需要recorders和experiment_name参数。None表示使用self.end_train_func。
+            experiment_name (str): 实验名称，None表示使用默认名称。
         """
         if end_train_func is None:
             end_train_func = self.end_train_func

@@ -1,8 +1,8 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
-"""Common utilities to handle ad-hoc-styled data.
+"""处理特定格式数据的通用工具。
 
-Most of these snippets comes from research project (paper code).
-Please take caution when using them in production.
+这些代码片段大多来自研究项目（论文代码）。
+在生产环境中使用时请谨慎。
 """

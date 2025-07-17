@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# MIT许可证授权。
 
 """
-Group can group a set of objects based on `group_func` and change them to a dict.
-After group, we provide a method to reduce them.
+Group可以根据`group_func`对一组对象进行分组并将其转换为字典。
+分组后，我们提供了一种方法来归约它们。
 
-For example:
+例如：
 
 group: {(A,B,C1): object, (A,B,C2): object} -> {(A,B): {C1: object, C2: object}}
 reduce: {(A,B): {C1: object, C2: object}} -> {(A,B): object}
@@ -22,28 +22,28 @@ class Group:
 
     def __init__(self, group_func=None, ens: Ensemble = None):
         """
-        Init Group.
+        初始化Group。
 
-        Args:
-            group_func (Callable, optional): Given a dict and return the group key and one of the group elements.
+        参数:
+            group_func (Callable, optional): 给定一个字典并返回分组键和其中一个分组元素。
 
                 For example: {(A,B,C1): object, (A,B,C2): object} -> {(A,B): {C1: object, C2: object}}
 
-            Defaults to None.
+            默认为None。
 
-            ens (Ensemble, optional): If not None, do ensemble for grouped value after grouping.
+            ens (Ensemble, optional): 如果不为None，则在分组后对分组值进行集成。
         """
         self._group_func = group_func
         self._ens_func = ens
 
     def group(self, *args, **kwargs) -> dict:
         """
-        Group a set of objects and change them to a dict.
+        将一组对象分组并转换为字典。
 
         For example: {(A,B,C1): object, (A,B,C2): object} -> {(A,B): {C1: object, C2: object}}
 
-        Returns:
-            dict: grouped dict
+        返回:
+            dict: 分组后的字典
         """
         if isinstance(getattr(self, "_group_func", None), Callable):
             return self._group_func(*args, **kwargs)
@@ -52,12 +52,12 @@ class Group:
 
     def reduce(self, *args, **kwargs) -> dict:
         """
-        Reduce grouped dict.
+        归约分组后的字典。
 
         For example: {(A,B): {C1: object, C2: object}} -> {(A,B): object}
 
-        Returns:
-            dict: reduced dict
+        返回:
+            dict: 归约后的字典
         """
         if isinstance(getattr(self, "_ens_func", None), Callable):
             return self._ens_func(*args, **kwargs)
@@ -66,15 +66,15 @@ class Group:
 
     def __call__(self, ungrouped_dict: dict, n_jobs: int = 1, verbose: int = 0, *args, **kwargs) -> dict:
         """
-        Group the ungrouped_dict into different groups.
+        将未分组的字典分成不同的组。
 
-        Args:
-            ungrouped_dict (dict): the ungrouped dict waiting for grouping like {name: things}
+        参数:
+            ungrouped_dict (dict): 待分组的字典，格式如 {name: things}
 
-        Returns:
-            dict: grouped_dict like {G1: object, G2: object}
-            n_jobs: how many progress you need.
-            verbose: the print mode for Parallel.
+        返回:
+            dict: 分组后的字典，格式如 {G1: 对象, G2: 对象}
+            n_jobs: 需要的进程数。
+            verbose: Parallel的打印模式。
         """
 
         # NOTE: The multiprocessing will raise error if you use `Serializable`
@@ -90,18 +90,18 @@ class Group:
 
 
 class RollingGroup(Group):
-    """Group the rolling dict"""
+    """滚动字典分组"""
 
     def group(self, rolling_dict: dict) -> dict:
-        """Given an rolling dict likes {(A,B,R): things}, return the grouped dict likes {(A,B): {R:things}}
+        """给定一个滚动字典如{(A,B,R): things}，返回分组后的字典如{(A,B): {R:things}}
 
-        NOTE: There is an assumption which is the rolling key is at the end of the key tuple, because the rolling results always need to be ensemble firstly.
+        注意：这里假设滚动键在键元组的末尾，因为滚动结果通常需要先进行集成。
 
-        Args:
-            rolling_dict (dict): an rolling dict. If the key is not a tuple, then do nothing.
+        参数:
+            rolling_dict (dict): 滚动字典。如果键不是元组，则不进行任何操作。
 
-        Returns:
-            dict: grouped dict
+        返回:
+            dict: 分组后的字典
         """
         grouped_dict = {}
         for key, values in rolling_dict.items():

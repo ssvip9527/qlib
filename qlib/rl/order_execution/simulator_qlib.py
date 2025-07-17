@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -17,20 +17,20 @@ from .strategy import SAOEStateAdapter, SAOEStrategy
 
 
 class SingleAssetOrderExecution(Simulator[Order, SAOEState, float]):
-    """Single-asset order execution (SAOE) simulator which is implemented based on Qlib backtest tools.
+    """基于Qlib回测工具实现的单一资产订单执行(SAOE)模拟器。
 
-    Parameters
+    参数
     ----------
     order
-        The seed to start an SAOE simulator is an order.
+        启动SAOE模拟器的种子是一个订单。
     executor_config
-        Executor configuration
+        执行器配置
     exchange_config
-        Exchange configuration
+        交易所配置
     qlib_config
-        Configuration used to initialize Qlib. If it is None, Qlib will not be initialized.
+        用于初始化Qlib的配置。如果为None，则不会初始化Qlib。
     cash_limit:
-        Cash limit.
+        现金限制。
     """
 
     def __init__(
@@ -117,12 +117,12 @@ class SingleAssetOrderExecution(Simulator[Order, SAOEState, float]):
         return obj
 
     def step(self, action: Optional[float]) -> None:
-        """Execute one step or SAOE.
+        """执行一步SAOE操作。
 
-        Parameters
+        参数
         ----------
         action (float):
-            The amount you wish to deal. The simulator doesn't guarantee all the amount to be successfully dealt.
+            希望成交的数量。模拟器不保证所有数量都能成功成交。
         """
 
         assert not self.done(), "Simulator has already done!"

@@ -1,9 +1,9 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation。
+# 基于 MIT 许可证授权。
 """
 这里提供了一套全面的分析类。
 
-以下是使用示例：
+使用示例：
 
 .. code-block:: python
 
@@ -77,7 +77,7 @@ class ValueCNT(FeaAnalyser):
         if self.ratio:
             self._val_cnt = self._val_cnt.div(self._dataset.groupby(DT_COL_NAME, group_keys=False).size(), axis=0)
 
-        # TODO: transfer this feature to other analysers
+        # 待办：将此特性转移到其他分析器中
         ymin, ymax = self._val_cnt.min().min(), self._val_cnt.max().max()
         self.ylim = (ymin - 0.05 * (ymax - ymin), ymax + 0.05 * (ymax - ymin))
 
@@ -204,8 +204,8 @@ class FeaMeanStd(NumFeaAnalyser):
 
 class RawFeaAna(FeaAnalyser):
     """
-    Motivation:
-    - display the values without further analysis
+    原始特征分析类
+    - 直接显示特征值而不进行进一步分析
     """
 
     def calc_stat_values(self):

@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -23,9 +23,9 @@ __all__ = ["AllOne", "PPO", "DQN"]
 
 
 class NonLearnablePolicy(BasePolicy):
-    """Tianshou's BasePolicy with empty ``learn`` and ``process_fn``.
+    """Tianshou的BasePolicy，带有空的``learn``和``process_fn``方法。
 
-    This could be moved outside in future.
+    未来可能会移出此类。
     """
 
     def __init__(self, obs_space: gym.Space, action_space: gym.Space) -> None:
@@ -44,9 +44,9 @@ class NonLearnablePolicy(BasePolicy):
 
 
 class AllOne(NonLearnablePolicy):
-    """Forward returns a batch full of 1.
+    """前向传播返回全为1的批次。
 
-    Useful when implementing some baselines (e.g., TWAP).
+    在实现某些基线(如TWAP)时很有用。
     """
 
     def __init__(self, obs_space: gym.Space, action_space: gym.Space, fill_value: float | int = 1.0) -> None:
@@ -100,15 +100,15 @@ class PPOCritic(nn.Module):
 
 
 class PPO(PPOPolicy):
-    """A wrapper of tianshou PPOPolicy.
+    """tianshou PPOPolicy的包装器。
 
-    Differences:
+    区别：
 
-    - Auto-create actor and critic network. Supports discrete action space only.
-    - Dedup common parameters between actor network and critic network
-      (not sure whether this is included in latest tianshou or not).
-    - Support a ``weight_file`` that supports loading checkpoint.
-    - Some parameters' default values are different from original.
+    - 自动创建actor和critic网络。仅支持离散动作空间。
+    - 去除actor网络和critic网络之间的重复参数
+      (不确定最新版tianshou是否已包含此功能)。
+    - 支持加载检查点的``weight_file``参数。
+    - 某些参数的默认值与原始版本不同。
     """
 
     def __init__(
@@ -162,12 +162,12 @@ DQNModel = PPOActor  # Reuse PPOActor.
 
 
 class DQN(DQNPolicy):
-    """A wrapper of tianshou DQNPolicy.
+    """tianshou DQNPolicy的包装器。
 
-    Differences:
+    区别：
 
-    - Auto-create model network. Supports discrete action space only.
-    - Support a ``weight_file`` that supports loading checkpoint.
+    - 自动创建模型网络。仅支持离散动作空间。
+    - 支持加载检查点的``weight_file``参数。
     """
 
     def __init__(
@@ -208,7 +208,7 @@ class DQN(DQNPolicy):
             set_weight(self, Trainer.get_policy_state_dict(weight_file))
 
 
-# utilities: these should be put in a separate (common) file. #
+# 实用工具：这些应该放在单独的(公共)文件中 #
 
 
 def auto_device(module: nn.Module) -> torch.device:

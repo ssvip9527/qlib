@@ -1,5 +1,5 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# MIT许可证授权。
 from __future__ import annotations
 
 import argparse
@@ -89,15 +89,15 @@ def _generate_report(
     decisions: List[BaseTradeDecision],
     report_indicators: List[INDICATOR_METRIC],
 ) -> Dict[str, Tuple[pd.DataFrame, pd.DataFrame]]:
-    """Generate backtest reports
+    """生成回测报告
 
-    Parameters
+    参数
     ----------
     decisions:
-        List of trade decisions.
+        交易决策列表
     report_indicators
-        List of indicator reports.
-    Returns
+        指标报告列表
+    返回值
     -------
 
     """
@@ -131,29 +131,29 @@ def single_with_simulator(
     cash_limit: float | None = None,
     generate_report: bool = False,
 ) -> Union[Tuple[pd.DataFrame, dict], pd.DataFrame]:
-    """Run backtest in a single thread with SingleAssetOrderExecution simulator. The orders will be executed day by day.
-    A new simulator will be created and used for every single-day order.
+    """使用SingleAssetOrderExecution模拟器在单线程中运行回测。订单将按天执行。
+    每个单日订单将创建并使用一个新的模拟器。
 
-    Parameters
+    参数
     ----------
     backtest_config:
-        Backtest config
+        回测配置
     orders:
-        Orders to be executed. Example format:
+        待执行的订单。示例格式:
                  datetime instrument  amount  direction
             0  2020-06-01       INST   600.0          0
             1  2020-06-02       INST   700.0          1
             ...
     split
-        Method to split orders. If it is "stock", split orders by stock. If it is "day", split orders by date.
+        订单拆分方式。"stock"(按股票)或"day"(按天)。
     cash_limit
-        Limitation of cash.
+        现金限制。
     generate_report
-        Whether to generate reports.
+        是否生成报告。
 
-    Returns
+    返回值
     -------
-        If generate_report is True, return execution records and the generated report. Otherwise, return only records.
+        如果generate_report为True，返回执行记录和生成的报告。否则，仅返回记录。
     """
     init_qlib(backtest_config["qlib"])
 
@@ -226,28 +226,28 @@ def single_with_collect_data_loop(
     cash_limit: float | None = None,
     generate_report: bool = False,
 ) -> Union[Tuple[pd.DataFrame, dict], pd.DataFrame]:
-    """Run backtest in a single thread with collect_data_loop.
+    """使用collect_data_loop在单线程中运行回测。
 
-    Parameters
+    参数
     ----------
     backtest_config:
-        Backtest config
+        回测配置
     orders:
-        Orders to be executed. Example format:
+        待执行的订单。示例格式:
                  datetime instrument  amount  direction
             0  2020-06-01       INST   600.0          0
             1  2020-06-02       INST   700.0          1
             ...
     split
-        Method to split orders. If it is "stock", split orders by stock. If it is "day", split orders by date.
+        订单拆分方式。"stock"(按股票)或"day"(按天)。
     cash_limit
-        Limitation of cash.
+        现金限制。
     generate_report
-        Whether to generate reports.
+        是否生成报告。
 
-    Returns
+    返回值
     -------
-        If generate_report is True, return execution records and the generated report. Otherwise, return only records.
+        如果generate_report为True，返回执行记录和生成的报告。否则，仅返回记录。
     """
 
     init_qlib(backtest_config["qlib"])
@@ -364,13 +364,13 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=RuntimeWarning)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config_path", type=str, required=True, help="Path to the config file")
-    parser.add_argument("--use_simulator", action="store_true", help="Whether to use simulator as the backend")
+    parser.add_argument("--config_path", type=str, required=True, help="配置文件路径")
+    parser.add_argument("--use_simulator", action="store_true", help="是否使用模拟器作为后端")
     parser.add_argument(
         "--n_jobs",
         type=int,
         required=False,
-        help="The number of jobs for running backtest parallely(1 for single process)",
+        help="并行运行回测的作业数(1表示单进程)",
     )
     args = parser.parse_args()
 

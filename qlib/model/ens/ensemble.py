@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# MIT许可证授权。
 
 """
-Ensemble module can merge the objects in an Ensemble. For example, if there are many submodels predictions, we may need to merge them into an ensemble prediction.
+集成模块可以合并Ensemble中的对象。例如，如果有多个子模型预测，我们可能需要将它们合并为一个集成预测。
 """
 
 from typing import Union
@@ -12,11 +12,11 @@ from qlib.log import get_module_logger
 
 
 class Ensemble:
-    """Merge the ensemble_dict into an ensemble object.
+    """将ensemble_dict合并为一个集成对象。
 
-    For example: {Rollinga_b: object, Rollingb_c: object} -> object
+    例如: {Rollinga_b: 对象, Rollingb_c: 对象} -> 对象
 
-    When calling this class:
+    当调用此类时:
 
         Args:
             ensemble_dict (dict): the ensemble dict like {name: things} waiting for merging
@@ -31,21 +31,21 @@ class Ensemble:
 
 class SingleKeyEnsemble(Ensemble):
     """
-    Extract the object if there is only one key and value in the dict. Make the result more readable.
-    {Only key: Only value} -> Only value
+    如果字典中只有一个键值对，则提取该对象使结果更易读。
+    {唯一键: 唯一值} -> 唯一值
 
-    If there is more than 1 key or less than 1 key, then do nothing.
-    Even you can run this recursively to make dict more readable.
+    如果有超过1个键或少于1个键，则不进行任何操作。
+    甚至可以递归运行以使字典更易读。
 
-    NOTE: Default runs recursively.
+    注意：默认递归运行。
 
-    When calling this class:
+    当调用此类时：
 
-        Args:
-            ensemble_dict (dict): the dict. The key of the dict will be ignored.
+        参数:
+            ensemble_dict (dict): 字典。字典的键将被忽略。
 
-        Returns:
-            dict: the readable dict.
+        返回:
+            dict: 更易读的字典。
     """
 
     def __call__(self, ensemble_dict: Union[dict, object], recursion: bool = True) -> object:
@@ -63,18 +63,18 @@ class SingleKeyEnsemble(Ensemble):
 
 
 class RollingEnsemble(Ensemble):
-    """Merge a dict of rolling dataframe like `prediction` or `IC` into an ensemble.
+    """将类似`prediction`或`IC`的滚动数据字典合并为一个集成。
 
-    NOTE: The values of dict must be pd.DataFrame, and have the index "datetime".
+    注意：字典的值必须是pd.DataFrame，并且具有"datetime"索引。
 
-    When calling this class:
+    当调用此类时：
 
-        Args:
-            ensemble_dict (dict): a dict like {"A": pd.DataFrame, "B": pd.DataFrame}.
-            The key of the dict will be ignored.
+        参数:
+            ensemble_dict (dict): 类似{"A": pd.DataFrame, "B": pd.DataFrame}的字典。
+            字典的键将被忽略。
 
-        Returns:
-            pd.DataFrame: the complete result of rolling.
+        返回:
+            pd.DataFrame: 滚动的完整结果。
     """
 
     def __call__(self, ensemble_dict: dict) -> pd.DataFrame:
@@ -90,34 +90,34 @@ class RollingEnsemble(Ensemble):
 
 class AverageEnsemble(Ensemble):
     """
-    Average and standardize a dict of same shape dataframe like `prediction` or `IC` into an ensemble.
+    将相同形状的数据字典(如`prediction`或`IC`)进行平均和标准化，合并为一个集成。
 
-    NOTE: The values of dict must be pd.DataFrame, and have the index "datetime". If it is a nested dict, then flat it.
+    注意：字典的值必须是pd.DataFrame，并且具有"datetime"索引。如果是嵌套字典，则将其展平。
 
-    When calling this class:
+    当调用此类时：
 
-        Args:
-            ensemble_dict (dict): a dict like {"A": pd.DataFrame, "B": pd.DataFrame}.
-            The key of the dict will be ignored.
+        参数:
+            ensemble_dict (dict): 类似{"A": pd.DataFrame, "B": pd.DataFrame}的字典。
+            字典的键将被忽略。
 
-        Returns:
-            pd.DataFrame: the complete result of averaging and standardizing.
+        返回:
+            pd.DataFrame: 平均和标准化的完整结果。
     """
 
     def __call__(self, ensemble_dict: dict) -> pd.DataFrame:
-        """using sample:
+        """使用示例:
         from qlib.model.ens.ensemble import AverageEnsemble
         pred_res['new_key_name'] = AverageEnsemble()(predict_dict)
 
-        Parameters
+        参数
         ----------
         ensemble_dict : dict
-            Dictionary you want to ensemble
+            需要集成的字典
 
-        Returns
+        返回
         -------
         pd.DataFrame
-            The dictionary including ensenbling result
+            包含集成结果的字典
         """
         # need to flatten the nested dict
         ensemble_dict = flatten_dict(ensemble_dict, sep=FLATTEN_TUPLE)

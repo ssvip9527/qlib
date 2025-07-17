@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) Microsoft Corporation.
+# MIT许可证授权。
 
 from __future__ import annotations
 
@@ -22,58 +22,58 @@ __all__ = ["SingleAssetOrderExecutionSimple"]
 
 
 class SingleAssetOrderExecutionSimple(Simulator[Order, SAOEState, float]):
-    """Single-asset order execution (SAOE) simulator.
+    """单资产订单执行(SAOE)模拟器。
 
-    As there's no "calendar" in the simple simulator, ticks are used to trade.
-    A tick is a record (a line) in the pickle-styled data file.
-    Each tick is considered as a individual trading opportunity.
-    If such fine granularity is not needed, use ``ticks_per_step`` to
-    lengthen the ticks for each step.
+    由于简单模拟器中没有"日历"，使用tick进行交易。
+    一个tick是pickle格式数据文件中的一条记录。
+    每个tick被视为一个独立的交易机会。
+    如果不需要如此精细的粒度，可以使用``ticks_per_step``来
+    延长每个步骤的tick数量。
 
-    In each step, the traded amount are "equally" separated to each tick,
-    then bounded by volume maximum execution volume (i.e., ``vol_threshold``),
-    and if it's the last step, try to ensure all the amount to be executed.
+    在每个步骤中，交易量被"平均"分配到每个tick，
+    然后受限于最大执行量(即``vol_threshold``)，
+    如果是最后一步，则尝试确保执行全部数量。
 
-    Parameters
+    参数
     ----------
     order
-        The seed to start an SAOE simulator is an order.
+        启动SAOE模拟器的种子订单。
     data_dir
-        Path to load backtest data.
+        加载回测数据的路径。
     feature_columns_today
-        Columns of today's feature.
+        今日特征列。
     feature_columns_yesterday
-        Columns of yesterday's feature.
+        昨日特征列。
     data_granularity
-        Number of ticks between consecutive data entries.
+        连续数据条目之间的tick数量。
     ticks_per_step
-        How many ticks per step.
+        每个步骤包含多少tick。
     vol_threshold
-        Maximum execution volume (divided by market execution volume).
+        最大执行量(除以市场执行量)。
     """
 
     history_exec: pd.DataFrame
-    """All execution history at every possible time ticks. See :class:`SAOEMetrics` for available columns.
-    Index is ``datetime``.
+    """所有可能时间点的执行历史记录。可用列参见:class:`SAOEMetrics`。
+    索引为``datetime``。
     """
 
     history_steps: pd.DataFrame
-    """Positions at each step. The position before first step is also recorded.
-    See :class:`SAOEMetrics` for available columns.
-    Index is ``datetime``, which is the **starting** time of each step."""
+    """每个步骤的仓位。第一步之前的仓位也会被记录。
+    可用列参见:class:`SAOEMetrics`。
+    索引为``datetime``，即每个步骤的**开始**时间。"""
 
     metrics: Optional[SAOEMetrics]
-    """Metrics. Only available when done."""
+    """指标。仅在完成后可用。"""
 
     twap_price: float
-    """This price is used to compute price advantage.
-    It"s defined as the average price in the period from order"s start time to end time."""
+    """用于计算价格优势的价格。
+    定义为订单开始时间到结束时间期间的平均价格。"""
 
     ticks_index: pd.DatetimeIndex
-    """All available ticks for the day (not restricted to order)."""
+    """当日所有可用的tick(不限于订单)。"""
 
     ticks_for_order: pd.DatetimeIndex
-    """Ticks that is available for trading (sliced by order)."""
+    """可用于交易的tick(按订单切片)。"""
 
     def __init__(
         self,

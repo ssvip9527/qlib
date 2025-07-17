@@ -580,9 +580,9 @@ class PandasSingleMetric(SingleMetric):
 
 class PandasOrderIndicator(BaseOrderIndicator):
     """
-    The data structure is OrderedDict(str: PandasSingleMetric).
-    Each PandasSingleMetric based on pd.Series is one metric.
-    Str is the name of metric.
+    数据结构为OrderedDict(str: PandasSingleMetric)。
+    每个基于pd.Series的PandasSingleMetric是一个指标。
+    Str是指标名称。
     """
 
     def __init__(self) -> None:
@@ -628,9 +628,9 @@ class PandasOrderIndicator(BaseOrderIndicator):
 
 class NumpyOrderIndicator(BaseOrderIndicator):
     """
-    The data structure is OrderedDict(str: SingleData).
-    Each idd.SingleData is one metric.
-    Str is the name of metric.
+    数据结构为OrderedDict(str: SingleData)。
+    每个idd.SingleData是一个指标。
+    Str是指标名称。
     """
 
     def __init__(self) -> None:
@@ -662,14 +662,14 @@ class NumpyOrderIndicator(BaseOrderIndicator):
         metrics: Union[str, List[str]],
         fill_value: float = 0,
     ) -> None:
-        # get all index(stock_id)
+        # 获取所有索引(stock_id)
         stock_set: set = set()
         for indicator in indicators:
             # set(np.ndarray.tolist()) is faster than set(np.ndarray)
             stock_set = stock_set | set(indicator.data[metrics[0]].index.tolist())
         stocks = sorted(list(stock_set))
 
-        # add metric by index
+        # 按索引添加指标
         if isinstance(metrics, str):
             metrics = [metrics]
         for metric in metrics:

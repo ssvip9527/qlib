@@ -1,15 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""Distributed logger for RL.
+"""分布式强化学习日志器。
 
-:class:`LogCollector` runs in every environment workers. It collects log info from simulator states,
-and add them (as a dict) to auxiliary info returned for each step.
+:class:`LogCollector` 在每个环境工作进程中运行，从模拟器状态收集日志信息，并将其（作为字典）添加到每步返回的辅助信息中。
 
-:class:`LogWriter` runs in the central worker. It decodes the dict collected by :class:`LogCollector`
-in each worker, and writes them to console, log files, or tensorboard...
+:class:`LogWriter` 在中央工作进程中运行，解码每个工作进程中由:class:`LogCollector`收集的字典，并将其写入控制台、日志文件或tensorboard等。
 
-The two modules communicate by the "log" field in "info" returned by ``env.step()``.
+这两个模块通过``env.step()``返回的"info"中的"log"字段进行通信。
 """
 
 # NOTE: This file contains many hardcoded / ad-hoc rules.
@@ -39,30 +37,29 @@ ActType = TypeVar("ActType")
 
 
 class LogLevel(IntEnum):
-    """Log-levels for RL training.
-    The behavior of handling each log level depends on the implementation of :class:`LogWriter`.
+    """强化学习训练的日志级别。
+    每个日志级别的处理行为取决于:class:`LogWriter`的实现。
     """
 
     DEBUG = 10
-    """If you only want to see the metric in debug mode."""
+    """仅在调试模式下查看指标。"""
     PERIODIC = 20
-    """If you want to see the metric periodically."""
-    # FIXME: I haven't given much thought about this. Let's hold it for one iteration.
+    """定期查看指标。"""
+    # FIXME: 对此尚未深入思考，暂保留此迭代版本。
 
     INFO = 30
-    """Important log messages."""
+    """重要日志消息。"""
     CRITICAL = 40
-    """LogWriter should always handle CRITICAL messages"""
+    """LogWriter应始终处理CRITICAL消息"""
 
 
 class LogCollector:
-    """Logs are first collected in each environment worker,
-    and then aggregated to stream at the central thread in vector env.
+    """日志首先在每个环境工作进程中收集，然后在向量环境的中央线程中聚合流。
 
-    In :class:`LogCollector`, every metric is added to a dict, which needs to be ``reset()`` at each step.
-    The dict is sent via the ``info`` in ``env.step()``, and decoded by the :class:`LogWriter` at vector env.
+    在:class:`LogCollector`中，每个指标都被添加到一个字典中，需要在每步调用``reset()``清空。
+    该字典通过``env.step()``中的``info``发送，并由向量环境中的:class:`LogWriter`解码。
 
-    ``min_loglevel`` is for optimization purposes: to avoid too much traffic on networks / in pipe.
+    ``min_loglevel``用于优化目的：避免网络/管道中的过多流量。
     """
 
     _logged: Dict[str, Tuple[int, Any]]
@@ -81,25 +78,25 @@ class LogCollector:
         self._logged[name] = (int(loglevel), metric)
 
     def add_string(self, name: str, string: str, loglevel: int | LogLevel = LogLevel.PERIODIC) -> None:
-        """Add a string with name into logged contents."""
+        """添加带名称的字符串到日志内容中。"""
         if loglevel < self._min_loglevel:
             return
         if not isinstance(string, str):
-            raise TypeError(f"{string} is not a string.")
+            raise TypeError(f"{string} 不是字符串。")
         self._add_metric(name, string, loglevel)
 
     def add_scalar(self, name: str, scalar: Any, loglevel: int | LogLevel = LogLevel.PERIODIC) -> None:
-        """Add a scalar with name into logged contents.
-        Scalar will be converted into a float.
+        """添加带名称的标量到日志内容中。
+        标量将被转换为浮点数。
         """
         if loglevel < self._min_loglevel:
             return
 
         if hasattr(scalar, "item"):
-            # could be single-item number
+            # 可能是单元素数字
             scalar = scalar.item()
         if not isinstance(scalar, (float, int)):
-            raise TypeError(f"{scalar} is not and can not be converted into float or integer.")
+            raise TypeError(f"{scalar} 不是且无法转换为浮点数或整数。")
         scalar = float(scalar)
         self._add_metric(name, scalar, loglevel)
 
@@ -109,24 +106,24 @@ class LogCollector:
         array: np.ndarray | pd.DataFrame | pd.Series,
         loglevel: int | LogLevel = LogLevel.PERIODIC,
     ) -> None:
-        """Add an array with name into logging."""
+        """添加带名称的数组到日志中。"""
         if loglevel < self._min_loglevel:
             return
 
         if not isinstance(array, (np.ndarray, pd.DataFrame, pd.Series)):
-            raise TypeError(f"{array} is not one of ndarray, DataFrame and Series.")
+            raise TypeError(f"{array} 不是ndarray、DataFrame或Series类型。")
         self._add_metric(name, array, loglevel)
 
     def add_any(self, name: str, obj: Any, loglevel: int | LogLevel = LogLevel.PERIODIC) -> None:
-        """Log something with any type.
+        """记录任意类型的对象。
 
-        As it's an "any" object, the only LogWriter accepting it is pickle.
-        Therefore, pickle must be able to serialize it.
+        由于是"任意"对象，唯一能接受它的LogWriter是pickle。
+        因此，pickle必须能够序列化它。
         """
         if loglevel < self._min_loglevel:
             return
 
-        # FIXME: detect and rescue object that could be scalar or array
+        # FIXME: 检测并处理可能是标量或数组的对象
 
         self._add_metric(name, obj, loglevel)
 
@@ -135,11 +132,10 @@ class LogCollector:
 
 
 class LogWriter(Generic[ObsType, ActType]):
-    """Base class for log writers, triggered at every reset and step by finite env.
+    """日志写入器基类，由有限环境在每次重置和步骤时触发。
 
-    What to do with a specific log depends on the implementation of subclassing :class:`LogWriter`.
-    The general principle is that, it should handle logs above its loglevel (inclusive),
-    and discard logs that are not acceptable. For instance, console loggers obviously can't handle an image.
+    如何处理特定日志取决于子类化:class:`LogWriter`的实现。
+    一般原则是，它应该处理高于其日志级别（包括）的日志，并丢弃不可接受的日志。例如，控制台日志器显然无法处理图像。
     """
 
     episode_count: int
@@ -234,27 +230,27 @@ class LogWriter(Generic[ObsType, ActType]):
             return array[0]
 
     def log_episode(self, length: int, rewards: List[float], contents: List[Dict[str, Any]]) -> None:
-        """This is triggered at the end of each trajectory.
+        """在每个轨迹结束时触发。
 
-        Parameters
+        参数
         ----------
         length
-            Length of this trajectory.
+            此轨迹的长度。
         rewards
-            A list of rewards at each step of this episode.
+            本回合每步奖励的列表。
         contents
-            Logged contents for every step.
+            每步的日志内容。
         """
 
     def log_step(self, reward: float, contents: Dict[str, Any]) -> None:
-        """This is triggered at each step.
+        """在每步触发。
 
-        Parameters
+        参数
         ----------
         reward
-            Reward for this step.
+            此步的奖励。
         contents
-            Logged contents for this step.
+            此步的日志内容。
         """
 
     def on_env_step(self, env_id: int, obs: ObsType, rew: float, done: bool, info: InfoDict) -> None:
@@ -286,44 +282,43 @@ class LogWriter(Generic[ObsType, ActType]):
             self.log_episode(self.episode_lengths[env_id], self.episode_rewards[env_id], self.episode_logs[env_id])
 
     def on_env_reset(self, env_id: int, _: ObsType) -> None:
-        """Callback for finite env.
+        """有限环境的回调函数。
 
-        Reset episode statistics. Nothing task-specific is logged here because of
-        `a limitation of tianshou <https://github.com/thu-ml/tianshou/issues/605>`__.
+        重置回合统计信息。由于tianshou的限制<https://github.com/thu-ml/tianshou/issues/605>，此处不记录任何任务特定信息。
         """
         self.episode_lengths[env_id] = 0
         self.episode_rewards[env_id] = []
         self.episode_logs[env_id] = []
 
     def on_env_all_ready(self) -> None:
-        """When all environments are ready to run.
-        Usually, loggers should be reset here.
+        """当所有环境准备就绪可以运行时调用。
+        通常，日志器应在此处重置。
         """
         self.clear()
 
     def on_env_all_done(self) -> None:
-        """All done. Time for cleanup."""
+        """所有操作完成，进行清理工作。"""
 
 
 class LogBuffer(LogWriter):
-    """Keep all numbers in memory.
+    """将所有数字保存在内存中。
 
-    Objects that can't be aggregated like strings, tensors, images can't be stored in the buffer.
-    To persist them, please use :class:`PickleWriter`.
+    无法聚合的对象（如字符串、张量、图像）不能存储在缓冲区中。
+    要持久化它们，请使用:class:`PickleWriter`。
 
-    Every time, Log buffer receives a new metric, the callback is triggered,
-    which is useful when tracking metrics inside a trainer.
+    每次日志缓冲区收到新指标时，都会触发回调，
+    这在训练器内部跟踪指标时非常有用。
 
-    Parameters
+    参数
     ----------
     callback
-        A callback receiving three arguments:
+        接收三个参数的回调函数：
 
-        - on_episode: Whether it's called at the end of an episode
-        - on_collect: Whether it's called at the end of a collect
-        - log_buffer: the :class:`LogBbuffer` object
+        - on_episode: 是否在回合结束时调用
+        - on_collect: 是否在收集结束时调用
+        - log_buffer: :class:`LogBbuffer`对象
 
-        No return value is expected.
+        不需要返回值。
     """
 
     # FIXME: needs a metric count
@@ -383,12 +378,12 @@ class LogBuffer(LogWriter):
 
 
 class ConsoleWriter(LogWriter):
-    """Write log messages to console periodically.
+    """定期将日志消息写入控制台。
 
-    It tracks an average meter for each metric, which is the average value since last ``clear()`` till now.
-    The display format for each metric is ``<name> <latest_value> (<average_value>)``.
+    它为每个指标跟踪一个平均计量器，即从上次``clear()``到现在的平均值。
+    每个指标的显示格式为``<名称> <最新值> (<平均值>)``。
 
-    Non-single-number metrics are auto skipped.
+    非单一数字指标会自动跳过。
     """
 
     prefix: str
@@ -403,7 +398,7 @@ class ConsoleWriter(LogWriter):
         loglevel: int | LogLevel = LogLevel.PERIODIC,
     ) -> None:
         super().__init__(loglevel)
-        # TODO: support log_every_n_step
+        # TODO: 支持按步数记录日志
         self.log_every_n_episode = log_every_n_episode
         self.total_episodes = total_episodes
 
@@ -468,9 +463,9 @@ class ConsoleWriter(LogWriter):
 
 
 class CsvWriter(LogWriter):
-    """Dump all episode metrics to a ``result.csv``.
+    """将所有回合指标转储到``result.csv``文件中。
 
-    This is not the correct implementation. It's only used for first iteration.
+    这不是正确的实现，仅用于第一次迭代。
     """
 
     SUPPORTED_TYPES = (float, str, pd.Timestamp)

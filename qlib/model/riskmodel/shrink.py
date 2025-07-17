@@ -5,30 +5,29 @@ from qlib.model.riskmodel import RiskModel
 
 
 class ShrinkCovEstimator(RiskModel):
-    """Shrinkage Covariance Estimator
+    """收缩协方差估计器
 
-    This estimator will shrink the sample covariance matrix towards
-    an identify matrix:
+    该估计器会将样本协方差矩阵向单位矩阵收缩:
         S_hat = (1 - alpha) * S + alpha * F
-    where `alpha` is the shrink parameter and `F` is the shrinking target.
+    其中`alpha`是收缩参数，`F`是收缩目标。
 
-    The following shrinking parameters (`alpha`) are supported:
-        - `lw` [1][2][3]: use Ledoit-Wolf shrinking parameter.
-        - `oas` [4]: use Oracle Approximating Shrinkage shrinking parameter.
-        - float: directly specify the shrink parameter, should be between [0, 1].
+    支持以下收缩参数(`alpha`):
+        - `lw` [1][2][3]: 使用Ledoit-Wolf收缩参数
+        - `oas` [4]: 使用Oracle Approximating Shrinkage收缩参数
+        - float: 直接指定收缩参数，应在[0, 1]之间
 
-    The following shrinking targets (`F`) are supported:
-        - `const_var` [1][4][5]: assume stocks have the same constant variance and zero correlation.
-        - `const_corr` [2][6]: assume stocks have different variance but equal correlation.
-        - `single_factor` [3][7]: assume single factor model as the shrinking target.
-        - np.ndarray: provide the shrinking targets directly.
+    支持以下收缩目标(`F`):
+        - `const_var` [1][4][5]: 假设股票具有相同的常数方差和零相关性
+        - `const_corr` [2][6]: 假设股票具有不同的方差但相等的相关性
+        - `single_factor` [3][7]: 假设单因子模型作为收缩目标
+        - np.ndarray: 直接提供收缩目标
 
-    Note:
-        - The optimal shrinking parameter depends on the selection of the shrinking target.
-            Currently, `oas` is not supported for `const_corr` and `single_factor`.
-        - Remember to set `nan_option` to `fill` or `mask` if your data has missing values.
+    注意:
+        - 最优收缩参数取决于收缩目标的选择。
+            目前`oas`不支持`const_corr`和`single_factor`。
+        - 如果数据有缺失值，请记得将`nan_option`设置为`fill`或`mask`。
 
-    References:
+    参考文献:
         [1] Ledoit, O., & Wolf, M. (2004). A well-conditioned estimator for large-dimensional covariance matrices.
             Journal of Multivariate Analysis, 88(2), 365–411. https://doi.org/10.1016/S0047-259X(03)00096-4
         [2] Ledoit, O., & Wolf, M. (2004). Honey, I shrunk the sample covariance matrix.
@@ -53,10 +52,10 @@ class ShrinkCovEstimator(RiskModel):
 
     def __init__(self, alpha: Union[str, float] = 0.0, target: Union[str, np.ndarray] = "const_var", **kwargs):
         """
-        Args:
-            alpha (str or float): shrinking parameter or estimator (`lw`/`oas`)
-            target (str or np.ndarray): shrinking target (`const_var`/`const_corr`/`single_factor`)
-            kwargs: see `RiskModel` for more information
+        参数:
+            alpha (str or float): 收缩参数或估计器(`lw`/`oas`)
+            target (str or np.ndarray): 收缩目标(`const_var`/`const_corr`/`single_factor`)
+            kwargs: 更多参数请参见`RiskModel`
         """
         super().__init__(**kwargs)
 
@@ -103,7 +102,7 @@ class ShrinkCovEstimator(RiskModel):
         return S
 
     def _get_shrink_target(self, X: np.ndarray, S: np.ndarray) -> np.ndarray:
-        """get shrinking target `F`"""
+        """获取收缩目标`F`"""
         if self.target == self.TGT_CONST_VAR:
             return self._get_shrink_target_const_var(X, S)
         if self.target == self.TGT_CONST_CORR:
@@ -113,10 +112,10 @@ class ShrinkCovEstimator(RiskModel):
         return self.target
 
     def _get_shrink_target_const_var(self, X: np.ndarray, S: np.ndarray) -> np.ndarray:
-        """get shrinking target with constant variance
+        """获取常数方差收缩目标
 
-        This target assumes zero pair-wise correlation and constant variance.
-        The constant variance is estimated by averaging all sample's variances.
+        该目标假设零成对相关性和常数方差。
+        常数方差通过平均所有样本方差来估计。
         """
         n = len(S)
         F = np.eye(n)
@@ -124,10 +123,10 @@ class ShrinkCovEstimator(RiskModel):
         return F
 
     def _get_shrink_target_const_corr(self, X: np.ndarray, S: np.ndarray) -> np.ndarray:
-        """get shrinking target with constant correlation
+        """获取常数相关性收缩目标
 
-        This target assumes constant pair-wise correlation but keep the sample variance.
-        The constant correlation is estimated by averaging all pairwise correlations.
+        该目标假设常数成对相关性但保持样本方差。
+        常数相关性通过平均所有成对相关性来估计。
         """
         n = len(S)
         var = np.diag(S)
@@ -139,7 +138,7 @@ class ShrinkCovEstimator(RiskModel):
         return F
 
     def _get_shrink_target_single_factor(self, X: np.ndarray, S: np.ndarray) -> np.ndarray:
-        """get shrinking target with single factor model"""
+        """获取单因子模型收缩目标"""
         X_mkt = np.nanmean(X, axis=1)
         cov_mkt = np.asarray(X.T.dot(X_mkt) / len(X))
         var_mkt = np.asarray(X_mkt.dot(X_mkt) / len(X))
@@ -148,10 +147,10 @@ class ShrinkCovEstimator(RiskModel):
         return F
 
     def _get_shrink_param(self, X: np.ndarray, S: np.ndarray, F: np.ndarray) -> float:
-        """get shrinking parameter `alpha`
+        """获取收缩参数`alpha`
 
-        Note:
-            The Ledoit-Wolf shrinking parameter estimator consists of three different methods.
+        注意:
+            Ledoit-Wolf收缩参数估计器包含三种不同方法。
         """
         if self.alpha == self.SHR_OAS:
             return self._get_shrink_param_oas(X, S, F)
@@ -165,14 +164,13 @@ class ShrinkCovEstimator(RiskModel):
         return self.alpha
 
     def _get_shrink_param_oas(self, X: np.ndarray, S: np.ndarray, F: np.ndarray) -> float:
-        """Oracle Approximating Shrinkage Estimator
+        """Oracle近似收缩估计器
 
-        This method uses the following formula to estimate the `alpha`
-        parameter for the shrink covariance estimator:
+        该方法使用以下公式估计收缩协方差估计器的`alpha`参数:
             A = (1 - 2 / p) * trace(S^2) + trace^2(S)
             B = (n + 1 - 2 / p) * (trace(S^2) - trace^2(S) / p)
             alpha = A / B
-        where `n`, `p` are the dim of observations and variables respectively.
+        其中`n`和`p`分别是观测值和变量的维度。
         """
         trS2 = np.sum(S**2)
         tr2S = np.trace(S) ** 2
@@ -186,9 +184,9 @@ class ShrinkCovEstimator(RiskModel):
         return alpha
 
     def _get_shrink_param_lw_const_var(self, X: np.ndarray, S: np.ndarray, F: np.ndarray) -> float:
-        """Ledoit-Wolf Shrinkage Estimator (Constant Variance)
+        """Ledoit-Wolf收缩估计器(常数方差)
 
-        This method shrinks the covariance matrix towards the constand variance target.
+        该方法将协方差矩阵向常数方差目标收缩。
         """
         t, n = X.shape
 
@@ -203,9 +201,9 @@ class ShrinkCovEstimator(RiskModel):
         return alpha
 
     def _get_shrink_param_lw_const_corr(self, X: np.ndarray, S: np.ndarray, F: np.ndarray) -> float:
-        """Ledoit-Wolf Shrinkage Estimator (Constant Correlation)
+        """Ledoit-Wolf收缩估计器(常数相关性)
 
-        This method shrinks the covariance matrix towards the constand correlation target.
+        该方法将协方差矩阵向常数相关性目标收缩。
         """
         t, n = X.shape
 
@@ -229,9 +227,9 @@ class ShrinkCovEstimator(RiskModel):
         return alpha
 
     def _get_shrink_param_lw_single_factor(self, X: np.ndarray, S: np.ndarray, F: np.ndarray) -> float:
-        """Ledoit-Wolf Shrinkage Estimator (Single Factor Model)
+        """Ledoit-Wolf收缩估计器(单因子模型)
 
-        This method shrinks the covariance matrix towards the single factor model target.
+        该方法将协方差矩阵向单因子模型目标收缩。
         """
         t, n = X.shape
 

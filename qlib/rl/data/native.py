@@ -1,5 +1,5 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# 版权所有 (c) 微软公司。
+# MIT许可证授权。
 from __future__ import annotations
 
 from pathlib import Path
@@ -28,7 +28,7 @@ def get_ticks_slice(
 
 
 class IntradayBacktestData(BaseIntradayBacktestData):
-    """Backtest data for Qlib simulator"""
+    """Qlib模拟器的回测数据"""
 
     def __init__(
         self,
@@ -84,7 +84,7 @@ class IntradayBacktestData(BaseIntradayBacktestData):
 
 
 class DataframeIntradayBacktestData(BaseIntradayBacktestData):
-    """Backtest data from dataframe"""
+    """来自数据框的回测数据"""
 
     def __init__(self, df: pd.DataFrame, price_column: str = "$close0", volume_column: str = "$volume0") -> None:
         self.df = df
@@ -129,7 +129,7 @@ def load_backtest_data(
             include_end=True,
         )
     else:
-        ticks_for_order = None  # FIXME: implement this logic
+        ticks_for_order = None  # FIXME: 实现此逻辑
 
     backtest_data = IntradayBacktestData(
         order=order,
@@ -141,7 +141,7 @@ def load_backtest_data(
 
 
 class HandlerIntradayProcessedData(BaseIntradayProcessedData):
-    """Subclass of IntradayProcessedData. Used to handle handler (bin format) style data."""
+    """IntradayProcessedData的子类。用于处理处理器（二进制格式）风格的数据。"""
 
     def __init__(
         self,

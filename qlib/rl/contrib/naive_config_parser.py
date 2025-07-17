@@ -1,5 +1,5 @@
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
+# MIT许可证授权。
 
 import os
 import platform
@@ -24,7 +24,7 @@ def merge_a_into_b(a: dict, b: dict) -> dict:
     return b
 
 
-def check_file_exist(filename: str, msg_tmpl: str = 'file "{}" does not exist') -> None:
+def check_file_exist(filename: str, msg_tmpl: str = '文件"{}"不存在') -> None:
     if not os.path.isfile(filename):
         raise FileNotFoundError(msg_tmpl.format(filename))
 
@@ -35,7 +35,7 @@ def parse_backtest_config(path: str) -> dict:
 
     file_ext_name = os.path.splitext(abs_path)[1]
     if file_ext_name not in (".py", ".json", ".yaml", ".yml"):
-        raise IOError("Only py/yml/yaml/json type are supported now!")
+        raise IOError("目前仅支持py/yml/yaml/json类型的配置文件！")
 
     with tempfile.TemporaryDirectory() as tmp_config_dir:
         with tempfile.NamedTemporaryFile(dir=tmp_config_dir, suffix=file_ext_name) as tmp_config_file:

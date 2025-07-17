@@ -19,7 +19,7 @@ AuxInfoType = TypeVar("AuxInfoType")
 
 
 class AuxiliaryInfoCollector(Generic[StateType, AuxInfoType]):
-    """Override this class to collect customized auxiliary information from environment."""
+    """重写此类以从环境中收集自定义辅助信息。"""
 
     env: Optional[EnvWrapper] = None
 
@@ -28,16 +28,16 @@ class AuxiliaryInfoCollector(Generic[StateType, AuxInfoType]):
         return self.collect(simulator_state)
 
     def collect(self, simulator_state: StateType) -> AuxInfoType:
-        """Override this for customized auxiliary info.
-        Usually useful in Multi-agent RL.
+        """重写此方法以获取自定义辅助信息。
+        通常在多智能体强化学习中有用。
 
-        Parameters
+        参数
         ----------
         simulator_state
-            Retrieved with ``simulator.get_state()``.
+            通过``simulator.get_state()``获取的模拟器状态。
 
-        Returns
+        返回
         -------
-        Auxiliary information.
+        辅助信息。
         """
-        raise NotImplementedError("collect is not implemented!")
+        raise NotImplementedError("collect方法未实现!")
