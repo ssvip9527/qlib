@@ -10,8 +10,8 @@
 这两个模块通过``env.step()``返回的"info"中的"log"字段进行通信。
 """
 
-# NOTE: This file contains many hardcoded / ad-hoc rules.
-# Refactoring it will be one of the future tasks.
+# 注意：此文件包含许多硬编码/临时规则。
+# 重构将是未来的任务之一。
 
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ class LogCollector:
         self._min_loglevel = int(min_loglevel)
 
     def reset(self) -> None:
-        """Clear all collected contents."""
+        """清除所有已收集的内容。"""
         self._logged = {}
 
     def _add_metric(self, name: str, metric: Any, loglevel: int | LogLevel) -> None:
@@ -139,28 +139,28 @@ class LogWriter(Generic[ObsType, ActType]):
     """
 
     episode_count: int
-    """Counter of episodes."""
+    """回合计数器。"""
 
     step_count: int
-    """Counter of steps."""
+    """步数计数器。"""
 
     global_step: int
-    """Counter of steps. Won"t be cleared in ``clear``."""
+    """全局步数计数器。在``clear``中不会被清除。"""
 
     global_episode: int
-    """Counter of episodes. Won"t be cleared in ``clear``."""
+    """全局回合计数器。在``clear``中不会被清除。"""
 
     active_env_ids: Set[int]
-    """Active environment ids in vector env."""
+    """向量环境中活跃的环境ID集合。"""
 
     episode_lengths: Dict[int, int]
-    """Map from environment id to episode length."""
+    """从环境ID到回合长度的映射。"""
 
     episode_rewards: Dict[int, List[float]]
-    """Map from environment id to episode total reward."""
+    """从环境ID到回合总奖励的映射。"""
 
     episode_logs: Dict[int, list]
-    """Map from environment id to episode logs."""
+    """从环境ID到回合日志的映射。"""
 
     def __init__(self, loglevel: int | LogLevel = LogLevel.PERIODIC) -> None:
         self.loglevel = loglevel
@@ -484,7 +484,7 @@ class CsvWriter(LogWriter):
         self.all_records = []
 
     def log_episode(self, length: int, rewards: List[float], contents: List[Dict[str, Any]]) -> None:
-        # FIXME Same as ConsoleLogger, needs a refactor to eliminate code-dup
+        # FIXME 与ConsoleLogger相同，需要重构以消除代码重复
         episode_wise_contents: Dict[str, list] = defaultdict(list)
 
         for step_contents in contents:
@@ -507,12 +507,12 @@ class CsvWriter(LogWriter):
 
 
 class PickleWriter(LogWriter):
-    """Dump logs to pickle files."""
+    """将日志转储到pickle文件。"""
 
 
 class TensorboardWriter(LogWriter):
-    """Write logs to event files that can be visualized with tensorboard."""
+    """将日志写入可通过tensorboard可视化的事件文件。"""
 
 
 class MlflowWriter(LogWriter):
-    """Add logs to mlflow."""
+    """将日志添加到mlflow。"""

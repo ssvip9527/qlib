@@ -70,7 +70,7 @@ class RewardCombination(Reward):
 
 
 # TODO:
-# reward_factory is disabled for now
+# reward_factory目前已禁用
 
 # _RegistryConfigReward = RegistryConfig[REWARDS]
 
@@ -86,19 +86,19 @@ class RewardCombination(Reward):
 
 # def reward_factory(reward_config: RewardConfig) -> Reward:
 #     """
-#     Use this factory to instantiate the reward from config.
-#     Simply using ``reward_config.build()`` might not work because reward can have complex combinations.
+#     使用此工厂从配置实例化奖励。
+#     直接使用``reward_config.build()``可能无法工作，因为奖励可能有复杂的组合。
 #     """
 #     if isinstance(reward_config, dict):
-#         # as reward combination
+#         # 作为奖励组合
 #         rewards = {}
 #         for name, rew in reward_config.items():
 #             if not isinstance(rew, _WeightedRewardConfig):
-#                 # default weight is 1.
+#                 # 默认权重为1
 #                 rew = _WeightedRewardConfig(weight=1., rew=rew)
-#             # no recursive build in this step
+#             # 此步骤不递归构建
 #             rewards[name] = (rew.reward.build(), rew.weight)
 #         return RewardCombination(rewards)
 #     else:
-#         # single reward
+#         # 单个奖励
 #         return reward_config.build()
