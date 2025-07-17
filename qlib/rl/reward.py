@@ -15,9 +15,9 @@ SimulatorState = TypeVar("SimulatorState")
 
 class Reward(Generic[SimulatorState]):
     """
-    Reward calculation component that takes a single argument: state of simulator. Returns a real number: reward.
+    奖励计算组件，接受单个参数：模拟器状态。返回一个实数：奖励。
 
-    Subclass should implement ``reward(simulator_state)`` to implement their own reward calculation recipe.
+    子类应实现``reward(simulator_state)``来实现自定义奖励计算逻辑。
     """
 
     env: Optional[EnvWrapper] = None
@@ -27,21 +27,40 @@ class Reward(Generic[SimulatorState]):
         return self.reward(simulator_state)
 
     def reward(self, simulator_state: SimulatorState) -> float:
-        """Implement this method for your own reward."""
-        raise NotImplementedError("Implement reward calculation recipe in `reward()`.")
+        """实现此方法以定义自定义奖励。"""
+        raise NotImplementedError("请在`reward()`中实现奖励计算逻辑。")
 
     def log(self, name: str, value: Any) -> None:
+        """记录奖励相关指标到日志。"""
         assert self.env is not None
         self.env.logger.add_scalar(name, value)
 
 
 class RewardCombination(Reward):
-    """Combination of multiple reward."""
+    """多个奖励的组合。"""
 
     def __init__(self, rewards: Dict[str, Tuple[Reward, float]]) -> None:
+        """初始化奖励组合。
+
+        参数
+        ----------
+        rewards
+            字典，键为奖励名称，值为元组(reward_fn, weight)，其中reward_fn是奖励函数，weight是权重。
+        """
         self.rewards = rewards
 
     def reward(self, simulator_state: Any) -> float:
+        """计算组合奖励，将多个奖励加权求和。
+
+        参数
+        ----------
+        simulator_state
+            模拟器状态，用于计算各个奖励。
+
+        返回
+        -------
+        加权求和后的总奖励。
+        """
         total_reward = 0.0
         for name, (reward_fn, weight) in self.rewards.items():
             rew = reward_fn(simulator_state) * weight
