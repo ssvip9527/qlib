@@ -13,24 +13,25 @@ def resam_calendar(
     calendar_raw: np.ndarray, freq_raw: Union[str, Freq], freq_sam: Union[str, Freq], region: str = None
 ) -> np.ndarray:
     """
-    Resample the calendar with frequency freq_raw into the calendar with frequency freq_sam
-    Assumption:
-        - Fix length (240) of the calendar in each day.
+    将频率为freq_raw的日历重采样为频率为freq_sam的日历
+    假设条件:
+        - 每日日历长度固定为240
 
-    Parameters
+    参数
     ----------
     calendar_raw : np.ndarray
-        The calendar with frequency  freq_raw
+        原始频率为freq_raw的日历
     freq_raw : str
-        Frequency of the raw calendar
+        原始日历频率
     freq_sam : str
-        Sample frequency
+        采样频率
     region: str
-        Region, for example, "cn", "us"
-    Returns
+        地区，例如"cn"(中国),"us"(美国)
+
+    返回值
     -------
     np.ndarray
-        The calendar with frequency freq_sam
+        频率为freq_sam的日历
     """
     if region is None:
         region = C["region"]
@@ -70,11 +71,12 @@ def resam_calendar(
 
 
 def get_higher_eq_freq_feature(instruments, fields, start_time=None, end_time=None, freq="day", disk_cache=1):
-    """get the feature with higher or equal frequency than `freq`.
-    Returns
+    """获取频率高于或等于`freq`的特征
+
+    返回值
     -------
     pd.DataFrame
-        the feature with higher or equal frequency
+        频率高于或等于指定频率的特征
     """
 
     from ..data.data import D  # pylint: disable=C0415
@@ -106,11 +108,10 @@ def resam_ts_data(
     method: Union[str, Callable] = "last",
     method_kwargs: dict = {},
 ):
-    """
-    Resample value from time-series data
+    """从时间序列数据中重采样值
 
-        - If `feature` has MultiIndex[instrument, datetime], apply the `method` to each instruemnt data with datetime in [start_time, end_time]
-            Example:
+        - 如果`feature`具有MultiIndex[instrument, datetime]，则对[start_time, end_time]区间内每个instrument的数据应用`method`
+            示例:
 
             .. code-block::
 
@@ -135,8 +136,8 @@ def resam_ts_data(
                 SH600000    87.433578 28117442.0
                 SH600655    2699.567383  158193.328125
 
-        - Else, the `feature` should have Index[datetime], just apply the `method` to `feature` directly
-            Example:
+        - 否则，`feature`应具有Index[datetime]，直接对`feature`应用`method`
+            示例:
 
             .. code-block::
                 print(feature)
@@ -157,24 +158,24 @@ def resam_ts_data(
 
                 87.433578
 
-    Parameters
+    参数
     ----------
     ts_feature : Union[pd.DataFrame, pd.Series]
-        Raw time-series feature to be resampled
+        待重采样的原始时间序列特征
     start_time : Union[str, pd.Timestamp], optional
-        start sampling time, by default None
+        采样开始时间，默认为None
     end_time : Union[str, pd.Timestamp], optional
-        end sampling time, by default None
+        采样结束时间，默认为None
     method : Union[str, Callable], optional
-        sample method, apply method function to each stock series data, by default "last"
-        - If type(method) is str or callable function, it should be an attribute of SeriesGroupBy or DataFrameGroupby, and applies groupy.method for the sliced time-series data
-        - If method is None, do nothing for the sliced time-series data.
+        采样方法，对每个股票序列数据应用方法函数，默认为"last"
+        - 如果method是字符串或可调用函数，应为SeriesGroupBy或DataFrameGroupby的属性，并对切片后的时间序列数据应用groupy.method
+        - 如果method为None，则不对切片后的时间序列数据做任何处理
     method_kwargs : dict, optional
-        arguments of method, by default {}
+        方法的参数，默认为{}
 
-    Returns
+    返回值
     -------
-        The resampled DataFrame/Series/value, return None when the resampled data is empty.
+        重采样后的DataFrame/Series/值，当重采样数据为空时返回None
     """
 
     selector_datetime = slice(start_time, end_time)
@@ -207,26 +208,27 @@ def resam_ts_data(
 
 
 def get_valid_value(series, last=True):
-    """get the first/last not nan value of pd.Series with single level index
-    Parameters
+    """获取单级索引pd.Series的第一个/最后一个非NaN值
+
+    参数
     ----------
     series : pd.Series
-        series should not be empty
+        序列不应为空
     last : bool, optional
-        whether to get the last valid value, by default True
-        - if last is True, get the last valid value
-        - else, get the first valid value
+        是否获取最后一个有效值，默认为True
+        - 如果last为True，获取最后一个有效值
+        - 否则，获取第一个有效值
 
-    Returns
+    返回值
     -------
     Nan | float
-        the first/last valid value
+        `first/last`有效值
     """
     return series.fillna(method="ffill").iloc[-1] if last else series.fillna(method="bfill").iloc[0]
 
 
 def _ts_data_valid(ts_feature, last=False):
-    """get the first/last not nan value of pd.Series|DataFrame with single level index"""
+    """获取单级索引pd.Series|DataFrame的第一个/最后一个非NaN值"""
     if isinstance(ts_feature, pd.DataFrame):
         return ts_feature.apply(lambda column: get_valid_value(column, last=last))
     elif isinstance(ts_feature, pd.Series):

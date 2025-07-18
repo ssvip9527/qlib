@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-Motivation of index_data
-- Pandas has a lot of user-friendly interfaces. However, integrating too much features in a single tool bring too much overhead and makes it much slower than numpy.
-    Some users just want a simple numpy dataframe with indices and don't want such a complicated tools.
-    Such users are the target of `index_data`
+index_data的设计动机
+- Pandas提供了许多用户友好的接口，但在单一工具中集成过多功能会带来额外开销，使其比numpy慢很多。
+    有些用户只需要一个带索引的简单numpy数据框，不想要如此复杂的工具。
+    这类用户正是`index_data`的目标用户
 
-`index_data` try to behave like pandas (some API will be different because we try to be simpler and more intuitive) but don't compromise the performance. It provides the basic numpy data and simple indexing feature. If users call APIs which may compromise the performance, index_data will raise Errors.
+`index_data`尝试模仿pandas的行为(部分API会有所不同，因为我们力求更简单直观)，但不会牺牲性能。它提供基本的numpy数据和简单索引功能。如果用户调用可能影响性能的API，index_data会抛出错误。
 """
 
 from __future__ import annotations
@@ -19,18 +19,18 @@ import pandas as pd
 
 
 def concat(data_list: Union[SingleData], axis=0) -> MultiData:
-    """concat all SingleData by index.
-    TODO: now just for SingleData.
+    """按索引连接所有SingleData。
+    TODO: 目前仅支持SingleData
 
-    Parameters
+    参数
     ----------
     data_list : List[SingleData]
-        the list of all SingleData to concat.
+        要连接的SingleData列表
 
-    Returns
+    返回
     -------
     MultiData
-        the MultiData with ndim == 2
+        维度为2的MultiData
     """
     if axis == 0:
         raise NotImplementedError(f"please implement this func when axis == 0")
@@ -55,21 +55,21 @@ def concat(data_list: Union[SingleData], axis=0) -> MultiData:
 
 
 def sum_by_index(data_list: Union[SingleData], new_index: list, fill_value=0) -> SingleData:
-    """concat all SingleData by new index.
+    """按新索引汇总所有SingleData
 
-    Parameters
+    参数
     ----------
     data_list : List[SingleData]
-        the list of all SingleData to sum.
+        要汇总的SingleData列表
     new_index : list
-        the new_index of new SingleData.
+        新SingleData的索引
     fill_value : float
-        fill the missing values or replace np.nan.
+        填充缺失值或替换np.nan的值
 
-    Returns
+    返回
     -------
     SingleData
-        the SingleData with new_index and values after sum.
+        包含新索引和汇总值后的SingleData
     """
     data_list = [data.to_dict() for data in data_list]
     data_sum = {}
@@ -86,15 +86,15 @@ def sum_by_index(data_list: Union[SingleData], new_index: list, fill_value=0) ->
 
 class Index:
     """
-    This is for indexing(rows or columns)
+    用于索引(行或列)
 
-    Read-only operations has higher priorities than others.
-    So this class is designed in a **read-only** way to shared data for queries.
-    Modifications will results in new Index.
+    读操作优先级高于其他操作。
+    因此此类设计为**只读**方式共享查询数据。
+    修改操作会生成新的Index实例。
 
-    NOTE: the indexing has following flaws
-    - duplicated index value is not well supported (only the first appearance will be considered)
-    - The order of the index is not considered!!!! So the slicing will not behave like pandas when indexings are ordered
+    注意：当前索引存在以下限制
+    - 不支持重复索引值(仅考虑首次出现的位置)
+    - 不考虑索引顺序!!!! 因此当索引有序时，切片行为不会与pandas一致
     """
 
     def __init__(self, idx_list: Union[List, pd.Index, "Index", int]):
@@ -147,22 +147,22 @@ class Index:
 
     def index(self, item) -> int:
         """
-        Given the index value, get the integer index
+        根据索引值获取整数索引
 
-        Parameters
+        参数
         ----------
         item :
-            The item to query
+            要查询的项
 
-        Returns
+        返回
         -------
         int:
-            The index of the item
+            项的索引位置
 
         Raises
         ------
         KeyError:
-            If the query item does not exist
+            当查询项不存在时抛出
         """
         try:
             return self.index_map[self._convert_type(item)]
@@ -186,12 +186,12 @@ class Index:
 
     def sort(self) -> Tuple["Index", np.ndarray]:
         """
-        sort the index
+        对索引进行排序
 
-        Returns
+        返回
         -------
         Tuple["Index", np.ndarray]:
-            the sorted Index and the changed index
+            排序后的Index和变化后的索引数组
         """
         sorted_idx = np.argsort(self.idx_list)
         idx = Index(self.idx_list[sorted_idx])
@@ -205,11 +205,11 @@ class Index:
 
 class LocIndexer:
     """
-    `Indexer` will behave like the `LocIndexer` in Pandas
+    `Indexer`的行为类似于Pandas中的`LocIndexer`
 
-    Read-only operations has higher priorities than others.
-    So this class is designed in a read-only way to shared data for queries.
-    Modifications will results in new Index.
+    读操作优先级高于其他操作。
+    因此此类设计为只读方式共享查询数据。
+    修改操作会生成新的Index实例。
     """
 
     def __init__(self, index_data: "IndexData", indices: List[Index], int_loc: bool = False):
@@ -220,7 +220,7 @@ class LocIndexer:
 
     @staticmethod
     def proc_idx_l(indices: List[Union[List, pd.Index, Index]], data_shape: Tuple = None) -> List[Index]:
-        """process the indices from user and output a list of `Index`"""
+        """处理用户输入的索引并输出`Index`列表"""
         res = []
         for i, idx in enumerate(indices):
             res.append(Index(data_shape[i] if len(idx) == 0 else idx))
@@ -228,19 +228,19 @@ class LocIndexer:
 
     def _slc_convert(self, index: Index, indexing: slice) -> slice:
         """
-        convert value-based indexing to integer-based indexing.
+        将基于值的索引转换为基于整数的索引
 
-        Parameters
+        参数
         ----------
         index : Index
-            index data.
+            索引数据
         indexing : slice
-            value based indexing data with slice type for indexing.
+            用于索引的基于值的切片类型数据
 
-        Returns
+        返回
         -------
         slice:
-            the integer based slicing
+            基于整数的切片
         """
         if index.is_sorted():
             int_start = None if indexing.start is None else bisect.bisect_left(index, indexing.start)
@@ -253,15 +253,15 @@ class LocIndexer:
     def __getitem__(self, indexing):
         """
 
-        Parameters
+        参数
         ----------
         indexing :
-            query for data
+            数据查询
 
-        Raises
+        异常
         ------
         KeyError:
-            If the non-slice index is queried but does not exist, `KeyError` is raised.
+            当查询非切片索引但不存在时抛出
         """
         # 1) convert slices to int loc
         if not isinstance(indexing, tuple):
@@ -336,7 +336,7 @@ class BinaryOps:
 
 def index_data_ops_creator(*args, **kwargs):
     """
-    meta class for auto generating operations for index data.
+    用于自动生成索引数据操作的元类
     """
     for method_name in ["__add__", "__sub__", "__rsub__", "__mul__", "__truediv__", "__eq__", "__gt__", "__lt__"]:
         args[2][method_name] = BinaryOps(method_name=method_name)
@@ -345,11 +345,11 @@ def index_data_ops_creator(*args, **kwargs):
 
 class IndexData(metaclass=index_data_ops_creator):
     """
-    Base data structure of SingleData and MultiData.
+    SingleData和MultiData的基础数据结构
 
-    NOTE:
-    - For performance issue, only **np.floating** is supported in the underlayer data !!!
-    - Boolean based on np.floating is also supported. Here are some examples
+    注意:
+    - 出于性能考虑，底层数据仅支持**np.floating**类型!!!
+    - 基于np.floating的布尔类型也受支持。示例如下
 
     .. code-block:: python
 
@@ -419,18 +419,18 @@ class IndexData(metaclass=index_data_ops_creator):
 
     def _align_indices(self, other: "IndexData") -> "IndexData":
         """
-        Align all indices of `other` to `self` before performing the arithmetic operations.
-        This function will return a new IndexData rather than changing data in `other` inplace
+        在执行算术运算前将`other`的所有索引对齐到`self`
+        此函数将返回新的IndexData而不是原地修改`other`的数据
 
-        Parameters
+        参数
         ----------
         other : "IndexData"
-            the index in `other` is to be changed
+            需要修改索引的数据
 
-        Returns
+        返回
         -------
         IndexData:
-            the data in `other` with index aligned to `self`
+            索引已对齐到`self`的数据
         """
         raise NotImplementedError(f"please implement _align_indices func")
 
@@ -444,7 +444,7 @@ class IndexData(metaclass=index_data_ops_creator):
         return self.__class__(~self.data.astype(bool), *self.indices)
 
     def abs(self):
-        """get the abs of data except np.nan."""
+        """获取数据绝对值(np.nan除外)"""
         tmp_data = np.absolute(self.data)
         return self.__class__(tmp_data, *self.indices)
 
@@ -457,17 +457,17 @@ class IndexData(metaclass=index_data_ops_creator):
         return self.__class__(tmp_data, *self.indices)
 
     def apply(self, func: Callable):
-        """apply a function to data."""
+        """对数据应用函数"""
         tmp_data = func(self.data)
         return self.__class__(tmp_data, *self.indices)
 
     def __len__(self):
-        """the length of the data.
+        """数据长度
 
-        Returns
+        返回
         -------
         int
-            the length of the data.
+            数据长度
         """
         return len(self.data)
 
@@ -530,16 +530,16 @@ class SingleData(IndexData):
     def __init__(
         self, data: Union[int, float, np.number, list, dict, pd.Series] = [], index: Union[List, pd.Index, Index] = []
     ):
-        """A data structure of index and numpy data.
-        It's used to replace pd.Series due to high-speed.
+        """索引与numpy数据的数据结构
+        用于替代pd.Series以获得更高性能
 
-        Parameters
+        参数
         ----------
         data : Union[int, float, np.number, list, dict, pd.Series]
-            the input data
+            输入数据
         index : Union[list, pd.Index]
-            the index of data.
-            empty list indicates that auto filling the index to the length of data
+            数据索引
+            空列表表示自动填充索引到数据长度
         """
         # for special data type
         if isinstance(data, dict):
@@ -567,19 +567,19 @@ class SingleData(IndexData):
             )
 
     def reindex(self, index: Index, fill_value=np.nan) -> SingleData:
-        """reindex data and fill the missing value with np.nan.
+        """重新索引数据并用np.nan填充缺失值
 
-        Parameters
+        参数
         ----------
         new_index : list
-            new index
+            新索引
         fill_value:
-            what value to fill if index is missing
+            索引缺失时的填充值
 
-        Returns
+        返回
         -------
         SingleData
-            reindex data
+            重新索引后的数据
         """
         # TODO: This method can be more general
         if self.index == index:
@@ -602,12 +602,12 @@ class SingleData(IndexData):
         return tmp_data1.fillna(fill_value) + tmp_data2.fillna(fill_value)
 
     def to_dict(self):
-        """convert SingleData to dict.
+        """将SingleData转换为字典
 
-        Returns
+        返回
         -------
         dict
-            data with the dict format.
+            字典格式的数据
         """
         return dict(zip(self.index, self.data.tolist()))
 
@@ -625,17 +625,17 @@ class MultiData(IndexData):
         index: Union[List, pd.Index, Index] = [],
         columns: Union[List, pd.Index, Index] = [],
     ):
-        """A data structure of index and numpy data.
-        It's used to replace pd.DataFrame due to high-speed.
+        """索引与numpy数据的数据结构
+        用于替代pd.DataFrame以获得更高性能
 
-        Parameters
+        参数
         ----------
         data : Union[list, np.ndarray]
-            the dim of data must be 2.
+            数据维度必须为2
         index : Union[List, pd.Index, Index]
-            the index of data.
+            数据索引
         columns: Union[List, pd.Index, Index]
-            the columns of data.
+            数据列名
         """
         if isinstance(data, pd.DataFrame):
             index, columns, data = data.index, data.columns, data.values

@@ -31,7 +31,7 @@ TW_TIME = [
 @functools.lru_cache(maxsize=240)
 def get_min_cal(shift: int = 0, region: str = REG_CN) -> List[time]:
     """
-    get the minute level calendar in day period
+    获取日内分钟级别日历
 
     Parameters
     ----------
@@ -71,7 +71,7 @@ def get_min_cal(shift: int = 0, region: str = REG_CN) -> List[time]:
 
 
 def is_single_value(start_time, end_time, freq, region: str = REG_CN):
-    """Is there only one piece of data for stock market.
+    """判断股票市场是否只有一条数据
 
     Parameters
     ----------
@@ -140,7 +140,7 @@ class Freq:
     @staticmethod
     def parse(freq: str) -> Tuple[int, str]:
         """
-        Parse freq into a unified format
+        将频率解析为统一格式
 
         Parameters
         ----------
@@ -282,7 +282,8 @@ def time_to_day_index(time_obj: Union[str, datetime], region: str = REG_CN):
 
 def get_day_min_idx_range(start: str, end: str, freq: str, region: str) -> Tuple[int, int]:
     """
-    get the min-bar index in a day for a time range (both left and right is closed) given a fixed frequency
+    获取给定频率下日内时间范围(左右都闭合)的分钟bar索引
+
     Parameters
     ----------
     start : str
@@ -321,8 +322,7 @@ def concat_date_time(date_obj: date, time_obj: time) -> pd.Timestamp:
 
 
 def cal_sam_minute(x: pd.Timestamp, sam_minutes: int, region: str = REG_CN) -> pd.Timestamp:
-    """
-    align the minute-level data to a down sampled calendar
+    """将分钟级别数据对齐到降采样后的日历
 
     e.g. align 10:38 to 10:35 in 5 minute-level(10:30 in 10 minute-level)
 
@@ -348,7 +348,7 @@ def cal_sam_minute(x: pd.Timestamp, sam_minutes: int, region: str = REG_CN) -> p
 
 def epsilon_change(date_time: pd.Timestamp, direction: str = "backward") -> pd.Timestamp:
     """
-    change the time by infinitely small quantity.
+    以无穷小量改变时间
 
 
     Parameters

@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-Collector module can collect objects from everywhere and process them such as merging, grouping, averaging and so on.
+收集器模块可以从各处收集对象并进行处理，例如合并、分组、平均等操作。
 """
 
 from collections import defaultdict

@@ -13,13 +13,13 @@ from qlib.data.data import DatasetProvider
 
 
 def robust_zscore(x: pd.Series, zscore=False):
-    """Robust ZScore Normalization
+    """鲁棒ZScore标准化
 
-    Use robust statistics for Z-Score normalization:
+    使用鲁棒统计量进行Z-Score标准化:
         mean(x) = median(x)
         std(x) = MAD(x) * 1.4826
 
-    Reference:
+    参考:
         https://en.wikipedia.org/wiki/Median_absolute_deviation.
     """
     x = x - x.median()
@@ -37,21 +37,21 @@ def zscore(x: Union[pd.Series, pd.DataFrame]):
 
 def deepcopy_basic_type(obj: object) -> object:
     """
-    deepcopy an object without copy the complicated objects.
-        This is useful when you want to generate Qlib tasks and share the handler
+    深度复制对象但不复制复杂对象
+        当需要生成Qlib任务并共享处理器时非常有用
 
-    NOTE:
-    - This function can't handle recursive objects!!!!!
+    注意:
+    - 此函数无法处理递归对象!!!!!
 
-    Parameters
+    参数
     ----------
     obj : object
-        the object to be copied
+        待复制的对象
 
-    Returns
+    返回
     -------
     object:
-        The copied object
+        复制后的对象
     """
     if isinstance(obj, tuple):
         return tuple(deepcopy_basic_type(i) for i in obj)
@@ -68,14 +68,14 @@ S_DROP = "__DROP__"  # this is a symbol which indicates drop the value
 
 def update_config(base_config: dict, ext_config: Union[dict, List[dict]]):
     """
-    supporting adding base config based on the ext_config
+    支持基于扩展配置更新基础配置
 
     >>> bc = {"a": "xixi"}
     >>> ec = {"b": "haha"}
     >>> new_bc = update_config(bc, ec)
     >>> print(new_bc)
     {'a': 'xixi', 'b': 'haha'}
-    >>> print(bc)  # base config should not be changed
+    >>> print(bc)  # 基础配置不应被改变
     {'a': 'xixi'}
     >>> print(update_config(bc, {"b": S_DROP}))
     {'a': 'xixi'}
@@ -110,7 +110,7 @@ def update_config(base_config: dict, ext_config: Union[dict, List[dict]]):
 
 def guess_horizon(label: List):
     """
-    Try to guess the horizon by parsing label
+    尝试通过解析标签猜测horizon
     """
     expr = DatasetProvider.parse_fields(label)[0]
     lft_etd, rght_etd = expr.get_extended_window_size()

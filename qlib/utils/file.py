@@ -14,12 +14,12 @@ log = get_module_logger("utils.file")
 
 
 def get_or_create_path(path: Optional[Text] = None, return_dir: bool = False):
-    """Create or get a file or directory given the path and return_dir.
+    """根据路径和return_dir参数创建或获取文件/目录
 
-    Parameters
+    参数
     ----------
-    path: a string indicates the path or None indicates creating a temporary path.
-    return_dir: if True, create and return a directory; otherwise c&r a file.
+    path: 表示路径的字符串，None表示创建临时路径
+    return_dir: 如果为True，创建并返回目录；否则创建并返回文件
 
     """
     if path:
@@ -42,22 +42,22 @@ def get_or_create_path(path: Optional[Text] = None, return_dir: bool = False):
 
 @contextlib.contextmanager
 def save_multiple_parts_file(filename, format="gztar"):
-    """Save multiple parts file
+    """保存多部分文件
 
-    Implementation process:
-        1. get the absolute path to 'filename'
-        2. create a 'filename' directory
-        3. user does something with file_path('filename/')
-        4. remove 'filename' directory
-        5. make_archive 'filename' directory, and rename 'archive file' to filename
+    实现流程:
+        1. 获取'filename'的绝对路径
+        2. 创建'filename'目录
+        3. 用户对file_path('filename/')进行操作
+        4. 删除'filename'目录
+        5. 将'filename'目录打包，并将归档文件重命名为filename
 
-    :param filename: result model path
-    :param format: archive format: one of "zip", "tar", "gztar", "bztar", or "xztar"
-    :return: real model path
+    :param filename: 结果模型路径
+    :param format: 归档格式: 可选"zip"、"tar"、"gztar"、"bztar"或"xztar"
+    :return: 实际模型路径
 
-    Usage::
+    用法::
 
-        >>> # The following code will create an archive file('~/tmp/test_file') containing 'test_doc_i'(i is 0-10) files.
+        >>> # 以下代码将创建一个包含'test_doc_i'(i为0-10)文件的归档文件('~/tmp/test_file')
         >>> with save_multiple_parts_file('~/tmp/test_file') as filename_dir:
         ...   for i in range(10):
         ...       temp_path = os.path.join(filename_dir, 'test_doc_{}'.format(str(i)))
@@ -94,23 +94,23 @@ def save_multiple_parts_file(filename, format="gztar"):
 
 @contextlib.contextmanager
 def unpack_archive_with_buffer(buffer, format="gztar"):
-    """Unpack archive with archive buffer
-    After the call is finished, the archive file and directory will be deleted.
+    """使用归档缓冲区解压文件
+    调用完成后，归档文件和目录将被删除
 
-    Implementation process:
-        1. create 'tempfile' in '~/tmp/' and directory
-        2. 'buffer' write to 'tempfile'
-        3. unpack archive file('tempfile')
-        4. user does something with file_path('tempfile/')
-        5. remove 'tempfile' and 'tempfile directory'
+    实现流程:
+        1. 在'~/tmp/'创建临时文件和目录
+        2. 将'buffer'写入临时文件
+        3. 解压归档文件('tempfile')
+        4. 用户对file_path('tempfile/')进行操作
+        5. 删除临时文件和临时文件目录
 
-    :param buffer: bytes
-    :param format: archive format: one of "zip", "tar", "gztar", "bztar", or "xztar"
-    :return: unpack archive directory path
+    :param buffer: 字节数据
+    :param format: 归档格式: 可选"zip"、"tar"、"gztar"、"bztar"或"xztar"
+    :return: 解压后的归档目录路径
 
-    Usage::
+    用法::
 
-        >>> # The following code is to print all the file names in 'test_unpack.tar.gz'
+        >>> # 以下代码打印'test_unpack.tar.gz'中的所有文件名
         >>> with open('test_unpack.tar.gz') as fp:
         ...     buffer = fp.read()
         ...
@@ -163,21 +163,21 @@ def get_tmp_file_with_buffer(buffer):
 @contextlib.contextmanager
 def get_io_object(file: Union[IO, str, Path], *args, **kwargs) -> IO:
     """
-    providing a easy interface to get an IO object
+    提供获取IO对象的简易接口
 
-    Parameters
+    参数
     ----------
     file : Union[IO, str, Path]
-        a object representing the file
+        表示文件的对象
 
-    Returns
+    返回
     -------
     IO:
-        a IO-like object
+        类IO对象
 
-    Raises
+    异常
     ------
-    NotImplementedError:
+        NotImplementedError:
     """
     if isinstance(file, IO):
         yield file

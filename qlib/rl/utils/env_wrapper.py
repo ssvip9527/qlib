@@ -101,17 +101,17 @@ class EnvWrapper(
         aux_info_collector: AuxiliaryInfoCollector[StateType, Any] | None = None,
         logger: LogCollector | None = None,
     ) -> None:
-        # Assign weak reference to wrapper.
+        # 分配弱引用给包装器
         #
-        # Use weak reference here, because:
-        # 1. Logically, the other components should be able to live without an env_wrapper.
-        #    For example, they might live in a strategy_wrapper in future.
-        #    Therefore injecting a "hard" attribute called "env" is not appropripate.
-        # 2. When the environment gets destroyed, it gets destoryed.
-        #    We don't want it to silently live inside some interpreters.
-        # 3. Avoid circular reference.
-        # 4. When the components get serialized, we can throw away the env without any burden.
-        #    (though this part is not implemented yet)
+        # 这里使用弱引用的原因：
+        # 1. 逻辑上，其他组件应该能够在没有env_wrapper的情况下运行
+        #    例如，它们可能在未来存在于strategy_wrapper中
+        #    因此注入一个名为"env"的"硬"属性是不合适的
+        # 2. 当环境被销毁时，它就会被销毁
+        #    我们不希望它默默地存在于某些解释器中
+        # 3. 避免循环引用
+        # 4. 当组件被序列化时，我们可以无负担地丢弃环境
+        #    (虽然这部分尚未实现)
         for obj in [state_interpreter, action_interpreter, reward_fn, aux_info_collector]:
             if obj is not None:
                 obj.env = weakref.proxy(self)  # type: ignore
@@ -151,12 +151,12 @@ class EnvWrapper(
             if self.seed_iterator is None:
                 raise RuntimeError("You can trying to get a state from a dead environment wrapper.")
 
-            # TODO: simulator/observation might need seed to prefetch something
-            # as only seed has the ability to do the work beforehands
+            # TODO: 模拟器/观察可能需要种子来预取一些东西
+            # 因为只有种子有能力提前完成这项工作
 
-            # NOTE: though logger is reset here, logs in this function won't work,
-            # because we can't send them outside.
-            # See https://github.com/thu-ml/tianshou/issues/605
+            # 注意：虽然这里重置了日志记录器，但此函数中的日志不会工作
+            # 因为我们无法将它们发送到外部
+            # 参见 https://github.com/thu-ml/tianshou/issues/605
             self.logger.reset()
 
             if self.seed_iterator is SEED_INTERATOR_MISSING:
@@ -199,33 +199,33 @@ class EnvWrapper(
         if self.seed_iterator is None:
             raise RuntimeError("State queue is already exhausted, but the environment is still receiving action.")
 
-        # Clear the logged information from last step
+        # 清除上一步的日志信息
         self.logger.reset()
 
-        # Action is what we have got from policy
+        # 动作是我们从策略中获得的
         self.status["action_history"].append(policy_action)
         action = self.action_interpreter(self.simulator.get_state(), policy_action)
 
-        # This update must be after action interpreter and before simulator.
+        # 此更新必须在动作解释器之后和模拟器之前进行
         self.status["cur_step"] += 1
 
-        # Use the converted action of update the simulator
+        # 使用转换后的动作更新模拟器
         self.simulator.step(action)
 
-        # Update "done" first, as this status might be used by reward_fn later
+        # 首先更新"done"状态，因为reward_fn稍后可能会使用此状态
         done = self.simulator.done()
         self.status["done"] = done
 
-        # Get state and calculate observation
+        # 获取状态并计算观察值
         sim_state = self.simulator.get_state()
         obs = self.state_interpreter(sim_state)
         self.status["obs_history"].append(obs)
 
-        # Reward and extra info
+        # 奖励和额外信息
         if self.reward_fn is not None:
             rew = self.reward_fn(sim_state)
         else:
-            # No reward. Treated as 0.
+            # 没有奖励。视为0。
             rew = 0.0
         self.status["reward_history"].append(rew)
 
@@ -234,7 +234,7 @@ class EnvWrapper(
         else:
             aux_info = {}
 
-        # Final logging stuff: RL-specific logs
+        # 最后的日志记录：RL特定的日志
         if done:
             self.logger.add_scalar("steps_per_episode", self.status["cur_step"])
         self.logger.add_scalar("reward", rew)

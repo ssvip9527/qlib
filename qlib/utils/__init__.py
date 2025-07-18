@@ -41,7 +41,7 @@ is_deprecated_lexsorted_pandas = version.parse(pd.__version__) > version.parse("
 
 #################### Server ####################
 def get_redis_connection():
-    """get redis connection instance."""
+    """获取redis连接实例"""
     return redis.StrictRedis(
         host=C.redis_host,
         port=C.redis_port,
@@ -174,13 +174,12 @@ def read_period_data(
 
 
 def np_ffill(arr: np.array):
-    """
-    forward fill a 1D numpy array
+    """一维numpy数组前向填充
 
-    Parameters
+    参数
     ----------
     arr : np.array
-        Input numpy 1D array
+        输入的一维numpy数组
     """
     mask = np.isnan(arr.astype(float))  # np.isnan only works on np.float
     # get fill index
@@ -191,9 +190,9 @@ def np_ffill(arr: np.array):
 
 #################### Search ####################
 def lower_bound(data, val, level=0):
-    """multi fields list lower bound.
+    """多字段列表下界
 
-    for single field list use `bisect.bisect_left` instead
+    单字段列表请使用`bisect.bisect_left`代替
     """
     left = 0
     right = len(data)
@@ -207,9 +206,9 @@ def lower_bound(data, val, level=0):
 
 
 def upper_bound(data, val, level=0):
-    """multi fields list upper bound.
+    """多字段列表上界
 
-    for single field list use `bisect.bisect_right` instead
+    单字段列表请使用`bisect.bisect_right`代替
     """
     left = 0
     right = len(data)
@@ -303,11 +302,11 @@ def parse_field(field):
 
 
 def compare_dict_value(src_data: dict, dst_data: dict):
-    """Compare dict value
+    """比较字典值
 
-    :param src_data:
-    :param dst_data:
-    :return:
+    :param src_data: 源数据
+    :param dst_data: 目标数据
+    :return: 差异列表
     """
 
     class DateEncoder(json.JSONEncoder):
@@ -326,10 +325,10 @@ def compare_dict_value(src_data: dict, dst_data: dict):
 
 
 def remove_repeat_field(fields):
-    """remove repeat field
+    """移除重复字段
 
-    :param fields: list; features fields
-    :return: list
+    :param fields: 列表; 特征字段
+    :return: 去重后的列表
     """
     fields = copy.deepcopy(fields)
     _fields = set(fields)

@@ -11,85 +11,86 @@ from qlib.config import C
 class ObjManager:
     def save_obj(self, obj: object, name: str):
         """
-        save obj as name
+        保存对象
 
-        Parameters
+        参数
         ----------
         obj : object
-            object to be saved
+            要保存的对象
         name : str
-            name of the object
+            对象名称
         """
         raise NotImplementedError(f"Please implement `save_obj`")
 
     def save_objs(self, obj_name_l):
         """
-        save objects
+        保存多个对象
 
-        Parameters
+        参数
         ----------
         obj_name_l : list of <obj, name>
+            对象和名称的列表
         """
         raise NotImplementedError(f"Please implement the `save_objs` method")
 
     def load_obj(self, name: str) -> object:
         """
-        load object by name
+        根据名称加载对象
 
-        Parameters
+        参数
         ----------
         name : str
-            the name of the object
+            对象名称
 
-        Returns
+        返回值
         -------
         object:
-            loaded object
+            加载的对象
         """
         raise NotImplementedError(f"Please implement the `load_obj` method")
 
     def exists(self, name: str) -> bool:
         """
-        if the object named `name` exists
+        检查指定名称的对象是否存在
 
-        Parameters
+        参数
         ----------
         name : str
-            name of the objecT
+            对象名称
 
-        Returns
+        返回值
         -------
         bool:
-            If the object exists
+            对象是否存在
         """
         raise NotImplementedError(f"Please implement the `exists` method")
 
     def list(self) -> list:
         """
-        list the objects
+        列出所有对象
 
-        Returns
+        返回值
         -------
         list:
-            the list of returned objects
+            对象列表
         """
         raise NotImplementedError(f"Please implement the `list` method")
 
     def remove(self, fname=None):
-        """remove.
+        """删除对象
 
-        Parameters
+        参数
         ----------
         fname :
-            if file name is provided. specific file is removed
-            otherwise, The all the objects will be removed.
+            如果提供文件名，则删除特定文件
+            否则将删除所有对象
         """
         raise NotImplementedError(f"Please implement the `remove` method")
 
 
 class FileManager(ObjManager):
     """
-    Use file system to manage objects
+    使用文件系统管理对象
     """
 
     def __init__(self, path=None):
@@ -103,7 +104,7 @@ class FileManager(ObjManager):
             return tempfile.mkdtemp(prefix=str(C["file_manager_path"]) + os.sep)
         except AttributeError as attribute_e:
             raise NotImplementedError(
-                f"If path is not given, the `create_path` function should be implemented"
+                f"如果未提供路径，则应实现`create_path`函数"
             ) from attribute_e
 
     def save_obj(self, obj, name):

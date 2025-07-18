@@ -9,19 +9,17 @@ from ..config import C
 
 
 class Serializable:
-    """
-    Serializable will change the behaviors of pickle.
+    """Serializable类将改变pickle的行为。
 
-        The rule to tell if a attribute will be kept or dropped when dumping.
-        The rule with higher priorities is on the top
-        - in the config attribute list -> always dropped
-        - in the include attribute list -> always kept
-        - in the exclude attribute list -> always dropped
-        - name not starts with `_` -> kept
-        - name starts with `_` -> kept if `dump_all` is true else dropped
+        判断属性在dump时是否保留的规则(优先级从高到低):
+        - 在config属性列表中 -> 总是丢弃
+        - 在include属性列表中 -> 总是保留
+        - 在exclude属性列表中 -> 总是丢弃
+        - 不以`_`开头的属性名 -> 保留
+        - 以`_`开头的属性名 -> 如果`dump_all`为true则保留，否则丢弃
 
-    It provides a syntactic sugar for distinguish the attributes which user doesn't want.
-    - For examples, a learnable Datahandler just wants to save the parameters without data when dumping to disk
+    它提供了一种语法糖来区分用户不希望保存的属性。
+    - 例如，一个可学习的Datahandler在dump到磁盘时只想保存参数而不保存数据
     """
 
     pickle_backend = "pickle"  # another optional value is "dill" which can pickle more things of python.
@@ -52,23 +50,22 @@ class Serializable:
 
     @property
     def dump_all(self):
-        """
-        will the object dump all object
+        """对象是否dump所有属性
         """
         return getattr(self, "_dump_all", False)
 
     def _get_attr_list(self, attr_type: str) -> list:
-        """
-        What attribute will not be in specific list
+        """获取特定类型的属性列表
 
-        Parameters
+        参数
         ----------
         attr_type : str
-            "include" or "exclude"
+            "include"(包含)或"exclude"(排除)
 
-        Returns
+        返回值
         -------
         list:
+            属性列表
         """
         if hasattr(self, f"_{attr_type}"):
             res = getattr(self, f"_{attr_type}", [])
@@ -79,22 +76,21 @@ class Serializable:
         return res
 
     def config(self, recursive=False, **kwargs):
-        """
-        configure the serializable object
+        """配置可序列化对象
 
-        Parameters
+        参数
         ----------
-        kwargs may include following keys
+        kwargs可能包含以下键:
 
             dump_all : bool
-                will the object dump all object
+                对象是否dump所有属性
             exclude : list
-                What attribute will not be dumped
+                不被dump的属性列表
             include : list
-                What attribute will be dumped
+                被dump的属性列表
 
         recursive : bool
-            will the configuration be recursive
+            是否递归配置
         """
         keys = {"dump_all", "exclude", "include"}
         for k, v in kwargs.items():
@@ -113,19 +109,18 @@ class Serializable:
                 del self.__dict__[self.FLAG_KEY]
 
     def to_pickle(self, path: Union[Path, str], **kwargs):
-        """
-        Dump self to a pickle file.
+        """将对象dump到pickle文件
 
-        path (Union[Path, str]): the path to dump
+        path (Union[Path, str]): dump文件路径
 
-        kwargs may include following keys
+        kwargs可能包含以下键:
 
             dump_all : bool
-                will the object dump all object
+                对象是否dump所有属性
             exclude : list
-                What attribute will not be dumped
+                不被dump的属性列表
             include : list
-                What attribute will be dumped
+                被dump的属性列表
         """
         self.config(**kwargs)
         with Path(path).open("wb") as f:
@@ -135,16 +130,16 @@ class Serializable:
     @classmethod
     def load(cls, filepath):
         """
-        Load the serializable class from a filepath.
+        从文件路径加载可序列化类
 
-        Args:
-            filepath (str): the path of file
+        参数:
+            filepath (str): 文件路径
 
-        Raises:
-            TypeError: the pickled file must be `type(cls)`
+        异常:
+            TypeError: pickle文件必须是`type(cls)`类型
 
-        Returns:
-            `type(cls)`: the instance of `type(cls)`
+        返回:
+            `type(cls)`: `type(cls)`的实例
         """
         with open(filepath, "rb") as f:
             object = cls.get_backend().load(f)
@@ -155,11 +150,10 @@ class Serializable:
 
     @classmethod
     def get_backend(cls):
-        """
-        Return the real backend of a Serializable class. The pickle_backend value can be "pickle" or "dill".
+        """返回Serializable类的真实后端。pickle_backend值可以是"pickle"或"dill"
 
-        Returns:
-            module: pickle or dill module based on pickle_backend
+        返回:
+            module: 基于pickle_backend的pickle或dill模块
         """
         # NOTE: pickle interface like backend; such as dill
         if cls.pickle_backend == "pickle":
@@ -171,15 +165,14 @@ class Serializable:
 
     @staticmethod
     def general_dump(obj, path: Union[Path, str]):
-        """
-        A general dumping method for object
+        """对象的通用dump方法
 
-        Parameters
+        参数
         ----------
         obj : object
-            the object to be dumped
+            待dump的对象
         path : Union[Path, str]
-            the target path the data will be dumped
+            数据将被dump的目标路径
         """
         path = Path(path)
         if isinstance(obj, Serializable):

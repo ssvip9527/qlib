@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-TaskGenerator module can generate many tasks based on TaskGen and some task templates.
+TaskGenerator模块可以根据TaskGen和一些任务模板生成多个任务
 """
 import abc
 import copy
@@ -51,19 +51,19 @@ def task_generator(tasks, generators) -> list:
 
 class TaskGen(metaclass=abc.ABCMeta):
     """
-    The base class for generating different tasks
+    生成不同任务的基类
 
-    Example 1:
+    示例1:
 
-        input: a specific task template and rolling steps
+        输入: 一个特定的任务模板和滚动步骤
 
-        output: rolling version of the tasks
+        输出: 任务的滚动版本
 
-    Example 2:
+    示例2:
 
-        input: a specific task template and losses list
+        输入: 一个特定的任务模板和损失列表
 
-        output: a set of tasks with different losses
+        输出: 一组具有不同损失的任务
 
     """
 
@@ -92,18 +92,18 @@ class TaskGen(metaclass=abc.ABCMeta):
 
 def handler_mod(task: dict, rolling_gen):
     """
-    Help to modify the handler end time when using RollingGen
-    It try to handle the following case
+    在使用RollingGen时帮助修改handler的结束时间
+    尝试处理以下情况:
 
-    - Hander's data end_time is earlier than  dataset's test_data's segments.
+    - Handler的数据end_time早于dataset的test_data的segments
 
-        - To handle this, handler's data's end_time is extended.
+        - 为此需要扩展handler数据的end_time
 
-    If the handler's end_time is None, then it is not necessary to change it's end time.
+    如果handler的end_time为None，则无需更改其结束时间
 
-    Args:
-        task (dict): a task template
-        rg (RollingGen): an instance of RollingGen
+    参数:
+        task (dict): 任务模板
+        rg (RollingGen): RollingGen实例
     """
     try:
         interval = rolling_gen.ta.cal_interval(
@@ -126,10 +126,10 @@ def handler_mod(task: dict, rolling_gen):
 
 def trunc_segments(ta: TimeAdjuster, segments: Dict[str, pd.Timestamp], days, test_key="test"):
     """
-    To avoid the leakage of future information, the segments should be truncated according to the test start_time
+    为避免未来信息泄露，应根据测试开始时间截断segments
 
-    NOTE:
-        This function will change segments **inplace**
+    注意:
+        此函数将**原地**修改segments
     """
     # adjust segment
     test_start = min(t for t in segments[test_key] if t is not None)

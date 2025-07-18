@@ -1,10 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-All module related class, e.g. :
-- importing a module, class
-- walkiing a module
-- operations on class or module...
+所有与模块相关的类，例如：
+- 导入模块、类
+- 遍历模块
+- 对类或模块的操作...
 """
 
 import contextlib
@@ -23,11 +23,11 @@ from qlib.typehint import InstConf
 
 
 def get_module_by_module_path(module_path: Union[str, ModuleType]):
-    """Load module path
+    """加载模块路径
 
-    :param module_path:
-    :return:
-    :raises: ModuleNotFoundError
+    :param module_path: 模块路径
+    :return: 模块对象
+    :raises: ModuleNotFoundError 当模块不存在时抛出
     """
     if module_path is None:
         raise ModuleNotFoundError("None is passed in as parameters as module_path")
@@ -48,16 +48,15 @@ def get_module_by_module_path(module_path: Union[str, ModuleType]):
 
 def split_module_path(module_path: str) -> Tuple[str, str]:
     """
-
-    Parameters
+    参数
     ----------
     module_path : str
-        e.g. "a.b.c.ClassName"
+        例如: "a.b.c.ClassName"
 
-    Returns
+    返回值
     -------
     Tuple[str, str]
-        e.g. ("a.b.c", "ClassName")
+        例如: ("a.b.c", "ClassName")
     """
     *m_path, cls = module_path.split(".")
     m_path = ".".join(m_path)
@@ -66,23 +65,23 @@ def split_module_path(module_path: str) -> Tuple[str, str]:
 
 def get_callable_kwargs(config: InstConf, default_module: Union[str, ModuleType] = None) -> (type, dict):
     """
-    extract class/func and kwargs from config info
+    从配置信息中提取类/函数及其参数
 
-    Parameters
+    参数
     ----------
     config : [dict, str]
-        similar to config
-        please refer to the doc of init_instance_by_config
+        类似配置信息
+        请参考init_instance_by_config的文档
 
-    default_module : Python module or str
-        It should be a python module to load the class type
-        This function will load class from the config['module_path'] first.
-        If config['module_path'] doesn't exists, it will load the class from default_module.
+    default_module : Python模块或str
+        应该是一个Python模块用于加载类类型
+        此函数会首先从config['module_path']加载类
+        如果config['module_path']不存在，则从default_module加载类
 
-    Returns
+    返回值
     -------
     (type, dict):
-        the class/func object and it's arguments.
+        类/函数对象及其参数
 
     Raises
     ------
@@ -127,31 +126,31 @@ def init_instance_by_config(
     **kwargs,
 ) -> Any:
     """
-    get initialized instance with config
+    通过配置获取初始化实例
 
-    Parameters
+    参数
     ----------
     config : InstConf
 
-    default_module : Python module
-        Optional. It should be a python module.
-        NOTE: the "module_path" will be override by `module` arguments
+    default_module : Python模块
+        可选。应该是一个Python模块。
+        注意："module_path"会被`module`参数覆盖
 
-        This function will load class from the config['module_path'] first.
-        If config['module_path'] doesn't exists, it will load the class from default_module.
+        此函数会首先从config['module_path']加载类
+        如果config['module_path']不存在，则从default_module加载类
 
     accept_types: Union[type, Tuple[type]]
-        Optional. If the config is a instance of specific type, return the config directly.
-        This will be passed into the second parameter of isinstance.
+        可选。如果配置是特定类型的实例，则直接返回配置
+        这将传递给isinstance的第二个参数
 
     try_kwargs: Dict
-        Try to pass in kwargs in `try_kwargs` when initialized the instance
-        If error occurred, it will fail back to initialization without try_kwargs.
+        尝试在初始化实例时传入`try_kwargs`中的参数
+        如果出错，将回退到不使用try_kwargs的初始化
 
-    Returns
+    返回值
     -------
     object:
-        An initialized object based on the config info
+        基于配置信息初始化的对象
     """
     if isinstance(config, accept_types):
         return config
@@ -188,15 +187,15 @@ def init_instance_by_config(
 @contextlib.contextmanager
 def class_casting(obj: object, cls: type):
     """
-    Python doesn't provide the downcasting mechanism.
-    We use the trick here to downcast the class
+    Python不提供向下转型机制
+    我们在这里使用技巧来实现类向下转型
 
-    Parameters
+    参数
     ----------
     obj : object
-        the object to be cast
+        要转型的对象
     cls : type
-        the target class type
+        目标类类型
     """
     orig_cls = obj.__class__
     obj.__class__ = cls
@@ -206,15 +205,15 @@ def class_casting(obj: object, cls: type):
 
 def find_all_classes(module_path: Union[str, ModuleType], cls: type) -> List[type]:
     """
-    Find all the classes recursively that inherit from `cls` in a given module.
-    - `cls` itself is also included
+    递归查找给定模块中继承自`cls`的所有类
+    - `cls`本身也会包含在内
 
         >>> from qlib.data.dataset.handler import DataHandler
         >>> find_all_classes("qlib.contrib.data.handler", DataHandler)
         [<class 'qlib.contrib.data.handler.Alpha158'>, <class 'qlib.contrib.data.handler.Alpha158vwap'>, <class 'qlib.contrib.data.handler.Alpha360'>, <class 'qlib.contrib.data.handler.Alpha360vwap'>, <class 'qlib.data.dataset.handler.DataHandlerLP'>]
 
-    TODO:
-    - skip import error
+    待办:
+    - 跳过导入错误
 
     """
     if isinstance(module_path, ModuleType):

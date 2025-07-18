@@ -21,7 +21,7 @@ __all__ = ["BaseStrategy", "RLStrategy", "RLIntStrategy"]
 
 
 class BaseStrategy:
-    """Base strategy for trading"""
+    """交易策略基类"""
 
     def __init__(
         self,
@@ -31,29 +31,27 @@ class BaseStrategy:
         trade_exchange: Exchange = None,
     ) -> None:
         """
-        Parameters
+        参数
         ----------
         outer_trade_decision : BaseTradeDecision, optional
-            the trade decision of outer strategy which this strategy relies, and it will be traded in
-            [start_time, end_time], by default None
+            本策略依赖的外部策略交易决策，将在[start_time, end_time]区间内交易，默认为None
 
-            - If the strategy is used to split trade decision, it will be used
-            - If the strategy is used for portfolio management, it can be ignored
+            - 如果策略用于拆分交易决策，将会使用此参数
+            - 如果策略用于投资组合管理，可以忽略此参数
         level_infra : LevelInfrastructure, optional
-            level shared infrastructure for backtesting, including trade calendar
+            回测共享的层级基础设施，包括交易日历等
         common_infra : CommonInfrastructure, optional
-            common infrastructure for backtesting, including trade_account, trade_exchange, .etc
+            回测共享的公共基础设施，包括交易账户、交易交易所等
 
         trade_exchange : Exchange
-            exchange that provides market info, used to deal order and generate report
+            提供市场信息的交易所，用于处理订单和生成报告
 
-            - If `trade_exchange` is None, self.trade_exchange will be set with common_infra
-            - It allows different trade_exchanges is used in different executions.
-            - For example:
+            - 如果`trade_exchange`为None，self.trade_exchange将从common_infra中获取
+            - 允许在不同的执行中使用不同的交易所
+            - 例如：
 
-                - In daily execution, both daily exchange and minutely are usable, but the daily exchange is
-                  recommended because it run faster.
-                - In minutely execution, the daily exchange is not usable, only the minutely exchange is recommended.
+                - 在日线执行中，日线交易所和分钟线交易所都可用，但推荐使用日线交易所，因为它运行更快
+                - 在分钟线执行中，日线交易所不可用，只能使用分钟线交易所
         """
 
         self._reset(level_infra=level_infra, common_infra=common_infra, outer_trade_decision=outer_trade_decision)
@@ -73,7 +71,7 @@ class BaseStrategy:
 
     @property
     def trade_exchange(self) -> Exchange:
-        """get trade exchange in a prioritized order"""
+        """按优先级顺序获取交易交易所"""
         return getattr(self, "_trade_exchange", None) or self.common_infra.get("trade_exchange")
 
     def reset_level_infra(self, level_infra: LevelInfrastructure) -> None:
@@ -96,14 +94,13 @@ class BaseStrategy:
         **kwargs,
     ) -> None:
         """
-        - reset `level_infra`, used to reset trade calendar, .etc
-        - reset `common_infra`, used to reset `trade_account`, `trade_exchange`, .etc
-        - reset `outer_trade_decision`, used to make split decision
+        - 重置`level_infra`，用于重置交易日历等
+        - 重置`common_infra`，用于重置`trade_account`、`trade_exchange`等
+        - 重置`outer_trade_decision`，用于做出拆分决策
 
-        **NOTE**:
-        split this function into `reset` and `_reset` will make following cases more convenient
-        1. Users want to initialize his strategy by overriding `reset`, but they don't want to affect the `_reset`
-        called when initialization
+        **注意**:
+        将此函数拆分为`reset`和`_reset`将使以下情况更方便
+        1. 用户希望通过重写`reset`来初始化策略，但不想影响初始化时调用的`_reset`
         """
         self._reset(
             level_infra=level_infra,
@@ -118,7 +115,7 @@ class BaseStrategy:
         outer_trade_decision: BaseTradeDecision = None,
     ):
         """
-        Please refer to the docs of `reset`
+        请参考`reset`的文档
         """
         if level_infra is not None:
             self.reset_level_infra(level_infra)
@@ -134,40 +131,39 @@ class BaseStrategy:
         self,
         execute_result: list = None,
     ) -> Union[BaseTradeDecision, Generator[Any, Any, BaseTradeDecision]]:
-        """Generate trade decision in each trading bar
+        """在每个交易bar生成交易决策
 
-        Parameters
+        参数
         ----------
         execute_result : List[object], optional
-            the executed result for trade decision, by default None
+            交易决策的执行结果，默认为None
 
-            - When call the generate_trade_decision firstly, `execute_result` could be None
+            - 首次调用generate_trade_decision时，`execute_result`可能为None
         """
         raise NotImplementedError("generate_trade_decision is not implemented!")
 
     # helper methods: not necessary but for convenience
     def get_data_cal_avail_range(self, rtype: str = "full") -> Tuple[int, int]:
         """
-        return data calendar's available decision range for `self` strategy
-        the range consider following factors
-        - data calendar in the charge of `self` strategy
-        - trading range limitation from the decision of outer strategy
+        返回`self`策略的数据日历可用决策范围
+        该范围考虑以下因素：
+        - `self`策略负责的数据日历
+        - 外部策略决策的交易范围限制
 
-
-        related methods
+        相关方法
         - TradeCalendarManager.get_data_cal_range
         - BaseTradeDecision.get_data_cal_range_limit
 
-        Parameters
+        参数
         ----------
         rtype: str
-            - "full": return the available data index range of the strategy from `start_time` to `end_time`
-            - "step": return the available data index range of the strategy of current step
+            - "full": 返回策略从`start_time`到`end_time`的可用数据索引范围
+            - "step": 返回策略当前步骤的可用数据索引范围
 
-        Returns
+        返回
         -------
         Tuple[int, int]:
-            the available range both sides are closed
+            可用的范围，两端均为闭区间
         """
         cal_range = self.trade_calendar.get_data_cal_range(rtype=rtype)
         if self.outer_trade_decision is None:
@@ -186,16 +182,16 @@ class BaseStrategy:
         trade_calendar: TradeCalendarManager,
     ) -> Optional[BaseTradeDecision]:
         """
-        update trade decision in each step of inner execution, this method enable all order
+        在内部执行的每个步骤中更新交易决策，此方法启用所有订单
 
-        Parameters
+        参数
         ----------
         trade_decision : BaseTradeDecision
-            the trade decision that will be updated
+            将被更新的交易决策
         trade_calendar : TradeCalendarManager
-            The calendar of the **inner strategy**!!!!!
+            **内部策略**的日历!!!!!
 
-        Returns
+        返回
         -------
             BaseTradeDecision:
         """

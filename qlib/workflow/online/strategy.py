@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-OnlineStrategy module is an element of online serving.
+OnlineStrategy模块是在线服务的一个组件。
 """
 
 from typing import List, Union
@@ -18,17 +18,17 @@ from qlib.workflow.task.utils import TimeAdjuster
 
 class OnlineStrategy:
     """
-    OnlineStrategy is working with `Online Manager <#Online Manager>`_, responding to how the tasks are generated, the models are updated and signals are prepared.
+    OnlineStrategy与`Online Manager <#Online Manager>`_配合使用，负责处理任务生成、模型更新和信号准备的方式。
     """
 
     def __init__(self, name_id: str):
         """
-        Init OnlineStrategy.
-        This module **MUST** use `Trainer <../reference/api.html#qlib.model.trainer.Trainer>`_ to finishing model training.
+        初始化OnlineStrategy。
+        此模块**必须**使用`Trainer <../reference/api.html#qlib.model.trainer.Trainer>`_来完成模型训练。
 
-        Args:
-            name_id (str): a unique name or id.
-            trainer (qlib.model.trainer.Trainer, optional): a instance of Trainer. Defaults to None.
+        参数:
+            name_id (str): 唯一的名称或ID。
+            trainer (qlib.model.trainer.Trainer, 可选): Trainer的实例。默认为None。
         """
         self.name_id = name_id
         self.logger = get_module_logger(self.__class__.__name__)
@@ -36,33 +36,32 @@ class OnlineStrategy:
 
     def prepare_tasks(self, cur_time, **kwargs) -> List[dict]:
         """
-        After the end of a routine, check whether we need to prepare and train some new tasks based on cur_time (None for latest)..
-        Return the new tasks waiting for training.
+        在例行程序结束后，根据当前时间（None表示最新）检查是否需要准备和训练一些新任务。
+        返回等待训练的新任务。
 
-        You can find the last online models by OnlineTool.online_models.
+        您可以通过OnlineTool.online_models找到最后的在线模型。
         """
         raise NotImplementedError(f"Please implement the `prepare_tasks` method.")
 
     def prepare_online_models(self, trained_models, cur_time=None) -> List[object]:
         """
-        Select some models from trained models and set them to online models.
-        This is a typical implementation to online all trained models, you can override it to implement the complex method.
-        You can find the last online models by OnlineTool.online_models if you still need them.
+        从训练好的模型中选择一些模型并将它们设置为在线模型。
+        这是一个将所有训练好的模型设为在线的典型实现，您可以重写它来实现更复杂的方法。
+        如果仍需要，可以通过OnlineTool.online_models找到最后的在线模型。
 
-        NOTE: Reset all online models to trained models. If there are no trained models, then do nothing.
+        注意：将所有在线模型重置为训练好的模型。如果没有训练好的模型，则不执行任何操作。
 
-        **NOTE**:
-            Current implementation is very naive. Here is a more complex situation which is more closer to the
-            practical scenarios.
-            1. Train new models at the day before `test_start` (at time stamp `T`)
-            2. Switch models at the `test_start` (at time timestamp `T + 1` typically)
+        **注意**:
+            当前实现非常简单。以下是一个更接近实际场景的复杂情况：
+            1. 在`test_start`前一天（时间戳`T`）训练新模型
+            2. 在`test_start`时（通常是时间戳`T + 1`）切换模型
 
-        Args:
-            models (list): a list of models.
-            cur_time (pd.Dataframe): current time from OnlineManger. None for the latest.
+        参数:
+            models (list): 模型列表。
+            cur_time (pd.Dataframe): 来自OnlineManger的当前时间。None表示最新。
 
-        Returns:
-            List[object]: a list of online models.
+        返回:
+            List[object]: 在线模型列表。
         """
         if not trained_models:
             return self.tool.online_models()
@@ -71,19 +70,19 @@ class OnlineStrategy:
 
     def first_tasks(self) -> List[dict]:
         """
-        Generate a series of tasks firstly and return them.
+        首先生成一系列任务并返回它们。
         """
         raise NotImplementedError(f"Please implement the `first_tasks` method.")
 
     def get_collector(self) -> Collector:
         """
-        Get the instance of `Collector <../advanced/task_management.html#Task Collecting>`_ to collect different results of this strategy.
+        获取`Collector <../advanced/task_management.html#Task Collecting>`_实例以收集此策略的不同结果。
 
-        For example:
-            1) collect predictions in Recorder
-            2) collect signals in a txt file
+        例如:
+            1) 在Recorder中收集预测
+            2) 在txt文件中收集信号
 
-        Returns:
+        返回:
             Collector
         """
         raise NotImplementedError(f"Please implement the `get_collector` method.")
@@ -91,7 +90,7 @@ class OnlineStrategy:
 
 class RollingStrategy(OnlineStrategy):
     """
-    This example strategy always uses the latest rolling model sas online models.
+    此示例策略始终使用最新的滚动模型作为在线模型。
     """
 
     def __init__(
@@ -101,14 +100,14 @@ class RollingStrategy(OnlineStrategy):
         rolling_gen: RollingGen,
     ):
         """
-        Init RollingStrategy.
+        初始化RollingStrategy。
 
-        Assumption: the str of name_id, the experiment name, and the trainer's experiment name are the same.
+        假设：name_id的字符串、实验名称和训练器的实验名称相同。
 
-        Args:
-            name_id (str): a unique name or id. Will be also the name of the Experiment.
-            task_template (Union[dict, List[dict]]): a list of task_template or a single template, which will be used to generate many tasks using rolling_gen.
-            rolling_gen (RollingGen): an instance of RollingGen
+        参数:
+            name_id (str): 唯一的名称或ID。也将作为实验的名称。
+            task_template (Union[dict, List[dict]]): 任务模板列表或单个模板，将用于通过rolling_gen生成多个任务。
+            rolling_gen (RollingGen): RollingGen的实例
         """
         super().__init__(name_id=name_id)
         self.exp_name = self.name_id
@@ -122,15 +121,15 @@ class RollingStrategy(OnlineStrategy):
 
     def get_collector(self, process_list=[RollingGroup()], rec_key_func=None, rec_filter_func=None, artifacts_key=None):
         """
-        Get the instance of `Collector <../advanced/task_management.html#Task Collecting>`_ to collect results. The returned collector must distinguish results in different models.
+        获取`Collector <../advanced/task_management.html#Task Collecting>`_实例以收集结果。返回的收集器必须能够区分不同模型的结果。
 
-        Assumption: the models can be distinguished based on the model name and rolling test segments.
-        If you do not want this assumption, please implement your method or use another rec_key_func.
+        假设：可以根据模型名称和滚动测试段来区分模型。
+        如果不希望此假设，请实现您自己的方法或使用其他rec_key_func。
 
-        Args:
-            rec_key_func (Callable): a function to get the key of a recorder. If None, use recorder id.
-            rec_filter_func (Callable, optional): filter the recorder by return True or False. Defaults to None.
-            artifacts_key (List[str], optional): the artifacts key you want to get. If None, get all artifacts.
+        参数:
+            rec_key_func (Callable): 获取记录器键的函数。如果为None，则使用记录器ID。
+            rec_filter_func (Callable, 可选): 通过返回True或False来过滤记录器。默认为None。
+            artifacts_key (List[str], 可选): 要获取的工件键。如果为None，则获取所有工件。
         """
 
         def rec_key(recorder):

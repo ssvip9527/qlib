@@ -21,36 +21,36 @@ class GetData:
     def __init__(self, delete_zip_file=False):
         """
 
-        Parameters
+        参数
         ----------
         delete_zip_file : bool, optional
-            Whether to delete the zip file, value from True or False, by default False
+            是否删除zip文件，值为True或False，默认为False
         """
         self.delete_zip_file = delete_zip_file
 
     def merge_remote_url(self, file_name: str):
         """
-        Generate download links.
+        生成下载链接。
 
-        Parameters
+        参数
         ----------
         file_name: str
-            The name of the file to be downloaded.
-            The file name can be accompanied by a version number, (e.g.: v2/qlib_data_simple_cn_1d_latest.zip),
-            if no version number is attached, it will be downloaded from v0 by default.
+            要下载的文件名。
+            文件名可以附带版本号（例如：v2/qlib_data_simple_cn_1d_latest.zip），
+            如果未附带版本号，则默认从v0下载。
         """
         return f"{self.REMOTE_URL}/{file_name}" if "/" in file_name else f"{self.REMOTE_URL}/v0/{file_name}"
 
     def download(self, url: str, target_path: [Path, str]):
         """
-        Download a file from the specified url.
+        从指定URL下载文件。
 
-        Parameters
+        参数
         ----------
         url: str
-            The url of the data.
+            数据URL。
         target_path: str
-            The location where the data is saved, including the file name.
+            数据保存位置，包括文件名。
         """
         file_name = str(target_path).rsplit("/", maxsplit=1)[-1]
         resp = requests.get(url, stream=True, timeout=60)
@@ -71,27 +71,27 @@ class GetData:
 
     def download_data(self, file_name: str, target_dir: [Path, str], delete_old: bool = True):
         """
-        Download the specified file to the target folder.
+        将指定文件下载到目标文件夹。
 
-        Parameters
+        参数
         ----------
         target_dir: str
-            data save directory
+            数据保存目录
         file_name: str
-            dataset name, needs to endwith .zip, value from [rl_data.zip, csv_data_cn.zip, ...]
-            may contain folder names, for example: v2/qlib_data_simple_cn_1d_latest.zip
+            数据集名称，需要以.zip结尾，可选值包括[rl_data.zip, csv_data_cn.zip, ...]
+            可能包含文件夹名称，例如：v2/qlib_data_simple_cn_1d_latest.zip
         delete_old: bool
-            delete an existing directory, by default True
+            是否删除现有目录，默认为True
 
-        Examples
+        示例
         ---------
-        # get rl data
+        # 获取rl数据
         python get_data.py download_data --file_name rl_data.zip --target_dir ~/.qlib/qlib_data/rl_data
-        When this command is run, the data will be downloaded from this link: https://qlibpublic.blob.core.windows.net/data/default/stock_data/rl_data.zip?{token}
+        运行此命令时，数据将从以下链接下载：https://qlibpublic.blob.core.windows.net/data/default/stock_data/rl_data.zip?{token}
 
-        # get cn csv data
+        # 获取cn csv数据
         python get_data.py download_data --file_name csv_data_cn.zip --target_dir ~/.qlib/csv_data/cn_data
-        When this command is run, the data will be downloaded from this link: https://qlibpublic.blob.core.windows.net/data/default/stock_data/csv_data_cn.zip?{token}
+        运行此命令时，数据将从以下链接下载：https://qlibpublic.blob.core.windows.net/data/default/stock_data/csv_data_cn.zip?{token}
         -------
 
         """
@@ -160,34 +160,34 @@ class GetData:
         delete_old=True,
         exists_skip=False,
     ):
-        """download cn qlib data from remote
+        """从远程下载cn qlib数据
 
-        Parameters
+        参数
         ----------
         target_dir: str
-            data save directory
+            数据保存目录
         name: str
-            dataset name, value from [qlib_data, qlib_data_simple], by default qlib_data
+            数据集名称，可选值包括[qlib_data, qlib_data_simple]，默认为qlib_data
         version: str
-            data version, value from [v1, ...], by default None(use script to specify version)
+            数据版本，可选值包括[v1, ...]，默认为None（使用脚本指定版本）
         interval: str
-            data freq, value from [1d], by default 1d
+            数据频率，可选值包括[1d]，默认为1d
         region: str
-            data region, value from [cn, us], by default cn
+            数据区域，可选值包括[cn, us]，默认为cn
         delete_old: bool
-            delete an existing directory, by default True
+            是否删除现有目录，默认为True
         exists_skip: bool
-            exists skip, by default False
+            如果存在则跳过，默认为False
 
-        Examples
+        示例
         ---------
-        # get 1d data
+        # 获取1d数据
         python get_data.py qlib_data --name qlib_data --target_dir ~/.qlib/qlib_data/cn_data --interval 1d --region cn
-        When this command is run, the data will be downloaded from this link: https://qlibpublic.blob.core.windows.net/data/default/stock_data/v2/qlib_data_cn_1d_latest.zip?{token}
+        运行此命令时，数据将从以下链接下载：https://qlibpublic.blob.core.windows.net/data/default/stock_data/v2/qlib_data_cn_1d_latest.zip?{token}
 
-        # get 1min data
+        # 获取1min数据
         python get_data.py qlib_data --name qlib_data --target_dir ~/.qlib/qlib_data/cn_data_1min --interval 1min --region cn
-        When this command is run, the data will be downloaded from this link: https://qlibpublic.blob.core.windows.net/data/default/stock_data/v2/qlib_data_cn_1min_latest.zip?{token}
+        运行此命令时，数据将从以下链接下载：https://qlibpublic.blob.core.windows.net/data/default/stock_data/v2/qlib_data_cn_1min_latest.zip?{token}
         -------
 
         """

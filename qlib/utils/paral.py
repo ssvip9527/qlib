@@ -34,24 +34,24 @@ def datetime_groupby_apply(
     df, apply_func: Union[Callable, Text], axis=0, level="datetime", resample_rule="ME", n_jobs=-1
 ):
     """datetime_groupby_apply
-    This function will apply the `apply_func` on the datetime level index.
+    此函数将在datetime级别的索引上应用`apply_func`
 
-    Parameters
+    参数
     ----------
     df :
-        DataFrame for processing
+        待处理的DataFrame
     apply_func : Union[Callable, Text]
-        apply_func for processing the data
-        if a string is given, then it is treated as naive pandas function
+        处理数据的函数
+        如果是字符串则视为pandas原生函数
     axis :
-        which axis is the datetime level located
+        datetime级别所在的轴
     level :
-        which level is the datetime level
+        datetime级别的名称
     resample_rule :
-        How to resample the data to calculating parallel
+        用于并行计算的数据重采样规则
     n_jobs :
-        n_jobs for joblib
-    Returns:
+        joblib的并行任务数
+    返回值:
         pd.DataFrame
     """
 
@@ -71,12 +71,12 @@ def datetime_groupby_apply(
 
 class AsyncCaller:
     """
-    This AsyncCaller tries to make it easier to async call
+    AsyncCaller旨在简化异步调用
 
-    Currently, it is used in MLflowRecorder to make functions like `log_params` async
+    目前用于MLflowRecorder中使`log_params`等函数异步执行
 
-    NOTE:
-    - This caller didn't consider the return value
+    注意:
+    - 此调用器不考虑返回值
     """
 
     STOP_MARK = "__STOP"
@@ -173,13 +173,13 @@ class DelayedTuple(DelayedTask):
 
 
 class DelayedDict(DelayedTask):
-    """DelayedDict.
-    It is designed for following feature:
-    Converting following existing code to parallel
-    - constructing a dict
-    - key can be gotten instantly
-    - computation of values tasks a lot of time.
-        - AND ALL the values are calculated in a SINGLE function
+    """DelayedDict
+    设计用于以下特性:
+    将现有代码转换为并行:
+    - 构造字典
+    - 可立即获取键
+    - 值计算耗时
+        - 且所有值都在单个函数中计算
     """
 
     def __init__(self, key_l, delayed_tpl):
@@ -194,29 +194,30 @@ class DelayedDict(DelayedTask):
 
 
 def is_delayed_tuple(obj) -> bool:
-    """is_delayed_tuple.
+    """is_delayed_tuple
 
-    Parameters
+    参数
     ----------
     obj : object
+        待判断对象
 
-    Returns
+    返回值
     -------
     bool
-        is `obj` joblib.delayed tuple
+        判断`obj`是否为joblib.delayed元组
     """
     return isinstance(obj, tuple) and len(obj) == 3 and callable(obj[0])
 
 
 def _replace_and_get_dt(complex_iter):
-    """_replace_and_get_dt.
+    """_replace_and_get_dt
 
-    FIXME: this function may cause infinite loop when the complex data-structure contains loop-reference
+    FIXME: 当复杂数据结构包含循环引用时，此函数可能导致无限循环
 
-    Parameters
+    参数
     ----------
     complex_iter :
-        complex_iter
+        复杂迭代对象
     """
     if isinstance(complex_iter, DelayedTask):
         dt = complex_iter
@@ -245,16 +246,16 @@ def _replace_and_get_dt(complex_iter):
 
 
 def _recover_dt(complex_iter):
-    """_recover_dt.
+    """_recover_dt
 
-    replace all the DelayedTask in the `complex_iter` with its `.res` value
+    将`complex_iter`中所有DelayedTask替换为其`.res`值
 
-    FIXME: this function may cause infinite loop when the complex data-structure contains loop-reference
+    FIXME: 当复杂数据结构包含循环引用时，此函数可能导致无限循环
 
-    Parameters
+    参数
     ----------
     complex_iter :
-        complex_iter
+        复杂迭代对象
     """
     if isinstance(complex_iter, DelayedTask):
         return complex_iter.get_replacement()
@@ -267,8 +268,8 @@ def _recover_dt(complex_iter):
 
 
 def complex_parallel(paral: Parallel, complex_iter):
-    """complex_parallel.
-    Find all the delayed function created by delayed in complex_iter, run them parallelly and then replace it with the result
+    """complex_parallel
+    查找complex_iter中由delayed创建的延迟函数，并行运行它们并用结果替换
 
     >>> from qlib.utils.paral import complex_parallel
     >>> from joblib import Parallel, delayed
@@ -276,16 +277,16 @@ def complex_parallel(paral: Parallel, complex_iter):
     >>> complex_parallel(Parallel(), complex_iter)
     {'a': 6, 'b': [1, 2, 11]}
 
-    Parameters
+    参数
     ----------
     paral : Parallel
-        paral
+        并行执行器
     complex_iter :
-        NOTE: only list, tuple and dict will be explored!!!!
+        注意: 仅会探索list、tuple和dict类型
 
-    Returns
+    返回值
     -------
-    complex_iter whose delayed joblib tasks are replaced with its execution results.
+    complex_iter中延迟的joblib任务被替换为其执行结果
     """
 
     complex_iter, dt_all = _replace_and_get_dt(complex_iter)
@@ -297,24 +298,24 @@ def complex_parallel(paral: Parallel, complex_iter):
 
 class call_in_subproc:
     """
-    When we repeatedly run functions, it is hard to avoid memory leakage.
-    So we run it in the subprocess to ensure it is OK.
+    当重复运行函数时，很难避免内存泄漏。
+    因此在子进程中运行以确保安全。
 
-    NOTE: Because local object can't be pickled. So we can't implement it via closure.
-          We have to implement it via callable Class
+    注意: 由于本地对象不能被pickle，无法通过闭包实现，
+          必须通过可调用类实现。
     """
 
     def __init__(self, func: Callable, qlib_config: QlibConfig = None):
         """
-        Parameters
+        参数
         ----------
         func : Callable
-            the function to be wrapped
+            待包装的函数
 
         qlib_config : QlibConfig
-            Qlib config for initialization in subprocess
+            子进程中初始化Qlib的配置
 
-        Returns
+        返回值
         -------
         Callable
         """
@@ -322,7 +323,7 @@ class call_in_subproc:
         self.qlib_config = qlib_config
 
     def _func_mod(self, *args, **kwargs):
-        """Modify the initial function by adding Qlib initialization"""
+        """通过添加Qlib初始化来修改初始函数"""
         if self.qlib_config is not None:
             C.register_from_C(self.qlib_config)
         return self.func(*args, **kwargs)

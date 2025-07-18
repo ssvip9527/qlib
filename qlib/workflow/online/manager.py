@@ -2,46 +2,43 @@
 # Licensed under the MIT License.
 
 """
-OnlineManager can manage a set of `Online Strategy <#Online Strategy>`_ and run them dynamically.
+OnlineManager可以管理一组`Online Strategy <#Online Strategy>`_并动态运行它们。
 
-With the change of time, the decisive models will be also changed. In this module, we call those contributing models `online` models.
-In every routine(such as every day or every minute), the `online` models may be changed and the prediction of them needs to be updated.
-So this module provides a series of methods to control this process.
+随着时间的推移，决策模型也会发生变化。在本模块中，我们将这些贡献模型称为`online`模型。
+在每个例行程序(如每天或每分钟)中，`online`模型可能会发生变化，需要更新它们的预测。
+因此本模块提供了一系列方法来控制这个过程。
 
-This module also provides a method to simulate `Online Strategy <#Online Strategy>`_ in history.
-Which means you can verify your strategy or find a better one.
+本模块还提供了一种在历史中模拟`Online Strategy <#Online Strategy>`_的方法。
+这意味着您可以验证您的策略或找到更好的策略。
 
-There are 4 total situations for using different trainers in different situations:
+在不同情况下使用不同训练器共有4种情况:
 
 
 
 =========================  ===================================================================================
-Situations                 Description
+情况                      描述
 =========================  ===================================================================================
-Online + Trainer           When you want to do a REAL routine, the Trainer will help you train the models. It
-                           will train models task by task and strategy by strategy.
+在线+训练器                当您想要执行真实的例行程序时，训练器将帮助您训练模型。
+                           它会逐个任务、逐个策略地训练模型。
 
-Online + DelayTrainer      DelayTrainer will skip concrete training until all tasks have been prepared by
-                           different strategies. It makes users can parallelly train all tasks at the end of
-                           `routine` or `first_train`. Otherwise, these functions will get stuck when each
-                           strategy prepare tasks.
+在线+延迟训练器            延迟训练器将跳过具体训练，直到所有任务已由不同策略准备完毕。
+                           它使用户可以在`routine`或`first_train`结束时并行训练所有任务。
+                           否则，当每个策略准备任务时，这些函数会卡住。
 
-Simulation + Trainer       It will behave in the same way as `Online + Trainer`. The only difference is that it
-                           is for simulation/backtesting instead of online trading
+模拟+训练器                它的行为方式与`在线+训练器`相同。唯一的区别是它用于模拟/回测而非在线交易
 
-Simulation + DelayTrainer  When your models don't have any temporal dependence, you can use DelayTrainer
-                           for the ability to multitasking. It means all tasks in all routines
-                           can be REAL trained at the end of simulating. The signals will be prepared well at
-                           different time segments (based on whether or not any new model is online).
+模拟+延迟训练器            当您的模型没有任何时间依赖性时，您可以使用延迟训练器来实现多任务处理能力。
+                           这意味着所有例行程序中的所有任务都可以在模拟结束时真实训练。
+                           信号将在不同时间段准备好(基于是否有任何新模型在线)。
 =========================  ===================================================================================
 
-Here is some pseudo code that demonstrate the workflow of each situation
+以下是一些伪代码，展示了每种情况的工作流程
 
-For simplicity
-    - Only one strategy is used in the strategy
-    - `update_online_pred` is only called in the online mode and is ignored
+为简单起见
+    - 策略中只使用一个策略
+    - `update_online_pred`仅在在线模式下调用并被忽略
 
-1) `Online + Trainer`
+1) `在线+训练器`
 
 .. code-block:: python
 
@@ -50,38 +47,38 @@ For simplicity
     trainer.end_train(models)
     for day in online_trading_days:
         # OnlineManager.routine
-        models = trainer.train(strategy.prepare_tasks())  # for each strategy
-        strategy.prepare_online_models(models)  # for each strategy
+        models = trainer.train(strategy.prepare_tasks())  # 对每个策略
+        strategy.prepare_online_models(models)  # 对每个策略
 
         trainer.end_train(models)
-        prepare_signals()  # prepare trading signals daily
+        prepare_signals()  # 每日准备交易信号
 
 
-`Online + DelayTrainer`: the workflow is the same as `Online + Trainer`.
+`在线+延迟训练器`: 工作流程与`在线+训练器`相同。
 
 
-2) `Simulation + DelayTrainer`
+2) `模拟+延迟训练器`
 
 .. code-block:: python
 
-    # simulate
+    # 模拟
     tasks = first_train()
     models = trainer.train(tasks)
     for day in historical_calendars:
         # OnlineManager.routine
-        models = trainer.train(strategy.prepare_tasks())  # for each strategy
-        strategy.prepare_online_models(models)  # for each strategy
+        models = trainer.train(strategy.prepare_tasks())  # 对每个策略
+        strategy.prepare_online_models(models)  # 对每个策略
     # delay_prepare()
-    # FIXME: Currently the delay_prepare is not implemented in a proper way.
+    # FIXME: 目前delay_prepare没有以正确的方式实现。
     trainer.end_train(<for all previous models>)
     prepare_signals()
 
 
-# Can we simplify current workflow?
+# 我们可以简化当前的工作流程吗?
 
-- Can reduce the number of state of tasks?
+- 可以减少任务的状态数量吗?
 
-    - For each task, we have three phases (i.e. task, partly trained task, final trained task)
+    - 对于每个任务，我们有三个阶段(即任务、部分训练的任务、最终训练的任务)
 """
 
 import logging
@@ -100,8 +97,8 @@ from qlib.workflow.task.collect import MergeCollector
 
 class OnlineManager(Serializable):
     """
-    OnlineManager can manage online models with `Online Strategy <#Online Strategy>`_.
-    It also provides a history recording of which models are online at what time.
+    OnlineManager可以通过`Online Strategy <#Online Strategy>`_管理在线模型。
+    它还提供了哪些模型在什么时间在线的历史记录。
     """
 
     STATUS_SIMULATING = "simulating"  # when calling `simulate`
@@ -115,14 +112,14 @@ class OnlineManager(Serializable):
         freq="day",
     ):
         """
-        Init OnlineManager.
-        One OnlineManager must have at least one OnlineStrategy.
+        初始化OnlineManager。
+        一个OnlineManager必须至少有一个OnlineStrategy。
 
-        Args:
-            strategies (Union[OnlineStrategy, List[OnlineStrategy]]): an instance of OnlineStrategy or a list of OnlineStrategy
-            begin_time (Union[str,pd.Timestamp], optional): the OnlineManager will begin at this time. Defaults to None for using the latest date.
-            trainer (qlib.model.trainer.Trainer): the trainer to train task. None for using TrainerR.
-            freq (str, optional): data frequency. Defaults to "day".
+        参数:
+            strategies (Union[OnlineStrategy, List[OnlineStrategy]]): OnlineStrategy实例或OnlineStrategy列表
+            begin_time (Union[str,pd.Timestamp], 可选): OnlineManager将在此时间开始。默认为None表示使用最新日期。
+            trainer (qlib.model.trainer.Trainer): 用于训练任务的训练器。None表示使用TrainerR。
+            freq (str, 可选): 数据频率。默认为"day"。
         """
         self.logger = get_module_logger(self.__class__.__name__)
         if not isinstance(strategies, list):
@@ -144,23 +141,23 @@ class OnlineManager(Serializable):
 
     def _postpone_action(self):
         """
-        Should the workflow to postpone the following actions to the end (in delay_prepare)
+        是否将以下操作推迟到最后(在delay_prepare中)
         - trainer.end_train
         - prepare_signals
 
-        Postpone these actions is to support simulating/backtest online strategies without time dependencies.
-        All the actions can be done parallelly at the end.
+        推迟这些操作是为了支持没有时间依赖性的模拟/回测在线策略。
+        所有操作都可以在最后并行完成。
         """
         return self.status == self.STATUS_SIMULATING and self.trainer.is_delay()
 
     def first_train(self, strategies: List[OnlineStrategy] = None, model_kwargs: dict = {}):
         """
-        Get tasks from every strategy's first_tasks method and train them.
-        If using DelayTrainer, it can finish training all together after every strategy's first_tasks.
+        从每个策略的first_tasks方法获取任务并训练它们。
+        如果使用DelayTrainer，它可以在每个策略的first_tasks之后一起完成所有训练。
 
-        Args:
-            strategies (List[OnlineStrategy]): the strategies list (need this param when adding strategies). None for use default strategies.
-            model_kwargs (dict): the params for `prepare_online_models`
+        参数:
+            strategies (List[OnlineStrategy]): 策略列表(添加策略时需要此参数)。None表示使用默认策略。
+            model_kwargs (dict): `prepare_online_models`的参数
         """
         if strategies is None:
             strategies = self.strategies
@@ -189,18 +186,18 @@ class OnlineManager(Serializable):
         signal_kwargs: dict = {},
     ):
         """
-        Typical update process for every strategy and record the online history.
+        每个策略的典型更新过程并记录在线历史。
 
-        The typical update process after a routine, such as day by day or month by month.
-        The process is: Update predictions -> Prepare tasks -> Prepare online models -> Prepare signals.
+        例行程序(如逐日或逐月)后的典型更新过程。
+        过程是: 更新预测 -> 准备任务 -> 准备在线模型 -> 准备信号。
 
-        If using DelayTrainer, it can finish training all together after every strategy's prepare_tasks.
+        如果使用DelayTrainer，它可以在每个策略的prepare_tasks之后一起完成所有训练。
 
-        Args:
-            cur_time (Union[str,pd.Timestamp], optional): run routine method in this time. Defaults to None.
-            task_kwargs (dict): the params for `prepare_tasks`
-            model_kwargs (dict): the params for `prepare_online_models`
-            signal_kwargs (dict): the params for `prepare_signals`
+        参数:
+            cur_time (Union[str,pd.Timestamp], 可选): 在此时间运行routine方法。默认为None。
+            task_kwargs (dict): `prepare_tasks`的参数
+            model_kwargs (dict): `prepare_online_models`的参数
+            signal_kwargs (dict): `prepare_signals`的参数
         """
         if cur_time is None:
             cur_time = D.calendar(freq=self.freq).max()
@@ -229,14 +226,14 @@ class OnlineManager(Serializable):
 
     def get_collector(self, **kwargs) -> MergeCollector:
         """
-        Get the instance of `Collector <../advanced/task_management.html#Task Collecting>`_ to collect results from every strategy.
-        This collector can be a basis as the signals preparation.
+        获取`Collector <../advanced/task_management.html#Task Collecting>`_实例以收集每个策略的结果。
+        此收集器可以作为信号准备的基础。
 
-        Args:
-            **kwargs: the params for get_collector.
+        参数:
+            **kwargs: get_collector的参数。
 
-        Returns:
-            MergeCollector: the collector to merge other collectors.
+        返回:
+            MergeCollector: 用于合并其他收集器的收集器。
         """
         collector_dict = {}
         for strategy in self.strategies:
@@ -245,10 +242,10 @@ class OnlineManager(Serializable):
 
     def add_strategy(self, strategies: Union[OnlineStrategy, List[OnlineStrategy]]):
         """
-        Add some new strategies to OnlineManager.
+        向OnlineManager添加一些新策略。
 
-        Args:
-            strategy (Union[OnlineStrategy, List[OnlineStrategy]]): a list of OnlineStrategy
+        参数:
+            strategy (Union[OnlineStrategy, List[OnlineStrategy]]): OnlineStrategy列表
         """
         if not isinstance(strategies, list):
             strategies = [strategies]
@@ -257,22 +254,22 @@ class OnlineManager(Serializable):
 
     def prepare_signals(self, prepare_func: Callable = AverageEnsemble(), over_write=False):
         """
-        After preparing the data of the last routine (a box in box-plot) which means the end of the routine, we can prepare trading signals for the next routine.
+        在准备完最后一个例行程序(箱线图中的一个框)的数据后，这意味着例行程序的结束，我们可以为下一个例行程序准备交易信号。
 
-        NOTE: Given a set prediction, all signals before these prediction end times will be prepared well.
+        注意: 给定一组预测，这些预测结束时间之前的所有信号都将准备好。
 
-        Even if the latest signal already exists, the latest calculation result will be overwritten.
+        即使最新的信号已经存在，最新的计算结果也将被覆盖。
 
         .. note::
 
-            Given a prediction of a certain time, all signals before this time will be prepared well.
+            给定某个时间的预测，此时间之前的所有信号都将准备好。
 
-        Args:
-            prepare_func (Callable, optional): Get signals from a dict after collecting. Defaults to AverageEnsemble(), the results collected by MergeCollector must be {xxx:pred}.
-            over_write (bool, optional): If True, the new signals will overwrite. If False, the new signals will append to the end of signals. Defaults to False.
+        参数:
+            prepare_func (Callable, 可选): 从收集后的字典中获取信号。默认为AverageEnsemble()，由MergeCollector收集的结果必须是{xxx:pred}。
+            over_write (bool, 可选): 如果为True，新信号将覆盖。如果为False，新信号将附加到信号末尾。默认为False。
 
-        Returns:
-            pd.DataFrame: the signals.
+        返回:
+            pd.DataFrame: 信号。
         """
         signals = prepare_func(self.get_collector()())
         old_signals = self.signals
@@ -288,11 +285,11 @@ class OnlineManager(Serializable):
 
     def get_signals(self) -> Union[pd.Series, pd.DataFrame]:
         """
-        Get prepared online signals.
+        获取准备好的在线信号。
 
-        Returns:
-            Union[pd.Series, pd.DataFrame]: pd.Series for only one signals every datetime.
-            pd.DataFrame for multiple signals, for example, buy and sell operations use different trading signals.
+        返回:
+            Union[pd.Series, pd.DataFrame]: pd.Series表示每个日期时间只有一个信号。
+            pd.DataFrame表示多个信号，例如买卖操作使用不同的交易信号。
         """
         return self.signals
 
@@ -303,22 +300,22 @@ class OnlineManager(Serializable):
         self, end_time=None, frequency="day", task_kwargs={}, model_kwargs={}, signal_kwargs={}
     ) -> Union[pd.Series, pd.DataFrame]:
         """
-        Starting from the current time, this method will simulate every routine in OnlineManager until the end time.
+        从当前时间开始，此方法将模拟OnlineManager中的每个例行程序，直到结束时间。
 
-        Considering the parallel training, the models and signals can be prepared after all routine simulating.
+        考虑到并行训练，模型和信号可以在所有例行程序模拟后准备。
 
-        The delay training way can be ``DelayTrainer`` and the delay preparing signals way can be ``delay_prepare``.
+        延迟训练方式可以是``DelayTrainer``，延迟准备信号方式可以是``delay_prepare``。
 
-        Args:
-            end_time: the time the simulation will end
-            frequency: the calendar frequency
-            task_kwargs (dict): the params for `prepare_tasks`
-            model_kwargs (dict): the params for `prepare_online_models`
-            signal_kwargs (dict): the params for `prepare_signals`
+        参数:
+            end_time: 模拟结束的时间
+            frequency: 日历频率
+            task_kwargs (dict): `prepare_tasks`的参数
+            model_kwargs (dict): `prepare_online_models`的参数
+            signal_kwargs (dict): `prepare_signals`的参数
 
-        Returns:
-            Union[pd.Series, pd.DataFrame]: pd.Series for only one signals every datetime.
-            pd.DataFrame for multiple signals, for example, buy and sell operations use different trading signals.
+        返回:
+            Union[pd.Series, pd.DataFrame]: pd.Series表示每个日期时间只有一个信号。
+            pd.DataFrame表示多个信号，例如买卖操作使用不同的交易信号。
         """
         self.status = self.STATUS_SIMULATING
         cal = D.calendar(start_time=self.cur_time, end_time=end_time, freq=frequency)
@@ -348,11 +345,11 @@ class OnlineManager(Serializable):
 
     def delay_prepare(self, model_kwargs={}, signal_kwargs={}):
         """
-        Prepare all models and signals if something is waiting for preparation.
+        如果有任何内容等待准备，则准备所有模型和信号。
 
-        Args:
-            model_kwargs: the params for `end_train`
-            signal_kwargs: the params for `prepare_signals`
+        参数:
+            model_kwargs: `end_train`的参数
+            signal_kwargs: `prepare_signals`的参数
         """
         # FIXME:
         # This method is not implemented in the proper way!!!

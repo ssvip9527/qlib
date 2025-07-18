@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-Task related workflow is implemented in this folder
+任务相关的工作流程在此文件夹中实现
 
-A typical task workflow
+一个典型的工作流程
 
-| Step                  | Description                                    |
+| 步骤                  | 描述                                    |
 |-----------------------+------------------------------------------------|
-| TaskGen               | Generating tasks.                              |
-| TaskManager(optional) | Manage generated tasks                         |
-| run task              | retrieve  tasks from TaskManager and run tasks. |
+| TaskGen               | 生成任务                              |
+| TaskManager(可选) | 管理生成的任务                         |
+| run task              | 从TaskManager检索任务并运行任务 |
 """

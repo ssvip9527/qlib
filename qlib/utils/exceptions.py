@@ -8,12 +8,12 @@ class QlibException(Exception):
 
 
 class RecorderInitializationError(QlibException):
-    """Error type for re-initialization when starting an experiment"""
+    """实验开始时重新初始化的错误类型"""
 
 
 class LoadObjectError(QlibException):
-    """Error type for Recorder when can not load object"""
+    """Recorder无法加载对象时的错误类型"""
 
 
 class ExpAlreadyExistError(Exception):
-    """Experiment already exists"""
+    """实验已存在"""
