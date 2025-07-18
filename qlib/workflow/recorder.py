@@ -469,7 +469,7 @@ class MLflowRecorder(Recorder):
             return self.artifact_uri
         else:
             raise ValueError(
-                "Please make sure the recorder has been created and started properly before getting artifact uri."
+                "请确保记录器已正确创建并启动后再获取artifact uri"
             )
 
     def list_artifacts(self, artifact_path=None):

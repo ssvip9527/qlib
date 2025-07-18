@@ -374,17 +374,17 @@ class PortAnaRecord(ACRecordTemp):
     ):
         """
         config["strategy"] : dict
-            define the strategy class as well as the kwargs.
+            定义策略类及其参数
         config["executor"] : dict
-            define the executor class as well as the kwargs.
+            定义执行器类及其参数
         config["backtest"] : dict
-            define the backtest kwargs.
+            定义回测参数
         risk_analysis_freq : str|List[str]
-            risk analysis freq of report
+            风险分析报告频率
         indicator_analysis_freq : str|List[str]
-            indicator analysis freq of report
+            指标分析报告频率
         indicator_analysis_method : str, optional, default by None
-            the candidate values include 'mean', 'amount_weighted', 'value_weighted'
+            可选值包括'mean', 'amount_weighted', 'value_weighted'
         """
         super().__init__(recorder=recorder, skip_existing=skip_existing, **kwargs)
 
@@ -410,8 +410,8 @@ class PortAnaRecord(ACRecordTemp):
                 },
             }
         # We only deepcopy_basic_type because
-        # - We don't want to affect the config outside.
-        # - We don't want to deepcopy complex object to avoid overhead
+        # - 避免影响外部config
+        # - 避免深度复制复杂对象以减少开销
         config = deepcopy_basic_type(config)
 
         self.strategy_config = config["strategy"]
@@ -582,11 +582,11 @@ class MultiPassPortAnaRecord(PortAnaRecord):
         Parameters
         ----------
         recorder : Recorder
-            The recorder used to save the backtest results.
+            用于保存回测结果的记录器
         pass_num : int
-            The number of backtest passes.
+            回测次数
         shuffle_init_score : bool
-            Whether to shuffle the prediction score of the first backtest date.
+            是否打乱第一个回测日期的预测分数
         """
         self.pass_num = pass_num
         self.shuffle_init_score = shuffle_init_score

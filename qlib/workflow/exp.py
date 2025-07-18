@@ -73,30 +73,29 @@ class Experiment:
 
     def create_recorder(self, recorder_name=None):
         """
-        Create a recorder for each experiment.
+        为每个实验创建记录器
 
         Parameters
         ----------
         recorder_name : str
-            the name of the recorder to be created.
+            要创建记录器的名称
 
         Returns
         -------
-        A recorder object.
+        记录器对象
         """
         raise NotImplementedError(f"Please implement the `create_recorder` method.")
 
     def search_records(self, **kwargs):
         """
-        Get a pandas DataFrame of records that fit the search criteria of the experiment.
-        Inputs are the search criteria user want to apply.
+        获取符合实验搜索条件的记录DataFrame
+        输入为用户想要应用的搜索条件
 
         Returns
         -------
-        A pandas.DataFrame of records, where each metric, parameter, and tag
-        are expanded into their own columns named metrics.*, params.*, and tags.*
-        respectively. For records that don't have a particular metric, parameter, or tag, their
-        value will be (NumPy) Nan, None, or None respectively.
+        包含记录的pandas.DataFrame，其中每个指标、参数和标签
+        都被展开到名为metrics.*、params.*和tags.*的列中
+        对于没有特定指标、参数或标签的记录，它们的值将分别为(NumPy)Nan、None或None
         """
         raise NotImplementedError(f"Please implement the `search_records` method.")
 
