@@ -329,7 +329,7 @@ class MLflowRecorder(Recorder):
 
         else:
             raise ValueError(
-                "Please make sure the recorder has been created and started properly before getting artifact uri."
+                "请确保记录器已正确创建并启动后再获取artifact uri。"
             )
 
     def start_run(self):
@@ -473,7 +473,7 @@ class MLflowRecorder(Recorder):
             )
 
     def list_artifacts(self, artifact_path=None):
-        assert self.uri is not None, "Please start the experiment and recorder first before using recorder directly."
+        assert self.uri is not None, "请先启动实验和记录器再直接使用记录器。"
         artifacts = self.client.list_artifacts(self.id, artifact_path)
         return [art.path for art in artifacts]
 

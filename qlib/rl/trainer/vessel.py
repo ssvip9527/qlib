@@ -205,12 +205,12 @@ class TrainingVessel(TrainingVesselBase):
     @staticmethod
     def _random_subset(name: str, collection: Sequence[T], size: int | None) -> Sequence[T]:
         if size is None:
-            # Size = None -> original collection
+            # size为None时返回原集合
             return collection
         order = np.random.permutation(len(collection))
         res = [collection[o] for o in order[:size]]
         _logger.info(
-            "Fast running in development mode. Cut %s initial states from %d to %d.",
+            "开发模式下快速运行。将%s的初始状态从%d个减少到%d个。",
             name,
             len(collection),
             len(res),

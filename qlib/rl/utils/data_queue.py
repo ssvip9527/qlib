@@ -150,9 +150,8 @@ class DataQueue(Generic[T]):
     def __iter__(self) -> Generator[Any, None, None]:
         if not self._activated:
             raise ValueError(
-                "Need to call activate() to launch a daemon worker "
-                "to produce data into data queue before using it. "
-                "You probably have forgotten to use the DataQueue in a with block.",
+                "需要先调用activate()启动守护进程将数据放入队列才能使用。"
+                "您可能忘记了在with块中使用DataQueue。"
             )
         return self._consumer()
 
