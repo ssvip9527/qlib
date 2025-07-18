@@ -27,7 +27,7 @@ Qlib提供了一个基类 ``qlib.strategy.base.BaseStrategy``。所有策略类�
 - `generate_trade_decision`
     generate_trade_decision是一个关键接口，用于在每个交易周期生成交易决策。
     调用此方法的频率取决于执行器频率（默认"time_per_step"="day"）。但交易频率可由用户实现决定。
-    例如，如果用户希望以周为单位进行交易，而执行器中的`time_per_step`为"day"，用户可以每周返回非空的TradeDecision（否则返回空值，如`此处 <https://github.com/ssvip9527/qlib/blob/main/qlib/contrib/strategy/signal_strategy.py#L132>`_ 所示）。
+    例如，如果用户希望以周为单位进行交易，而执行器中的`time_per_step`为"day"，用户可以每周返回非空的TradeDecision（否则返回空值，如`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/contrib/strategy/signal_strategy.py#L132>`_ 所示）。
 
 用户可以继承`BaseStrategy`来自定义自己的策略类。
 

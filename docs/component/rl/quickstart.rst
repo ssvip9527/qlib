@@ -170,6 +170,6 @@ And the config file for backtesting:
 
 在这种情况下，:class:`~qlib.rl.order_execution.simulator_qlib.SingleAssetOrderExecution` 和 :class:`~qlib.rl.order_execution.simulator_simple.SingleAssetOrderExecutionSimple` 作为模拟器示例，:class:`qlib.rl.order_execution.interpreter.FullHistoryStateInterpreter` 和 :class:`qlib.rl.order_execution.interpreter.CategoricalActionInterpreter` 作为解释器示例，:class:`qlib.rl.order_execution.policy.PPO` 作为策略示例，:class:`qlib.rl.order_execution.reward.PAPenaltyReward` 作为奖励函数示例。
 对于单资产订单执行任务，如果开发者已经定义了自己的模拟器/解释器/奖励函数/策略，他们只需修改配置文件中的相应设置即可启动训练和回测流程。
-示例的详细信息可以在`这里 <https://github.com/ssvip9527/qlib/blob/main/examples/rl/README.md>`_ 找到。
+示例的详细信息可以在`这里 <https://github.com/ssvip9527/qlib/blob/main-cn/examples/rl/README.md>`_ 找到。
 
 未来我们将提供更多不同场景的示例，例如基于强化学习的投资组合构建。

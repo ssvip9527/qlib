@@ -8,7 +8,7 @@
 简介
 ============
 
-`Qlib框架 <../introduction/introduction.html#framework>`_ 中的组件采用松耦合设计。用户可以使用这些组件构建自己的量化研究工作流，例如`示例 <https://github.com/ssvip9527/qlib/blob/main/examples/workflow_by_code.py>`_。
+`Qlib框架 <../introduction/introduction.html#framework>`_ 中的组件采用松耦合设计。用户可以使用这些组件构建自己的量化研究工作流，例如`示例 <https://github.com/ssvip9527/qlib/blob/main-cn/examples/workflow_by_code.py>`_。
 
 
 此外，``Qlib``提供了更友好的接口``qrun``来自动运行通过配置定义的整个工作流。运行整个工作流称为一次`执行`。
@@ -225,7 +225,7 @@ In the `task` field, the `model` section describes the parameters of the model t
     类型：str。模型在qlib中的路径。
 
 - `kwargs`
-    模型的关键字参数。有关更多信息，请参考具体的模型实现：`models <https://github.com/ssvip9527/qlib/blob/main/qlib/contrib/model>`_。
+    模型的关键字参数。有关更多信息，请参考具体的模型实现：`models <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/contrib/model>`_。
 
 .. note::
 

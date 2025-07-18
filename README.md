@@ -61,7 +61,7 @@ RD-Agent 现在已在 [GitHub](https://github.com/microsoft/RD-Agent) 上可用�
 | ADD 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/704) 于2021年11月22日 |
 | ADARNN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/689) 于2021年11月14日 |
 | TCN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/668) 于2021年11月4日 |
-| 嵌套决策框架 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/438) 于2021年10月1日。 [示例](https://github.com/ssvip9527/qlib/blob/main/examples/nested_decision_execution/workflow.py) 和 [文档](https://qlib.readthedocs.io/en/latest/component/highfreq.html) |
+| 嵌套决策框架 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/438) 于2021年10月1日。 [示例](https://github.com/ssvip9527/qlib/blob/main-cn/examples/nested_decision_execution/workflow.py) 和 [文档](https://qlib.readthedocs.io/en/latest/component/highfreq.html) |
 | Temporal Routing Adaptor (TRA) | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/531) 于2021年7月30日 |
 | Transformer & Localformer | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/508) 于2021年7月22日 |
 | 发布 Qlib v0.7.0 | :octocat: [已发布](https://github.com/ssvip9527/qlib/releases/tag/v0.7.0) 于2021年7月12日 |
@@ -384,19 +384,19 @@ Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工�
 2. 图形化报告分析：首先运行 `python -m pip install .[analysis]` 安装所需依赖，然后用 `jupyter notebook` 打开并运行 `examples/workflow_by_code.ipynb`，即可获得图形化报告。
     - 预测信号（模型预测）分析
       - 分组累计收益
-      ![Cumulative Return](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_cumulative_return.png)
+      ![Cumulative Return](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/analysis/analysis_model_cumulative_return.png)
       - 收益分布
-      ![long_short](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_long_short.png)
+      ![long_short](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/analysis/analysis_model_long_short.png)
       - 信息系数（IC）
-      ![Information Coefficient](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_IC.png)
-      ![Monthly IC](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_monthly_IC.png)
-      ![IC](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_NDQ.png)
+      ![Information Coefficient](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/analysis/analysis_model_IC.png)
+      ![Monthly IC](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/analysis/analysis_model_monthly_IC.png)
+      ![IC](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/analysis/analysis_model_NDQ.png)
       - 预测信号（模型预测）的自相关性
-      ![Auto Correlation](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_auto_correlation.png)
+      ![Auto Correlation](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/analysis/analysis_model_auto_correlation.png)
 
     - 投资组合分析
       - 回测收益
-      ![Report](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/report.png)
+      ![Report](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/analysis/report.png)
       <!-- 
       - Score IC
       ![Score IC](docs/_static/img/score_ic.png)
@@ -579,7 +579,7 @@ Qlib 数据以紧凑格式存储，便于高效组合为科学计算所需的数
 加入 IM 讨论群：
 |[Gitter](https://gitter.im/Microsoft/qlib)|
 |----|
-|![image](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/qrcode/gitter_qr.png)|
+|![image](https://github.com/ssvip9527/qlib/blob/main-cn/docs/_static/img/qrcode/gitter_qr.png)|
 
 # 贡献
 感谢所有贡献者！

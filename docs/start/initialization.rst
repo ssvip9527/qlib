@@ -37,7 +37,7 @@ Qlib初始化
 Parameters
 -------------------
 
-除了`provider_uri`和`region`之外，`qlib.init`还有其他参数。以下是`qlib.init`的几个重要参数（Qlib有很多配置，这里仅列出部分参数。更详细的设置可以在`此处 <https://github.com/ssvip9527/qlib/blob/main/qlib/config.py>`_找到）：
+除了`provider_uri`和`region`之外，`qlib.init`还有其他参数。以下是`qlib.init`的几个重要参数（Qlib有很多配置，这里仅列出部分参数。更详细的设置可以在`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/config.py>`_找到）：
 
 - `provider_uri`
     类型：字符串。Qlib数据的URI。例如，它可以是``get_data.py``加载的数据存储的位置。

@@ -24,8 +24,8 @@
 以下是Qlib数据工作流的典型示例：
 
 - 用户下载数据并将其转换为Qlib格式（文件后缀为`.bin`）。在此步骤中，通常仅将一些基本数据（如OHLCV）存储在磁盘上。
-- 基于Qlib的表达式引擎创建一些基本特征（例如"Ref($close, 60) / $close"，表示过去60个交易日的收益率）。表达式引擎支持的运算符可在`此处 <https://github.com/ssvip9527/qlib/blob/main/qlib/data/ops.py>`__找到。此步骤通常在Qlib的`数据加载器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-loader>`_中实现，它是`数据处理器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-handler>`_的一个组件。
-- 如果用户需要更复杂的数据处理（例如数据归一化），`数据处理器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-handler>`_支持用户自定义处理器来处理数据（一些预定义的处理器可在`此处 <https://github.com/ssvip9527/qlib/blob/main/qlib/data/dataset/processor.py>`__找到）。这些处理器与表达式引擎中的运算符不同，它们专为一些难以用表达式引擎运算符支持的复杂数据处理方法而设计。
+- 基于Qlib的表达式引擎创建一些基本特征（例如"Ref($close, 60) / $close"，表示过去60个交易日的收益率）。表达式引擎支持的运算符可在`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/data/ops.py>`__找到。此步骤通常在Qlib的`数据加载器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-loader>`_中实现，它是`数据处理器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-handler>`_的一个组件。
+- 如果用户需要更复杂的数据处理（例如数据归一化），`数据处理器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-handler>`_支持用户自定义处理器来处理数据（一些预定义的处理器可在`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/data/dataset/processor.py>`__找到）。这些处理器与表达式引擎中的运算符不同，它们专为一些难以用表达式引擎运算符支持的复杂数据处理方法而设计。
 - 最后，`数据集 <https://qlib.readthedocs.io/en/latest/component/data.html#dataset>`_负责从数据处理器处理后的数据中准备模型特定的数据集
 
 数据准备
@@ -37,7 +37,7 @@ Qlib格式数据
 我们专门设计了一种数据结构来管理金融数据，详细信息请参考Qlib论文中的`文件存储设计部分 <https://arxiv.org/abs/2009.11189>`_。
 此类数据将以`.bin`为文件后缀存储（我们称之为`.bin`文件、`.bin`格式或Qlib格式）。`.bin`文件专为金融数据的科学计算而设计。
 
-``Qlib``提供了两种现成的数据集，可通过此`链接 <https://github.com/ssvip9527/qlib/blob/main/qlib/contrib/data/handler.py>`__访问：
+``Qlib``提供了两种现成的数据集，可通过此`链接 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/contrib/data/handler.py>`__访问：
 
 ========================  =================  ================
 数据集                    美国市场           中国市场
@@ -251,7 +251,7 @@ Qlib格式数据集
 股票池（市场）
 -------------------
 
-``Qlib``将`股票池 <https://github.com/ssvip9527/qlib/blob/main/examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml#L4>`_定义为股票列表及其日期范围。可以按以下方式导入预定义的股票池（如沪深300）。
+``Qlib``将`股票池 <https://github.com/ssvip9527/qlib/blob/main-cn/examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml#L4>`_定义为股票列表及其日期范围。可以按以下方式导入预定义的股票池（如沪深300）。
 
 .. code-block:: bash
 
@@ -443,7 +443,7 @@ DataHandlerLP
 - ``CSRankNorm``：应用横截面排名归一化的`处理器`。
 - ``CSZFillna``：以横截面方式通过列平均值填充N/A值的`处理器`。
 
-用户也可以通过继承``Processor``的基类创建自己的`处理器`。有关所有处理器的实现详情，请参考（`处理器链接 <https://github.com/ssvip9527/qlib/blob/main/qlib/data/dataset/processor.py>`_）。
+用户也可以通过继承``Processor``的基类创建自己的`处理器`。有关所有处理器的实现详情，请参考（`处理器链接 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/data/dataset/processor.py>`_）。
 
 要了解更多关于``Processor``的信息，请参考`处理器API <../reference/api.html#module-qlib.data.dataset.processor>`_。
 

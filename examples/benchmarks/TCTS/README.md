@@ -12,7 +12,7 @@
 在步骤<img src="https://latex.codecogs.com/png.latex?s" title="s" />，给定训练数据<img src="https://latex.codecogs.com/png.latex?x_s,y_s" title="x_s,y_s" />，调度器<img src="https://latex.codecogs.com/png.latex?\varphi" title="\varphi" />选择合适的任务<img src="https://latex.codecogs.com/png.latex?T_{i_s}" title="T_{i_s}" />（绿色实线）来更新模型<img src="https://latex.codecogs.com/png.latex?f" title="f" />（蓝色实线）。经过<img src="https://latex.codecogs.com/png.latex?S" title="S" />步后，我们在验证集上评估模型<img src="https://latex.codecogs.com/png.latex?f" title="f" />并更新调度器<img src="https://latex.codecogs.com/png.latex?\varphi" title="\varphi" />（绿色虚线）。
 
 ### 实验
-由于数据版本和Qlib版本不同，论文中实验设置的原始数据和数据预处理方法与现有Qlib版本中的实验设置有所不同。因此，我们根据两种设置提供了两个版本的代码：1）可用于复现实验结果的[代码](https://github.com/lwwang1995/tcts)；2）当前Qlib基线中的[代码](https://github.com/ssvip9527/qlib/blob/main/qlib/contrib/model/pytorch_tcts.py)。
+由于数据版本和Qlib版本不同，论文中实验设置的原始数据和数据预处理方法与现有Qlib版本中的实验设置有所不同。因此，我们根据两种设置提供了两个版本的代码：1）可用于复现实验结果的[代码](https://github.com/lwwang1995/tcts)；2）当前Qlib基线中的[代码](https://github.com/ssvip9527/qlib/blob/main-cn/qlib/contrib/model/pytorch_tcts.py)。
 
 #### 设置1
 * 数据集：我们使用[沪深300](http://www.csindex.com.cn/en/indices/index-detail/000300) 300只股票2008年1月1日至2020年8月1日的历史交易数据。根据交易时间将数据分为训练集（2008/01/01-2013/12/31）、验证集（2014/01/01-2015/12/31）和测试集（2016/01/01-2020/08/01）。
