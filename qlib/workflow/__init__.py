@@ -1,17 +1,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-Motivation of this design (instead of using mlflow directly):
-- Better design than mlflow native design
-    - we have record object with a lot of methods(more intuitive), instead of use run_id everytime in mlflow
-        - So the recorder's interfaces like log, start, will be more intuitive.
-- Provide richer and tailerd features than mlflow native
-    - Logging code diff at the start of run.
-    - log_object and load_object to for Python object directly instead log_artifact and download_artifact
-- (weak) Allow diverse backend support
+设计动机(相比直接使用mlflow):
+- 比mlflow原生设计更好
+    - 我们拥有包含丰富方法的记录对象(更直观)，而不是像mlflow中每次都要使用run_id
+        - 因此记录器的接口如log、start等会更加直观
+- 提供比mlflow原生更丰富和定制化的功能
+    - 在运行开始时记录代码差异
+    - 直接使用log_object和load_object处理Python对象，而不是log_artifact和download_artifact
+- (较弱)支持多种后端
 
-To be honest, design always add burdens. For example,
-- You need to create an experiment before you can get a recorder. (In MLflow, experiments are more like tags, and you often just use a run_id in many interfaces without first defining an experiment.)
+诚然，设计总会带来额外负担。例如：
+- 必须先创建实验才能获取记录器(在MLflow中，实验更像是标签，您通常可以在许多接口中直接使用run_id而无需先定义实验)
 """
 
 from contextlib import contextmanager
@@ -25,7 +25,7 @@ from ..utils.exceptions import RecorderInitializationError
 
 class QlibRecorder:
     """
-    A global system that helps to manage the experiments.
+    用于管理实验的全局系统。
     """
 
     def __init__(self, exp_manager: ExpManager):
@@ -46,38 +46,37 @@ class QlibRecorder:
         resume: bool = False,
     ):
         """
-        Method to start an experiment. This method can only be called within a Python's `with` statement. Here is the example code:
+        启动实验的方法。此方法只能在Python的`with`语句中调用。示例代码如下：
 
         .. code-block:: Python
 
-            # start new experiment and recorder
+            # 启动新实验和记录器
             with R.start(experiment_name='test', recorder_name='recorder_1'):
                 model.fit(dataset)
                 R.log...
-                ... # further operations
+                ... # 其他操作
 
-            # resume previous experiment and recorder
-            with R.start(experiment_name='test', recorder_name='recorder_1', resume=True): # if users want to resume recorder, they have to specify the exact same name for experiment and recorder.
-                ... # further operations
+            # 恢复之前的实验和记录器
+            with R.start(experiment_name='test', recorder_name='recorder_1', resume=True): # 如果用户想恢复记录器，必须指定完全相同的实验和记录器名称
+                ... # 其他操作
 
 
-        Parameters
+        参数
         ----------
         experiment_id : str
-            id of the experiment one wants to start.
+            要启动的实验ID
         experiment_name : str
-            name of the experiment one wants to start.
+            要启动的实验名称
         recorder_id : str
-            id of the recorder under the experiment one wants to start.
+            实验下要启动的记录器ID
         recorder_name : str
-            name of the recorder under the experiment one wants to start.
+            实验下要启动的记录器名称
         uri : str
-            The tracking uri of the experiment, where all the artifacts/metrics etc. will be stored.
-            The default uri is set in the qlib.config. Note that this uri argument will not change the one defined in the config file.
-            Therefore, the next time when users call this function in the same experiment,
-            they have to also specify this argument with the same value. Otherwise, inconsistent uri may occur.
+            实验的跟踪URI，所有artifacts/metrics等将存储在此处
+            默认URI设置在qlib.config中。注意此uri参数不会更改配置文件中的设置
+            因此下次在同一实验中调用此函数时，用户必须指定相同的值，否则可能出现URI不一致
         resume : bool
-            whether to resume the specific recorder with given name under the given experiment.
+            是否恢复指定名称的记录器
         """
         run = self.start_exp(
             experiment_id=experiment_id,
@@ -213,29 +212,28 @@ class QlibRecorder:
 
     def list_recorders(self, experiment_id=None, experiment_name=None):
         """
-        Method for listing all the recorders of experiment with given id or name.
+        列出指定ID或名称实验的所有记录器的方法。
 
-        If user doesn't provide the id or name of the experiment, this method will try to retrieve the default experiment and
-        list all the recorders of the default experiment. If the default experiment doesn't exist, the method will first
-        create the default experiment, and then create a new recorder under it. (More information about the default experiment
-        can be found `here <../component/recorder.html#qlib.workflow.exp.Experiment>`__).
+        如果用户未提供实验ID或名称，此方法将尝试获取默认实验并列出其所有记录器。
+        如果默认实验不存在，方法将先创建默认实验，然后在其下创建新记录器。
+        (关于默认实验的更多信息请参考`此处 <../component/recorder.html#qlib.workflow.exp.Experiment>`__)。
 
-        Here is the example code:
+        示例代码：
 
         .. code-block:: Python
 
             recorders = R.list_recorders(experiment_name='test')
 
-        Parameters
+        参数
         ----------
         experiment_id : str
-            id of the experiment.
+            实验ID
         experiment_name : str
-            name of the experiment.
+            实验名称
 
-        Returns
+        返回
         -------
-        A dictionary (id -> recorder) of recorder information that being stored.
+        存储的记录器信息字典(id -> recorder)
         """
         return self.get_exp(experiment_id=experiment_id, experiment_name=experiment_name).list_recorders()
 
@@ -243,77 +241,65 @@ class QlibRecorder:
         self, *, experiment_id=None, experiment_name=None, create: bool = True, start: bool = False
     ) -> Experiment:
         """
-        Method for retrieving an experiment with given id or name. Once the `create` argument is set to
-        True, if no valid experiment is found, this method will create one for you. Otherwise, it will
-        only retrieve a specific experiment or raise an Error.
+        根据ID或名称获取实验的方法。当`create`参数设为True时，如果找不到有效实验，此方法将自动创建一个；否则仅获取特定实验或抛出错误。
 
-        - If '`create`' is True:
+        - 当'`create`'为True时：
 
-            - If `active experiment` exists:
+            - 存在`active experiment`：
+                - 未指定ID或名称，返回当前活动实验
+                - 指定了ID或名称，返回指定实验。若无此实验，则创建新实验
 
-                - no id or name specified, return the active experiment.
+            - 不存在`active experiment`：
+                - 未指定ID或名称，创建默认实验并设为活动状态
+                - 指定了ID或名称，返回指定实验。若无此实验，则创建新实验或默认实验
 
-                - if id or name is specified, return the specified experiment. If no such exp found, create a new experiment with given id or name.
+        - 当'`create`'为False时：
 
-            - If `active experiment` not exists:
+            - 存在`active experiment`：
+                - 未指定ID或名称，返回当前活动实验
+                - 指定了ID或名称，返回指定实验。若无此实验，抛出错误
 
-                - no id or name specified, create a default experiment, and the experiment is set to be active.
+            - 不存在`active experiment`：
+                - 未指定ID或名称。若默认实验存在则返回，否则抛出错误
+                - 指定了ID或名称，返回指定实验。若无此实验，抛出错误
 
-                - if id or name is specified, return the specified experiment. If no such exp found, create a new experiment with given name or the default experiment.
-
-        - Else If '`create`' is False:
-
-            - If `active experiment` exists:
-
-                - no id or name specified, return the active experiment.
-
-                - if id or name is specified, return the specified experiment. If no such exp found, raise Error.
-
-            - If `active experiment` not exists:
-
-                - no id or name specified. If the default experiment exists, return it, otherwise, raise Error.
-
-                - if id or name is specified, return the specified experiment. If no such exp found, raise Error.
-
-        Here are some use cases:
+        使用示例：
 
         .. code-block:: Python
 
-            # Case 1
+            # 示例1
             with R.start('test'):
                 exp = R.get_exp()
                 recorders = exp.list_recorders()
 
-            # Case 2
+            # 示例2
             with R.start('test'):
                 exp = R.get_exp(experiment_name='test1')
 
-            # Case 3
-            exp = R.get_exp() -> a default experiment.
+            # 示例3
+            exp = R.get_exp() -> 获取默认实验
 
-            # Case 4
+            # 示例4
             exp = R.get_exp(experiment_name='test')
 
-            # Case 5
-            exp = R.get_exp(create=False) -> the default experiment if exists.
+            # 示例5
+            exp = R.get_exp(create=False) -> 若存在则返回默认实验
 
-        Parameters
+        参数
         ----------
         experiment_id : str
-            id of the experiment.
+            实验ID
         experiment_name : str
-            name of the experiment.
+            实验名称
         create : boolean
-            an argument determines whether the method will automatically create a new experiment
-            according to user's specification if the experiment hasn't been created before.
+            决定当实验不存在时是否自动创建新实验
         start : bool
-            when start is True,
-            if the experiment has not started(not activated), it will start
-            It is designed for R.log_params to auto start experiments
+            当为True时，如果实验未启动(未激活)，将自动启动
+            专为R.log_params自动启动实验设计
 
-        Returns
+        返回
         -------
-        An experiment instance with given id or name.
+        具有给定ID或名称的实验实例
         """
         return self.exp_manager.get_exp(
             experiment_id=experiment_id,
@@ -324,63 +310,62 @@ class QlibRecorder:
 
     def delete_exp(self, experiment_id=None, experiment_name=None):
         """
-        Method for deleting the experiment with given id or name. At least one of id or name must be given,
-        otherwise, error will occur.
+        删除指定ID或名称实验的方法。必须提供至少ID或名称中的一个，否则会出错。
 
-        Here is the example code:
+        示例代码：
 
         .. code-block:: Python
 
             R.delete_exp(experiment_name='test')
 
-        Parameters
+        参数
         ----------
         experiment_id : str
-            id of the experiment.
+            实验ID
         experiment_name : str
-            name of the experiment.
+            实验名称
         """
         self.exp_manager.delete_exp(experiment_id, experiment_name)
 
     def get_uri(self):
         """
-        Method for retrieving the uri of current experiment manager.
+        获取当前实验管理器URI的方法。
 
-        Here is the example code:
+        示例代码：
 
         .. code-block:: Python
 
             uri = R.get_uri()
 
-        Returns
+        返回
         -------
-        The uri of current experiment manager.
+        当前实验管理器的URI
         """
         return self.exp_manager.uri
 
     def set_uri(self, uri: Optional[Text]):
         """
-        Method to reset the **default** uri of current experiment manager.
+        重置当前实验管理器**默认**URI的方法。
 
-        NOTE:
+        注意：
 
-        - When the uri is refer to a file path, please using the absolute path instead of strings like "~/mlruns/"
-          The backend don't support strings like this.
+        - 当URI引用文件路径时，请使用绝对路径而非类似"~/mlruns/"的字符串
+          后端不支持此类字符串
         """
         self.exp_manager.default_uri = uri
 
     @contextmanager
     def uri_context(self, uri: Text):
         """
-        Temporarily set the exp_manager's **default_uri** to uri
+        临时设置exp_manager的**default_uri**为指定URI
 
-        NOTE:
-        - Please refer to the NOTE in the `set_uri`
+        注意：
+        - 请参考`set_uri`中的注意事项
 
-        Parameters
+        参数
         ----------
         uri : Text
-            the temporal uri
+            临时URI
         """
         prev_uri = self.exp_manager.default_uri
         self.exp_manager.default_uri = uri

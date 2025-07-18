@@ -27,10 +27,10 @@ mlflow.utils.validation.MAX_PARAM_VAL_LENGTH = 1000
 
 class Recorder:
     """
-    这是用于记录实验的`Recorder`类，其API设计与mlflow类似。
-    (链接: https://mlflow.org/docs/latest/python_api/mlflow.html)
+    This is the `Recorder` class for experiment recording, with API design similar to mlflow.
+    (Link: https://mlflow.org/docs/latest/python_api/mlflow.html)
 
-    记录器的状态可以是SCHEDULED(已调度), RUNNING(运行中), FINISHED(已完成), FAILED(失败)。
+    The recorder's status can be SCHEDULED, RUNNING, FINISHED or FAILED.
     """
 
     # status type
@@ -73,32 +73,32 @@ class Recorder:
 
     def save_objects(self, local_path=None, artifact_path=None, **kwargs):
         """
-        Save objects such as prediction file or model checkpoints to the artifact URI. User
-        can save object through keywords arguments (name:value).
+        保存对象如预测文件或模型检查点到artifact URI。用户
+        可以通过关键字参数(name:value)保存对象。
 
-        Please refer to the docs of qlib.workflow:R.save_objects
+        请参考qlib.workflow:R.save_objects的文档
 
-        Parameters
+        参数
         ----------
         local_path : str
-            if provided, them save the file or directory to the artifact URI.
+            如果提供，则将文件或目录保存到artifact URI。
         artifact_path=None : str
-            the relative path for the artifact to be stored in the URI.
+            存储在URI中的artifact的相对路径。
         """
         raise NotImplementedError(f"Please implement the `save_objects` method.")
 
     def load_object(self, name):
         """
-        Load objects such as prediction file or model checkpoints.
+        加载对象如预测文件或模型检查点。
 
-        Parameters
+        参数
         ----------
         name : str
-            name of the file to be loaded.
+            要加载的文件名。
 
-        Returns
+        返回
         -------
-        The saved object.
+        保存的对象。
         """
         raise NotImplementedError(f"Please implement the `load_object` method.")
 
@@ -121,143 +121,143 @@ class Recorder:
 
     def log_params(self, **kwargs):
         """
-        Log a batch of params for the current run.
+        为当前运行记录一批参数。
 
-        Parameters
+        参数
         ----------
-        keyword arguments
-            key, value pair to be logged as parameters.
+        关键字参数
+            要记录为参数的键值对。
         """
         raise NotImplementedError(f"Please implement the `log_params` method.")
 
     def log_metrics(self, step=None, **kwargs):
         """
-        Log multiple metrics for the current run.
+        为当前运行记录多个指标。
 
-        Parameters
+        参数
         ----------
-        keyword arguments
-            key, value pair to be logged as metrics.
+        关键字参数
+            要记录为指标的键值对。
         """
         raise NotImplementedError(f"Please implement the `log_metrics` method.")
 
     def log_artifact(self, local_path: str, artifact_path: Optional[str] = None):
         """
-        Log a local file or directory as an artifact of the currently active run.
+        将本地文件或目录记录为当前活动运行的artifact。
 
-        Parameters
+        参数
         ----------
         local_path : str
-            Path to the file to write.
+            要写入的文件路径。
         artifact_path : Optional[str]
-            If provided, the directory in ``artifact_uri`` to write to.
+            如果提供，则写入到``artifact_uri``中的目录。
         """
         raise NotImplementedError(f"Please implement the `log_metrics` method.")
 
     def set_tags(self, **kwargs):
         """
-        Log a batch of tags for the current run.
+        为当前运行记录一批标签。
 
-        Parameters
+        参数
         ----------
-        keyword arguments
-            key, value pair to be logged as tags.
+        关键字参数
+            要记录为标签的键值对。
         """
         raise NotImplementedError(f"Please implement the `set_tags` method.")
 
     def delete_tags(self, *keys):
         """
-        Delete some tags from a run.
+        从运行中删除一些标签。
 
-        Parameters
+        参数
         ----------
-        keys : series of strs of the keys
-            all the name of the tag to be deleted.
+        keys : 键的字符串序列
+            要删除的所有标签名称。
         """
         raise NotImplementedError(f"Please implement the `delete_tags` method.")
 
     def list_artifacts(self, artifact_path: str = None):
         """
-        List all the artifacts of a recorder.
+        列出记录器的所有artifacts。
 
-        Parameters
+        参数
         ----------
         artifact_path : str
-            the relative path for the artifact to be stored in the URI.
+            artifact存储在URI中的相对路径。
 
-        Returns
+        返回
         -------
-        A list of artifacts information (name, path, etc.) that being stored.
+            存储的artifacts信息列表(名称、路径等)。
         """
         raise NotImplementedError(f"Please implement the `list_artifacts` method.")
 
     def download_artifact(self, path: str, dst_path: Optional[str] = None) -> str:
         """
-        Download an artifact file or directory from a run to a local directory if applicable,
-        and return a local path for it.
+        从运行中下载artifact文件或目录到本地目录(如果适用)，
+        并返回其本地路径。
 
-        Parameters
+        参数
         ----------
         path : str
-            Relative source path to the desired artifact.
+            目标artifact的相对源路径。
         dst_path : Optional[str]
-            Absolute path of the local filesystem destination directory to which to
-            download the specified artifacts. This directory must already exist.
-            If unspecified, the artifacts will either be downloaded to a new
-            uniquely-named directory on the local filesystem.
+            本地文件系统目标目录的绝对路径，用于
+            下载指定的artifacts。该目录必须已存在。
+            如果未指定，artifacts将被下载到本地文件系统上
+            一个唯一命名的新目录中。
 
-        Returns
+        返回
         -------
         str
-            Local path of desired artifact.
+            目标artifact的本地路径。
         """
         raise NotImplementedError(f"Please implement the `list_artifacts` method.")
 
     def list_metrics(self):
         """
-        List all the metrics of a recorder.
+        列出记录器的所有指标。
 
-        Returns
+        返回
         -------
-        A dictionary of metrics that being stored.
+            存储的指标字典。
         """
         raise NotImplementedError(f"Please implement the `list_metrics` method.")
 
     def list_params(self):
         """
-        List all the params of a recorder.
+        列出记录器的所有参数。
 
-        Returns
+        返回
         -------
-        A dictionary of params that being stored.
+            存储的参数字典。
         """
         raise NotImplementedError(f"Please implement the `list_params` method.")
 
     def list_tags(self):
         """
-        List all the tags of a recorder.
+        列出记录器的所有标签。
 
-        Returns
+        返回
         -------
-        A dictionary of tags that being stored.
+            存储的标签字典。
         """
         raise NotImplementedError(f"Please implement the `list_tags` method.")
 
 
 class MLflowRecorder(Recorder):
     """
-    Use mlflow to implement a Recorder.
+    使用mlflow实现一个Recorder。
 
-    Due to the fact that mlflow will only log artifact from a file or directory, we decide to
-    use file manager to help maintain the objects in the project.
+    由于mlflow只能从文件或目录记录artifact，我们决定使用
+    文件管理器来帮助维护项目中的对象。
 
-    Instead of using mlflow directly, we use another interface wrapping mlflow to log experiments.
-    Though it takes extra efforts, but it brings users benefits due to following reasons.
-    - It will be more convenient to change the experiment logging backend without changing any code in upper level
-    - We can provide more convenience to automatically do some extra things and make interface easier. For examples:
-        - Automatically logging the uncommitted code
-        - Automatically logging part of environment variables
-        - User can control several different runs by just creating different Recorder (in mlflow, you always have to switch artifact_uri and pass in run ids frequently)
+    我们不是直接使用mlflow，而是使用另一个包装mlflow的接口来记录实验。
+    虽然需要额外的工作，但由于以下原因它为用户带来了好处：
+    - 可以更方便地更改实验记录后端，而无需更改上层代码
+    - 我们可以提供更多便利来自动执行一些额外操作并使接口更简单。例如：
+        - 自动记录未提交的代码
+        - 自动记录部分环境变量
+        - 用户只需创建不同的Recorder即可控制多个不同的运行(在mlflow中，您总是需要频繁切换artifact_uri并传入运行id)
     """
 
     def __init__(self, experiment_id, uri, name=None, mlflow_run=None):
@@ -314,7 +314,7 @@ class MLflowRecorder(Recorder):
 
     def get_local_dir(self):
         """
-        This function will return the directory path of this recorder.
+        此函数将返回此记录器的目录路径。
         """
         if self.artifact_uri is not None:
             if platform.system() == "Windows":
@@ -361,8 +361,8 @@ class MLflowRecorder(Recorder):
 
     def _log_uncommitted_code(self):
         """
-        Mlflow only log the commit id of the current repo. But usually, user will have a lot of uncommitted changes.
-        So this tries to automatically to log them all.
+        Mlflow只记录当前仓库的提交ID。但通常用户会有很多未提交的更改。
+        因此这个方法尝试自动记录所有这些更改。
         """
         # TODO: the sub-directories maybe git repos.
         # So it will be better if we can walk the sub-directories and log the uncommitted changes.
@@ -412,18 +412,18 @@ class MLflowRecorder(Recorder):
 
     def load_object(self, name, unpickler=pickle.Unpickler):
         """
-        Load object such as prediction file or model checkpoint in mlflow.
+        从mlflow加载对象如预测文件或模型检查点。
 
-        Args:
-            name (str): the object name
+        参数:
+            name (str): 对象名称
 
-            unpickler: Supporting using custom unpickler
+            unpickler: 支持使用自定义unpickler
 
-        Raises:
-            LoadObjectError: if raise some exceptions when load the object
+        抛出:
+            LoadObjectError: 如果加载对象时出现异常
 
-        Returns:
-            object: the saved object in mlflow.
+        返回:
+            object: mlflow中保存的对象。
         """
         assert self.uri is not None, "Please start the experiment and recorder first before using recorder directly."
 
