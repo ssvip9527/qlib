@@ -2,15 +2,15 @@
 # Licensed under the MIT License.
 
 """
-TaskManager can fetch unused tasks automatically and manage the lifecycle of a set of tasks with error handling.
-These features can run tasks concurrently and ensure every task will be used only once.
-Task Manager will store all tasks in `MongoDB <https://www.mongodb.com/>`_.
-Users **MUST** finished the configuration of `MongoDB <https://www.mongodb.com/>`_ when using this module.
+TaskManager可以自动获取未使用的任务，并通过错误处理管理一组任务的生命周期。
+这些功能可以并发运行任务，并确保每个任务只被使用一次。
+Task Manager会将所有任务存储在`MongoDB <https://www.mongodb.com/>`_中。
+使用此模块时，用户**必须**完成`MongoDB <https://www.mongodb.com/>`_的配置。
 
-A task in TaskManager consists of 3 parts
-- tasks description: the desc will define the task
-- tasks status: the status of the task
-- tasks result: A user can get the task with the task description and task result.
+TaskManager中的任务由三部分组成
+- 任务描述：定义任务内容
+- 任务状态：任务的当前状态
+- 任务结果：用户可以通过任务描述和任务结果获取任务
 """
 import concurrent
 import pickle
@@ -34,24 +34,24 @@ class TaskManager:
     """
     TaskManager
 
-    Here is what will a task looks like when it created by TaskManager
+    以下是TaskManager创建的任务示例：
 
     .. code-block:: python
 
         {
-            'def': pickle serialized task definition.  using pickle will make it easier
-            'filter': json-like data. This is for filtering the tasks.
+            'def': pickle序列化的任务定义，使用pickle更方便
+            'filter': 类JSON数据，用于过滤任务
             'status': 'waiting' | 'running' | 'done'
-            'res': pickle serialized task result,
+            'res': pickle序列化的任务结果
         }
 
-    The tasks manager assumes that you will only update the tasks you fetched.
-    The mongo fetch one and update will make it date updating secure.
+    任务管理器假设您只会更新已获取的任务。
+    MongoDB的获取和更新操作确保数据更新安全。
 
-    This class can be used as a tool from commandline. Here are several examples.
-    You can view the help of manage module with the following commands:
-    python -m qlib.workflow.task.manage -h # show manual of manage module CLI
-    python -m qlib.workflow.task.manage wait -h # show manual of the wait command of manage
+    此类可作为命令行工具使用。以下是几个示例：
+    查看manage模块帮助的命令：
+    python -m qlib.workflow.task.manage -h # 显示manage模块CLI手册
+    python -m qlib.workflow.task.manage wait -h # 显示wait命令手册
 
     .. code-block:: shell
 
@@ -61,17 +61,17 @@ class TaskManager:
 
     .. note::
 
-        Assumption: the data in MongoDB was encoded and the data out of MongoDB was decoded
+        假设：MongoDB中的数据会被编码，取出的数据会被解码
 
-    Here are four status which are:
+    四种状态说明：
 
-        STATUS_WAITING: waiting for training
+        STATUS_WAITING: 等待训练
 
-        STATUS_RUNNING: training
+        STATUS_RUNNING: 训练中
 
-        STATUS_PART_DONE: finished some step and waiting for next step
+        STATUS_PART_DONE: 已完成部分步骤，等待下一步
 
-        STATUS_DONE: all work done
+        STATUS_DONE: 全部工作完成
     """
 
     STATUS_WAITING = "waiting"
@@ -99,9 +99,9 @@ class TaskManager:
     @staticmethod
     def list() -> list:
         """
-        List the all collection(task_pool) of the db.
+        列出数据库中所有集合(任务池)。
 
-        Returns:
+        返回:
             list
         """
         return get_mongodb().list_collection_names()
@@ -115,18 +115,18 @@ class TaskManager:
 
     def _decode_task(self, task):
         """
-        _decode_task is Serialization tool.
-        Mongodb needs JSON, so it needs to convert Python objects into JSON objects through pickle
+        _decode_task是序列化工具。
+        Mongodb需要JSON格式，因此需要通过pickle将Python对象转换为JSON对象
 
-        Parameters
+        参数
         ----------
         task : dict
-            task information
+            任务信息
 
-        Returns
+        返回
         -------
         dict
-            JSON required by mongodb
+            mongodb所需的JSON格式
         """
         for prefix in self.ENCODE_FIELDS_PREFIX:
             for k in list(task.keys()):
@@ -139,14 +139,14 @@ class TaskManager:
 
     def _decode_query(self, query):
         """
-        If the query includes any `_id`, then it needs `ObjectId` to decode.
-        For example, when using TrainerRM, it needs query `{"_id": {"$in": _id_list}}`. Then we need to `ObjectId` every `_id` in `_id_list`.
+        如果查询包含`_id`，则需要使用`ObjectId`进行解码。
+        例如，当使用TrainerRM时，需要查询`{"_id": {"$in": _id_list}}`，然后需要将`_id_list`中的每个`_id`转换为`ObjectId`。
 
-        Args:
-            query (dict): query dict. Defaults to {}.
+        参数:
+            query (dict): 查询字典，默认为{}
 
-        Returns:
-            dict: the query after decoding.
+        返回:
+            dict: 解码后的查询
         """
         if "_id" in query:
             if isinstance(query["_id"], dict):
@@ -214,22 +214,22 @@ class TaskManager:
 
     def create_task(self, task_def_l, dry_run=False, print_nt=False) -> List[str]:
         """
-        If the tasks in task_def_l are new, then insert new tasks into the task_pool, and record inserted_id.
-        If a task is not new, then just query its _id.
+        如果task_def_l中的任务是新的，则插入新任务到任务池并记录inserted_id。
+        如果任务已存在，则只查询其_id。
 
-        Parameters
+        参数
         ----------
         task_def_l: list
-            a list of task
+            任务列表
         dry_run: bool
-            if insert those new tasks to task pool
+            是否实际插入新任务到任务池
         print_nt: bool
-            if print new task
+            是否打印新任务
 
-        Returns
+        返回
         -------
         List[str]
-            a list of the _id of task_def_l
+            task_def_l中各任务的_id列表
         """
         new_tasks = []
         _id_list = []
@@ -262,14 +262,14 @@ class TaskManager:
 
     def fetch_task(self, query={}, status=STATUS_WAITING) -> dict:
         """
-        Use query to fetch tasks.
+        使用查询获取任务。
 
-        Args:
-            query (dict, optional): query dict. Defaults to {}.
-            status (str, optional): [description]. Defaults to STATUS_WAITING.
+        参数:
+            query (dict, optional): 查询字典，默认为{}
+            status (str, optional): 任务状态，默认为STATUS_WAITING
 
-        Returns:
-            dict: a task(document in collection) after decoding
+        返回:
+            dict: 解码后的任务(集合中的文档)
         """
         query = query.copy()
         query = self._decode_query(query)
@@ -286,16 +286,16 @@ class TaskManager:
     @contextmanager
     def safe_fetch_task(self, query={}, status=STATUS_WAITING):
         """
-        Fetch task from task_pool using query with contextmanager
+        使用contextmanager从任务池中获取任务
 
-        Parameters
+        参数
         ----------
         query: dict
-            the dict of query
+            查询字典
 
-        Returns
+        返回
         -------
-        dict: a task(document in collection) after decoding
+        dict: 解码后的任务(集合中的文档)
         """
         task = self.fetch_task(query=query, status=status)
         try:
@@ -316,20 +316,20 @@ class TaskManager:
 
     def query(self, query={}, decode=True):
         """
-        Query task in collection.
-        This function may raise exception `pymongo.errors.CursorNotFound: cursor id not found` if it takes too long to iterate the generator
+        查询集合中的任务。
+        如果迭代生成器耗时过长，此函数可能抛出异常`pymongo.errors.CursorNotFound: cursor id not found`
 
         python -m qlib.workflow.task.manage -t <your task pool> query '{"_id": "615498be837d0053acbc5d58"}'
 
-        Parameters
+        参数
         ----------
         query: dict
-            the dict of query
+            查询字典
         decode: bool
 
-        Returns
+        返回
         -------
-        dict: a task(document in collection) after decoding
+        dict: 解码后的任务(集合中的文档)
         """
         query = query.copy()
         query = self._decode_query(query)
@@ -338,25 +338,25 @@ class TaskManager:
 
     def re_query(self, _id) -> dict:
         """
-        Use _id to query task.
+        使用_id查询任务。
 
-        Args:
-            _id (str): _id of a document
+        参数:
+            _id (str): 文档的_id
 
-        Returns:
-            dict: a task(document in collection) after decoding
+        返回:
+            dict: 解码后的任务(集合中的文档)
         """
         t = self.task_pool.find_one({"_id": ObjectId(_id)})
         return self._decode_task(t)
 
     def commit_task_res(self, task, res, status=STATUS_DONE):
         """
-        Commit the result to task['res'].
+        提交结果到task['res']。
 
-        Args:
-            task ([type]): [description]
-            res (object): the result you want to save
-            status (str, optional): STATUS_WAITING, STATUS_RUNNING, STATUS_DONE, STATUS_PART_DONE. Defaults to STATUS_DONE.
+        参数:
+            task ([type]): 任务
+            res (object): 要保存的结果
+            status (str, optional): STATUS_WAITING, STATUS_RUNNING, STATUS_DONE, STATUS_PART_DONE。默认为STATUS_DONE。
         """
         # A workaround to use the class attribute.
         if status is None:
@@ -413,10 +413,10 @@ class TaskManager:
 
     def reset_waiting(self, query={}):
         """
-        Reset all running task into waiting status. Can be used when some running task exit unexpected.
+        将所有运行中的任务重置为等待状态。可用于某些任务意外退出的情况。
 
-        Args:
-            query (dict, optional): the query dict. Defaults to {}.
+        参数:
+            query (dict, optional): 查询字典，默认为{}
         """
         query = query.copy()
         # default query
@@ -455,11 +455,11 @@ class TaskManager:
 
     def wait(self, query={}):
         """
-        When multiprocessing, the main progress may fetch nothing from TaskManager because there are still some running tasks.
-        So main progress should wait until all tasks are trained well by other progress or machines.
+        在多进程环境下，主进程可能因为仍有任务在运行而无法从TaskManager获取任务。
+        因此主进程应等待其他进程或机器完成所有任务。
 
-        Args:
-            query (dict, optional): the query dict. Defaults to {}.
+        参数:
+            query (dict, optional): 查询字典，默认为{}
         """
         task_stat = self.task_stat(query)
         total = self._get_total(task_stat)
@@ -490,13 +490,13 @@ def run_task(
     **kwargs,
 ):
     r"""
-    While the task pool is not empty (has WAITING tasks), use task_func to fetch and run tasks in task_pool
+    当任务池不为空(有WAITING状态任务)时，使用task_func获取并运行任务池中的任务
 
-    After running this method, here are 4 situations (before_status -> after_status):
+    运行此方法后，有以下4种情况(before_status -> after_status):
 
-        STATUS_WAITING -> STATUS_DONE: use task["def"] as `task_func` param, it means that the task has not been started
+        STATUS_WAITING -> STATUS_DONE: 使用task["def"]作为`task_func`参数，表示任务尚未开始
 
-        STATUS_WAITING -> STATUS_PART_DONE: use task["def"] as `task_func` param
+        STATUS_WAITING -> STATUS_PART_DONE: 使用task["def"]作为`task_func`参数
 
         STATUS_PART_DONE -> STATUS_PART_DONE: use task["res"] as `task_func` param, it means that the task has been started but not completed
 

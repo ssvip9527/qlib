@@ -21,21 +21,21 @@ from pathlib import Path
 
 def get_mongodb() -> Database:
     """
-    Get database in MongoDB, which means you need to declare the address and the name of a database at first.
+    获取MongoDB数据库实例，使用前需要先声明数据库地址和名称。
 
-    For example:
+    示例:
 
-        Using qlib.init():
+        使用qlib.init():
 
             .. code-block:: python
 
                 mongo_conf = {
-                    "task_url": task_url,  # your MongoDB url
-                    "task_db_name": task_db_name,  # database name
+                    "task_url": task_url,  # MongoDB地址
+                    "task_db_name": task_db_name,  # 数据库名称
                 }
                 qlib.init(..., mongo=mongo_conf)
 
-        After qlib.init():
+        在qlib.init()之后:
 
             .. code-block:: python
 
@@ -44,8 +44,8 @@ def get_mongodb() -> Database:
                     "task_db_name" : "rolling_db"
                 }
 
-    Returns:
-        Database: the Database instance
+    返回:
+        Database: 数据库实例
     """
     try:
         cfg = C["mongo"]
@@ -59,14 +59,14 @@ def get_mongodb() -> Database:
 
 def list_recorders(experiment, rec_filter_func=None):
     """
-    List all recorders which can pass the filter in an experiment.
+    列出实验中通过过滤器的所有记录器。
 
-    Args:
-        experiment (str or Experiment): the name of an Experiment or an instance
-        rec_filter_func (Callable, optional): return True to retain the given recorder. Defaults to None.
+    参数:
+        experiment (str or Experiment): 实验名称或实例
+        rec_filter_func (Callable, optional): 返回True以保留给定记录器。默认为None。
 
-    Returns:
-        dict: a dict {rid: recorder} after filtering.
+    返回:
+        dict: 过滤后的字典{rid: recorder}
     """
     if isinstance(experiment, str):
         experiment = R.get_exp(experiment_name=experiment)
@@ -99,12 +99,12 @@ class TimeAdjuster:
 
     def get(self, idx: int):
         """
-        Get datetime by index.
+        通过索引获取日期时间。
 
-        Parameters
+        参数
         ----------
         idx : int
-            index of the calendar
+            日历索引
         """
         if idx is None or idx >= len(self.cals):
             return None
@@ -112,20 +112,20 @@ class TimeAdjuster:
 
     def max(self) -> pd.Timestamp:
         """
-        Return the max calendar datetime
+        返回日历中的最大日期时间
         """
         return max(self.cals)
 
     def align_idx(self, time_point, tp_type="start") -> int:
         """
-        Align the index of time_point in the calendar.
+        对齐日历中时间点的索引。
 
-        Parameters
+        参数
         ----------
         time_point
         tp_type : str
 
-        Returns
+        返回
         -------
         index : int
         """

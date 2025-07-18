@@ -155,9 +155,7 @@ class RecordTemp:
 
 
 class SignalRecord(RecordTemp):
-    """
-    This is the Signal Record class that generates the signal prediction. This class inherits the ``RecordTemp`` class.
-    """
+    """信号记录类，用于生成信号预测。继承自``RecordTemp``类。"""
 
     def __init__(self, model=None, dataset=None, recorder=None):
         super().__init__(recorder=recorder)
@@ -242,9 +240,7 @@ class ACRecordTemp(RecordTemp):
 
 
 class HFSignalRecord(SignalRecord):
-    """
-    This is the Signal Analysis Record class that generates the analysis results such as IC and IR. This class inherits the ``RecordTemp`` class.
-    """
+    """信号分析记录类，用于生成IC和IR等分析结果。继承自``RecordTemp``类。"""
 
     artifact_path = "hg_sig_analysis"
     depend_cls = SignalRecord
@@ -290,9 +286,9 @@ class HFSignalRecord(SignalRecord):
 
 class SigAnaRecord(ACRecordTemp):
     """
-    This is the Signal Analysis Record class that generates the analysis results such as IC and IR.
-    This class inherits the ``RecordTemp`` class.
-    """
+        信号分析记录类，用于生成IC和IR等分析结果。
+        继承自``RecordTemp``类。
+        """
 
     artifact_path = "sig_analysis"
     depend_cls = SignalRecord
@@ -353,15 +349,15 @@ class SigAnaRecord(ACRecordTemp):
 
 class PortAnaRecord(ACRecordTemp):
     """
-    This is the Portfolio Analysis Record class that generates the analysis results such as those of backtest. This class inherits the ``RecordTemp`` class.
+        组合分析记录类，用于生成回测等分析结果。继承自``RecordTemp``类。
 
-    The following files will be stored in recorder
+        以下文件将被存储在记录器中：
 
-    - report_normal.pkl & positions_normal.pkl:
+        - report_normal.pkl & positions_normal.pkl:
 
-        - The return report and detailed positions of the backtest, returned by `qlib/contrib/evaluate.py:backtest`
-    - port_analysis.pkl : The risk analysis of your portfolio, returned by `qlib/contrib/evaluate.py:risk_analysis`
-    """
+            - 回测的收益报告和详细持仓，由`qlib/contrib/evaluate.py:backtest`返回
+        - port_analysis.pkl : 组合风险分析，由`qlib/contrib/evaluate.py:risk_analysis`返回
+        """
 
     artifact_path = "portfolio_analysis"
     depend_cls = SignalRecord
@@ -564,20 +560,20 @@ class PortAnaRecord(ACRecordTemp):
 
 class MultiPassPortAnaRecord(PortAnaRecord):
     """
-    This is the Multiple Pass Portfolio Analysis Record class that run backtest multiple times and generates the analysis results such as those of backtest. This class inherits the ``PortAnaRecord`` class.
+        多遍组合分析记录类，多次运行回测并生成分析结果。继承自``PortAnaRecord``类。
 
-    If shuffle_init_score enabled, the prediction score of the first backtest date will be shuffled, so that initial position will be random.
-    The shuffle_init_score will only works when the signal is used as <PRED> placeholder. The placeholder will be replaced by pred.pkl saved in recorder.
+        如果启用shuffle_init_score，将随机打乱第一个回测日期的预测分数，使初始持仓随机化。
+        shuffle_init_score仅在信号使用<PRED>占位符时有效。占位符将被记录器中保存的pred.pkl替换。
 
-    Parameters
-    ----------
-    recorder : Recorder
-        The recorder used to save the backtest results.
-    pass_num : int
-        The number of backtest passes.
-    shuffle_init_score : bool
-        Whether to shuffle the prediction score of the first backtest date.
-    """
+        参数
+        ----------
+        recorder : Recorder
+            用于保存回测结果的记录器
+        pass_num : int
+            回测遍数
+        shuffle_init_score : bool
+            是否打乱第一个回测日期的预测分数
+        """
 
     depend_cls = SignalRecord
 
