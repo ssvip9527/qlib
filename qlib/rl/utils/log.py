@@ -384,11 +384,12 @@ class ConsoleWriter(LogWriter):
     每个指标的显示格式为``<名称> <最新值> (<平均值>)``。
 
     非单一数字指标会自动跳过。
-    """
+
 
     prefix: str
-    """Prefix can be set via ``writer.prefix``."""
+        Prefix can be set via ``writer.prefix``.
 
+    """
     def __init__(
         self,
         log_every_n_episode: int = 20,

@@ -13,7 +13,7 @@ API 参考
 ====
 
 数据提供器
---------
+----------
 
 .. automodule:: qlib.data.data
     :members:

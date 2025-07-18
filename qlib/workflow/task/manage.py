@@ -39,10 +39,10 @@ class TaskManager:
     .. code-block:: python
 
         {
-            'def': pickle序列化的任务定义，使用pickle更方便
-            'filter': 类JSON数据，用于过滤任务
-            'status': 'waiting' | 'running' | 'done'
-            'res': pickle序列化的任务结果
+            'def': 'pickle序列化的任务定义，使用pickle更方便',
+            'filter': '类JSON数据，用于过滤任务',
+            'status': 'waiting' | 'running' | 'done',
+            'res': 'pickle序列化的任务结果'
         }
 
     任务管理器假设您只会更新已获取的任务。
@@ -319,13 +319,15 @@ class TaskManager:
         查询集合中的任务。
         如果迭代生成器耗时过长，此函数可能抛出异常`pymongo.errors.CursorNotFound: cursor id not found`
 
-        python -m qlib.workflow.task.manage -t <your task pool> query '{"_id": "615498be837d0053acbc5d58"}'
+        示例:
+             python -m qlib.workflow.task.manage -t <your task pool> query '{"_id": "615498be837d0053acbc5d58"}'
 
         参数
         ----------
         query: dict
             查询字典
         decode: bool
+            是否解码结果
 
         返回
         -------

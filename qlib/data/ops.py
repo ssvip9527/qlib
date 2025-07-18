@@ -65,18 +65,19 @@ class ChangeInstrument(ElemOperator):
     """更改工具运算符
     在某些情况下，计算时可能需要切换到另一个工具，例如计算股票相对于市场指数的贝塔值。
     这需要将特征计算从股票（原始工具）更改为指数（参考工具）
+
     参数
     ----------
     instrument: 要执行下游操作的新工具。
-                例如，SH000300（沪深300指数）或^GPSC（标普500指数）。
+        例如，SH000300（沪深300指数）或^GPSC（标普500指数）。
 
     feature: 要为新工具计算的特征。
+
     返回
     ----------
     Expression
         特征运算输出
     """
-
     def __init__(self, instrument, feature):
         self.instrument = instrument
         self.feature = feature
@@ -1629,17 +1630,21 @@ class OpsWrapper:
         参数
         ----------
         ops_list : List[Union[Type[ExpressionOps], dict]]
-            - 如果类型是List[Type[ExpressionOps]]，列表中的每个元素表示运算符类，该类必须是`ExpressionOps`的子类。
+            - 如果类型是List[Type[ExpressionOps]]，列表中的每个元素表示运算符类，该类必须是`ExpressionOps`的子类
             - 如果类型是List[dict]，列表中的每个元素表示运算符的配置，格式如下：
 
                 .. code-block:: text
 
                     {
-                        "class": 类名,
-                        "module_path": 路径,
+                        "class": "类名",
+                        "module_path": "路径"
                     }
 
-                注意: `class`是运算符的类名，`module_path`是Python模块或文件路径。
+        注意
+        -----
+            - `class`是运算符的类名
+            - `module_path`是Python模块或文件路径
+
         """
         for _operator in ops_list:
             if isinstance(_operator, dict):

@@ -411,9 +411,9 @@ class ExpressionProvider(abc.ABC):
     def expression(self, instrument, field, start_time=None, end_time=None, freq="day") -> pd.Series:
         """获取表达式数据
 
-        `expression`方法的职责：
-        - 解析`field`并加载相应数据
-        - 加载数据时应处理数据的时间依赖性，通常会使用`get_expression_instance`方法
+        `expression` 方法的职责：
+        - 解析 `field` 并加载相应数据
+        - 加载数据时应处理数据的时间依赖性，通常会使用 `get_expression_instance` 方法
 
         参数
         ----------
@@ -653,10 +653,10 @@ class LocalCalendarProvider(CalendarProvider, ProviderBackendMixin):
         freq : str
             frequency of read calendar file.
         future: bool
+
         Returns
         ----------
-        list
-            list of timestamps
+        list of timestamps
         """
         try:
             backend_obj = self.backend_obj(freq=freq, future=future).data
@@ -841,6 +841,30 @@ class LocalExpressionProvider(ExpressionProvider):
         self.time2idx = time2idx
 
     def expression(self, instrument, field, start_time=None, end_time=None, freq="day"):
+        """获取表达式数据
+
+        `expression` 方法的职责：
+        - 解析 `field` 并加载相应数据
+        - 加载数据时应处理数据的时间依赖性，通常会使用 `get_expression_instance` 方法
+
+        参数
+        ----------
+        instrument : str
+            特定标的
+        field : str
+            特征的特定字段
+        start_time : str
+            时间范围开始
+        end_time : str
+            时间范围结束
+        freq : str
+            时间频率，可选：year/quarter/month/week/day
+
+        返回
+        -------
+        pd.Series
+            特定表达式的数据
+        """
         expression = self.get_expression_instance(field)
         start_time = time_to_slc_point(start_time)
         end_time = time_to_slc_point(end_time)

@@ -49,9 +49,9 @@ master_doc = "index"
 
 
 # 项目的基本信息。
-project = "QLib"
+project = "QLib-中文文档"
 copyright = "Microsoft"
-author = "Microsoft"
+author = "Microsoft 谋决量化 翻译"
 
 # 您正在记录的项目的版本信息，用于 |version| 和 |release| 的替换，
 # 也用于构建文档中的其他各处。
@@ -65,7 +65,7 @@ release = pkg_resources.get_distribution("pyqlib").version
 #
 # 如果通过 gettext 目录进行内容翻译，也会用到此项。
 # 通常在这些情况下从命令行设置 "language"。
-language = "en_US"
+language = "zh_CN"
 
 # 相对于源目录的模式列表，用于匹配在查找源文件时要忽略的文件和目录。
 # 这些模式也会影响 html_static_path 和 html_extra_path
@@ -98,17 +98,17 @@ html_logo = "_static/img/logo/1.png"
 
 # 主题选项是特定于主题的，用于进一步自定义主题的外观和感觉。
 # 有关每个主题可用选项的列表，请参阅文档。
-# html_context = {
-#     "display_github": False,
-#     "last_updated": True,
-#     "commit": True,
-#     "github_user": "Microsoft",
-#     "github_repo": "QLib",
-#     'github_version': 'master',
-#     'conf_py_path': '/docs/',
+html_context = {
+    # "display_github": False,
+    # "last_updated": True,
+    # "commit": True,
+    # "github_user": "Microsoft",
+    # "github_repo": "QLib",
+    # 'github_version': 'master',
+    # 'conf_py_path': '/docs/',
+    "footer": "由 <a href='https://www.moujue.com'>谋决量化</a> 翻译，源码<a href='https://github.com/ssvip9527/qlib'>github</a>."
+}
 
-# }
-#
 html_theme_options = {
     "logo_only": True,
     "collapse_navigation": False,
@@ -169,7 +169,6 @@ latex_documents = [
 # （源起始文件，名称，描述，作者，手册部分）。
 man_pages = [(master_doc, "qlib", "QLib文档", [author], 1)]
 
-
 # -- Texinfo输出选项 -------------------------------------------------------
 
 # 将文档树分组到Texinfo文件中。元组列表
@@ -192,15 +191,13 @@ texinfo_documents = [
 # Dublin Core书目信息。
 epub_title = project
 epub_author = author
-epub_publisher = author
+epub_publisher = 'https://www.moujue.com/'
 epub_copyright = copyright
 
 # 文本的唯一标识符。可以是ISBN号或项目主页。
-#
 # epub_identifier = ''
 
 # 文本的唯一标识符。
-#
 # epub_uid = ''
 
 # 不应打包到epub文件中的文件列表。
