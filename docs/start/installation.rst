@@ -29,7 +29,7 @@
 
       $ pip install numpy
       $ pip install --upgrade cython
-      $ git clone https://github.com/microsoft/qlib.git && cd qlib
+      $ git clone https://github.com/ssvip9527/qlib.git && cd qlib
       $ python setup.py install
 
 .. note::

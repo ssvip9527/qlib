@@ -37,12 +37,12 @@ Qlib初始化
 Parameters
 -------------------
 
-除了`provider_uri`和`region`之外，`qlib.init`还有其他参数。以下是`qlib.init`的几个重要参数（Qlib有很多配置，这里仅列出部分参数。更详细的设置可以在`此处 <https://github.com/microsoft/qlib/blob/main/qlib/config.py>`_找到）：
+除了`provider_uri`和`region`之外，`qlib.init`还有其他参数。以下是`qlib.init`的几个重要参数（Qlib有很多配置，这里仅列出部分参数。更详细的设置可以在`此处 <https://github.com/ssvip9527/qlib/blob/main/qlib/config.py>`_找到）：
 
 - `provider_uri`
     类型：字符串。Qlib数据的URI。例如，它可以是``get_data.py``加载的数据存储的位置。
 - `region`
-    类型：字符串，可选参数（默认：`qlib.constant.REG_CN`）。目前支持``qlib.constant.REG_US``（'us'）和``qlib.constant.REG_CN``（'cn'）。不同的`region`值将导致不同的股票市场模式。- ``qlib.constant.REG_US``：美国股票市场。- ``qlib.constant.REG_CN``：中国股票市场。不同模式将导致不同的交易限制和成本。区域只是`定义一批配置的快捷方式 <https://github.com/microsoft/qlib/blob/528f74af099bf6156e9480bcd2bb28e453231212/qlib/config.py#L249>`_，包括最小交易单位（``trade_unit``）、涨跌幅限制（``limit_threshold``）等。它不是必需的部分，如果现有区域设置不能满足要求，用户可以手动设置关键配置。
+    类型：字符串，可选参数（默认：`qlib.constant.REG_CN`）。目前支持``qlib.constant.REG_US``（'us'）和``qlib.constant.REG_CN``（'cn'）。不同的`region`值将导致不同的股票市场模式。- ``qlib.constant.REG_US``：美国股票市场。- ``qlib.constant.REG_CN``：中国股票市场。不同模式将导致不同的交易限制和成本。区域只是`定义一批配置的快捷方式 <https://github.com/ssvip9527/qlib/blob/528f74af099bf6156e9480bcd2bb28e453231212/qlib/config.py#L249>`_，包括最小交易单位（``trade_unit``）、涨跌幅限制（``limit_threshold``）等。它不是必需的部分，如果现有区域设置不能满足要求，用户可以手动设置关键配置。
 - `redis_host`
     类型：字符串，可选参数（默认："127.0.0.1"），`redis`的主机。锁和缓存机制依赖于redis。
 - `redis_port`

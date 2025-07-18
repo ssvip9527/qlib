@@ -159,13 +159,13 @@ QLib 库的初始发布。
     - 支持嵌套决策执行框架
     - 日内交易有大量变更，难以一一列举，主要变化包括：
         - 交易限制更为精确：
-            - `旧版本 <https://github.com/microsoft/qlib/blob/v0.7.2/qlib/contrib/backtest/exchange.py#L160>`__，多空操作共用同一动作
-            - `当前版本 <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/backtest/exchange.py#L304>`__，多空操作的交易限制不同
+            - `旧版本 <https://github.com/ssvip9527/qlib/blob/v0.7.2/qlib/contrib/backtest/exchange.py#L160>`__，多空操作共用同一动作
+            - `当前版本 <https://github.com/ssvip9527/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/backtest/exchange.py#L304>`__，多空操作的交易限制不同
         - 年化指标计算常数不同：
-            - `Current version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/contrib/evaluate.py#L42>`_ 使用更精确常数，优于 `previous version <https://github.com/microsoft/qlib/blob/v0.7.2/qlib/contrib/evaluate.py#L22>`__
-        - 发布了 `A new version <https://github.com/microsoft/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/tests/data.py#L17>`__ 的数据。由于 Yahoo 数据源不稳定，重新下载数据后可能不同
-        - 用户可对比 `Current version <https://github.com/microsoft/qlib/tree/7c31012b507a3823117bddcc693fc64899460b2a/examples/benchmarks>`__ 与 `previous version <https://github.com/microsoft/qlib/tree/v0.7.2/examples/benchmarks>`__ 的回测结果
+            - `Current version <https://github.com/ssvip9527/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/contrib/evaluate.py#L42>`_ 使用更精确常数，优于 `previous version <https://github.com/ssvip9527/qlib/blob/v0.7.2/qlib/contrib/evaluate.py#L22>`__
+        - 发布了 `A new version <https://github.com/ssvip9527/qlib/blob/7c31012b507a3823117bddcc693fc64899460b2a/qlib/tests/data.py#L17>`__ 的数据。由于 Yahoo 数据源不稳定，重新下载数据后可能不同
+        - 用户可对比 `Current version <https://github.com/ssvip9527/qlib/tree/7c31012b507a3823117bddcc693fc64899460b2a/examples/benchmarks>`__ 与 `previous version <https://github.com/ssvip9527/qlib/tree/v0.7.2/examples/benchmarks>`__ 的回测结果
 
 其它版本
 --------------
-请参考 `GitHub 发布说明 <https://github.com/microsoft/qlib/releases>`_
+请参考 `GitHub 发布说明 <https://github.com/ssvip9527/qlib/releases>`_

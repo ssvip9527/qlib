@@ -309,7 +309,7 @@ class Run(BaseRun):
             qlib日线数据可以通过以下方式获取：
                 $ python scripts/get_data.py qlib_data --target_dir ~/.qlib/qlib_data/cn_data --interval 1d --region cn --version v3
             或者：
-                下载日线数据，参考：https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
+                下载日线数据，参考：https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
 
         使用示例
         ---------
@@ -317,7 +317,7 @@ class Run(BaseRun):
         """
         if qlib_data_1d_dir is None or not Path(qlib_data_1d_dir).expanduser().exists():
             raise ValueError(
-                "If normalize 5min, the qlib_data_1d_dir parameter must be set: --qlib_data_1d_dir <user qlib 1d data >, Reference: https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance"
+                "If normalize 5min, the qlib_data_1d_dir parameter must be set: --qlib_data_1d_dir <user qlib 1d data >, Reference: https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance"
             )
         super(Run, self).normalize_data(
             date_field_name, symbol_field_name, end_date=end_date, qlib_data_1d_dir=qlib_data_1d_dir

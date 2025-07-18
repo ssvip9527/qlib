@@ -44,4 +44,4 @@ Training Vessel & Trainer
 
 Trainer和TrainingVessel的API可在`这里 <../../reference/api.html#module-qlib.rl.trainer>`__找到。
 
-RL模块采用松耦合设计。目前，RL示例与具体业务逻辑集成，但RL的核心部分比您看到的要简单得多。为了展示RL的简单核心，我们创建了`一个专用笔记本 <https://github.com/microsoft/qlib/tree/main/examples/rl/simple_example.ipynb>`__，用于无业务损失的RL演示。
+RL模块采用松耦合设计。目前，RL示例与具体业务逻辑集成，但RL的核心部分比您看到的要简单得多。为了展示RL的简单核心，我们创建了`一个专用笔记本 <https://github.com/ssvip9527/qlib/tree/main/examples/rl/simple_example.ipynb>`__，用于无业务损失的RL演示。

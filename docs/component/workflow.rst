@@ -8,7 +8,7 @@
 简介
 ============
 
-`Qlib框架 <../introduction/introduction.html#framework>`_ 中的组件采用松耦合设计。用户可以使用这些组件构建自己的量化研究工作流，例如`示例 <https://github.com/microsoft/qlib/blob/main/examples/workflow_by_code.py>`_。
+`Qlib框架 <../introduction/introduction.html#framework>`_ 中的组件采用松耦合设计。用户可以使用这些组件构建自己的量化研究工作流，例如`示例 <https://github.com/ssvip9527/qlib/blob/main/examples/workflow_by_code.py>`_。
 
 
 此外，``Qlib``提供了更友好的接口``qrun``来自动运行通过配置定义的整个工作流。运行整个工作流称为一次`执行`。
@@ -128,7 +128,7 @@
 使用``qrun``之前，用户需要准备一个配置文件。以下内容展示了如何准备配置文件的各个部分。
 
 配置文件的设计逻辑非常简单。它预定义了固定的工作流，并提供此yaml接口让用户定义如何初始化每个组件。
-它遵循`init_instance_by_config <https://github.com/microsoft/qlib/blob/2aee9e0145decc3e71def70909639b5e5a6f4b58/qlib/utils/__init__.py#L264>`_ 的设计。它定义了Qlib每个组件的初始化，通常包括类和初始化参数。
+它遵循`init_instance_by_config <https://github.com/ssvip9527/qlib/blob/2aee9e0145decc3e71def70909639b5e5a6f4b58/qlib/utils/__init__.py#L264>`_ 的设计。它定义了Qlib每个组件的初始化，通常包括类和初始化参数。
 
 例如，以下yaml和代码是等效的。
 
@@ -225,7 +225,7 @@ In the `task` field, the `model` section describes the parameters of the model t
     类型：str。模型在qlib中的路径。
 
 - `kwargs`
-    模型的关键字参数。有关更多信息，请参考具体的模型实现：`models <https://github.com/microsoft/qlib/blob/main/qlib/contrib/model>`_。
+    模型的关键字参数。有关更多信息，请参考具体的模型实现：`models <https://github.com/ssvip9527/qlib/blob/main/qlib/contrib/model>`_。
 
 .. note::
 

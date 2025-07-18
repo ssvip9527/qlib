@@ -383,61 +383,61 @@ class QlibRecorder:
         experiment_name=None,
     ) -> Recorder:
         """
-        Method for retrieving a recorder.
+        获取记录器的方法。
 
-        - If `active recorder` exists:
+        - 存在`active recorder`时：
 
-            - no id or name specified, return the active recorder.
+            - 未指定ID或名称，返回当前活动记录器
 
-            - if id or name is specified, return the specified recorder.
+            - 指定了ID或名称，返回指定记录器
 
-        - If `active recorder` not exists:
+        - 不存在`active recorder`时：
 
-            - no id or name specified, raise Error.
+            - 未指定ID或名称，抛出错误
 
-            - if id or name is specified, and the corresponding experiment_name must be given, return the specified recorder. Otherwise, raise Error.
+            - 指定了ID或名称，必须同时提供对应的experiment_name才能返回指定记录器，否则抛出错误
 
-        The recorder can be used for further process such as `save_object`, `load_object`, `log_params`,
-        `log_metrics`, etc.
+        获取的记录器可用于后续操作如`save_object`、`load_object`、`log_params`、
+        `log_metrics`等。
 
-        Here are some use cases:
+        使用示例：
 
         .. code-block:: Python
 
-            # Case 1
+            # 示例1
             with R.start(experiment_name='test'):
                 recorder = R.get_recorder()
 
-            # Case 2
+            # 示例2
             with R.start(experiment_name='test'):
                 recorder = R.get_recorder(recorder_id='2e7a4efd66574fa49039e00ffaefa99d')
 
-            # Case 3
-            recorder = R.get_recorder() -> Error
+            # 示例3
+            recorder = R.get_recorder() -> 错误
 
-            # Case 4
-            recorder = R.get_recorder(recorder_id='2e7a4efd66574fa49039e00ffaefa99d') -> Error
+            # 示例4
+            recorder = R.get_recorder(recorder_id='2e7a4efd66574fa49039e00ffaefa99d') -> 错误
 
-            # Case 5
+            # 示例5
             recorder = R.get_recorder(recorder_id='2e7a4efd66574fa49039e00ffaefa99d', experiment_name='test')
 
 
-        Here are some things users may concern
-        - Q: What recorder will it return if multiple recorder meets the query (e.g. query with experiment_name)
-        - A: If mlflow backend is used, then the recorder with the latest `start_time` will be returned. Because MLflow's `search_runs` function guarantee it
+        用户可能关心的问题：
+        - 问：如果多个记录器符合查询条件(如使用experiment_name查询)，会返回哪个记录器？
+        - 答：如果使用mlflow后端，将返回具有最新`start_time`的记录器。因为MLflow的`search_runs`函数保证了这一点
 
-        Parameters
+        参数
         ----------
         recorder_id : str
-            id of the recorder.
+            记录器ID
         recorder_name : str
-            name of the recorder.
+            记录器名称
         experiment_name : str
-            name of the experiment.
+            实验名称
 
-        Returns
+        返回
         -------
-        A recorder instance.
+        记录器实例
         """
         return self.get_exp(experiment_name=experiment_name, experiment_id=experiment_id, create=False).get_recorder(
             recorder_id, recorder_name, create=False, start=False
@@ -445,21 +445,20 @@ class QlibRecorder:
 
     def delete_recorder(self, recorder_id=None, recorder_name=None):
         """
-        Method for deleting the recorders with given id or name. At least one of id or name must be given,
-        otherwise, error will occur.
+        删除指定ID或名称记录器的方法。必须提供至少ID或名称中的一个，否则会出错。
 
-        Here is the example code:
+        示例代码：
 
         .. code-block:: Python
 
             R.delete_recorder(recorder_id='2e7a4efd66574fa49039e00ffaefa99d')
 
-        Parameters
+        参数
         ----------
         recorder_id : str
-            id of the experiment.
+            记录器ID
         recorder_name : str
-            name of the experiment.
+            记录器名称
         """
         self.get_exp().delete_recorder(recorder_id, recorder_name)
 
@@ -520,73 +519,73 @@ class QlibRecorder:
 
     def load_object(self, name: Text):
         """
-        Method for loading an object from artifacts in the experiment in the uri.
+        从URI中实验的artifacts加载对象的方法。
         """
         return self.get_exp().get_recorder(start=True).load_object(name)
 
     def log_params(self, **kwargs):
         """
-        Method for logging parameters during an experiment. In addition to using ``R``, one can also log to a specific recorder after getting it with `get_recorder` API.
+        在实验过程中记录参数的方法。除了使用``R``外，也可以通过`get_recorder`API获取特定记录器后进行记录。
 
-        - If `active recorder` exists: it will log parameters through the active recorder.
-        - If `active recorder` not exists: the system will create a default experiment as well as a new recorder, and log parameters under it.
+        - 存在`active recorder`：通过活动记录器记录参数
+        - 不存在`active recorder`：系统将创建默认实验和新记录器，并在其下记录参数
 
-        Here are some use cases:
+        使用示例：
 
         .. code-block:: Python
 
-            # Case 1
+            # 示例1
             with R.start('test'):
                 R.log_params(learning_rate=0.01)
 
-            # Case 2
+            # 示例2
             R.log_params(learning_rate=0.01)
 
-        Parameters
+        参数
         ----------
-        keyword argument:
+        关键字参数：
             name1=value1, name2=value2, ...
         """
         self.get_exp(start=True).get_recorder(start=True).log_params(**kwargs)
 
     def log_metrics(self, step=None, **kwargs):
         """
-        Method for logging metrics during an experiment. In addition to using ``R``, one can also log to a specific recorder after getting it with `get_recorder` API.
+        在实验过程中记录指标的方法。除了使用``R``外，也可以通过`get_recorder`API获取特定记录器后进行记录。
 
-        - If `active recorder` exists: it will log metrics through the active recorder.
-        - If `active recorder` not exists: the system will create a default experiment as well as a new recorder, and log metrics under it.
+        - 存在`active recorder`：通过活动记录器记录指标
+        - 不存在`active recorder`：系统将创建默认实验和新记录器，并在其下记录指标
 
-        Here are some use cases:
+        使用示例：
 
         .. code-block:: Python
 
-            # Case 1
+            # 示例1
             with R.start('test'):
                 R.log_metrics(train_loss=0.33, step=1)
 
-            # Case 2
+            # 示例2
             R.log_metrics(train_loss=0.33, step=1)
 
-        Parameters
+        参数
         ----------
-        keyword argument:
+        关键字参数：
             name1=value1, name2=value2, ...
         """
         self.get_exp(start=True).get_recorder(start=True).log_metrics(step, **kwargs)
 
     def log_artifact(self, local_path: str, artifact_path: Optional[str] = None):
         """
-        Log a local file or directory as an artifact of the currently active run
+        将本地文件或目录记录为当前活动运行的artifact
 
-        - If `active recorder` exists: it will set tags through the active recorder.
-        - If `active recorder` not exists: the system will create a default experiment as well as a new recorder, and set the tags under it.
+        - 存在`active recorder`：通过活动记录器设置标签
+        - 不存在`active recorder`：系统将创建默认实验和新记录器，并在其下设置标签
 
-        Parameters
+        参数
         ----------
         local_path : str
-            Path to the file to write.
+            要写入的文件路径
         artifact_path : Optional[str]
-            If provided, the directory in ``artifact_uri`` to write to.
+            如果提供，则为``artifact_uri``中要写入的目录
         """
         self.get_exp(start=True).get_recorder(start=True).log_artifact(local_path, artifact_path)
 
@@ -614,25 +613,25 @@ class QlibRecorder:
 
     def set_tags(self, **kwargs):
         """
-        Method for setting tags for a recorder. In addition to using ``R``, one can also set the tag to a specific recorder after getting it with `get_recorder` API.
+        为记录器设置标签的方法。除了使用``R``外，也可以通过`get_recorder`API获取特定记录器后进行设置。
 
-        - If `active recorder` exists: it will set tags through the active recorder.
-        - If `active recorder` not exists: the system will create a default experiment as well as a new recorder, and set the tags under it.
+        - 存在`active recorder`：通过活动记录器设置标签
+        - 不存在`active recorder`：系统将创建默认实验和新记录器，并在其下设置标签
 
-        Here are some use cases:
+        使用示例：
 
         .. code-block:: Python
 
-            # Case 1
+            # 示例1
             with R.start('test'):
                 R.set_tags(release_version="2.2.0")
 
-            # Case 2
+            # 示例2
             R.set_tags(release_version="2.2.0")
 
-        Parameters
+        参数
         ----------
-        keyword argument:
+        关键字参数：
             name1=value1, name2=value2, ...
         """
         self.get_exp(start=True).get_recorder(start=True).set_tags(**kwargs)
@@ -640,7 +639,7 @@ class QlibRecorder:
 
 class RecorderWrapper(Wrapper):
     """
-    Wrapper class for QlibRecorder, which detects whether users reinitialize qlib when already starting an experiment.
+    QlibRecorder的包装类，用于检测用户在已经开始实验时是否重新初始化了qlib。
     """
 
     def register(self, provider):

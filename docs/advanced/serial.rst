@@ -36,7 +36,7 @@
 
     重新加载``DatasetH``后，用户需要重新初始化它。这意味着用户可以重置``DatasetH``或``QlibDataHandler``的一些状态，如`instruments`（标的）、`start_time`（开始时间）、`end_time`（结束时间）和`segments`（分段）等，并根据这些状态生成新数据（数据不是状态，不应保存到磁盘）。
 
-更详细的示例见此`链接 <https://github.com/microsoft/qlib/tree/main/examples/highfreq>`_。
+更详细的示例见此`链接 <https://github.com/ssvip9527/qlib/tree/main/examples/highfreq>`_。
 
 
 API

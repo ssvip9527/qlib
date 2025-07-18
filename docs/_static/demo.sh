@@ -1,5 +1,5 @@
 #!/bin/sh
-git clone https://github.com/microsoft/qlib.git
+git clone https://github.com/ssvip9527/qlib.git
 cd qlib
 ls
 pip install pyqlib

@@ -26,4 +26,4 @@ Qlib-Server
 
 参考
 =========
-如果用户对``Qlib-Server``和``在线``模式感兴趣，请参考`Qlib-Server项目 <https://github.com/microsoft/qlib-server>`_和`Qlib-Server文档 <https://qlib-server.readthedocs.io/en/latest/>`_。
+如果用户对``Qlib-Server``和``在线``模式感兴趣，请参考`Qlib-Server项目 <https://github.com/ssvip9527/qlib-server>`_和`Qlib-Server文档 <https://qlib-server.readthedocs.io/en/latest/>`_。

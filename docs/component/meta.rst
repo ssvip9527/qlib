@@ -65,4 +65,4 @@
 3. 对``DDG-DA``进行推理以获取指导信息。
 4. 将指导信息应用于预测模型以提高其性能。
 
-上述示例可以在``examples/benchmarks_dynamic/DDG-DA/workflow.py``中找到。`这里 <https://github.com/microsoft/qlib/tree/main/examples/benchmarks_dynamic/DDG-DA>`_。
+上述示例可以在``examples/benchmarks_dynamic/DDG-DA/workflow.py``中找到。`这里 <https://github.com/ssvip9527/qlib/tree/main/examples/benchmarks_dynamic/DDG-DA>`_。

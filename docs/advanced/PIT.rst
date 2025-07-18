@@ -19,7 +19,7 @@
 数据准备
 ----------------
 
-Qlib提供了一个爬虫帮助用户下载金融数据，以及一个转换器将数据转换为Qlib格式。请按照`scripts/data_collector/pit/README.md <https://github.com/microsoft/qlib/tree/main/scripts/data_collector/pit/>`_下载和转换数据。此外，你可以在该文档中找到一些额外的使用示例。
+Qlib提供了一个爬虫帮助用户下载金融数据，以及一个转换器将数据转换为Qlib格式。请按照`scripts/data_collector/pit/README.md <https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/pit/>`_下载和转换数据。此外，你可以在该文档中找到一些额外的使用示例。
 
 
 PIT数据的基于文件的设计

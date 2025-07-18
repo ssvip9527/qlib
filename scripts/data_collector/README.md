@@ -13,7 +13,7 @@
 
 ## 自定义数据收集
 
-> 具体实现参考: https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo
+> 具体实现参考: https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo
 
 1. 在当前目录创建数据集代码目录
 2. 添加`collector.py`文件

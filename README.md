@@ -1,8 +1,8 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/pyqlib.svg?logo=python&logoColor=white)](https://pypi.org/project/pyqlib/#files)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-lightgrey)](https://pypi.org/project/pyqlib/#files)
 [![PypI Versions](https://img.shields.io/pypi/v/pyqlib)](https://pypi.org/project/pyqlib/#history)
-[![Upload Python Package](https://github.com/microsoft/qlib/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/pyqlib/)
-[![Github Actions Test Status](https://github.com/microsoft/qlib/workflows/Test/badge.svg?branch=main)](https://github.com/microsoft/qlib/actions)
+[![Upload Python Package](https://github.com/ssvip9527/qlib/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/pyqlib/)
+[![Github Actions Test Status](https://github.com/ssvip9527/qlib/workflows/Test/badge.svg?branch=main)](https://github.com/ssvip9527/qlib/actions)
 [![Documentation Status](https://readthedocs.org/projects/qlib/badge/?version=latest)](https://qlib.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/pypi/l/pyqlib)](LICENSE)
 [![Join the chat at https://gitter.im/Microsoft/qlib](https://badges.gitter.im/Microsoft/qlib.svg)](https://gitter.im/Microsoft/qlib?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -45,33 +45,33 @@ RD-Agent 现在已在 [GitHub](https://github.com/microsoft/RD-Agent) 上可用�
 | 特性 | 状态 |
 | --                      | ------    |
 | [R&D-Agent-Quant](https://arxiv.org/abs/2505.15155) 已发布 | 将 R&D-Agent 应用于 Qlib 用于量化交易 | 
-| BPQP 用于端到端学习 | 📈即将到来！([审核中](https://github.com/microsoft/qlib/pull/1863)) |
+| BPQP 用于端到端学习 | 📈即将到来！([审核中](https://github.com/ssvip9527/qlib/pull/1863)) |
 | 🔥LLM驱动的自动量化工厂🔥 | 🚀 于2024年8月8日在 [♾️RD-Agent](https://github.com/microsoft/RD-Agent) 中发布 |
-| KRNN 和 Sandwich 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/1414/) 于2023年5月26日 |
-| 发布 Qlib v0.9.0 | :octocat: [已发布](https://github.com/microsoft/qlib/releases/tag/v0.9.0) 于2022年12月9日 |
-| RL 学习框架 | :hammer: :chart_with_upwards_trend: 于2022年11月10日发布。 [#1332](https://github.com/microsoft/qlib/pull/1332), [#1322](https://github.com/microsoft/qlib/pull/1322), [#1316](https://github.com/microsoft/qlib/pull/1316),[#1299](https://github.com/microsoft/qlib/pull/1299),[#1263](https://github.com/microsoft/qlib/pull/1263), [#1244](https://github.com/microsoft/qlib/pull/1244), [#1169](https://github.com/microsoft/qlib/pull/1169), [#1125](https://github.com/microsoft/qlib/pull/1125), [#1076](https://github.com/microsoft/qlib/pull/1076)|
-| HIST 和 IGMTF 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/1040) 于2022年4月10日 |
-| Qlib [notebook 教程](https://github.com/microsoft/qlib/tree/main/examples/tutorial) | 📖 [已发布](https://github.com/microsoft/qlib/pull/1037) 于2022年4月7日 | 
-| Ibovespa 指数数据 | :rice: [已发布](https://github.com/microsoft/qlib/pull/990) 于2022年4月6日 |
-| Point-in-Time 数据库 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/343) 于2022年3月10日 |
-| Arctic Provider Backend & Orderbook 数据示例 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/744) 于2022年1月17日 |
-| 基于元学习的框架 & DDG-DA  | :chart_with_upwards_trend:  :hammer: [已发布](https://github.com/microsoft/qlib/pull/743) 于2022年1月10日 | 
-| 基于规划的投资组合优化 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/754) 于2021年12月28日 | 
-| 发布 Qlib v0.8.0 | :octocat: [已发布](https://github.com/microsoft/qlib/releases/tag/v0.8.0) 于2021年12月8日 |
-| ADD 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/704) 于2021年11月22日 |
-| ADARNN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/689) 于2021年11月14日 |
-| TCN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/668) 于2021年11月4日 |
-| 嵌套决策框架 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/438) 于2021年10月1日。 [示例](https://github.com/microsoft/qlib/blob/main/examples/nested_decision_execution/workflow.py) 和 [文档](https://qlib.readthedocs.io/en/latest/component/highfreq.html) |
-| Temporal Routing Adaptor (TRA) | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/531) 于2021年7月30日 |
-| Transformer & Localformer | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/508) 于2021年7月22日 |
-| 发布 Qlib v0.7.0 | :octocat: [已发布](https://github.com/microsoft/qlib/releases/tag/v0.7.0) 于2021年7月12日 |
-| TCTS 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/491) 于2021年7月1日 |
-| 在线服务和自动模型滚动 | :hammer:  [已发布](https://github.com/microsoft/qlib/pull/290) 于2021年5月17日 | 
-| DoubleEnsemble 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/286) 于2021年3月2日 | 
-| 高频数据处理示例 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/257) 于2021年2月5日  |
-| 高频交易示例 | :chart_with_upwards_trend: [部分代码已发布](https://github.com/microsoft/qlib/pull/227) 于2021年1月28日  | 
-| 高频数据(1min) | :rice: [已发布](https://github.com/microsoft/qlib/pull/221) 于2021年1月27日 |
-| Tabnet 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/205) 于2021年1月22日 |
+| KRNN 和 Sandwich 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/1414/) 于2023年5月26日 |
+| 发布 Qlib v0.9.0 | :octocat: [已发布](https://github.com/ssvip9527/qlib/releases/tag/v0.9.0) 于2022年12月9日 |
+| RL 学习框架 | :hammer: :chart_with_upwards_trend: 于2022年11月10日发布。 [#1332](https://github.com/ssvip9527/qlib/pull/1332), [#1322](https://github.com/ssvip9527/qlib/pull/1322), [#1316](https://github.com/ssvip9527/qlib/pull/1316),[#1299](https://github.com/ssvip9527/qlib/pull/1299),[#1263](https://github.com/ssvip9527/qlib/pull/1263), [#1244](https://github.com/ssvip9527/qlib/pull/1244), [#1169](https://github.com/ssvip9527/qlib/pull/1169), [#1125](https://github.com/ssvip9527/qlib/pull/1125), [#1076](https://github.com/ssvip9527/qlib/pull/1076)|
+| HIST 和 IGMTF 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/1040) 于2022年4月10日 |
+| Qlib [notebook 教程](https://github.com/ssvip9527/qlib/tree/main/examples/tutorial) | 📖 [已发布](https://github.com/ssvip9527/qlib/pull/1037) 于2022年4月7日 | 
+| Ibovespa 指数数据 | :rice: [已发布](https://github.com/ssvip9527/qlib/pull/990) 于2022年4月6日 |
+| Point-in-Time 数据库 | :hammer: [已发布](https://github.com/ssvip9527/qlib/pull/343) 于2022年3月10日 |
+| Arctic Provider Backend & Orderbook 数据示例 | :hammer: [已发布](https://github.com/ssvip9527/qlib/pull/744) 于2022年1月17日 |
+| 基于元学习的框架 & DDG-DA  | :chart_with_upwards_trend:  :hammer: [已发布](https://github.com/ssvip9527/qlib/pull/743) 于2022年1月10日 | 
+| 基于规划的投资组合优化 | :hammer: [已发布](https://github.com/ssvip9527/qlib/pull/754) 于2021年12月28日 | 
+| 发布 Qlib v0.8.0 | :octocat: [已发布](https://github.com/ssvip9527/qlib/releases/tag/v0.8.0) 于2021年12月8日 |
+| ADD 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/704) 于2021年11月22日 |
+| ADARNN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/689) 于2021年11月14日 |
+| TCN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/668) 于2021年11月4日 |
+| 嵌套决策框架 | :hammer: [已发布](https://github.com/ssvip9527/qlib/pull/438) 于2021年10月1日。 [示例](https://github.com/ssvip9527/qlib/blob/main/examples/nested_decision_execution/workflow.py) 和 [文档](https://qlib.readthedocs.io/en/latest/component/highfreq.html) |
+| Temporal Routing Adaptor (TRA) | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/531) 于2021年7月30日 |
+| Transformer & Localformer | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/508) 于2021年7月22日 |
+| 发布 Qlib v0.7.0 | :octocat: [已发布](https://github.com/ssvip9527/qlib/releases/tag/v0.7.0) 于2021年7月12日 |
+| TCTS 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/491) 于2021年7月1日 |
+| 在线服务和自动模型滚动 | :hammer:  [已发布](https://github.com/ssvip9527/qlib/pull/290) 于2021年5月17日 | 
+| DoubleEnsemble 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/286) 于2021年3月2日 | 
+| 高频数据处理示例 | :hammer: [已发布](https://github.com/ssvip9527/qlib/pull/257) 于2021年2月5日  |
+| 高频交易示例 | :chart_with_upwards_trend: [部分代码已发布](https://github.com/ssvip9527/qlib/pull/227) 于2021年1月28日  | 
+| 高频数据(1min) | :rice: [已发布](https://github.com/ssvip9527/qlib/pull/221) 于2021年1月27日 |
+| Tabnet 模型 | :chart_with_upwards_trend: [已发布](https://github.com/ssvip9527/qlib/pull/205) 于2021年1月22日 |
 
 2021年之前发布的特性未在此列出。
 
@@ -201,7 +201,7 @@ Qlib 提供强大的基础设施来支持量化研究。[数据](https://qlib.re
 
 * 克隆仓库并安装 ``Qlib`` 如下。
     ```bash
-    git clone https://github.com/microsoft/qlib.git && cd qlib
+    git clone https://github.com/ssvip9527/qlib.git && cd qlib
     pip install .  # `pip install -e .[dev]` 推荐用于开发。检查 docs/developer/code_standard_and_dev_guide.rst 中的细节
     ```
 
@@ -248,7 +248,7 @@ rm -f qlib_bin.tar.gz
   ```
 
 此数据集是由 [crawler scripts](scripts/data_collector/) 收集的公共数据创建的，这些脚本已在同一仓库中发布。
-用户可以使用它创建相同的数据集。[数据集描述](https://github.com/microsoft/qlib/tree/main/scripts/data_collector#description-of-dataset)
+用户可以使用它创建相同的数据集。[数据集描述](https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector#description-of-dataset)
 
 *请**注意**数据是从 [Yahoo Finance](https://finance.yahoo.com/lookup) 收集的，数据可能不完美。
 我们建议用户如果有高质量数据集，请准备自己的数据。更多信息，用户可以参考[相关文档](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*。
@@ -258,9 +258,9 @@ rm -f qlib_bin.tar.gz
   > 
   > 建议用户手动更新一次数据 (--trading_date 2021-05-25) 然后设置为自动更新。
   >
-  > **注意**：用户无法基于 Qlib 提供的离线数据（一些字段被移除以减少数据大小）增量更新数据。用户应使用 [yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) 从头下载 Yahoo 数据，然后增量更新它。
+  > **注意**：用户无法基于 Qlib 提供的离线数据（一些字段被移除以减少数据大小）增量更新数据。用户应使用 [yahoo collector](https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) 从头下载 Yahoo 数据，然后增量更新它。
   > 
-  > 更多信息，请参考：[yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance)
+  > 更多信息，请参考：[yahoo collector](https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance)
 
   * 每个交易日自动更新数据到 "qlib" 目录 (Linux)
       * 使用 *crontab*: `crontab -e`
@@ -384,19 +384,19 @@ Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工�
 2. 图形化报告分析：首先运行 `python -m pip install .[analysis]` 安装所需依赖，然后用 `jupyter notebook` 打开并运行 `examples/workflow_by_code.ipynb`，即可获得图形化报告。
     - 预测信号（模型预测）分析
       - 分组累计收益
-      ![Cumulative Return](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_cumulative_return.png)
+      ![Cumulative Return](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_cumulative_return.png)
       - 收益分布
-      ![long_short](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_long_short.png)
+      ![long_short](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_long_short.png)
       - 信息系数（IC）
-      ![Information Coefficient](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_IC.png)
-      ![Monthly IC](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_monthly_IC.png)
-      ![IC](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_NDQ.png)
+      ![Information Coefficient](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_IC.png)
+      ![Monthly IC](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_monthly_IC.png)
+      ![IC](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_NDQ.png)
       - 预测信号（模型预测）的自相关性
-      ![Auto Correlation](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/analysis_model_auto_correlation.png)
+      ![Auto Correlation](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/analysis_model_auto_correlation.png)
 
     - 投资组合分析
       - 回测收益
-      ![Report](https://github.com/microsoft/qlib/blob/main/docs/_static/img/analysis/report.png)
+      ![Report](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/analysis/report.png)
       <!-- 
       - Score IC
       ![Score IC](docs/_static/img/score_ic.png)
@@ -539,7 +539,7 @@ make html
 ```
 你也可以直接在线查看[最新文档](http://qlib.readthedocs.io/)。
 
-Qlib 正在持续开发中，开发计划见 [github 项目](https://github.com/microsoft/qlib/projects/1)。
+Qlib 正在持续开发中，开发计划见 [github 项目](https://github.com/ssvip9527/qlib/projects/1)。
 
 
 
@@ -548,7 +548,7 @@ Qlib 的数据服务器可部署为“离线”模式或“在线”模式，默
 
 在“离线”模式下，数据会本地部署。
 
-在“在线”模式下，数据作为共享数据服务部署，数据及其缓存会被所有客户端共享。由于缓存命中率更高，数据检索性能有望提升，同时也会节省磁盘空间。在线模式文档见 [Qlib-Server](https://qlib-server.readthedocs.io/)，可通过 [Azure CLI 脚本一键部署](https://qlib-server.readthedocs.io/en/latest/build.html#one-click-deployment-in-azure)。在线数据服务器源码见 [Qlib-Server 仓库](https://github.com/microsoft/qlib-server)。
+在“在线”模式下，数据作为共享数据服务部署，数据及其缓存会被所有客户端共享。由于缓存命中率更高，数据检索性能有望提升，同时也会节省磁盘空间。在线模式文档见 [Qlib-Server](https://qlib-server.readthedocs.io/)，可通过 [Azure CLI 脚本一键部署](https://qlib-server.readthedocs.io/en/latest/build.html#one-click-deployment-in-azure)。在线数据服务器源码见 [Qlib-Server 仓库](https://github.com/ssvip9527/qlib-server)。
 
 ## Qlib 数据服务器性能
 数据处理性能对 AI 等数据驱动方法至关重要。作为面向 AI 的平台，Qlib 提供了数据存储与处理的解决方案。为展示 Qlib 数据服务器的性能，我们与其他数据存储方案进行了对比。
@@ -571,19 +571,19 @@ Qlib 数据以紧凑格式存储，便于高效组合为科学计算所需的数
 - [微矿Qlib：业内首个AI量化投资开源平台](https://mp.weixin.qq.com/s/vsJv7lsgjEi-ALYUz4CvtQ)
 
 # 联系我们
-- 如有任何问题，请在 [这里](https://github.com/microsoft/qlib/issues/new/choose) 提 issue，或在 [gitter](https://gitter.im/Microsoft/qlib) 留言。
-- 如希望为 `Qlib` 做贡献，请[提交 pull request](https://github.com/microsoft/qlib/compare)。
+- 如有任何问题，请在 [这里](https://github.com/ssvip9527/qlib/issues/new/choose) 提 issue，或在 [gitter](https://gitter.im/Microsoft/qlib) 留言。
+- 如希望为 `Qlib` 做贡献，请[提交 pull request](https://github.com/ssvip9527/qlib/compare)。
 - 其他事宜欢迎邮件联系（[qlib@microsoft.com](mailto:qlib@microsoft.com)）。
   - 我们正在招聘新成员（全职/实习），欢迎投递简历！
 
 加入 IM 讨论群：
 |[Gitter](https://gitter.im/Microsoft/qlib)|
 |----|
-|![image](https://github.com/microsoft/qlib/blob/main/docs/_static/img/qrcode/gitter_qr.png)|
+|![image](https://github.com/ssvip9527/qlib/blob/main/docs/_static/img/qrcode/gitter_qr.png)|
 
 # 贡献
 感谢所有贡献者！
-<a href="https://github.com/microsoft/qlib/graphs/contributors"><img src="https://contrib.rocks/image?repo=microsoft/qlib" /></a>
+<a href="https://github.com/ssvip9527/qlib/graphs/contributors"><img src="https://contrib.rocks/image?repo=microsoft/qlib" /></a>
 
 Qlib 于 2020 年 9 月开源前为组内项目，遗憾的是内部提交历史未保留。组内许多成员也为 Qlib 做出了重要贡献，包括 Ruihua Wang、Yinda Zhang、Haisu Yu、Shuyu Wang、Bochen Pang 及 [Dong Zhou](https://github.com/evanzd/evanzd)。特别感谢 [Dong Zhou](https://github.com/evanzd/evanzd) 的初始版本。
 
@@ -592,7 +592,7 @@ Qlib 于 2020 年 9 月开源前为组内项目，遗憾的是内部提交历史
 本项目欢迎各种贡献和建议。
 **[代码规范与开发指南](docs/developer/code_standard_and_dev_guide.rst) 可参考提交 pull request。**
 
-贡献并不难。解决 issue（如回答 [issues 列表](https://github.com/microsoft/qlib/issues) 或 [gitter](https://gitter.im/Microsoft/qlib) 上的问题）、修复/提出 bug、完善文档甚至修正错别字，都是对 Qlib 的重要贡献。
+贡献并不难。解决 issue（如回答 [issues 列表](https://github.com/ssvip9527/qlib/issues) 或 [gitter](https://gitter.im/Microsoft/qlib) 上的问题）、修复/提出 bug、完善文档甚至修正错别字，都是对 Qlib 的重要贡献。
 
 如想为 Qlib 文档/代码做贡献，可参考下图步骤：
 <p align="center">
@@ -602,13 +602,13 @@ Qlib 于 2020 年 9 月开源前为组内项目，遗憾的是内部提交历史
 如不知如何开始，可参考以下示例：
 | 类型 | 示例 |
 | -- | -- |
-| 解决问题 | [回答问题](https://github.com/microsoft/qlib/issues/749)；[提出](https://github.com/microsoft/qlib/issues/765)或[修复](https://github.com/microsoft/qlib/pull/792) bug |
-| 文档 | [提升文档质量](https://github.com/microsoft/qlib/pull/797/files)；[修正错别字](https://github.com/microsoft/qlib/pull/774) |
-| 新特性 | [实现需求特性](https://github.com/microsoft/qlib/projects) 如 [此](https://github.com/microsoft/qlib/pull/754)；[重构接口](https://github.com/microsoft/qlib/pull/539/files) |
-| 数据集 | [新增数据集](https://github.com/microsoft/qlib/pull/733) |
-| 模型 | [实现新模型](https://github.com/microsoft/qlib/pull/689)，[贡献模型说明](https://github.com/microsoft/qlib/tree/main/examples/benchmarks#contributing) |
+| 解决问题 | [回答问题](https://github.com/ssvip9527/qlib/issues/749)；[提出](https://github.com/ssvip9527/qlib/issues/765)或[修复](https://github.com/ssvip9527/qlib/pull/792) bug |
+| 文档 | [提升文档质量](https://github.com/ssvip9527/qlib/pull/797/files)；[修正错别字](https://github.com/ssvip9527/qlib/pull/774) |
+| 新特性 | [实现需求特性](https://github.com/ssvip9527/qlib/projects) 如 [此](https://github.com/ssvip9527/qlib/pull/754)；[重构接口](https://github.com/ssvip9527/qlib/pull/539/files) |
+| 数据集 | [新增数据集](https://github.com/ssvip9527/qlib/pull/733) |
+| 模型 | [实现新模型](https://github.com/ssvip9527/qlib/pull/689)，[贡献模型说明](https://github.com/ssvip9527/qlib/tree/main/examples/benchmarks#contributing) |
 
-[Good first issues](https://github.com/microsoft/qlib/labels/good%20first%20issue) 标签表示适合新手入门。
+[Good first issues](https://github.com/ssvip9527/qlib/labels/good%20first%20issue) 标签表示适合新手入门。
 
 可通过 `rg 'TODO|FIXME' qlib` 查找 Qlib 中待完善实现。
 

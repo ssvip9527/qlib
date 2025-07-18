@@ -29,7 +29,7 @@
 
     .. code-block::
 
-        git clone https://github.com/microsoft/qlib.git && cd qlib
+        git clone https://github.com/ssvip9527/qlib.git && cd qlib
         python setup.py install
 
 要了解更多关于`安装`的信息，请参考`Qlib安装指南 <../start/installation.html>`_。

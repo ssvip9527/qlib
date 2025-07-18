@@ -666,7 +666,7 @@ class LocalCalendarProvider(CalendarProvider, ProviderBackendMixin):
                     f"load calendar error: freq={freq}, future={future}; return current calendar!"
                 )
                 get_module_logger("data").warning(
-                    "You can get future calendar by referring to the following document: https://github.com/microsoft/qlib/blob/main/scripts/data_collector/contrib/README.md"
+                    "You can get future calendar by referring to the following document: https://github.com/ssvip9527/qlib/blob/main/scripts/data_collector/contrib/README.md"
                 )
                 backend_obj = self.backend_obj(freq=freq, future=False).data
             else:

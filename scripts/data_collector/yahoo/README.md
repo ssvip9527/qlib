@@ -37,7 +37,7 @@ pip install -r requirements.txt
     - `version`: dataset version, value from [`v1`, `v2`], by default `v1`
       - `v2` end date is *2021-06*, `v1` end date is *2020-09*
       - If users want to incrementally update data, they need to use yahoo collector to [collect data from scratch](#collector-yahoofinance-data-to-qlib).
-      - **the [benchmarks](https://github.com/microsoft/qlib/tree/main/examples/benchmarks) for qlib use `v1`**, *由于雅虎财经对历史数据的访问不稳定，`v2`和`v1`之间存在一些差异*
+      - **the [benchmarks](https://github.com/ssvip9527/qlib/tree/main/examples/benchmarks) for qlib use `v1`**, *由于雅虎财经对历史数据的访问不稳定，`v2`和`v1`之间存在一些差异*
     - `interval`: `1d` or `1min`, by default `1d`
     - `region`: `cn` or `us` or `in`, by default `cn`
     - `delete_old`: delete existing data from `target_dir`(*features, calendars, instruments, dataset_cache, features_cache*), value from [`True`, `False`], by default `True`
@@ -160,7 +160,7 @@ pip install -r requirements.txt
 ### Automatic update of daily frequency data(from yahoo finance)
   > 建议用户先手动更新一次数据（--trading_date 2021-05-25），然后再设置为自动更新。
   >
-  > **注意**：用户无法基于 Qlib 提供的离线数据进行增量更新（为减小数据体积，部分字段已被移除）。用户应使用 [yahoo collector](https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) 从头开始下载 Yahoo 数据，然后进行增量更新。
+  > **注意**：用户无法基于 Qlib 提供的离线数据进行增量更新（为减小数据体积，部分字段已被移除）。用户应使用 [yahoo collector](https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance) 从头开始下载 Yahoo 数据，然后进行增量更新。
   > 
 
    * 每个交易日自动更新数据到 "qlib" 目录（Linux）
@@ -183,7 +183,7 @@ pip install -r requirements.txt
   * `scripts/data_collector/yahoo/collector.py update_data_to_bin` 参数说明：
       * `source_dir`: The directory where the raw data collected from the Internet is saved, default "Path(__file__).parent/source"
       * `normalize_dir`: Directory for normalize data, default "Path(__file__).parent/normalize"
-      * `qlib_data_1d_dir`: the qlib data to be updated for yahoo, usually from: [download qlib data](https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data)
+      * `qlib_data_1d_dir`: the qlib data to be updated for yahoo, usually from: [download qlib data](https://github.com/ssvip9527/qlib/tree/main/scripts#download-cn-data)
       * `end_date`: end datetime, default ``pd.Timestamp(trading_date + pd.Timedelta(days=1))``; open interval(excluding end)
       * `region`: region, value from ["CN", "US"], default "CN"
       * `interval`: interval, default "1d"(Currently only supports 1d data)

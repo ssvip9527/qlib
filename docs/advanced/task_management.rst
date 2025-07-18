@@ -18,7 +18,7 @@
 
 整个流程可用于 `在线服务 <../component/online.html>`_。
 
-完整流程的示例见 `此处 <https://github.com/microsoft/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`__。
+完整流程的示例见 `此处 <https://github.com/ssvip9527/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`__。
 
 任务生成
 ===============
@@ -33,7 +33,7 @@
     :members:
     :noindex:
 
-``Qlib`` 提供了一个 `RollingGen <https://github.com/microsoft/qlib/tree/main/qlib/workflow/task/gen.py>`_ 类，用于生成数据集在不同日期段的 ``任务`` 列表。
+``Qlib`` 提供了一个 `RollingGen <https://github.com/ssvip9527/qlib/tree/main/qlib/workflow/task/gen.py>`_ 类，用于生成数据集在不同日期段的 ``任务`` 列表。
 此类允许用户在一个实验中验证不同时期数据对模型的影响。更多信息见 `此处 <../reference/api.html#TaskGen>`__。
 
 任务存储
@@ -97,4 +97,4 @@
 
 因此，层次结构为：``Collector`` 的第二步对应 ``Group``，而 ``Group`` 的第二步对应 ``Ensemble``。
 
-更多信息，请参见 `Collector <../reference/api.html#Collector>`_、`Group <../reference/api.html#Group>`_ 和 `Ensemble <../reference/api.html#Ensemble>`_，或 `示例 <https://github.com/microsoft/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`_。
+更多信息，请参见 `Collector <../reference/api.html#Collector>`_、`Group <../reference/api.html#Group>`_ 和 `Ensemble <../reference/api.html#Ensemble>`_，或 `示例 <https://github.com/ssvip9527/qlib/tree/main/examples/model_rolling/task_manager_rolling.py>`_。

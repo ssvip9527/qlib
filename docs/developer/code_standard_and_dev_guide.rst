@@ -24,7 +24,7 @@ When you submit a PR request, you can check whether your code passes the CI test
     python -m black . -l 120
 
 
-2. Qlib will check your code style pylint. The checking command is implemented in [github action workflow](https://github.com/microsoft/qlib/blob/0e8b94a552f1c457cfa6cd2c1bb3b87ebb3fb279/.github/workflows/test.yml#L66).
+2. Qlib will check your code style pylint. The checking command is implemented in [github action workflow](https://github.com/ssvip9527/qlib/blob/0e8b94a552f1c457cfa6cd2c1bb3b87ebb3fb279/.github/workflows/test.yml#L66).
    Sometime pylint's restrictions are not that reasonable. You can ignore specific errors like this
 
 .. code-block:: python
@@ -32,7 +32,7 @@ When you submit a PR request, you can check whether your code passes the CI test
     return -ICLoss()(pred, target, index)  # pylint: disable=E1130
 
 
-3. Qlib will check your code style flake8. The checking command is implemented in [github action workflow](https://github.com/microsoft/qlib/blob/0e8b94a552f1c457cfa6cd2c1bb3b87ebb3fb279/.github/workflows/test.yml#L73).
+3. Qlib will check your code style flake8. The checking command is implemented in [github action workflow](https://github.com/ssvip9527/qlib/blob/0e8b94a552f1c457cfa6cd2c1bb3b87ebb3fb279/.github/workflows/test.yml#L73).
 
    You can fix the bug by inputing the following code in the command line.
 

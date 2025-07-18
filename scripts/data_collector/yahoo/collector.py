@@ -511,7 +511,7 @@ class YahooNormalize1dExtend(YahooNormalize1d):
         参数说明
         ----------
         old_qlib_data_dir: str, Path
-            用于Yahoo数据更新的QLib历史数据目录，通常来自：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
+            用于Yahoo数据更新的QLib历史数据目录，通常来自：https://github.com/ssvip9527/qlib/tree/main/scripts#download-cn-data
         date_field_name: str
             日期字段名称，默认为date
         symbol_field_name: str
@@ -827,7 +827,7 @@ class Run(BaseRun):
                     $ python scripts/get_data.py qlib_data --target_dir <qlib_data_1d_dir> --interval 1d
                     $ python scripts/data_collector/yahoo/collector.py update_data_to_bin --qlib_data_1d_dir <qlib_data_1d_dir> --trading_date 2021-06-01
                 或者：
-                    下载日线数据，参考：https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
+                    下载日线数据，参考：https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#1d-from-yahoo
 
         使用示例
         ---------
@@ -837,7 +837,7 @@ class Run(BaseRun):
         if self.interval.lower() == "1min":
             if qlib_data_1d_dir is None or not Path(qlib_data_1d_dir).expanduser().exists():
                 raise ValueError(
-                    "If normalize 1min, the qlib_data_1d_dir parameter must be set: --qlib_data_1d_dir <user qlib 1d data >, Reference: https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance"
+                    "If normalize 1min, the qlib_data_1d_dir parameter must be set: --qlib_data_1d_dir <user qlib 1d data >, Reference: https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#automatic-update-of-daily-frequency-datafrom-yahoo-finance"
                 )
         super(Run, self).normalize_data(
             date_field_name, symbol_field_name, end_date=end_date, qlib_data_1d_dir=qlib_data_1d_dir
@@ -846,15 +846,15 @@ class Run(BaseRun):
     def normalize_data_1d_extend(
         self, old_qlib_data_dir, date_field_name: str = "date", symbol_field_name: str = "symbol"
     ):
-        """归一化数据扩展；扩展Yahoo Qlib数据(来源: https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data)
+        """归一化数据扩展；扩展Yahoo Qlib数据(来源: https://github.com/ssvip9527/qlib/tree/main/scripts#download-cn-data)
 
         注意事项
         -----
             扩展Yahoo Qlib数据的步骤：
 
-                1. 下载Qlib数据：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data；保存至<dir1>
+                1. 下载Qlib数据：https://github.com/ssvip9527/qlib/tree/main/scripts#download-cn-data；保存至<dir1>
 
-                2. 收集源数据：https://github.com/microsoft/qlib/tree/main/scripts/data_collector/yahoo#collector-data；保存至<dir2>
+                2. 收集源数据：https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector/yahoo#collector-data；保存至<dir2>
 
                 3. 归一化新源数据(来自步骤2)：python scripts/data_collector/yahoo/collector.py normalize_data_1d_extend --old_qlib_dir <dir1> --source_dir <dir2> --normalize_dir <dir3> --region CN --interval 1d
 
@@ -865,7 +865,7 @@ class Run(BaseRun):
         参数说明
         ----------
         old_qlib_data_dir: str
-            用于更新的Yahoo Qlib数据，通常来自：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
+            用于更新的Yahoo Qlib数据，通常来自：https://github.com/ssvip9527/qlib/tree/main/scripts#download-cn-data
         date_field_name: str
             日期字段名称，默认为date
         symbol_field_name: str
@@ -949,7 +949,7 @@ class Run(BaseRun):
         参数说明
         ----------
         qlib_data_1d_dir: str
-            用于Yahoo数据更新的Qlib数据，通常来自：https://github.com/microsoft/qlib/tree/main/scripts#download-cn-data
+            用于Yahoo数据更新的Qlib数据，通常来自：https://github.com/ssvip9527/qlib/tree/main/scripts#download-cn-data
 
         end_date: str
             结束日期时间，默认为``pd.Timestamp(trading_date + pd.Timedelta(days=1))``；开区间(不包含结束日期)

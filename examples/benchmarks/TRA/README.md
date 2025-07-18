@@ -31,7 +31,7 @@
 - `workflow_config_tra_Alpha158.yaml`：使用Alpha158数据集运行TRA（带特征子采样）
 - `workflow_config_tra_Alpha158_full.yaml`：使用Alpha158数据集运行TRA（不带特征子采样）
 
-TRA的性能在[基准测试](https://github.com/microsoft/qlib/tree/main/examples/benchmarks)中有所报告。
+TRA的性能在[基准测试](https://github.com/ssvip9527/qlib/tree/main/examples/benchmarks)中有所报告。
 
 ## 使用方法（不再维护）
 
