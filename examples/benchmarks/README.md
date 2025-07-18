@@ -139,7 +139,7 @@ python run_all_model.py run 3 lightgbm Alpha158 csi500  # 对于有随机性的�
 4. 请更新上述**基准表格**中的结果，例如[Alpha360](#alpha158-dataset)、[Alpha158](#alpha158-dataset)（每个指标的值是基于**20次**不同随机种子运行计算的均值和标准差。您可以通过Qlib提供的自动化[脚本](https://github.com/ssvip9527/qlib/blob/main/examples/run_all_model.py)完成上述操作，并在.md文件中获取最终结果。如果您没有足够的计算资源，可以在PR中寻求帮助）。
 5. 在[新闻列表](https://github.com/ssvip9527/qlib#newspaper-whats-new----sparkling_heart)和[模型列表](https://github.com/ssvip9527/qlib#quant-model-paper-zoo)的索引页面更新信息。
 
-最后，您可以提交PR进行审核。（[此处是一个示例](https://github.com/ssvip9527/qlib/pull/1040)）
+最后，您可以提交PR进行审核。（[此处是一个示例](https://github.com/microsoft/qlib/pull/1040)）
 
 
 # 常见问题

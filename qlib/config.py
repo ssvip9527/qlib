@@ -206,7 +206,7 @@ _default_config = {
         },
         # 通常应设置为`False`以避免重复日志记录 [1]。
         # 但是，由于pytest中的bug，需要将日志消息传播到根日志器才能被`caplog`捕获 [2]。
-        # [1] https://github.com/ssvip9527/qlib/pull/1661
+        # [1] https://github.com/microsoft/qlib/pull/1661
         # [2] https://github.com/pytest-dev/pytest/issues/3697
         "loggers": {"qlib": {"level": logging.DEBUG, "handlers": ["console"], "propagate": False}},
         # 为了让qlib与其他包兼容，我们不应禁用现有日志器。
