@@ -14,8 +14,8 @@ logger = get_module_logger("workflow")
 
 class Experiment:
     """
-    This is the `Experiment` class for each experiment being run. The API is designed similar to mlflow.
-    (The link: https://mlflow.org/docs/latest/python_api/mlflow.html)
+    这是用于运行每个实验的`Experiment`类。API设计类似于mlflow。
+    (链接: https://mlflow.org/docs/latest/python_api/mlflow.html)
     """
 
     def __init__(self, id, name):
@@ -43,31 +43,31 @@ class Experiment:
 
     def start(self, *, recorder_id=None, recorder_name=None, resume=False):
         """
-        Start the experiment and set it to be active. This method will also start a new recorder.
+        开始实验并设置为活动状态。此方法还将启动一个新的记录器。
 
-        Parameters
+        参数
         ----------
         recorder_id : str
-            the id of the recorder to be created.
+            要创建的记录器ID
         recorder_name : str
-            the name of the recorder to be created.
+            要创建的记录器名称
         resume : bool
-            whether to resume the first recorder
+            是否恢复第一个记录器
 
-        Returns
+        返回
         -------
-        An active recorder.
+        一个活动的记录器。
         """
         raise NotImplementedError(f"Please implement the `start` method.")
 
     def end(self, recorder_status=Recorder.STATUS_S):
         """
-        End the experiment.
+        结束实验。
 
-        Parameters
+        参数
         ----------
         recorder_status : str
-            the status the recorder to be set with when ending (SCHEDULED, RUNNING, FINISHED, FAILED).
+            结束时记录器要设置的状态(SCHEDULED, RUNNING, FINISHED, FAILED)。
         """
         raise NotImplementedError(f"Please implement the `end` method.")
 

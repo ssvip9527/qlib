@@ -27,10 +27,10 @@ mlflow.utils.validation.MAX_PARAM_VAL_LENGTH = 1000
 
 class Recorder:
     """
-    This is the `Recorder` class for logging the experiments. The API is designed similar to mlflow.
-    (The link: https://mlflow.org/docs/latest/python_api/mlflow.html)
+    这是用于记录实验的`Recorder`类，其API设计与mlflow类似。
+    (链接: https://mlflow.org/docs/latest/python_api/mlflow.html)
 
-    The status of the recorder can be SCHEDULED, RUNNING, FINISHED, FAILED.
+    记录器的状态可以是SCHEDULED(已调度), RUNNING(运行中), FINISHED(已完成), FAILED(失败)。
     """
 
     # status type
@@ -104,18 +104,18 @@ class Recorder:
 
     def start_run(self):
         """
-        Start running or resuming the Recorder. The return value can be used as a context manager within a `with` block;
-        otherwise, you must call end_run() to terminate the current run. (See `ActiveRun` class in mlflow)
+        启动或恢复记录器。返回值可用作`with`块中的上下文管理器；
+        否则必须调用end_run()来终止当前运行。(参见mlflow中的`ActiveRun`类)
 
-        Returns
+        返回
         -------
-        An active running object (e.g. mlflow.ActiveRun object).
+        一个活动运行对象(例如mlflow.ActiveRun对象)。
         """
         raise NotImplementedError(f"Please implement the `start_run` method.")
 
     def end_run(self):
         """
-        End an active Recorder.
+        结束一个活动的记录器。
         """
         raise NotImplementedError(f"Please implement the `end_run` method.")
 

@@ -28,8 +28,7 @@ logger = get_module_logger("workflow", logging.INFO)
 
 class RecordTemp:
     """
-    This is the Records Template class that enables user to generate experiment results such as IC and
-    backtest in a certain format.
+    这是记录模板类，用于生成特定格式的实验结果，例如IC和回测。
     """
 
     artifact_path = None
@@ -49,8 +48,7 @@ class RecordTemp:
 
     def save(self, **kwargs):
         """
-        It behaves the same as self.recorder.save_objects.
-        But it is an easier interface because users don't have to care about `get_path` and `artifact_path`
+        功能与self.recorder.save_objects相同，但提供了更简单的接口，用户无需关心`get_path`和`artifact_path`
         """
         art_path = self.get_path()
         if art_path == "":
@@ -68,7 +66,7 @@ class RecordTemp:
 
     def generate(self, **kwargs):
         """
-        Generate certain records such as IC, backtest etc., and save them.
+        生成特定记录如IC、回测等，并保存它们。
 
         Parameters
         ----------
@@ -81,8 +79,7 @@ class RecordTemp:
 
     def load(self, name: str, parents: bool = True):
         """
-        It behaves the same as self.recorder.load_object.
-        But it is an easier interface because users don't have to care about `get_path` and `artifact_path`
+        功能与self.recorder.load_object相同，但提供了更简单的接口，用户无需关心`get_path`和`artifact_path`
 
         Parameters
         ----------
@@ -109,8 +106,7 @@ class RecordTemp:
 
     def list(self):
         """
-        List the supported artifacts.
-        Users don't have to consider self.get_path
+        列出支持的工件，用户无需考虑self.get_path
 
         Return
         ------
@@ -120,11 +116,10 @@ class RecordTemp:
 
     def check(self, include_self: bool = False, parents: bool = True):
         """
-        Check if the records is properly generated and saved.
-        It is useful in following examples
+        检查记录是否正确生成和保存。在以下情况下很有用：
 
-        - checking if the dependant files complete before generating new things.
-        - checking if the final files is completed
+        - 在生成新内容前检查依赖文件是否完整
+        - 检查最终文件是否完成
 
         Parameters
         ----------

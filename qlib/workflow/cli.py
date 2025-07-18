@@ -29,14 +29,14 @@ def get_path_list(path):
 
 def sys_config(config, config_path):
     """
-    Configure the `sys` section
+    配置`sys`部分
 
-    Parameters
+    参数
     ----------
     config : dict
-        configuration of the workflow.
+        工作流配置
     config_path : str
-        path of the configuration
+        配置文件路径
     """
     sys_config = config.get("sys", {})
 
@@ -51,17 +51,17 @@ def sys_config(config, config_path):
 
 def render_template(config_path: str) -> str:
     """
-    render the template based on the environment
+    根据环境渲染模板
 
-    Parameters
+    参数
     ----------
     config_path : str
-        configuration path
+        配置文件路径
 
-    Returns
+    返回
     -------
     str
-        the rendered content
+        渲染后的内容
     """
     with open(config_path, "r") as f:
         config = f.read()
@@ -85,15 +85,14 @@ def render_template(config_path: str) -> str:
 # workflow handler function
 def workflow(config_path, experiment_name="workflow", uri_folder="mlruns"):
     """
-    This is a Qlib CLI entrance.
-    User can run the whole Quant research workflow defined by a configure file
-    - the code is located here ``qlib/workflow/cli.py`
+    Qlib命令行入口。
+    用户可以通过配置文件运行完整的量化研究工作流
+    - 代码位于``qlib/workflow/cli.py`
 
-    User can specify a base_config file in your workflow.yml file by adding "BASE_CONFIG_PATH".
-    Qlib will load the configuration in BASE_CONFIG_PATH first, and the user only needs to update the custom fields
-    in their own workflow.yml file.
+    用户可以在workflow.yml文件中通过添加"BASE_CONFIG_PATH"指定基础配置文件。
+    Qlib会先加载BASE_CONFIG_PATH中的配置，用户只需在自己的workflow.yml文件中更新自定义字段。
 
-    For examples:
+    示例:
 
         qlib_init:
             provider_uri: "~/.qlib/qlib_data/cn_data"

@@ -17,16 +17,16 @@ from qlib.workflow.recorder import Recorder
 
 
 class Collector(Serializable):
-    """The collector to collect different results"""
+    """用于收集不同结果的收集器"""
 
     pickle_backend = "dill"  # use dill to dump user method
 
     def __init__(self, process_list=[]):
         """
-        Init Collector.
+        初始化收集器
 
-        Args:
-            process_list (list or Callable):  the list of processors or the instance of a processor to process dict.
+        参数:
+            process_list (list or Callable):  处理字典的处理器列表或单个处理器实例
         """
         if not isinstance(process_list, list):
             process_list = [process_list]
@@ -34,12 +34,12 @@ class Collector(Serializable):
 
     def collect(self) -> dict:
         """
-        Collect the results and return a dict like {key: things}
+        收集结果并返回一个类似{key: 值}的字典
 
-        Returns:
-            dict: the dict after collecting.
+        返回:
+            dict: 收集后的字典
 
-            For example:
+            例如:
 
             {"prediction": pd.Series}
 
@@ -52,17 +52,17 @@ class Collector(Serializable):
     @staticmethod
     def process_collect(collected_dict, process_list=[], *args, **kwargs) -> dict:
         """
-        Do a series of processing to the dict returned by collect and return a dict like {key: things}
-        For example, you can group and ensemble.
+        对collect返回的字典进行一系列处理并返回一个类似{key: 值}的字典
+        例如可以进行分组和集成
 
-        Args:
-            collected_dict (dict): the dict return by `collect`
-            process_list (list or Callable): the list of processors or the instance of a processor to process dict.
-                The processor order is the same as the list order.
-                For example: [Group1(..., Ensemble1()), Group2(..., Ensemble2())]
+        参数:
+            collected_dict (dict): collect方法返回的字典
+            process_list (list or Callable): 处理字典的处理器列表或单个处理器实例
+                处理器顺序与列表顺序相同
+                例如: [Group1(..., Ensemble1()), Group2(..., Ensemble2())]
 
-        Returns:
-            dict: the dict after processing.
+        返回:
+            dict: 处理后的字典
         """
         if not isinstance(process_list, list):
             process_list = [process_list]
@@ -78,10 +78,10 @@ class Collector(Serializable):
 
     def __call__(self, *args, **kwargs) -> dict:
         """
-        Do the workflow including ``collect`` and ``process_collect``
+        执行包括``collect``和``process_collect``的工作流程
 
-        Returns:
-            dict: the dict after collecting and processing.
+        返回:
+            dict: 收集和处理后的字典
         """
         collected = self.collect()
         return self.process_collect(collected, self.process_list, *args, **kwargs)
@@ -89,13 +89,13 @@ class Collector(Serializable):
 
 class MergeCollector(Collector):
     """
-    A collector to collect the results of other Collectors
+    用于收集其他收集器结果的收集器
 
-    For example:
+    例如:
 
-        We have 2 collector, which named A and B.
-        A can collect {"prediction": pd.Series} and B can collect {"IC": {"Xgboost": pd.Series, "LSTM": pd.Series}}.
-        Then after this class's collect, we can collect {"A_prediction": pd.Series, "B_IC": {"Xgboost": pd.Series, "LSTM": pd.Series}}
+        我们有两个收集器A和B
+        A可以收集{"prediction": pd.Series}，B可以收集{"IC": {"Xgboost": pd.Series, "LSTM": pd.Series}}
+        经过本类收集后，我们可以收集{"A_prediction": pd.Series, "B_IC": {"Xgboost": pd.Series, "LSTM": pd.Series}}
 
         ...
 
@@ -103,13 +103,13 @@ class MergeCollector(Collector):
 
     def __init__(self, collector_dict: Dict[str, Collector], process_list: List[Callable] = [], merge_func=None):
         """
-        Init MergeCollector.
+        初始化MergeCollector
 
-        Args:
-            collector_dict (Dict[str,Collector]): the dict like {collector_key, Collector}
-            process_list (List[Callable]): the list of processors or the instance of processor to process dict.
-            merge_func (Callable): a method to generate outermost key. The given params are ``collector_key`` from collector_dict and ``key`` from every collector after collecting.
-                None for using tuple to connect them, such as "ABC"+("a","b") -> ("ABC", ("a","b")).
+        参数:
+            collector_dict (Dict[str,Collector]): 类似{collector_key, Collector}的字典
+            process_list (List[Callable]): 处理字典的处理器列表或单个处理器实例
+            merge_func (Callable): 生成最外层键的方法。参数是collector_dict中的``collector_key``和每个收集器收集后的``key``
+                如果为None则使用元组连接它们，例如"ABC"+("a","b") -> ("ABC", ("a","b"))
         """
         super().__init__(process_list=process_list)
         self.collector_dict = collector_dict
@@ -117,10 +117,10 @@ class MergeCollector(Collector):
 
     def collect(self) -> dict:
         """
-        Collect all results of collector_dict and change the outermost key to a recombination key.
+        收集collector_dict中的所有结果并将最外层键改为重组后的键
 
-        Returns:
-            dict: the dict after collecting.
+        返回:
+            dict: 收集后的字典
         """
         collect_dict = {}
         for collector_key, collector in self.collector_dict.items():
@@ -148,19 +148,19 @@ class RecorderCollector(Collector):
         status: Iterable = {Recorder.STATUS_FI},
     ):
         """
-        Init RecorderCollector.
+        初始化RecorderCollector。
 
-        Args:
+        参数：
             experiment:
-                (Experiment or str): an instance of an Experiment or the name of an Experiment
-                (Callable): an callable function, which returns a list of experiments
-            process_list (list or Callable): the list of processors or the instance of a processor to process dict.
-            rec_key_func (Callable): a function to get the key of a recorder. If None, use recorder id.
-            rec_filter_func (Callable, optional): filter the recorder by return True or False. Defaults to None.
-            artifacts_path (dict, optional): The artifacts name and its path in Recorder. Defaults to {"pred": "pred.pkl", "IC": "sig_analysis/ic.pkl"}.
-            artifacts_key (str or List, optional): the artifacts key you want to get. If None, get all artifacts.
-            list_kwargs (str): arguments for list_recorders function.
-            status (Iterable): only collect recorders with specific status. None indicating collecting all the recorders
+                (Experiment或str): Experiment实例或Experiment名称
+                (Callable): 可调用函数，返回实验列表
+            process_list (list或Callable): 处理器列表或处理字典的处理器实例
+            rec_key_func (Callable): 获取记录器键的函数。如果为None，则使用记录器ID
+            rec_filter_func (Callable, 可选): 通过返回True或False过滤记录器。默认为None
+            artifacts_path (dict, 可选): 记录器中工件名称及其路径。默认为{"pred": "pred.pkl"}
+            artifacts_key (str或List, 可选): 要获取的工件键。如果为None，则获取所有工件
+            list_kwargs (str): list_recorders函数的参数
+            status (Iterable): 仅收集具有特定状态的记录器。None表示收集所有记录器
         """
         super().__init__(process_list=process_list)
         if isinstance(experiment, str):
@@ -183,16 +183,16 @@ class RecorderCollector(Collector):
 
     def collect(self, artifacts_key=None, rec_filter_func=None, only_exist=True) -> dict:
         """
-        Collect different artifacts based on recorder after filtering.
+        基于过滤后的记录器收集不同的工件。
 
-        Args:
-            artifacts_key (str or List, optional): the artifacts key you want to get. If None, use the default.
-            rec_filter_func (Callable, optional): filter the recorder by return True or False. If None, use the default.
-            only_exist (bool, optional): if only collect the artifacts when a recorder really has.
-                If True, the recorder with exception when loading will not be collected. But if False, it will raise the exception.
+        参数：
+            artifacts_key (str或List, 可选): 要获取的工件键。如果为None，则使用默认值
+            rec_filter_func (Callable, 可选): 通过返回True或False过滤记录器。如果为None，则使用默认值
+            only_exist (bool, 可选): 是否仅当记录器确实拥有时才收集工件。
+                如果为True，加载时出现异常的记录器将不会被收集。但如果为False，则会引发异常
 
-        Returns:
-            dict: the dict after collected like {artifact: {rec_key: object}}
+        返回：
+            dict: 收集后的字典，格式为{artifact: {rec_key: object}}
         """
         if artifacts_key is None:
             artifacts_key = self.artifacts_key
@@ -250,9 +250,9 @@ class RecorderCollector(Collector):
 
     def get_exp_name(self) -> str:
         """
-        Get experiment name
+        获取实验名称
 
-        Returns:
-            str: experiment name
+        返回：
+            str: 实验名称
         """
         return self.experiment.name

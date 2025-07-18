@@ -22,14 +22,14 @@ logger = get_module_logger("workflow")
 
 class ExpManager:
     """
-    This is the `ExpManager` class for managing experiments. The API is designed similar to mlflow.
-    (The link: https://mlflow.org/docs/latest/python_api/mlflow.html)
+    这是用于管理实验的`ExpManager`类。API设计类似于mlflow。
+    (链接: https://mlflow.org/docs/latest/python_api/mlflow.html)
 
-    The `ExpManager` is expected to be a singleton (btw, we can have multiple `Experiment`s with different uri. user can get different experiments from different uri, and then compare records of them). Global Config (i.e. `C`)  is also a singleton.
+    `ExpManager`预期是一个单例(同时，我们可以有多个具有不同uri的`Experiment`。用户可以从不同的uri获取不同的实验，然后比较它们的记录)。全局配置(即`C`)也是一个单例。
 
-    So we try to align them together.  They share the same variable, which is called **default uri**. Please refer to `ExpManager.default_uri` for details of variable sharing.
+    因此我们尝试将它们对齐。它们共享同一个变量，称为**默认uri**。有关变量共享的详细信息，请参阅`ExpManager.default_uri`。
 
-    When the user starts an experiment, the user may want to set the uri to a specific uri (it will override **default uri** during this period), and then unset the **specific uri** and fallback to the **default uri**.    `ExpManager._active_exp_uri` is that **specific uri**.
+    当用户开始一个实验时，用户可能希望将uri设置为特定的uri(在此期间它将覆盖**默认uri**)，然后取消设置**特定uri**并回退到**默认uri**。`ExpManager._active_exp_uri`就是那个**特定uri**。
     """
 
     active_experiment: Optional[Experiment]

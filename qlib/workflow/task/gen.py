@@ -14,24 +14,24 @@ from .utils import TimeAdjuster
 
 def task_generator(tasks, generators) -> list:
     """
-    Use a list of TaskGen and a list of task templates to generate different tasks.
+    使用TaskGen列表和任务模板列表生成不同的任务
 
-    For examples:
+    例如:
 
-        There are 3 task templates a,b,c and 2 TaskGen A,B. A will generates 2 tasks from a template and B will generates 3 tasks from a template.
-        task_generator([a, b, c], [A, B]) will finally generate 3*2*3 = 18 tasks.
+        有3个任务模板a,b,c和2个TaskGen A,B。A会从每个模板生成2个任务，B会生成3个任务
+        task_generator([a, b, c], [A, B])最终会生成3*2*3 = 18个任务
 
-    Parameters
+    参数
     ----------
     tasks : List[dict] or dict
-        a list of task templates or a single task
+        任务模板列表或单个任务
     generators : List[TaskGen] or TaskGen
-        a list of TaskGen or a single TaskGen
+        TaskGen列表或单个TaskGen
 
-    Returns
+    返回
     -------
     list
-        a list of tasks
+        任务列表
     """
 
     if isinstance(tasks, dict):
@@ -305,18 +305,18 @@ class RollingGen(TaskGen):
 class MultiHorizonGenBase(TaskGen):
     def __init__(self, horizon: List[int] = [5], label_leak_n=2):
         """
-        This task generator tries to generate tasks for different horizons based on an existing task
+        基于现有任务为不同周期生成任务
 
-        Parameters
+        参数
         ----------
         horizon : List[int]
-            the possible horizons of the tasks
+            任务可能的周期列表
         label_leak_n : int
-            How many future days it will take to get complete label after the day making prediction
-            For example:
-            - User make prediction on day `T`(after getting the close price on `T`)
-            - The label is the return of buying stock on `T + 1` and selling it on `T + 2`
-            - the `label_leak_n` will be 2 (e.g. two days of information is leaked to leverage this sample)
+            预测日后需要多少天才能获得完整标签
+            例如:
+            - 用户在`T`日(收盘后)进行预测
+            - 标签是在`T + 1`日买入并在`T + 2`日卖出的收益
+            - `label_leak_n`将为2(即需要泄露2天的信息来利用该样本)
         """
         self.horizon = list(horizon)
         self.label_leak_n = label_leak_n
@@ -326,14 +326,14 @@ class MultiHorizonGenBase(TaskGen):
     @abc.abstractmethod
     def set_horizon(self, task: dict, hr: int):
         """
-        This method is designed to change the task **in place**
+        此方法用于**原地**修改任务
 
-        Parameters
+        参数
         ----------
         task : dict
-            Qlib's task
+            Qlib任务
         hr : int
-            the horizon of task
+            任务周期
         """
 
     def generate(self, task: dict):
