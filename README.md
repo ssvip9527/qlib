@@ -470,7 +470,7 @@ Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工�
 该脚本会为每个模型创建独立虚拟环境，训练完成后自动删除，仅保留实验结果如 `IC` 和 `backtest`。
 
 例如，运行所有模型 10 次：
-```python
+```bash
 python run_all_model.py run 10
 ```
 
