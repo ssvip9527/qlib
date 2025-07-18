@@ -153,10 +153,10 @@ class RollingStrategy(OnlineStrategy):
 
     def first_tasks(self) -> List[dict]:
         """
-        Use rolling_gen to generate different tasks based on task_template.
+        使用rolling_gen基于task_template生成不同的任务
 
-        Returns:
-            List[dict]: a list of tasks
+        返回:
+            List[dict]: 任务列表
         """
         return task_generator(
             tasks=self.task_template,
@@ -165,12 +165,12 @@ class RollingStrategy(OnlineStrategy):
 
     def prepare_tasks(self, cur_time) -> List[dict]:
         """
-        Prepare new tasks based on cur_time (None for the latest).
+        根据当前时间(最新为None)准备新任务
 
-        You can find the last online models by OnlineToolR.online_models.
+        可以通过OnlineToolR.online_models查找最新的在线模型
 
-        Returns:
-            List[dict]: a list of new tasks.
+        返回:
+            List[dict]: 新任务列表
         """
         # TODO: filter recorders by latest test segments is not a necessary
         latest_records, max_test = self._list_latest(self.tool.online_models())
@@ -189,13 +189,13 @@ class RollingStrategy(OnlineStrategy):
 
     def _list_latest(self, rec_list: List[Recorder]):
         """
-        List latest recorder form rec_list
+        从rec_list中列出最新的记录器
 
-        Args:
-            rec_list (List[Recorder]): a list of Recorder
+        参数:
+            rec_list (List[Recorder]): 记录器列表
 
-        Returns:
-            List[Recorder], pd.Timestamp: the latest recorders and their test end time
+        返回:
+            List[Recorder], pd.Timestamp: 最新记录器及其测试结束时间
         """
         if len(rec_list) == 0:
             return rec_list, None

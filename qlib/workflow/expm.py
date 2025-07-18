@@ -56,29 +56,28 @@ class ExpManager:
         **kwargs,
     ) -> Experiment:
         """
-        Start an experiment. This method includes first get_or_create an experiment, and then
-        set it to be active.
+        启动一个实验。该方法首先获取或创建一个实验，然后将其设置为活动状态。
 
-        Maintaining `_active_exp_uri` is included in start_exp, remaining implementation should be included in _end_exp in subclass
+        `_active_exp_uri`的维护包含在start_exp中，剩余实现应包含在子类的_end_exp中
 
-        Parameters
+        参数
         ----------
         experiment_id : str
-            id of the active experiment.
+            活动实验的ID
         experiment_name : str
-            name of the active experiment.
+            活动实验的名称
         recorder_id : str
-            id of the recorder to be started.
+            要启动的记录器ID
         recorder_name : str
-            name of the recorder to be started.
+            要启动的记录器名称
         uri : str
-            the current tracking URI.
+            当前跟踪URI
         resume : boolean
-            whether to resume the experiment and recorder.
+            是否恢复实验和记录器
 
-        Returns
+        返回
         -------
-        An active experiment.
+        一个活动实验对象
         """
         self._active_exp_uri = uri
         # The subclass may set the underlying uri back.
@@ -93,21 +92,21 @@ class ExpManager:
         )
 
     def _start_exp(self, *args, **kwargs) -> Experiment:
-        """Please refer to the doc of `start_exp`"""
+        """请参考`start_exp`方法的文档"""
         raise NotImplementedError(f"Please implement the `start_exp` method.")
 
     def end_exp(self, recorder_status: Text = Recorder.STATUS_S, **kwargs):
         """
-        End an active experiment.
+        结束一个活动实验
 
-        Maintaining `_active_exp_uri` is included in end_exp, remaining implementation should be included in _end_exp in subclass
+        `_active_exp_uri`的维护包含在end_exp中，剩余实现应包含在子类的_end_exp中
 
-        Parameters
+        参数
         ----------
         experiment_name : str
-            name of the active experiment.
+            活动实验的名称
         recorder_status : str
-            the status of the active recorder of the experiment.
+            实验活动记录器的状态
         """
         self._active_exp_uri = None
         # The subclass may set the underlying uri back.
@@ -115,88 +114,87 @@ class ExpManager:
         self._end_exp(recorder_status=recorder_status, **kwargs)
 
     def _end_exp(self, recorder_status: Text = Recorder.STATUS_S, **kwargs):
-        raise NotImplementedError(f"Please implement the `end_exp` method.")
+        raise NotImplementedError(f"请实现`end_exp`方法")
 
     def create_exp(self, experiment_name: Optional[Text] = None):
         """
-        Create an experiment.
+        创建一个实验
 
-        Parameters
+        参数
         ----------
         experiment_name : str
-            the experiment name, which must be unique.
+            实验名称，必须唯一
 
-        Returns
+        返回
         -------
-        An experiment object.
+        一个实验对象
 
         Raise
         -----
         ExpAlreadyExistError
+            当实验已存在时抛出
         """
         raise NotImplementedError(f"Please implement the `create_exp` method.")
 
     def search_records(self, experiment_ids=None, **kwargs):
         """
-        Get a pandas DataFrame of records that fit the search criteria of the experiment.
-        Inputs are the search criteria user want to apply.
+        获取符合实验搜索条件的记录DataFrame
+        输入为用户想要应用的搜索条件
 
-        Returns
+        返回
         -------
-        A pandas.DataFrame of records, where each metric, parameter, and tag
-        are expanded into their own columns named metrics.*, params.*, and tags.*
-        respectively. For records that don't have a particular metric, parameter, or tag, their
-        value will be (NumPy) Nan, None, or None respectively.
+        一个pandas.DataFrame记录，其中每个指标、参数和标签
+        分别展开到名为metrics.*、params.*和tags.*的列中
+        对于没有特定指标、参数或标签的记录，它们的值将分别为(NumPy)Nan、None或None
         """
         raise NotImplementedError(f"Please implement the `search_records` method.")
 
     def get_exp(self, *, experiment_id=None, experiment_name=None, create: bool = True, start: bool = False):
         """
-        Retrieve an experiment. This method includes getting an active experiment, and get_or_create a specific experiment.
+        检索一个实验。该方法包括获取活动实验，以及获取或创建特定实验
 
-        When user specify experiment id and name, the method will try to return the specific experiment.
-        When user does not provide recorder id or name, the method will try to return the current active experiment.
-        The `create` argument determines whether the method will automatically create a new experiment according
-        to user's specification if the experiment hasn't been created before.
+        当用户指定实验ID和名称时，方法将尝试返回特定实验
+        当用户未提供记录器ID或名称时，方法将尝试返回当前活动实验
+        `create`参数决定如果实验尚未创建，方法是否根据用户规范自动创建新实验
 
-        * If `create` is True:
+        * 如果`create`为True:
 
-            * If `active experiment` exists:
+            * 如果`活动实验`存在:
 
-                * no id or name specified, return the active experiment.
-                * if id or name is specified, return the specified experiment. If no such exp found, create a new experiment with given id or name. If `start` is set to be True, the experiment is set to be active.
+                * 未指定ID或名称，返回活动实验
+                * 如果指定了ID或名称，返回指定实验。如果未找到，则使用给定ID或名称创建新实验。如果`start`设为True，实验将被设置为活动状态
 
-            * If `active experiment` not exists:
+            * 如果`活动实验`不存在:
 
-                * no id or name specified, create a default experiment.
-                * if id or name is specified, return the specified experiment. If no such exp found, create a new experiment with given id or name. If `start` is set to be True, the experiment is set to be active.
+                * 未指定ID或名称，创建默认实验
+                * 如果指定了ID或名称，返回指定实验。如果未找到，则使用给定ID或名称创建新实验。如果`start`设为True，实验将被设置为活动状态
 
-        * Else If `create` is False:
+        * 如果`create`为False:
 
-            * If `active experiment` exists:
+            * 如果`活动实验`存在:
 
-                * no id or name specified, return the active experiment.
-                * if id or name is specified, return the specified experiment. If no such exp found, raise Error.
+                * 未指定ID或名称，返回活动实验
+                * 如果指定了ID或名称，返回指定实验。如果未找到，抛出错误
 
-            * If `active experiment` not exists:
+            * 如果`活动实验`不存在:
 
-                *  no id or name specified. If the default experiment exists, return it, otherwise, raise Error.
-                * if id or name is specified, return the specified experiment. If no such exp found, raise Error.
+                * 未指定ID或名称。如果默认实验存在则返回，否则抛出错误
+                * 如果指定了ID或名称，返回指定实验。如果未找到，抛出错误
 
-        Parameters
+        参数
         ----------
         experiment_id : str
-            id of the experiment to return.
+            要返回的实验ID
         experiment_name : str
-            name of the experiment to return.
+            要返回的实验名称
         create : boolean
-            create the experiment it if hasn't been created before.
+            如果实验尚未创建，是否创建它
         start : boolean
-            start the new experiment if one is created.
+            如果创建了新实验，是否启动它
 
-        Returns
+        返回
         -------
-        An experiment object.
+        一个实验对象
         """
         # special case of getting experiment
         if experiment_id is None and experiment_name is None:
@@ -217,8 +215,8 @@ class ExpManager:
 
     def _get_or_create_exp(self, experiment_id=None, experiment_name=None) -> (object, bool):
         """
-        Method for getting or creating an experiment. It will try to first get a valid experiment, if exception occurs, it will
-        automatically create a new experiment based on the given id and name.
+        获取或创建实验的方法。首先尝试获取有效实验，如果发生异常，
+        则根据给定的ID和名称自动创建新实验。
         """
         try:
             return (
@@ -247,43 +245,44 @@ class ExpManager:
 
     def _get_exp(self, experiment_id=None, experiment_name=None) -> Experiment:
         """
-        Get specific experiment by name or id. If it does not exist, raise ValueError.
+        通过名称或ID获取特定实验。如果不存在则抛出ValueError
 
-        Parameters
+        参数
         ----------
         experiment_id :
-            The id of experiment
+            实验ID
         experiment_name :
-            The name of experiment
+            实验名称
 
-        Returns
+        返回
         -------
         Experiment:
-            The searched experiment
+            搜索到的实验
 
         Raises
         ------
         ValueError
+            当实验不存在时抛出
         """
         raise NotImplementedError(f"Please implement the `_get_exp` method")
 
     def delete_exp(self, experiment_id=None, experiment_name=None):
         """
-        Delete an experiment.
+        删除一个实验
 
-        Parameters
+        参数
         ----------
         experiment_id  : str
-            the experiment id.
+            实验ID
         experiment_name  : str
-            the experiment name.
+            实验名称
         """
         raise NotImplementedError(f"Please implement the `delete_exp` method.")
 
     @property
     def default_uri(self):
         """
-        Get the default tracking URI from qlib.config.C
+        从qlib.config.C获取默认跟踪URI
         """
         if "kwargs" not in C.exp_manager or "uri" not in C.exp_manager["kwargs"]:
             raise ValueError("The default URI is not set in qlib.config.C")
@@ -296,34 +295,34 @@ class ExpManager:
     @property
     def uri(self):
         """
-        Get the default tracking URI or current URI.
+        获取默认跟踪URI或当前URI
 
-        Returns
+        返回
         -------
-        The tracking URI string.
+        跟踪URI字符串
         """
         return self._active_exp_uri or self.default_uri
 
     def list_experiments(self):
         """
-        List all the existing experiments.
+        列出所有现有实验
 
-        Returns
+        返回
         -------
-        A dictionary (name -> experiment) of experiments information that being stored.
+        存储的实验信息字典(name -> experiment)
         """
         raise NotImplementedError(f"Please implement the `list_experiments` method.")
 
 
 class MLflowExpManager(ExpManager):
     """
-    Use mlflow to implement ExpManager.
+    使用mlflow实现ExpManager
     """
 
     @property
     def client(self):
-        # Please refer to `tests/dependency_tests/test_mlflow.py::MLflowTest::test_creating_client`
-        # The test ensure the speed of create a new client
+        # 请参考`tests/dependency_tests/test_mlflow.py::MLflowTest::test_creating_client`
+        # 该测试确保创建新客户端的速度
         return mlflow.tracking.MlflowClient(tracking_uri=self.uri)
 
     def _start_exp(
@@ -365,8 +364,7 @@ class MLflowExpManager(ExpManager):
 
     def _get_exp(self, experiment_id=None, experiment_name=None):
         """
-        Method for getting or creating an experiment. It will try to first get a valid experiment, if exception occurs, it will
-        raise errors.
+        获取或创建实验的方法。首先尝试获取有效实验，如果发生异常则抛出错误。
         """
         assert (
             experiment_id is not None or experiment_name is not None

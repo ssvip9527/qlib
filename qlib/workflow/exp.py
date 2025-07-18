@@ -101,60 +101,59 @@ class Experiment:
 
     def delete_recorder(self, recorder_id):
         """
-        Create a recorder for each experiment.
+        为每个实验创建记录器。
 
-        Parameters
+        参数
         ----------
         recorder_id : str
-            the id of the recorder to be deleted.
+            要删除的记录器ID。
         """
         raise NotImplementedError(f"Please implement the `delete_recorder` method.")
 
     def get_recorder(self, recorder_id=None, recorder_name=None, create: bool = True, start: bool = False) -> Recorder:
         """
-        Retrieve a Recorder for user. When user specify recorder id and name, the method will try to return the
-        specific recorder. When user does not provide recorder id or name, the method will try to return the current
-        active recorder. The `create` argument determines whether the method will automatically create a new recorder
-        according to user's specification if the recorder hasn't been created before.
+        为用户检索记录器。当用户指定记录器ID和名称时，该方法会尝试返回特定的记录器。
+        当用户未提供记录器ID或名称时，该方法会尝试返回当前活动记录器。
+        `create`参数决定如果记录器尚未创建，该方法是否会根据用户规范自动创建新记录器。
 
-        * If `create` is True:
+        * 如果`create`为True:
 
-            * If `active recorder` exists:
+            * 如果`活动记录器`存在:
 
-                * no id or name specified, return the active recorder.
-                * if id or name is specified, return the specified recorder. If no such exp found, create a new recorder with given id or name. If `start` is set to be True, the recorder is set to be active.
+                * 未指定ID或名称，返回活动记录器。
+                * 如果指定了ID或名称，返回指定的记录器。如果未找到对应实验，则使用给定的ID或名称创建新记录器。如果`start`设为True，则将记录器设为活动状态。
 
-            * If `active recorder` not exists:
+            * 如果`活动记录器`不存在:
 
-                * no id or name specified, create a new recorder.
-                * if id or name is specified, return the specified experiment. If no such exp found, create a new recorder with given id or name. If `start` is set to be True, the recorder is set to be active.
+                * 未指定ID或名称，创建新记录器。
+                * 如果指定了ID或名称，返回指定的实验。如果未找到对应实验，则使用给定的ID或名称创建新记录器。如果`start`设为True，则将记录器设为活动状态。
 
-        * Else If `create` is False:
+        * 如果`create`为False:
 
-            * If `active recorder` exists:
+            * 如果`活动记录器`存在:
 
-                * no id or name specified, return the active recorder.
-                * if id or name is specified, return the specified recorder. If no such exp found, raise Error.
+                * 未指定ID或名称，返回活动记录器。
+                * 如果指定了ID或名称，返回指定的记录器。如果未找到对应实验，则抛出错误。
 
-            * If `active recorder` not exists:
+            * 如果`活动记录器`不存在:
 
-                * no id or name specified, raise Error.
-                * if id or name is specified, return the specified recorder. If no such exp found, raise Error.
+                * 未指定ID或名称，抛出错误。
+                * 如果指定了ID或名称，返回指定的记录器。如果未找到对应实验，则抛出错误。
 
-        Parameters
+        参数
         ----------
         recorder_id : str
-            the id of the recorder to be deleted.
+            要删除的记录器ID。
         recorder_name : str
-            the name of the recorder to be deleted.
+            要删除的记录器名称。
         create : boolean
-            create the recorder if it hasn't been created before.
+            如果记录器尚未创建，则创建它。
         start : boolean
-            start the new recorder if one is **created**.
+            如果创建了新记录器，则启动它。
 
-        Returns
+        返回
         -------
-        A recorder object.
+        记录器对象。
         """
         # special case of getting the recorder
         if recorder_id is None and recorder_name is None:
@@ -176,8 +175,8 @@ class Experiment:
 
     def _get_or_create_rec(self, recorder_id=None, recorder_name=None) -> (object, bool):
         """
-        Method for getting or creating a recorder. It will try to first get a valid recorder, if exception occurs, it will
-        automatically create a new recorder based on the given id and name.
+        获取或创建记录器的方法。首先尝试获取有效的记录器，如果发生异常，
+        则根据给定的ID和名称自动创建新记录器。
         """
         try:
             if recorder_id is None and recorder_name is None:
@@ -194,19 +193,19 @@ class Experiment:
 
     def _get_recorder(self, recorder_id=None, recorder_name=None):
         """
-        Get specific recorder by name or id. If it does not exist, raise ValueError
+        通过名称或ID获取特定记录器。如果不存在，则抛出ValueError
 
-        Parameters
+        参数
         ----------
         recorder_id :
-            The id of recorder
+            记录器ID
         recorder_name :
-            The name of recorder
+            记录器名称
 
-        Returns
+        返回
         -------
         Recorder:
-            The searched recorder
+            搜索到的记录器
 
         Raises
         ------
@@ -221,27 +220,27 @@ class Experiment:
         self, rtype: Literal["dict", "list"] = RT_D, **flt_kwargs
     ) -> Union[List[Recorder], Dict[str, Recorder]]:
         """
-        List all the existing recorders of this experiment. Please first get the experiment instance before calling this method.
-        If user want to use the method `R.list_recorders()`, please refer to the related API document in `QlibRecorder`.
+        列出本实验的所有现有记录器。调用此方法前请先获取实验实例。
+        如果想使用`R.list_recorders()`方法，请参考`QlibRecorder`中的相关API文档。
 
         flt_kwargs : dict
-            filter recorders by conditions
-            e.g.  list_recorders(status=Recorder.STATUS_FI)
+            按条件过滤记录器
+            例如：list_recorders(status=Recorder.STATUS_FI)
 
-        Returns
+        返回
         -------
-        The return type depends on `rtype`
-            if `rtype` == "dict":
-                A dictionary (id -> recorder) of recorder information that being stored.
-            elif `rtype` == "list":
-                A list of Recorder.
+        返回类型取决于`rtype`
+            如果`rtype` == "dict":
+                存储的记录器信息的字典(id -> recorder)。
+            如果`rtype` == "list":
+                记录器列表。
         """
         raise NotImplementedError(f"Please implement the `list_recorders` method.")
 
 
 class MLflowExperiment(Experiment):
     """
-    Use mlflow to implement Experiment.
+    使用mlflow实现Experiment。
     """
 
     def __init__(self, id, name, uri):
@@ -301,17 +300,17 @@ class MLflowExperiment(Experiment):
                 return recorder
             except MlflowException as mlflow_exp:
                 raise ValueError(
-                    "No valid recorder has been found, please make sure the input recorder id is correct."
+                    "未找到有效的记录器，请确保输入的记录器ID正确。"
                 ) from mlflow_exp
         elif recorder_name is not None:
             logger.warning(
-                f"Please make sure the recorder name {recorder_name} is unique, we will only return the latest recorder if there exist several matched the given name."
+                f"请确保记录器名称{recorder_name}是唯一的，如果存在多个匹配给定名称的记录器，我们只会返回最新的一个。"
             )
             recorders = self.list_recorders()
             for rid in recorders:
                 if recorders[rid].name == recorder_name:
                     return recorders[rid]
-            raise ValueError("No valid recorder has been found, please make sure the input recorder name is correct.")
+            raise ValueError("未找到有效的记录器，请确保输入的记录器名称正确。")
 
     def search_records(self, **kwargs):
         filter_string = "" if kwargs.get("filter_string") is None else kwargs.get("filter_string")
@@ -324,7 +323,7 @@ class MLflowExperiment(Experiment):
     def delete_recorder(self, recorder_id=None, recorder_name=None):
         assert (
             recorder_id is not None or recorder_name is not None
-        ), "Please input a valid recorder id or name before deleting."
+        ), "删除前请输入有效的记录器ID或名称。"
         try:
             if recorder_id is not None:
                 self._client.delete_run(recorder_id)
@@ -333,7 +332,7 @@ class MLflowExperiment(Experiment):
                 self._client.delete_run(recorder.id)
         except MlflowException as e:
             raise ValueError(
-                f"Error: {e}. Something went wrong when deleting recorder. Please check if the name/id of the recorder is correct."
+                f"错误: {e}. 删除记录器时出现问题。请检查记录器的`name/id`是否正确。"
             ) from e
 
     UNLIMITED = 50000  # FIXME: Mlflow can only list 50000 records at most!!!!!!!
@@ -346,18 +345,18 @@ class MLflowExperiment(Experiment):
         filter_string: str = "",
     ):
         """
-        Quoting docs of search_runs
-        > The default ordering is to sort by start_time DESC, then run_id.
+        引用search_runs文档
+        > 默认排序是按start_time降序，然后按run_id。
 
-        Parameters
+        参数
         ----------
         max_results : int
-            the number limitation of the results'
+            结果数量限制
         status : str
-            the criteria based on status to filter results.
-            `None` indicates no filtering.
+            基于状态过滤结果的标准。
+            `None`表示不过滤。
         filter_string : str
-            mlflow supported filter string like 'params."my_param"="a" and tags."my_tag"="b"', use this will help to reduce too much run number.
+            mlflow支持的过滤字符串，如'params."my_param"="a" and tags."my_tag"="b"'，使用此参数有助于减少运行数量。
         """
         runs = self._client.search_runs(
             self.id, run_view_type=ViewType.ACTIVE_ONLY, max_results=max_results, filter_string=filter_string

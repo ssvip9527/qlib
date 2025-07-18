@@ -379,9 +379,9 @@ class Account:
             计算指标的配置，默认为{}
         """
         if atomic is True and trade_info is None:
-            raise ValueError("trade_info is necessary in atomic executor")
+            raise ValueError("原子执行器中必须提供trade_info")
         elif atomic is False and inner_order_indicators is None:
-            raise ValueError("inner_order_indicators is necessary in un-atomic executor")
+            raise ValueError("非原子执行器中必须提供inner_order_indicators")
 
         # 在每个bar结束时更新当前持仓和持有bar计数
         self.update_current_position(trade_start_time, trade_end_time, trade_exchange)

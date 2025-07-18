@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """
-Updater is a module to update artifacts such as predictions when the stock data is updating.
+更新器模块，用于在股票数据更新时更新预测等artifact。
 """
 
 from abc import ABCMeta, abstractmethod
@@ -30,23 +30,23 @@ class RMDLoader:
         self, start_time, end_time, segments=None, unprepared_dataset: Optional[DatasetH] = None
     ) -> DatasetH:
         """
-        Load, config and setup dataset.
+        加载、配置和设置数据集
 
-        This dataset is for inference.
+        该数据集用于推理
 
-        Args:
+        参数:
             start_time :
-                the start_time of underlying data
+                基础数据的开始时间
             end_time :
-                the end_time of underlying data
+                基础数据的结束时间
             segments : dict
-                the segments config for dataset
-                Due to the time series dataset (TSDatasetH), the test segments maybe different from start_time and end_time
+                数据集的分段配置
+                对于时间序列数据集(TSDatasetH)，测试段可能与开始时间和结束时间不同
             unprepared_dataset: Optional[DatasetH]
-                if user don't want to load dataset from recorder, please specify user's dataset
+                如果用户不想从记录器加载数据集，请指定用户的数据集
 
-        Returns:
-            DatasetH: the instance of DatasetH
+        返回:
+            DatasetH: DatasetH实例
 
         """
         if segments is None:
@@ -81,14 +81,14 @@ class RecordUpdater(metaclass=ABCMeta):
 
 class DSBasedUpdater(RecordUpdater, metaclass=ABCMeta):
     """
-    Dataset-Based Updater
+    基于数据集的更新器
 
-    - Providing updating feature for Updating data based on Qlib Dataset
+    - 提供基于Qlib数据集更新数据的功能
 
-    Assumption
+    假设条件
 
-    - Based on Qlib dataset
-    - The data to be updated is a multi-level index pd.DataFrame. For example label, prediction.
+    - 基于Qlib数据集
+    - 要更新的数据是多级索引的pd.DataFrame，例如标签、预测
 
         .. code-block::
 
@@ -112,38 +112,39 @@ class DSBasedUpdater(RecordUpdater, metaclass=ABCMeta):
         loader_cls: type = RMDLoader,
     ):
         """
-        Init PredUpdater.
+        初始化预测更新器
 
-        Expected behavior in following cases:
+        在以下情况下的预期行为:
 
-        - if `to_date` is greater than the max date in the calendar, the data will be updated to the latest date
-        - if there are data before `from_date` or after `to_date`, only the data between `from_date` and `to_date` are affected.
+        - 如果`to_date`大于日历中的最大日期，数据将更新到最新日期
+        - 如果有数据在`from_date`之前或`to_date`之后，只有`from_date`和`to_date`之间的数据会受到影响
 
-        Args:
+        参数:
             record : Recorder
+                记录器
             to_date :
-                update to prediction to the `to_date`
+                更新预测到`to_date`
 
-                if to_date is None:
+                如果to_date为None:
 
-                    data will updated to the latest date.
+                    数据将更新到最新日期
             from_date :
-                the update will start from `from_date`
+                更新将从`from_date`开始
 
-                if from_date is None:
+                如果from_date为None:
 
-                    the updating will occur on the next tick after the latest data in historical data
+                    更新将在历史数据中最新数据的下一个时间点进行
             hist_ref : int
-                Sometimes, the dataset will have historical depends.
-                Leave the problem to users to set the length of historical dependency
-                If user doesn't specify this parameter, Updater will try to load dataset to automatically determine the hist_ref
+                有时数据集会有历史依赖
+                将历史依赖长度的问题留给用户设置
+                如果用户不指定此参数，更新器将尝试加载数据集自动确定hist_ref
 
                 .. note::
 
-                    the start_time is not included in the `hist_ref`; So the `hist_ref` will be `step_len - 1` in most cases
+                    start_time不包含在`hist_ref`中；因此`hist_ref`在大多数情况下会是`step_len - 1`
 
             loader_cls : type
-                the class to load the model and dataset
+                加载模型和数据集的类
 
         """
         # TODO: automate this hist_ref in the future.
@@ -179,14 +180,14 @@ class DSBasedUpdater(RecordUpdater, metaclass=ABCMeta):
 
     def prepare_data(self, unprepared_dataset: Optional[DatasetH] = None) -> DatasetH:
         """
-        Load dataset
-        - if unprepared_dataset is specified, then prepare the dataset directly
-        - Otherwise,
+        加载数据集
+        - 如果指定了unprepared_dataset，则直接准备数据集
+        - 否则
 
-        Separating this function will make it easier to reuse the dataset
+        分离此函数将使重用数据集更容易
 
-        Returns:
-            DatasetH: the instance of DatasetH
+        返回:
+            DatasetH: DatasetH实例
         """
         # automatically getting the historical dependency if not specified
         if self.hist_ref is None:
@@ -210,19 +211,19 @@ class DSBasedUpdater(RecordUpdater, metaclass=ABCMeta):
 
     def update(self, dataset: DatasetH = None, write: bool = True, ret_new: bool = False) -> Optional[object]:
         """
-        Parameters
+        参数
         ----------
         dataset : DatasetH
-            DatasetH: the instance of DatasetH. None for prepare it again.
+            DatasetH实例。None表示需要重新准备
         write : bool
-            will the the write action be executed
+            是否执行写入操作
         ret_new : bool
-            will the updated data be returned
+            是否返回更新后的数据
 
-        Returns
+        返回
         -------
         Optional[object]
-            the updated dataset
+            更新后的数据集
         """
         # FIXME: the problem below is not solved
         # The model dumped on GPU instances can not be loaded on CPU instance. Follow exception will raised
@@ -250,11 +251,11 @@ class DSBasedUpdater(RecordUpdater, metaclass=ABCMeta):
     @abstractmethod
     def get_update_data(self, dataset: Dataset) -> pd.DataFrame:
         """
-        return the updated data based on the given dataset
+        基于给定数据集返回更新后的数据
 
-        The difference between `get_update_data` and `update`
-        - `update_date` only include some data specific feature
-        - `update` include some general routine steps(e.g. prepare dataset, checking)
+        `get_update_data`和`update`的区别
+        - `update_date`只包含一些数据特定的功能
+        - `update`包含一些常规步骤(例如准备数据集、检查)
         """
 
 
@@ -269,7 +270,7 @@ def _replace_range(data, new_data):
 
 class PredUpdater(DSBasedUpdater):
     """
-    Update the prediction in the Recorder
+    更新记录器中的预测
     """
 
     def get_update_data(self, dataset: Dataset) -> pd.DataFrame:
@@ -283,10 +284,10 @@ class PredUpdater(DSBasedUpdater):
 
 class LabelUpdater(DSBasedUpdater):
     """
-    Update the label in the recorder
+    更新记录器中的标签
 
-    Assumption
-    - The label is generated from record_temp.SignalRecord.
+    假设条件
+    - 标签由record_temp.SignalRecord生成
     """
 
     def __init__(self, record: Recorder, to_date=None, **kwargs):

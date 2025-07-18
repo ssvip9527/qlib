@@ -593,7 +593,7 @@ class MultiPassPortAnaRecord(PortAnaRecord):
 
         super().__init__(recorder, **kwargs)
 
-        # Save original strategy so that pred df can be replaced in next generate
+        # 保存原始策略以便在下一次生成时替换预测数据框
         self.original_strategy = deepcopy_basic_type(self.strategy_config)
         if not isinstance(self.original_strategy, dict):
             raise QlibException("MultiPassPortAnaRecord require the passed in strategy to be a dict")
