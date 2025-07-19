@@ -59,7 +59,7 @@ Qlib常见问题解答
     > select 1
     > flushdb
 
-如果问题未解决，使用``keys *``查看是否存在多个键。如果存在，请尝试使用``flushall``清除所有键。
+如果问题未解决，使用``keys``* 查看是否存在多个键。如果存在，请尝试使用``flushall``清除所有键。
 
 .. note::
 
@@ -141,7 +141,7 @@ Qlib常见问题解答
       TypeError: send() got an unexpected keyword argument 'binary'
 
 
-- ``python-engineio``版本需要与``python-socketio``版本兼容，参考：https://github.com/miguelgrinberg/python-socketio#version-compatibility
+- 注意: ``python-engineio``版本需要与``python-socketio`` 版本兼容，参考：https://github.com/miguelgrinberg/python-socketio#version-compatibility
 
     .. code-block:: bash
 
