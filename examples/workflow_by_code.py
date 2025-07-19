@@ -80,6 +80,6 @@ if __name__ == "__main__":
         sar.generate()
 
         # 回测。如果用户希望基于自己的预测进行回测，
-        # 请参考https://qlib.readthedocs.io/en/latest/component/recorder.html#record-template。
+        # 请参考https://qlib.moujue.com/component/recorder.html#record-template。
         par = PortAnaRecord(recorder, port_analysis_config, "day")
         par.generate()

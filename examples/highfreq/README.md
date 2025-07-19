@@ -16,7 +16,7 @@
 
 ### 转储、重新加载和重新初始化数据集
 
-高频数据集在`workflow.py`中实现为`qlib.data.dataset.DatasetH`。`DatatsetH`是[`qlib.utils.serial.Serializable`](https://qlib.readthedocs.io/en/latest/advanced/serial.html)的子类，其状态可以以`pickle`格式转储到磁盘或从磁盘加载。
+高频数据集在`workflow.py`中实现为`qlib.data.dataset.DatasetH`。`DatatsetH`是[`qlib.utils.serial.Serializable`](https://qlib.moujue.com/advanced/serial.html)的子类，其状态可以以`pickle`格式转储到磁盘或从磁盘加载。
 
 ### 关于重新初始化
 

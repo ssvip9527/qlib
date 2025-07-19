@@ -8,7 +8,7 @@
 
 # Collect Data From Yahoo Finance
 
-> *Please pay **ATTENTION** that the data is collected from [Yahoo Finance](https://finance.yahoo.com/lookup) and the data might not be perfect. We recommend users to prepare their own data if they have high-quality dataset. For more information, users can refer to the [related document](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*
+> *Please pay **ATTENTION** that the data is collected from [Yahoo Finance](https://finance.yahoo.com/lookup) and the data might not be perfect. We recommend users to prepare their own data if they have high-quality dataset. For more information, users can refer to the [related document](https://qlib.moujue.com/component/data.html#converting-csv-format-into-qlib-format)*
 
 **注意**: 雅虎财经已阻止来自中国的访问。如果您想使用雅虎数据爬虫，请更换网络。
 

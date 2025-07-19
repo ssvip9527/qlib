@@ -42,7 +42,7 @@ python get_data.py qlib_data --help
 ```
 
 ## 在Qlib中使用
-> 更多信息请参考: https://qlib.readthedocs.io/en/latest/start/initialization.html
+> 更多信息请参考: https://qlib.moujue.com/start/initialization.html
 
 
 ### 美国市场数据

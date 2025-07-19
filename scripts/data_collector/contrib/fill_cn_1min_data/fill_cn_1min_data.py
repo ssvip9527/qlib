@@ -55,7 +55,7 @@ def fill_1min_using_1d(
     data_1min_dir: str
         1分钟数据目录
     qlib_data_1d_dir: str
-        日线QLib数据（二进制数据）目录，来源：https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format
+        日线QLib数据（二进制数据）目录，来源：https://qlib.moujue.com/component/data.html#converting-csv-format-into-qlib-format
     max_workers: int
         线程池执行器（max_workers），默认16
     date_field_name: str

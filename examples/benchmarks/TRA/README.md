@@ -25,7 +25,7 @@
 
 **更新**：`TRA`已迁移至`qlib.contrib.model.pytorch_tra`，以支持`qlib.workflow`和`Alpha158/Alpha360`数据集等其他Qlib组件。
 
-请按照官方[文档](https://qlib.readthedocs.io/en/latest/component/workflow.html)使用TRA和workflow。我们还提供了几个示例配置文件：
+请按照官方[文档](https://qlib.moujue.com/component/workflow.html)使用TRA和workflow。我们还提供了几个示例配置文件：
 
 - `workflow_config_tra_Alpha360.yaml`：使用Alpha360数据集运行TRA
 - `workflow_config_tra_Alpha158.yaml`：使用Alpha158数据集运行TRA（带特征子采样）

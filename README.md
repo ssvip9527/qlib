@@ -3,7 +3,7 @@
 [![PypI Versions](https://img.shields.io/pypi/v/pyqlib)](https://pypi.org/project/pyqlib/#history)
 [![Upload Python Package](https://github.com/ssvip9527/qlib/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/pyqlib/)
 [![Github Actions Test Status](https://github.com/microsoft/qlib/workflows/Test/badge.svg?branch=main)](https://github.com/microsoft/qlib/actions)
-[![Documentation Status](https://readthedocs.org/projects/qlib/badge/?version=latest)](https://qlib.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/qlib/badge/?version=latest)](https://qlib.moujue.com/?badge=latest)
 [![License](https://img.shields.io/pypi/l/pyqlib)](LICENSE)
 [![Join the chat at https://gitter.im/Microsoft/qlib](https://badges.gitter.im/Microsoft/qlib.svg)](https://gitter.im/Microsoft/qlib?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -61,7 +61,7 @@ RD-Agent 现在已在 [GitHub](https://github.com/microsoft/RD-Agent) 上可用�
 | ADD 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/704) 于2021年11月22日 |
 | ADARNN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/689) 于2021年11月14日 |
 | TCN 模型 | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/668) 于2021年11月4日 |
-| 嵌套决策框架 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/438) 于2021年10月1日。 [示例](https://github.com/ssvip9527/qlib/blob/main-cn/examples/nested_decision_execution/workflow.py) 和 [文档](https://qlib.readthedocs.io/en/latest/component/highfreq.html) |
+| 嵌套决策框架 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/438) 于2021年10月1日。 [示例](https://github.com/ssvip9527/qlib/blob/main-cn/examples/nested_decision_execution/workflow.py) 和 [文档](https://qlib.moujue.com/component/highfreq.html) |
 | Temporal Routing Adaptor (TRA) | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/531) 于2021年7月30日 |
 | Transformer & Localformer | :chart_with_upwards_trend: [已发布](https://github.com/microsoft/qlib/pull/508) 于2021年7月22日 |
 | 发布 Qlib v0.7.0 | :octocat: [已发布](https://github.com/ssvip9527/qlib/releases/tag/v0.7.0) 于2021年7月12日 |
@@ -147,13 +147,13 @@ Qlib 是一个开源的、面向AI的量化投资平台，旨在利用AI技术�
 <img src="docs/_static/img/framework-abstract.jpg" />
 </div>
 
-Qlib 的高层框架如上所示（用户可以在深入细节时找到 Qlib 设计的[详细框架](https://qlib.readthedocs.io/en/latest/introduction/introduction.html#framework)）。
+Qlib 的高层框架如上所示（用户可以在深入细节时找到 Qlib 设计的[详细框架](https://qlib.moujue.com/introduction/introduction.html#framework)）。
 组件被设计为松散耦合的模块，每个组件都可以独立使用。
 
-Qlib 提供强大的基础设施来支持量化研究。[数据](https://qlib.readthedocs.io/en/latest/component/data.html) 始终是重要的一部分。
-设计了一个强大的学习框架来支持不同的学习范式（例如 [强化学习](https://qlib.readthedocs.io/en/latest/component/rl.html), [监督学习](https://qlib.readthedocs.io/en/latest/component/workflow.html#model-section)）和不同级别的模式（例如 [市场动态建模](https://qlib.readthedocs.io/en/latest/component/meta.html)）。
-通过建模市场，[交易策略](https://qlib.readthedocs.io/en/latest/component/strategy.html) 将生成将被执行的交易决策。不同级别或粒度的多个交易策略和执行器可以[嵌套以一起优化和运行](https://qlib.readthedocs.io/en/latest/component/highfreq.html)。
-最后，将提供全面的[分析](https://qlib.readthedocs.io/en/latest/component/report.html)，并且模型可以以低成本[在线服务](https://qlib.readthedocs.io/en/latest/component/online.html)。
+Qlib 提供强大的基础设施来支持量化研究。[数据](https://qlib.moujue.com/component/data.html) 始终是重要的一部分。
+设计了一个强大的学习框架来支持不同的学习范式（例如 [强化学习](https://qlib.moujue.com/component/rl.html), [监督学习](https://qlib.moujue.com/component/workflow.html#model-section)）和不同级别的模式（例如 [市场动态建模](https://qlib.moujue.com/component/meta.html)）。
+通过建模市场，[交易策略](https://qlib.moujue.com/component/strategy.html) 将生成将被执行的交易决策。不同级别或粒度的多个交易策略和执行器可以[嵌套以一起优化和运行](https://qlib.moujue.com/component/highfreq.html)。
+最后，将提供全面的[分析](https://qlib.moujue.com/component/report.html)，并且模型可以以低成本[在线服务](https://qlib.moujue.com/component/online.html)。
 
 
 # 快速开始
@@ -251,7 +251,7 @@ rm -f qlib_bin.tar.gz
 用户可以使用它创建相同的数据集。[数据集描述](https://github.com/ssvip9527/qlib/tree/main/scripts/data_collector#description-of-dataset)
 
 *请**注意**数据是从 [Yahoo Finance](https://finance.yahoo.com/lookup) 收集的，数据可能不完美。
-我们建议用户如果有高质量数据集，请准备自己的数据。更多信息，用户可以参考[相关文档](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*。
+我们建议用户如果有高质量数据集，请准备自己的数据。更多信息，用户可以参考[相关文档](https://qlib.moujue.com/component/data.html#converting-csv-format-into-qlib-format)*。
 
 ### 自动更新每日频率数据 (从 yahoo finance)
   > 如果用户只想在历史数据上尝试他们的模型和策略，此步骤是*可选*的。
@@ -287,7 +287,7 @@ rm -f qlib_bin.tar.gz
     ```
     python scripts/check_data_health.py check_data --qlib_dir ~/.qlib/qlib_data/cn_data --missing_data_num 30055 --large_step_threshold_volume 94485 --large_step_threshold_price 20
     ```
-  * 如果您想了解更多关于 `check_data_health` 的信息，请参考[文档](https://qlib.readthedocs.io/en/latest/component/data.html#checking-the-health-of-the-data)。
+  * 如果您想了解更多关于 `check_data_health` 的信息，请参考[文档](https://qlib.moujue.com/component/data.html#checking-the-health-of-the-data)。
 
 <!-- 
 - Run the initialization code and get stock data:
@@ -346,7 +346,7 @@ docker stop <容器名>
 ```bash
 docker rm <容器名>
 ```
-8. 更多信息请参考[文档](https://qlib.readthedocs.io/en/latest/developer/how_to_build_image.html)。
+8. 更多信息请参考[文档](https://qlib.moujue.com/developer/how_to_build_image.html)。
 
 ## 自动化量化研究工作流
 Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工作流（包括数据集构建、模型训练、回测和评估）。你可以按照以下步骤启动自动化量化研究工作流，并进行图形化报告分析：
@@ -360,7 +360,7 @@ Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工�
     ```bash
     python -m pdb qlib/workflow/cli.py examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
     ```
-    `qrun` 的结果如下，更多解释请参考[文档](https://qlib.readthedocs.io/en/latest/component/strategy.html#result)。
+    `qrun` 的结果如下，更多解释请参考[文档](https://qlib.moujue.com/component/strategy.html#result)。
 
     ```bash
 
@@ -379,7 +379,7 @@ Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工�
     information_ratio  1.444287
     max_drawdown      -0.091078
     ```
-    有关 `qrun` 和 [工作流](https://qlib.readthedocs.io/en/latest/component/workflow.html) 的详细文档请参考链接。
+    有关 `qrun` 和 [工作流](https://qlib.moujue.com/component/workflow.html) 的详细文档请参考链接。
 
 2. 图形化报告分析：首先运行 `python -m pip install .[analysis]` 安装所需依赖，然后用 `jupyter notebook` 打开并运行 `examples/workflow_by_code.ipynb`，即可获得图形化报告。
     - 预测信号（模型预测）分析
@@ -407,7 +407,7 @@ Qlib 提供了名为 `qrun` 的工具，可自动运行完整的量化研究工�
       - Rank Label
       ![Rank Label](docs/_static/img/rank_label.png)
       -->
-   - 上述结果的[详细解释](https://qlib.readthedocs.io/en/latest/component/report.html)
+   - 上述结果的[详细解释](https://qlib.moujue.com/component/report.html)
 
 ## 通过代码构建自定义量化研究工作流
 自动化工作流可能并不适用于所有量化研究者的研究流程。为支持灵活的量化研究工作流，Qlib 还提供了模块化接口，允许研究者通过代码自定义工作流。[这里](examples/workflow_by_code.ipynb)有一个通过代码自定义量化研究工作流的演示。
@@ -498,7 +498,7 @@ Qlib 现已支持强化学习功能，用于建模连续投资决策。该功能
 以下是基于不同场景的 Qlib 强化学习解决方案列表：
 
 ### [订单执行中的强化学习](examples/rl_order_execution)
-[这里](https://qlib.readthedocs.io/en/latest/component/rl/overall.html#order-execution)有该场景的介绍，所有方法的对比见[此处](examples/rl_order_execution)。
+[这里](https://qlib.moujue.com/component/rl/overall.html#order-execution)有该场景的介绍，所有方法的对比见[此处](examples/rl_order_execution)。
 - [TWAP](examples/rl_order_execution/exp_configs/backtest_twap.yml)
 - [PPO: "An End-to-End Optimal Trade Execution Framework based on Proximal Policy Optimization", IJCAL 2020](examples/rl_order_execution/exp_configs/backtest_ppo.yml)
 - [OPDS: "Universal Trading for Order Execution with Oracle Policy Distillation", AAAI 2021](examples/rl_order_execution/exp_configs/backtest_opds.yml)
@@ -511,7 +511,7 @@ Qlib 现已支持强化学习功能，用于建模连续投资决策。该功能
 | [Alpha360](./qlib/contrib/data/handler.py) |  √        |  √           |
 | [Alpha158](./qlib/contrib/data/handler.py) |  √        |  √           |
 
-[这里](https://qlib.readthedocs.io/en/latest/advanced/alpha.html)有使用 `Qlib` 构建数据集的教程。
+[这里](https://qlib.moujue.com/advanced/alpha.html)有使用 `Qlib` 构建数据集的教程。
 欢迎提交新的量化数据集 PR。
 
 
@@ -521,8 +521,8 @@ Qlib 高度可定制，许多组件都可学习。
 学习框架也会利用 `工作流` 层（如共享 `信息提取器`，基于 `执行环境` 创建环境等）。
 
 根据学习范式，可分为强化学习和监督学习：
-- 监督学习的详细文档见[这里](https://qlib.readthedocs.io/en/latest/component/model.html)。
-- 强化学习的详细文档见[这里](https://qlib.readthedocs.io/en/latest/component/rl.html)。Qlib 的 RL 学习框架利用 `工作流` 层的 `执行环境` 创建环境，支持 `NestedExecutor`，可实现多层次策略/模型/代理的联合优化（如针对特定投资组合管理策略优化订单执行策略）。
+- 监督学习的详细文档见[这里](https://qlib.moujue.com/component/model.html)。
+- 强化学习的详细文档见[这里](https://qlib.moujue.com/component/rl.html)。Qlib 的 RL 学习框架利用 `工作流` 层的 `执行环境` 创建环境，支持 `NestedExecutor`，可实现多层次策略/模型/代理的联合优化（如针对特定投资组合管理策略优化订单执行策略）。
 
 
 # 关于 Qlib 的更多信息

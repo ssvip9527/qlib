@@ -4,7 +4,7 @@
 alpha因子通过两种方式进行评估：
 1. alpha因子与未来收益之间的相关性。
 2. 基于alpha因子构建投资组合并评估最终的总收益。
-   - 指标解释可参见[此处](https://qlib.readthedocs.io/en/latest/component/report.html#id4)
+   - 指标解释可参见[此处](https://qlib.moujue.com/component/report.html#id4)
 
 以下是各基准模型在Qlib的`Alpha360`和`Alpha158`数据集上分别使用中国A股和沪深300数据的运行结果。每个指标的值是基于20次不同随机种子运行计算的均值和标准差。
 

@@ -24,9 +24,9 @@
 以下是Qlib数据工作流的典型示例：
 
 - 用户下载数据并将其转换为Qlib格式（文件后缀为`.bin`）。在此步骤中，通常仅将一些基本数据（如OHLCV）存储在磁盘上。
-- 基于Qlib的表达式引擎创建一些基本特征（例如"Ref($close, 60) / $close"，表示过去60个交易日的收益率）。表达式引擎支持的运算符可在`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/data/ops.py>`__找到。此步骤通常在Qlib的`数据加载器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-loader>`_中实现，它是`数据处理器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-handler>`_的一个组件。
-- 如果用户需要更复杂的数据处理（例如数据归一化），`数据处理器 <https://qlib.readthedocs.io/en/latest/component/data.html#data-handler>`_支持用户自定义处理器来处理数据（一些预定义的处理器可在`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/data/dataset/processor.py>`__找到）。这些处理器与表达式引擎中的运算符不同，它们专为一些难以用表达式引擎运算符支持的复杂数据处理方法而设计。
-- 最后，`数据集 <https://qlib.readthedocs.io/en/latest/component/data.html#dataset>`_负责从数据处理器处理后的数据中准备模型特定的数据集
+- 基于Qlib的表达式引擎创建一些基本特征（例如"Ref($close, 60) / $close"，表示过去60个交易日的收益率）。表达式引擎支持的运算符可在`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/data/ops.py>`__找到。此步骤通常在Qlib的`数据加载器 <https://qlib.moujue.com/component/data.html#data-loader>`_中实现，它是`数据处理器 <https://qlib.moujue.com/component/data.html#data-handler>`_的一个组件。
+- 如果用户需要更复杂的数据处理（例如数据归一化），`数据处理器 <https://qlib.moujue.com/component/data.html#data-handler>`_支持用户自定义处理器来处理数据（一些预定义的处理器可在`此处 <https://github.com/ssvip9527/qlib/blob/main-cn/qlib/data/dataset/processor.py>`__找到）。这些处理器与表达式引擎中的运算符不同，它们专为一些难以用表达式引擎运算符支持的复杂数据处理方法而设计。
+- 最后，`数据集 <https://qlib.moujue.com/component/data.html#dataset>`_负责从数据处理器处理后的数据中准备模型特定的数据集
 
 数据准备
 ============

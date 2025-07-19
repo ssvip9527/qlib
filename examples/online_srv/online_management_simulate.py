@@ -99,7 +99,7 @@ class OnlineSimulationExample:
         signals = self.rolling_online_manager.get_signals()
         print(signals)
         # Backtesting
-        # - the code is based on this example https://qlib.readthedocs.io/en/latest/component/strategy.html
+        # - the code is based on this example https://qlib.moujue.com/component/strategy.html
         CSI300_BENCH = "SH000903"
         STRATEGY_CONFIG = {
             "topk": 30,

@@ -1,6 +1,6 @@
 # 收集基金数据
 
-> *请注意，本数据来源于[天天基金网](https://fund.eastmoney.com/)，数据可能并不完美。如果用户拥有高质量数据集，建议自行准备数据。更多信息请参考[相关文档](https://qlib.readthedocs.io/en/latest/component/data.html#converting-csv-format-into-qlib-format)*
+> *请注意，本数据来源于[天天基金网](https://fund.eastmoney.com/)，数据可能并不完美。如果用户拥有高质量数据集，建议自行准备数据。更多信息请参考[相关文档](https://qlib.moujue.com/component/data.html#converting-csv-format-into-qlib-format)*
 
 ## 需求说明
 
