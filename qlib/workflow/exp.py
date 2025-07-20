@@ -299,13 +299,9 @@ class MLflowExperiment(Experiment):
                 recorder = MLflowRecorder(self.id, self._uri, mlflow_run=run)
                 return recorder
             except MlflowException as mlflow_exp:
-                raise ValueError(
-                    "未找到有效的记录器，请确保输入的记录器ID正确。"
-                ) from mlflow_exp
+                raise ValueError("未找到有效的记录器，请确保输入的记录器ID正确。") from mlflow_exp
         elif recorder_name is not None:
-            logger.warning(
-                f"请确保记录器名称{recorder_name}是唯一的，如果存在多个匹配给定名称的记录器，我们只会返回最新的一个。"
-            )
+            logger.warning(f"请确保记录器名称{recorder_name}是唯一的，如果存在多个匹配给定名称的记录器，我们只会返回最新的一个。")
             recorders = self.list_recorders()
             for rid in recorders:
                 if recorders[rid].name == recorder_name:

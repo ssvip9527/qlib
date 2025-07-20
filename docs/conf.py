@@ -55,7 +55,7 @@ author = "Microsoft 谋决量化 翻译"
 
 # 您正在记录的项目的版本信息，用于 |version| 和 |release| 的替换，
 # 也用于构建文档中的其他各处。
-#
+
 # 简短的 X.Y 版本。
 import importlib.metadata
 version = importlib.metadata.version("pyqlib")
