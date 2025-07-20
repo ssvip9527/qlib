@@ -16,7 +16,7 @@ def get_version(rel_path: str) -> str:
         if line.startswith("__version__"):
             delim = '"' if '"' in line else "'"
             return line.split(delim)[1]
-    raise RuntimeError("Unable to find version string.")
+    raise RuntimeError("无法找到版本信息。")
 
 
 # 获取 numpy 的头文件路径
