@@ -19,13 +19,13 @@ try:
     from ._libs.expanding import expanding_slope, expanding_rsquare, expanding_resi
 except ImportError:
     print(
-        "#### Do not import qlib package in the repository directory in case of importing qlib from . without compiling #####"
+        "#### 如果从 . 导入`qlib`而不进行编译，请勿导入存储库目录中的`qlib`包 #####"
     )
     raise
 except ValueError:
-    print("!!!!!!!! A error occurs when importing operators implemented based on Cython.!!!!!!!!")
-    print("!!!!!!!! They will be disabled. Please Upgrade your numpy to enable them     !!!!!!!!")
-    # We catch this error because some platform can't upgrade there package (e.g. Kaggle)
+    print("!!!!!!!! 导入基于Cython实现的算子时出错。        !!!!!!!!")
+    print("!!!!!!!! 它们将被禁用。请升级你的`Numpy`以启用它们!!!!!!!!")
+    # 我们发现这个错误是因为某些平台无法升级其包（例如 Kaggle）
     # https://www.kaggle.com/general/293387
     # https://www.kaggle.com/product-feedback/98562
 
@@ -66,17 +66,11 @@ class ChangeInstrument(ElemOperator):
     在某些情况下，计算时可能需要切换到另一个工具，例如计算股票相对于市场指数的贝塔值。
     这需要将特征计算从股票（原始工具）更改为指数（参考工具）
 
-    参数
-    ----------
-    instrument: 要执行下游操作的新工具。
+    :param instrument: 要执行下游操作的新工具。
         例如，SH000300（沪深300指数）或^GPSC（标普500指数）。
-
-    feature: 要为新工具计算的特征。
-
-    返回
-    ----------
-    Expression
-        特征运算输出
+    :param feature: 要为新工具计算的特征。
+    :returns: 特征运算输出
+    :rtype: Expression
     """
     def __init__(self, instrument, feature):
         self.instrument = instrument

@@ -13,9 +13,11 @@
 # 如果扩展（或 autodoc 要记录的模块）在其他目录中，
 # 请在此处将这些目录添加到 sys.path。如果目录是相对于文档根目录的，
 # 请像下面这样使用 os.path.abspath 使其成为绝对路径。
-#
+
 import os
 import sys
+sys.path.insert(0, os.path.abspath('../'))
+import qlib
 
 # import pkg_resources  # Deprecated, see https://setuptools.pypa.io/en/latest/pkg_resources.html
 
@@ -50,17 +52,18 @@ master_doc = "index"
 
 # 项目的基本信息。
 project = "QLib-中文文档"
-copyright = "Microsoft"
 author = "Microsoft 谋决量化 翻译"
 
 # 您正在记录的项目的版本信息，用于 |version| 和 |release| 的替换，
 # 也用于构建文档中的其他各处。
 
 # 简短的 X.Y 版本。
-import importlib.metadata
-version = importlib.metadata.version("pyqlib")
-# 完整版本，包括 alpha/beta/rc 标签。
-release = importlib.metadata.version("pyqlib")
+# import importlib.metadata
+# version = importlib.metadata.version("pyqlib")
+# # 完整版本，包括 alpha/beta/rc 标签。
+# release = importlib.metadata.version("pyqlib")
+version = qlib.__version__
+release = qlib.__version__
 
 # Sphinx 自动生成内容的语言。请参阅文档以获取支持的语言列表。
 #
@@ -76,7 +79,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "hidden"]
 pygments_style = "sphinx"
 
 # 如果为 true，`todo` 和 `todoList` 将生成输出，否则不生成任何内容。
-todo_include_todos = False
+# todo_include_todos = False
+# 如果为 true，`todo` 和 `todoList` 将生成输出，否则不生成任何内容。
+todo_include_todos = True
 
 # 如果为 true，将在 :func: 等交叉引用文本后附加 '()'。
 add_function_parentheses = False
@@ -84,8 +89,7 @@ add_function_parentheses = False
 # 如果为 true，当前模块名将添加到所有描述性单元标题前（如 .. function::）。
 add_module_names = True
 
-# 如果为 true，`todo` 和 `todoList` 将生成输出，否则不生成任何内容。
-todo_include_todos = True
+
 
 
 # -- HTML 输出选项 ----------------------------------------------------------
@@ -193,7 +197,7 @@ texinfo_documents = [
 epub_title = project
 epub_author = author
 epub_publisher = 'https://www.moujue.com/'
-epub_copyright = copyright
+epub_copyright = "Microsoft"
 
 # 文本的唯一标识符。可以是ISBN号或项目主页。
 # epub_identifier = ''

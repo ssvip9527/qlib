@@ -88,19 +88,11 @@ class DatasetH(Dataset):
         """
         Setup the underlying data.
 
-        Parameters
-        ----------
-        handler : Union[dict, DataHandler]
-            处理器可以是：
-
+        :param handler: 处理器可以是：
             - `DataHandler`的实例
-
             - `DataHandler`的配置。请参考`DataHandler`
-
-        segments : dict
-            描述数据分段的选项。
-            以下是一些示例：
-
+        :type handler: Union[dict, DataHandler]
+        :param segments: 描述数据分段的选项。以下是一些示例：
             .. code-block::
 
                 1) 'segments': {
@@ -112,6 +104,7 @@ class DatasetH(Dataset):
                         'insample': ("2008-01-01", "2014-12-31"),
                         'outsample': ("2017-01-01", "2020-08-01",),
                     }
+        :type segments: dict
         """
         self.handler: DataHandler = init_instance_by_config(handler, accept_types=DataHandler)
         self.segments = segments.copy()

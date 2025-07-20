@@ -134,6 +134,15 @@ class TopkDropoutStrategy(BaseSignalStrategy):
         self.forbid_all_trade_at_limit = forbid_all_trade_at_limit
 
     def generate_trade_decision(self, execute_result=None):
+        """生成交易决策
+
+        根据信号生成交易决策，包括选股和调仓逻辑。
+
+        :param execute_result: 执行结果，默认为None
+        :type execute_result: Any
+        :return: 交易决策对象
+        :rtype: TradeDecisionWO
+        """
         # get the number of trading step finished, trade_step can be [0, 1, 2, ..., trade_len - 1]
         trade_step = self.trade_calendar.get_trade_step()
         trade_start_time, trade_end_time = self.trade_calendar.get_step_time(trade_step)

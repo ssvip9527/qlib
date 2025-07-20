@@ -89,17 +89,14 @@ class BaseStorage:
 
 
 class CalendarStorage(BaseStorage):
-    """
-    日历存储类，其方法行为与同名的List方法保持一致
-    """
+    """日历存储类，其方法行为与同名的List方法保持一致"""
 
     def __init__(self, freq: str, future: bool, **kwargs):
         """初始化日历存储
 
-        参数:
-            freq: 频率字符串
-            future: 是否包含未来数据
-            **kwargs: 其他关键字参数
+        :param freq: 频率字符串
+        :param future: 是否包含未来数据
+        :param **kwargs: 其他关键字参数
         """
         self.freq = freq
         self.future = future
@@ -109,51 +106,35 @@ class CalendarStorage(BaseStorage):
     def data(self) -> Iterable[CalVT]:
         """获取所有日历数据
 
-        返回:
-            Iterable[CalVT]: 日历数据的可迭代对象
-
-        异常:
-        ------
-        ValueError
-            如果数据(存储)不存在，则引发ValueError
+        :returns: 日历数据的可迭代对象
+        :rtype: Iterable[CalVT]
+        :raises ValueError: 如果数据(存储)不存在
         """
         raise NotImplementedError("CalendarStorage的子类必须实现`data`方法")
 
     def clear(self) -> None:
         """清空日历存储数据
 
-        异常:
-        ------
-        NotImplementedError: 子类必须实现此方法
+        :raises NotImplementedError: 子类必须实现此方法
         """
         raise NotImplementedError("CalendarStorage的子类必须实现`clear`方法")
 
     def extend(self, iterable: Iterable[CalVT]) -> None:
         """扩展日历存储数据
 
-        参数:
-            iterable: 包含日历数据的可迭代对象
-
-        异常:
-        ------
-        NotImplementedError: 子类必须实现此方法
+        :param iterable: 包含日历数据的可迭代对象
+        :raises NotImplementedError: 子类必须实现此方法
         """
         raise NotImplementedError("CalendarStorage的子类必须实现`extend`方法")
 
     def index(self, value: CalVT) -> int:
         """获取日历值的索引
 
-        参数:
-            value: 日历值
-
-        返回:
-            int: 日历值在存储中的索引
-
-        异常:
-        ------
-        ValueError
-            如果数据(存储)不存在，则引发ValueError
-        NotImplementedError: 子类必须实现此方法
+        :param value: 日历值
+        :returns: 日历值在存储中的索引
+        :rtype: int
+        :raises ValueError: 如果数据(存储)不存在
+        :raises NotImplementedError: 子类必须实现此方法
         """
         raise NotImplementedError("CalendarStorage的子类必须实现`index`方法")
 
@@ -279,10 +260,9 @@ class InstrumentStorage(BaseStorage):
     def __init__(self, market: str, freq: str, **kwargs):
         """初始化证券工具存储
 
-        参数:
-            market: 市场名称
-            freq: 频率字符串
-            **kwargs: 其他关键字参数
+        :param market: 市场名称
+        :param freq: 频率字符串
+        :param **kwargs: 其他关键字参数
         """
         self.market = market
         self.freq = freq
@@ -394,11 +374,10 @@ class FeatureStorage(BaseStorage):
     def __init__(self, instrument: str, field: str, freq: str, **kwargs):
         """初始化特征存储
 
-        参数:
-            instrument: 证券工具代码
-            field: 特征字段名称
-            freq: 频率字符串
-            **kwargs: 其他关键字参数
+        :param instrument: 证券工具代码
+        :param field: 特征字段名称
+        :param freq: 频率字符串
+        :param **kwargs: 其他关键字参数
         """
         self.instrument = instrument
         self.field = field

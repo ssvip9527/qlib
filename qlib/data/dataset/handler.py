@@ -113,20 +113,14 @@ class DataHandler(DataHandlerABC):
         fetch_orig=True,
     ):
         """
-        参数
-        ----------
-        instruments :
-            要检索的股票列表。
-        start_time :
-            原始数据的开始时间。
-        end_time :
-            原始数据的结束时间。
-        data_loader : Union[dict, str, DataLoader]
-            用于加载数据的数据加载器。
-        init_data :
-            在构造函数中初始化原始数据。
-        fetch_orig : bool
-            如果可能，返回原始数据而不是副本。
+        :param instruments: 要检索的股票列表
+        :param start_time: 原始数据的开始时间
+        :param end_time: 原始数据的结束时间
+        :param data_loader: 用于加载数据的数据加载器
+        :type data_loader: Union[dict, str, DataLoader]
+        :param init_data: 在构造函数中初始化原始数据
+        :param fetch_orig: 如果可能，返回原始数据而不是副本
+        :type fetch_orig: bool
         """
 
         # Setup data loader

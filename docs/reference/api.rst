@@ -188,7 +188,7 @@ API 参考
 
 
 任务生成器
--------
+----------
 .. automodule:: qlib.workflow.task.gen
     :members:
 
