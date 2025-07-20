@@ -119,7 +119,7 @@ class RollingStrategy(OnlineStrategy):
         self.tool = OnlineToolR(self.exp_name)
         self.ta = TimeAdjuster()
 
-    def get_collector(self, process_list=[RollingGroup()], rec_key_func=None, rec_filter_func=None, artifacts_key=None):
+    def get_collector(self, process_list=None, rec_key_func=None, rec_filter_func=None, artifacts_key=None):
         """
         获取`Collector <../advanced/task_management.html#Task Collecting>`_实例以收集结果。返回的收集器必须能够区分不同模型的结果。
 
@@ -131,6 +131,9 @@ class RollingStrategy(OnlineStrategy):
             rec_filter_func (Callable, 可选): 通过返回True或False来过滤记录器。默认为None。
             artifacts_key (List[str], 可选): 要获取的工件键。如果为None，则获取所有工件。
         """
+
+        if process_list is None:
+            process_list = [RollingGroup()]
 
         def rec_key(recorder):
             task_config = recorder.load_object("task")

@@ -17,7 +17,7 @@
 import os
 import sys
 
-import pkg_resources
+# import pkg_resources  # Deprecated, see https://setuptools.pypa.io/en/latest/pkg_resources.html
 
 
 # -- 通用配置 ------------------------------------------------
@@ -57,9 +57,10 @@ author = "Microsoft 谋决量化 翻译"
 # 也用于构建文档中的其他各处。
 #
 # 简短的 X.Y 版本。
-version = pkg_resources.get_distribution("pyqlib").version
+import importlib.metadata
+version = importlib.metadata.version("pyqlib")
 # 完整版本，包括 alpha/beta/rc 标签。
-release = pkg_resources.get_distribution("pyqlib").version
+release = importlib.metadata.version("pyqlib")
 
 # Sphinx 自动生成内容的语言。请参阅文档以获取支持的语言列表。
 #

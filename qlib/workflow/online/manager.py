@@ -1,8 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""
-OnlineManager可以管理一组`Online Strategy <#Online Strategy>`_并动态运行它们。
+"""OnlineManager可以管理一组`Online Strategy <#Online Strategy>`_并动态运行它们。
 
 随着时间的推移，决策模型也会发生变化。在本模块中，我们将这些贡献模型称为`online`模型。
 在每个例行程序(如每天或每分钟)中，`online`模型可能会发生变化，需要更新它们的预测。
@@ -96,8 +95,7 @@ from qlib.workflow.task.collect import MergeCollector
 
 
 class OnlineManager(Serializable):
-    """
-    OnlineManager可以通过`Online Strategy <#Online Strategy>`_管理在线模型。
+    """OnlineManager可以通过`Online Strategy <#Online Strategy>`_管理在线模型。
     它还提供了哪些模型在什么时间在线的历史记录。
     """
 
