@@ -30,7 +30,7 @@ def get_or_create_path(path: Optional[Text] = None, return_dir: bool = False):
             if not os.path.exists(xpath):
                 os.makedirs(xpath)
     else:
-        temp_dir = os.path.expanduser("~/tmp")
+        temp_dir = tempfile.gettempdir()
         if not os.path.exists(temp_dir):
             os.makedirs(temp_dir)
         if return_dir:
@@ -120,7 +120,7 @@ def unpack_archive_with_buffer(buffer, format="gztar"):
         ...
 
     """
-    temp_dir = os.path.expanduser("~/tmp")
+    temp_dir = tempfile.gettempdir()
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
     with tempfile.NamedTemporaryFile("wb", delete=False, dir=temp_dir) as fp:
@@ -151,7 +151,7 @@ def unpack_archive_with_buffer(buffer, format="gztar"):
 
 @contextlib.contextmanager
 def get_tmp_file_with_buffer(buffer):
-    temp_dir = os.path.expanduser("~/tmp")
+    temp_dir = tempfile.gettempdir()
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
     with tempfile.NamedTemporaryFile("wb", delete=True, dir=temp_dir) as fp:

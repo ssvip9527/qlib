@@ -42,12 +42,12 @@ class ADARNN(Model):
         num_layers=2,
         dropout=0.0,
         n_epochs=200,
-        pre_epoch=40,
+        pre_epoch=0,  # 设置为0以立即启用Boosting更新
         dw=0.5,
         loss_type="cosine",
         len_seq=60,
         len_win=0,
-        lr=0.001,
+        lr=0.01,
         metric="mse",
         batch_size=2000,
         early_stop=20,
@@ -61,7 +61,8 @@ class ADARNN(Model):
         # 设置日志记录器。
         self.logger = get_module_logger("ADARNN")
         self.logger.info("ADARNN pytorch版本...")
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(GPU)
+        if GPU >= 0:
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(GPU)
 
         # 设置超参数。
         self.d_feat = d_feat
@@ -117,12 +118,20 @@ class ADARNN(Model):
             )
         )
 
+        import os
+        os.environ['LOKY_MAX_CPU_COUNT'] = '1'
+        os.environ['JOBLIB_SERIALIZE_MODE'] = 'pickle'
+        os.environ['OMP_NUM_THREADS'] = '1'
+        os.environ['MKL_NUM_THREADS'] = '1'
+        os.environ['NUMEXPR_NUM_THREADS'] = '1'
         if self.seed is not None:
             np.random.seed(self.seed)
             torch.manual_seed(self.seed)
 
         n_hiddens = [hidden_size for _ in range(num_layers)]
-        self.model = AdaRNN(
+        self.weight_mat = nn.Parameter(torch.eye(self.len_seq, device=self.device))
+        self.dist_mat = nn.Parameter(torch.zeros(self.num_layers, self.len_seq, device=self.device))
+        self.model = AdaRNN(d_feat=self.d_feat,
             use_bottleneck=False,
             bottleneck_width=64,
             n_input=d_feat,
@@ -176,7 +185,8 @@ class ADARNN(Model):
             if flag:
                 continue
 
-            total_loss = torch.zeros(1).to(self.device)
+            self.train_optimizer.zero_grad()
+            total_loss = None
             for i, n in enumerate(index):
                 feature_s = list_feat[n[0]]
                 feature_t = list_feat[n[1]]
@@ -189,7 +199,7 @@ class ADARNN(Model):
                         feature_all, len_win=self.len_win
                     )
                 else:
-                    pred_all, loss_transfer, dist, weight_mat = self.model.forward_Boosting(feature_all, weight_mat)
+                    pred_all, loss_transfer, dist = self.model.forward_Boosting(feature_all)
                     dist_mat = dist_mat + dist
                 pred_s = pred_all[0 : feature_s.size(0)]
                 pred_t = pred_all[feature_s.size(0) :]
@@ -197,17 +207,27 @@ class ADARNN(Model):
                 loss_s = criterion(pred_s, label_reg_s)
                 loss_t = criterion(pred_t, label_reg_t)
 
-                total_loss = total_loss + loss_s + loss_t + self.dw * loss_transfer
-            self.train_optimizer.zero_grad()
-            total_loss.backward()
-            torch.nn.utils.clip_grad_value_(self.model.parameters(), 3.0)
-            self.train_optimizer.step()
+                current_loss = loss_s + loss_t + self.dw * loss_transfer
+                if total_loss is None:
+                    total_loss = current_loss
+                else:
+                    total_loss += current_loss
+            if total_loss is not None:
+                  total_loss.backward()
+                  torch.nn.utils.clip_grad_value_(self.model.parameters(), 3.0)
+                  self.train_optimizer.step()
+            else:
+                  # 没有有效的训练数据，跳过本轮更新
+                  pass
         if epoch >= self.pre_epoch:
-            if epoch > self.pre_epoch:
-                weight_mat = self.model.update_weight_Boosting(weight_mat, dist_old, dist_mat)
+            self.model.update_weight_Boosting(dist_old, dist_mat)
             return weight_mat, dist_mat
         else:
-            weight_mat = self.transform_type(out_weight_list)
+            if out_weight_list is None:
+                # 初始化默认权重矩阵
+                weight_mat = torch.eye(self.len_seq, device=self.device)
+            else:
+                weight_mat = self.transform_type(out_weight_list)
             return weight_mat, None
 
     @staticmethod
@@ -222,7 +242,7 @@ class ADARNN(Model):
         res["icir"] = ic.mean() / ic.std()
         res["ric"] = rank_ic.mean()
         res["ricir"] = rank_ic.mean() / rank_ic.std()
-        res["mse"] = -(pred["label"] - pred["score"]).mean()
+        res["mse"] = ((pred["label"] - pred["score"]) ** 2).mean()
         res["loss"] = res["mse"]
         return res
 
@@ -270,8 +290,7 @@ class ADARNN(Model):
 
         for step in range(self.n_epochs):
             self.logger.info("第%d轮训练:", step)
-            self.logger.info("training...")
-            weight_mat, dist_mat = self.train_AdaRNN(train_loader_list, step, dist_mat, weight_mat)
+            self.train_AdaRNN(train_loader_list, step)
             self.logger.info("评估中...")
             train_metrics = self.test_epoch(df_train)
             valid_metrics = self.test_epoch(df_valid)
@@ -332,9 +351,14 @@ class ADARNN(Model):
 
     def transform_type(self, init_weight):
         weight = torch.ones(self.num_layers, self.len_seq).to(self.device)
+        if init_weight is None:
+            return torch.zeros_like(weight)
         for i in range(self.num_layers):
             for j in range(self.len_seq):
-                weight[i, j] = init_weight[i][j].item()
+                if init_weight[i][j] is None:
+                    weight[i, j] = 0.0
+                else:
+                    weight[i, j] = init_weight[i][j].item()
         return weight
 
 
@@ -379,6 +403,7 @@ class AdaRNN(nn.Module):
         use_bottleneck=False,
         bottleneck_width=256,
         n_input=128,
+        d_feat=6,
         n_hiddens=[64, 64],
         n_output=6,
         dropout=0.0,
@@ -390,6 +415,8 @@ class AdaRNN(nn.Module):
         super(AdaRNN, self).__init__()
         self.use_bottleneck = use_bottleneck
         self.n_input = n_input
+        self.hidden_size = n_hiddens[0]
+        self.d_feat = d_feat
         self.num_layers = len(n_hiddens)
         self.hiddens = n_hiddens
         self.n_output = n_output
@@ -424,6 +451,8 @@ class AdaRNN(nn.Module):
             self.fc_out = nn.Linear(n_hiddens[-1], self.n_output)
 
         if self.model_type == "AdaRNN":
+            self.weight_mat = nn.Parameter(torch.randn(self.num_layers, self.len_seq))
+            self.dist_mat = nn.Parameter(torch.randn(self.num_layers, self.len_seq))
             gate = nn.ModuleList()
             for i in range(len(n_hiddens)):
                 gate_weight = nn.Linear(len_seq * self.hiddens[i] * 2, len_seq)
@@ -451,7 +480,8 @@ class AdaRNN(nn.Module):
             fea_bottleneck = self.bottleneck(fea[:, -1, :])
             fc_out = self.fc(fea_bottleneck).squeeze()
         else:
-            fc_out = self.fc_out(fea[:, -1, :]).squeeze()  # [N,]
+            fea = fea @ self.weight_mat + fea @ self.dist_mat
+            fc_out = self.fc_out(fea[:, -1, :] @ self.weight_mat).squeeze()  # [N,]
 
         out_list_all, out_weight_list = out[1], out[2]
         out_list_s, out_list_t = self.get_features(out_list_all)
@@ -509,7 +539,7 @@ class AdaRNN(nn.Module):
         return fea_list_src, fea_list_tar
 
     # 基于Boosting的前向传播
-    def forward_Boosting(self, x, weight_mat=None):
+    def forward_Boosting(self, x):
         out = self.gru_features(x)
         fea = out[0]
         if self.use_bottleneck:
@@ -521,10 +551,7 @@ class AdaRNN(nn.Module):
         out_list_all = out[1]
         out_list_s, out_list_t = self.get_features(out_list_all)
         loss_transfer = torch.zeros((1,)).to(self.device)
-        if weight_mat is None:
-            weight = (1.0 / self.len_seq * torch.ones(self.num_layers, self.len_seq)).to(self.device)
-        else:
-            weight = weight_mat
+        weight = self.weight_mat
         dist_mat = torch.zeros(self.num_layers, self.len_seq).to(self.device)
         for i, n in enumerate(out_list_s):
             criterion_transder = TransferLoss(loss_type=self.trans_loss, input_dim=n.shape[2])
@@ -532,18 +559,21 @@ class AdaRNN(nn.Module):
                 loss_trans = criterion_transder.compute(n[:, j, :], out_list_t[i][:, j, :])
                 loss_transfer = loss_transfer + weight[i, j] * loss_trans
                 dist_mat[i, j] = loss_trans
-        return fc_out, loss_transfer, dist_mat, weight
+        return fc_out, loss_transfer, dist_mat
 
     # 更新Boosting权重
-    def update_weight_Boosting(self, weight_mat, dist_old, dist_new):
+    def update_weight_Boosting(self, dist_old, dist_new):
         epsilon = 1e-5
+        weight_mat = self.weight_mat.detach()
+        if dist_old is None:
+            dist_old = torch.zeros_like(dist_new)
         dist_old = dist_old.detach()
         dist_new = dist_new.detach()
-        ind = dist_new > dist_old + epsilon
+        ind = dist_new < dist_old - epsilon
         weight_mat[ind] = weight_mat[ind] * (1 + torch.sigmoid(dist_new[ind] - dist_old[ind]))
         weight_norm = torch.norm(weight_mat, dim=1, p=1)
         weight_mat = weight_mat / weight_norm.t().unsqueeze(1).repeat(1, self.len_seq)
-        return weight_mat
+        self.weight_mat.data = weight_mat
 
     def predict(self, x):
         out = self.gru_features(x, predict=True)
