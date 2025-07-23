@@ -16,14 +16,14 @@ class FeaAnalyser:
     def __init__(self, dataset: pd.DataFrame):
         """
 
-        Parameters
+        参数
         ----------
         dataset : pd.DataFrame
 
-            We often have multiple columns for dataset. Each column corresponds to one sub figure.
-            There will be a datatime column in the index levels.
-            Aggretation will be used for more summarized metrics overtime.
-            Here is an example of data:
+            数据集通常有多个列。每列对应一个子图。
+            索引级别中会有一个日期时间列。
+            聚合将用于随时间汇总的指标。
+            以下是数据示例：
 
             .. code-block::
 
@@ -40,7 +40,7 @@ class FeaAnalyser:
         pass
 
     def plot_single(self, col, ax):
-        raise NotImplementedError(f"This type of input is not supported")
+        raise NotImplementedError(f"不支持此类型的输入")
 
     def skip(self, col):
         return False

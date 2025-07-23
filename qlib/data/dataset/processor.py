@@ -220,7 +220,7 @@ class Fillna(Processor):
         if self.fields_group is None:
             df.fillna(self.fill_value, inplace=True)
         else:
-            # this implementation is extremely slow
+            # 这种实现方式非常慢
             # df.fillna({col: self.fill_value for col in cols}, inplace=True)
             df[self.fields_group] = df[self.fields_group].fillna(self.fill_value)
         return df
@@ -250,10 +250,10 @@ class MinMaxNorm(Processor):
         self.min_val = np.nanmin(df[cols].values, axis=0)
         self.max_val = np.nanmax(df[cols].values, axis=0)
         self.ignore = self.min_val == self.max_val
-        # To improve the speed, we set the value of `min_val` to `0` for the columns that do not need to be processed,
-        # and the value of `max_val` to `1`, when using `(x - min_val) / (max_val - min_val)` for uniform calculation,
-        # the columns that do not need to be processed will be calculated by `(x - 0) / (1 - 0)`,
-        # as you can see, the columns that do not need to be processed, will not be affected.
+        # 为了提高速度，对于不需要处理的列，我们将`min_val`设为`0`，
+        # 将`max_val`设为`1`，这样在使用`(x - min_val) / (max_val - min_val)`统一计算时，
+        # 不需要处理的列将被计算为`(x - 0) / (1 - 0)`，
+        # 可以看到，不需要处理的列不会受到影响。
         for _i, _con in enumerate(self.ignore):
             if _con:
                 self.min_val[_i] = 0

@@ -52,14 +52,14 @@ class InternalData:
         perf_task_tpl["record"] = ["qlib.workflow.record_temp.SignalRecord"]
 
         trainer = auto_filter_kwargs(trainer)(experiment_name=self.exp_name, **trainer_kwargs)
-        # NOTE:
-        # The handler is initialized for only once.
+        # 注意：
+        # 处理器只初始化一次。
         if not trainer.has_worker():
             self.dh = init_task_handler(perf_task_tpl)
-            self.dh.config(dump_all=False)  # in some cases, the data handler are saved to disk with `dump_all=True`
+            self.dh.config(dump_all=False)  # 在某些情况下，数据处理器会以 `dump_all=True` 的方式保存到磁盘
         else:
             self.dh = init_instance_by_config(perf_task_tpl["dataset"]["kwargs"]["handler"])
-        assert self.dh.dump_all is False  # otherwise, it will save all the detailed data
+        assert self.dh.dump_all is False  # 否则，它会保存所有详细数据
 
         seg = perf_task_tpl["dataset"]["kwargs"]["segments"]
 

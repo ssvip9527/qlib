@@ -53,8 +53,8 @@ def score_ic_graph(pred_label: pd.DataFrame, show_notebook: bool = True, **kwarg
                             2017-12-15   -0.102778       -0.102778
 
 
-    :param show_notebook: whether to display graphics in notebook, the default is **True**.
-    :return: if show_notebook is True, display in notebook; else return **plotly.graph_objs.Figure** list.
+    :param show_notebook: 是否在 notebook 中显示图表，默认为 **True**。
+    :return: 如果 show_notebook 为 True，则在 notebook 中显示；否则返回 **plotly.graph_objs.Figure** 列表。
     """
     _ic_df = _get_score_ic(pred_label)
 

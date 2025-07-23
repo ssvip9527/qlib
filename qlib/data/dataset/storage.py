@@ -72,8 +72,8 @@ class NaiveDFStorage(BaseHandlerStorage):
         # 为解决此问题
         # - 切片具有更高优先级（当level为None时除外）
         if isinstance(selector, (tuple, list)) and level is not None:
-            # when level is None, the argument will be passed in directly
-            # we don't have to convert it into slice
+            # 当level为None时，参数将被直接传入
+            # 我们不需要将其转换为切片
             try:
                 selector = slice(*selector)
             except ValueError:

@@ -95,34 +95,34 @@ def risk_analysis(r, N: int = None, freq: str = "day", mode: Literal["sum", "pro
 
 
 def indicator_analysis(df, method="mean"):
-    """analyze statistical time-series indicators of trading
+    """分析交易的统计时间序列指标
 
-    Parameters
+    参数
     ----------
     df : pandas.DataFrame
-        columns: like ['pa', 'pos', 'ffr', 'deal_amount', 'value'].
-            Necessary fields:
-                - 'pa' is the price advantage in trade indicators
-                - 'pos' is the positive rate in trade indicators
-                - 'ffr' is the fulfill rate in trade indicators
-            Optional fields:
-                - 'deal_amount' is the total deal deal_amount, only necessary when method is 'amount_weighted'
-                - 'value' is the total trade value, only necessary when method is 'value_weighted'
+        列：如 ['pa', 'pos', 'ffr', 'deal_amount', 'value']。
+            必需字段：
+                - 'pa' 是交易指标中的价格优势
+                - 'pos' 是交易指标中的正比率
+                - 'ffr' 是交易指标中的成交率
+            可选字段：
+                - 'deal_amount' 是总成交量，仅在 method 为 'amount_weighted' 时需要
+                - 'value' 是总交易价值，仅在 method 为 'value_weighted' 时需要
 
-        index: Index(datetime)
-    method : str, optional
-        statistics method of pa/ffr, by default "mean"
+        索引：Index(datetime)
+    method : str, 可选
+        pa/ffr 的统计方法，默认为 "mean"
 
-        - if method is 'mean', count the mean statistical value of each trade indicator
-        - if method is 'amount_weighted', count the deal_amount weighted mean statistical value of each trade indicator
-        - if method is 'value_weighted', count the value weighted mean statistical value of each trade indicator
+        - 如果 method 为 'mean'，计算每个交易指标的平均统计值
+        - 如果 method 为 'amount_weighted'，计算每个交易指标的成交量加权平均统计值
+        - 如果 method 为 'value_weighted'，计算每个交易指标的价值加权平均统计值
 
-        Note: statistics method of pos is always "mean"
+        注意：pos 的统计方法始终为 "mean"
 
-    Returns
+    返回
     -------
     pd.DataFrame
-        statistical value of each trade indicators
+        每个交易指标的统计值
     """
     weights_dict = {
         "mean": df["count"],
@@ -155,25 +155,25 @@ def backtest_daily(
     exchange_kwargs: dict = None,
     pos_type: str = "Position",
 ):
-    """initialize the strategy and executor, then executor the backtest of daily frequency
+    """初始化策略和执行器，然后执行日频回测
 
-    Parameters
+    参数
     ----------
     start_time : Union[str, pd.Timestamp]
-        closed start time for backtest
-        **NOTE**: This will be applied to the outmost executor's calendar.
+        回测的闭区间开始时间
+        **注意**：这将应用于最外层执行器的日历。
     end_time : Union[str, pd.Timestamp]
-        closed end time for backtest
-        **NOTE**: This will be applied to the outmost executor's calendar.
-        E.g. Executor[day](Executor[1min]),   setting `end_time == 20XX0301` will include all the minutes on 20XX0301
+        回测的闭区间结束时间
+        **注意**：这将应用于最外层执行器的日历。
+        例如：Executor[day](Executor[1min])，设置 `end_time == 20XX0301` 将包含 20XX0301 这一天的所有分钟
     strategy : Union[str, dict, BaseStrategy]
-        for initializing outermost portfolio strategy. Please refer to the docs of init_instance_by_config for more information.
+        用于初始化最外层投资组合策略。更多信息请参考 init_instance_by_config 的文档。
 
-        E.g.
+        例如：
 
         .. code-block:: python
 
-            # dict
+            # 字典形式
             strategy = {
                 "class": "TopkDropoutStrategy",
                 "module_path": "qlib.contrib.strategy.signal_strategy",
@@ -183,7 +183,7 @@ def backtest_daily(
                     "n_drop": 5,
                 },
             }
-            # BaseStrategy
+            # BaseStrategy形式
             pred_score = pd.read_pickle("score.pkl")["score"]
             STRATEGY_CONFIG = {
                 "topk": 50,
@@ -191,52 +191,52 @@ def backtest_daily(
                 "signal": pred_score,
             }
             strategy = TopkDropoutStrategy(**STRATEGY_CONFIG)
-            # str example.
-            # 1) specify a pickle object
-            #     - path like 'file:///<path to pickle file>/obj.pkl'
-            # 2) specify a class name
-            #     - "ClassName":  getattr(module, "ClassName")() will be used.
-            # 3) specify module path with class name
-            #     - "a.b.c.ClassName" getattr(<a.b.c.module>, "ClassName")() will be used.
+            # 字符串形式示例：
+            # 1) 指定pickle对象
+            #     - 路径形如 'file:///<path to pickle file>/obj.pkl'
+            # 2) 指定类名
+            #     - "ClassName": 将使用 getattr(module, "ClassName")() 
+            # 3) 指定带类名的模块路径
+            #     - "a.b.c.ClassName" 将使用 getattr(<a.b.c.module>, "ClassName")() 
 
     executor : Union[str, dict, BaseExecutor]
-        for initializing the outermost executor.
+        用于初始化最外层执行器。
     benchmark: str
-        the benchmark for reporting.
+        用于报告的基准。
     account : Union[float, int, Position]
-        information for describing how to creating the account
+        描述如何创建账户的信息
 
-        For `float` or `int`:
+        对于 `float` 或 `int`：
 
-            Using Account with only initial cash
+            仅使用初始现金创建账户
 
-        For `Position`:
+        对于 `Position`：
 
-            Using Account with a Position
+            使用持仓创建账户
     exchange_kwargs : dict
-        the kwargs for initializing Exchange
-        E.g.
+        用于初始化交易所的参数
+        例如：
 
         .. code-block:: python
 
             exchange_kwargs = {
                 "freq": freq,
-                "limit_threshold": None, # limit_threshold is None, using C.limit_threshold
-                "deal_price": None, # deal_price is None, using C.deal_price
+                "limit_threshold": None, # limit_threshold 为 None 时，使用 C.limit_threshold
+                "deal_price": None, # deal_price 为 None 时，使用 C.deal_price
                 "open_cost": 0.0005,
                 "close_cost": 0.0015,
                 "min_cost": 5,
             }
 
     pos_type : str
-        the type of Position.
+        持仓类型。
 
-    Returns
+    返回
     -------
     report_normal: pd.DataFrame
-        backtest report
+        回测报告
     positions_normal: pd.DataFrame
-        backtest positions
+        回测持仓
 
     """
     freq = "day"
@@ -288,25 +288,25 @@ def long_short_backtest(
     extract_codes=False,
 ):
     """
-    A backtest for long-short strategy
+    多空策略的回测
 
-    :param pred:        The trading signal produced on day `T`.
-    :param topk:       The short topk securities and long topk securities.
-    :param deal_price:  The price to deal the trading.
-    :param shift:       Whether to shift prediction by one day.  The trading day will be T+1 if shift==1.
-    :param open_cost:   open transaction cost.
-    :param close_cost:  close transaction cost.
-    :param trade_unit:  100 for China A.
-    :param limit_threshold: limit move 0.1 (10%) for example, long and short with same limit.
-    :param min_cost:    min transaction cost.
-    :param subscribe_fields: subscribe fields.
-    :param extract_codes:  bool.
-                       will we pass the codes extracted from the pred to the exchange.
-                       NOTE: This will be faster with offline qlib.
-    :return:            The result of backtest, it is represented by a dict.
-                        { "long": long_returns(excess),
-                        "short": short_returns(excess),
-                        "long_short": long_short_returns}
+    :param pred:        在 `T` 日产生的交易信号。
+    :param topk:       做空和做多的前topk只证券。
+    :param deal_price:  交易价格。
+    :param shift:       是否将预测向后移动一天。如果shift==1，交易日将是T+1。
+    :param open_cost:   开仓交易成本。
+    :param close_cost:  平仓交易成本。
+    :param trade_unit:  中国A股为100。
+    :param limit_threshold: 涨跌停限制，例如0.1（10%），多空使用相同的限制。
+    :param min_cost:    最小交易成本。
+    :param subscribe_fields: 订阅字段。
+    :param extract_codes:  布尔值。
+                       是否将从pred中提取的代码传递给交易所。
+                       注意：在离线qlib中这样会更快。
+    :return:            回测结果，以字典形式表示。
+                        { "long": 多头超额收益,
+                        "short": 空头超额收益,
+                        "long_short": 多空组合收益}
     """
     if get_level_index(pred, level="datetime") == 1:
         pred = pred.swaplevel().sort_index()

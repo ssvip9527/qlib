@@ -177,18 +177,18 @@ class DDGDA(Rolling):
 
     def _dump_data_for_proxy_model(self):
         """
-        Dump data for training meta model.
-        The meta model will be trained upon the proxy forecasting model.
-        This dataset is for the proxy forecasting model.
+        导出用于训练元模型的数据。
+        元模型将基于代理预测模型进行训练。
+        这个数据集是为代理预测模型准备的。
         """
 
-        # NOTE: adjusting to `self.sim_task_model` just for aligning with previous implementation.
-        # In previous version. The data for proxy model is using sim_task_model's way for processing
+        # 注意：调整为 `self.sim_task_model` 只是为了与之前的实现保持一致。
+        # 在之前的版本中，代理模型的数据使用 sim_task_model 的方式进行处理
         task = self._adjust_task(self.basic_task(enable_handler_cache=False), self.sim_task_model)
         task = replace_task_handler_with_cache(task, self.working_dir)
         # if self.meta_data_proc is not None:
         # else:
-        #     # Otherwise, we don't need futher processing
+        #     # 否则，我们不需要进一步处理
         #     task = self.basic_task()
 
         dataset = init_instance_by_config(task["dataset"])
@@ -232,8 +232,8 @@ class DDGDA(Rolling):
 
     def _dump_meta_ipt(self):
         """
-        Dump data for training meta model.
-        This function will dump the input data for meta model
+        导出用于训练元模型的数据。
+        这个函数将导出元模型的输入数据
         """
         # According to the experiments, the choice of the model type is very important for achieving good results
         sim_task = self._adjust_task(self.basic_task(enable_handler_cache=False), astype=self.sim_task_model)
@@ -252,16 +252,16 @@ class DDGDA(Rolling):
 
     def _train_meta_model(self, fill_method="max"):
         """
-        training a meta model based on a simplified linear proxy model;
+        基于简化的线性代理模型训练元模型；
         """
 
-        # 1) leverage the simplified proxy forecasting model to train meta model.
-        # - Only the dataset part is important, in current version of meta model will integrate the
+        # 1) 利用简化的代理预测模型来训练元模型。
+        # - 只有数据集部分是重要的，在当前版本的元模型中将集成
 
-        # NOTE:
-        # - The train_start for training meta model does not necessarily align with final rolling
-        #   But please select a right time to make sure the finnal rolling tasks are not leaked in the training data.
-        # - The test_start is automatically aligned to the next day of test_end.  Validation is ignored.
+        # 注意：
+        # - 训练元模型的 train_start 不必与最终滚动对齐
+        #   但请选择合适的时间以确保最终滚动任务不会泄露到训练数据中。
+        # - test_start 自动对齐到 test_end 的下一天。验证被忽略。
         train_start = "2008-01-01" if self.train_start is None else self.train_start
         train_end = "2010-12-31" if self.meta_1st_train_end is None else self.meta_1st_train_end
         test_start = (pd.Timestamp(train_end) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
@@ -279,9 +279,9 @@ class DDGDA(Rolling):
             },
             # "record": ["qlib.workflow.record_temp.SignalRecord"]
         }
-        # the proxy_forecast_model_task will be used to create meta tasks.
-        # The test date of first task will be 2011-01-01. Each test segment will be about 20days
-        # The tasks include all training tasks and test tasks.
+        # proxy_forecast_model_task 将用于创建元任务。
+        # 第一个任务的测试日期将是 2011-01-01。每个测试段大约 20 天。
+        # 任务包括所有训练任务和测试任务。
 
         # 2) preparing meta dataset
         kwargs = dict(
@@ -293,10 +293,10 @@ class DDGDA(Rolling):
             fill_method=fill_method,
             rolling_ext_days=0,
         )
-        # NOTE:
-        # the input of meta model (internal data) are shared between proxy model and final forecasting model
-        # but their task test segment are not aligned! It worked in my previous experiment.
-        # So the misalignment will not affect the effectiveness of the method.
+        # 注意：
+        # 元模型的输入（内部数据）在代理模型和最终预测模型之间共享
+        # 但它们的任务测试段不对齐！在我之前的实验中是有效的。
+        # 所以这种不对齐不会影响方法的有效性。
         with self._internal_data_path.open("rb") as f:
             internal_data = pickle.load(f)
 
@@ -323,11 +323,11 @@ class DDGDA(Rolling):
 
     def get_task_list(self):
         """
-        Leverage meta-model for inference:
-        - Given
-            - baseline tasks
-            - input for meta model(internal data)
-            - meta model (its learnt knowledge on proxy forecasting model is expected to transfer to normal forecasting model)
+        利用元模型进行推理：
+        - 给定
+            - 基准任务
+            - 元模型的输入（内部数据）
+            - 元模型（其在代理预测模型上学到的知识预期可以迁移到普通预测模型）
         """
         # 1) get meta model
         exp = R.get_exp(experiment_name=self.meta_exp_name)
@@ -335,9 +335,9 @@ class DDGDA(Rolling):
         meta_model: MetaModelDS = rec.load_object("model")
 
         # 2)
-        # we are transfer to knowledge of meta model to final forecasting tasks.
-        # Create MetaTaskDataset for the final forecasting tasks
-        # Aligning the setting of it to the MetaTaskDataset when training Meta model is necessary
+        # 我们将元模型的知识迁移到最终预测任务。
+        # 为最终预测任务创建 MetaTaskDataset
+        # 必须将其设置与训练元模型时的 MetaTaskDataset 对齐
 
         # 2.1) get previous config
         param = rec.list_params()
@@ -370,8 +370,8 @@ class DDGDA(Rolling):
         return new_tasks
 
     def run(self):
-        # prepare the meta model for rolling ---------
-        # 1) file: handler_proxy.pkl (self.proxy_hd)
+        # 为滚动准备元模型 ---------
+        # 1) 文件：handler_proxy.pkl (self.proxy_hd)
         self._dump_data_for_proxy_model()
         # 2)
         # file: internal_data_s20.pkl

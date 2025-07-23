@@ -135,9 +135,9 @@ class HyperparamOptManager:
         missing_fields = [k for k in valid_fields if k not in params]
 
         if invalid_fields:
-            raise ValueError("Invalid Fields Found {} - Valid ones are {}".format(invalid_fields, valid_fields))
+            raise ValueError("发现无效字段 {} - 有效字段为 {}".format(invalid_fields, valid_fields))
         if missing_fields:
-            raise ValueError("Missing Fields Found {} - Valid ones are {}".format(missing_fields, valid_fields))
+            raise ValueError("发现缺失字段 {} - 有效字段为 {}".format(missing_fields, valid_fields))
 
     def _get_name(self, params):
         """为提供的参数集返回唯一键。"""
@@ -159,13 +159,13 @@ class HyperparamOptManager:
             ranges_to_skip = set(self.results.index)
 
         if not isinstance(self.param_ranges, dict):
-            raise ValueError("Only works for random search!")
+            raise ValueError("仅适用于随机搜索！")
 
         param_range_keys = list(self.param_ranges.keys())
         param_range_keys.sort()
 
         def _get_next():
-            """Returns next hyperparameter set per try."""
+            """返回每次尝试的下一组超参数。"""
 
             parameters = {k: np.random.choice(self.param_ranges[k]) for k in param_range_keys}
 
@@ -182,7 +182,7 @@ class HyperparamOptManager:
             if name not in ranges_to_skip:
                 return parameters
 
-        raise ValueError("Exceeded max number of hyperparameter searches!!")
+        raise ValueError("超过最大超参数搜索次数！！")
 
     def update_score(self, parameters, loss, model, info=""):
         """更新上次优化运行的结果。
@@ -292,7 +292,7 @@ class DistributedHyperparamOptManager(HyperparamOptManager):
         return False if self.worker_search_queue else True
 
     def get_next_parameters(self):
-        """Returns next dictionary of hyperparameters to optimise."""
+        """返回下一组要优化的超参数字典。"""
         param_name = self.worker_search_queue.pop()
 
         params = self.global_hyperparam_df.loc[param_name, :].to_dict()

@@ -171,7 +171,7 @@ class TFTModel(ModelFT):
         LABEL_COL = DATASET_SETTING[DATASET]["label_col"]
 
         if DATASET not in ALLOW_DATASET:
-            raise AssertionError("The dataset is not supported, please make a new formatter to fit this dataset")
+            raise AssertionError("不支持该数据集，请创建新的格式化器以适配此数据集")
 
         dtrain, dvalid = self._prepare_data(dataset)
         dtrain.loc[:, LABEL_COL] = get_shifted_label(dtrain, shifts=LABEL_SHIFT, col_shift=LABEL_COL)
@@ -194,8 +194,7 @@ class TFTModel(ModelFT):
         ModelClass = libs.tft_model.TemporalFusionTransformer
         if not isinstance(self.data_formatter, data_formatters.base.GenericDataFormatter):
             raise ValueError(
-                "Data formatters should inherit from"
-                + "AbstractDataFormatter! Type={}".format(type(self.data_formatter))
+                "数据格式化器应该继承自AbstractDataFormatter！类型={}".format(type(self.data_formatter))
             )
 
         default_keras_session = tf.keras.backend.get_session()
@@ -251,7 +250,7 @@ class TFTModel(ModelFT):
 
     def predict(self, dataset):
         if self.model is None:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
         d_test = dataset.prepare("test", col_set=["feature", "label"])
         d_test = transform_df(d_test)
         d_test.loc[:, self.label_col] = get_shifted_label(d_test, shifts=self.label_shift, col_shift=self.label_col)

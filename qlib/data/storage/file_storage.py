@@ -91,10 +91,10 @@ class FileCalendarStorage(FileStorageMixin, CalendarStorage):
         if not hasattr(self, "_freq_file_cache"):
             freq = Freq(self.freq)
             if freq not in self.support_freq:
-                # NOTE: uri
-                #   1. If `uri` does not exist
-                #       - Get the `min_uri` of the closest `freq` under the same "directory" as the `uri`
-                #       - Read data from `min_uri` and resample to `freq`
+                # 注意：uri
+                #   1. 如果 `uri` 不存在
+                #       - 获取与 `uri` 在同一"目录"下最接近的 `freq` 的 `min_uri`
+                #       - 从 `min_uri` 读取数据并重采样到 `freq`
 
                 freq = Freq.get_recent_freq(freq, self.support_freq)
                 if freq is None:
@@ -131,7 +131,7 @@ class FileCalendarStorage(FileStorageMixin, CalendarStorage):
     def data(self) -> List[CalVT]:
         # 检查文件是否存在
         self.check()
-        # If cache is enabled, then return cache directly
+        # 如果启用了缓存，则直接返回缓存
         if self.enable_read_cache:
             key = "orig_file" + str(self.uri)
             if key not in H["c"]:
@@ -266,7 +266,7 @@ class FileInstrumentStorage(FileStorageMixin, InstrumentStorage):
 
     def update(self, *args, **kwargs) -> None:
         if len(args) > 1:
-            raise TypeError(f"update expected at most 1 arguments, got {len(args)}")
+            raise TypeError(f"update方法最多接受1个参数，但收到了{len(args)}个")
         inst = self._read_instrument()
         if args:
             other = args[0]  # type: dict

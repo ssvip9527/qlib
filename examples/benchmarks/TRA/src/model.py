@@ -233,15 +233,15 @@ class TRAModel(Model):
             self.train_epoch(train_set)
 
             self.logger.info("evaluating...")
-            # average params for inference
+            # 用于推理的平均参数
             params_list["model"].append(copy.deepcopy(self.model.state_dict()))
             params_list["tra"].append(copy.deepcopy(self.tra.state_dict()))
             self.model.load_state_dict(average_params(params_list["model"]))
             self.tra.load_state_dict(average_params(params_list["tra"]))
 
-            # NOTE: during evaluating, the whole memory will be refreshed
+            # 注意：在评估期间，整个内存将被刷新
             if self.tra.num_states > 1 or self.eval_train:
-                train_set.clear_memory()  # NOTE: clear the shared memory
+                train_set.clear_memory()  # 注意：清除共享内存
                 train_metrics = self.test_epoch(train_set)[0]
                 evals_result["train"].append(train_metrics)
                 self.logger.info("\ttrain metrics: %s" % train_metrics)
@@ -269,7 +269,7 @@ class TRAModel(Model):
                     self.logger.info("early stop @ %s" % epoch)
                     break
 
-            # restore parameters
+            # 恢复参数
             self.model.load_state_dict(params_list["model"][-1])
             self.tra.load_state_dict(params_list["tra"][-1])
 
@@ -281,7 +281,7 @@ class TRAModel(Model):
         self.logger.info("test metrics: %s" % metrics)
 
         if self.logdir:
-            self.logger.info("save model & pred to local directory")
+            self.logger.info("保存模型和预测结果到本地目录")
 
             pd.concat({name: pd.DataFrame(evals_result[name]) for name in evals_result}, axis=1).to_csv(
                 self.logdir + "/logs.csv", index=False
@@ -305,7 +305,7 @@ class TRAModel(Model):
                     "seed": self.seed,
                     "logdir": self.logdir,
                 },
-                "best_eval_metric": -best_score,  # NOTE: minux -1 for minimize
+                "best_eval_metric": -best_score,  # 注意：乘以-1用于最小化
                 "metric": metrics,
             }
             with open(self.logdir + "/info.json", "w") as f:
@@ -313,7 +313,7 @@ class TRAModel(Model):
 
     def predict(self, dataset, segment="test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
 
         test_set = dataset.prepare(segment)
 
@@ -324,17 +324,17 @@ class TRAModel(Model):
 
 
 class LSTM(nn.Module):
-    """LSTM Model
+    """LSTM模型
 
-    Args:
-        input_size (int): input size (# features)
-        hidden_size (int): hidden size
-        num_layers (int): number of hidden layers
-        use_attn (bool): whether use attention layer.
-            we use concat attention as https://github.com/fulifeng/Adv-ALSTM/
-        dropout (float): dropout rate
-        input_drop (float): input dropout for data augmentation
-        noise_level (float): add gaussian noise to input for data augmentation
+    参数:
+        input_size (int): 输入大小（特征数量）
+        hidden_size (int): 隐藏层大小
+        num_layers (int): 隐藏层数量
+        use_attn (bool): 是否使用注意力层。
+            我们使用连接注意力，参考 https://github.com/fulifeng/Adv-ALSTM/
+        dropout (float): dropout比率
+        input_drop (float): 用于数据增强的输入dropout
+        noise_level (float): 为输入添加高斯噪声用于数据增强
     """
 
     def __init__(
@@ -394,7 +394,7 @@ class LSTM(nn.Module):
 
 
 class PositionalEncoding(nn.Module):
-    # reference: https://pytorch.org/tutorials/beginner/transformer_tutorial.html
+    # 参考：https://pytorch.org/tutorials/beginner/transformer_tutorial.html
     def __init__(self, d_model, dropout=0.1, max_len=5000):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
@@ -413,16 +413,16 @@ class PositionalEncoding(nn.Module):
 
 
 class Transformer(nn.Module):
-    """Transformer Model
+    """Transformer模型
 
-    Args:
-        input_size (int): input size (# features)
-        hidden_size (int): hidden size
-        num_layers (int): number of transformer layers
-        num_heads (int): number of heads in transformer
-        dropout (float): dropout rate
-        input_drop (float): input dropout for data augmentation
-        noise_level (float): add gaussian noise to input for data augmentation
+    参数:
+        input_size (int): 输入大小（特征数量）
+        hidden_size (int): 隐藏层大小
+        num_layers (int): transformer层数
+        num_heads (int): transformer中的头数
+        dropout (float): dropout比率
+        input_drop (float): 用于数据增强的输入dropout
+        noise_level (float): 为输入添加高斯噪声用于数据增强
     """
 
     def __init__(
@@ -463,7 +463,7 @@ class Transformer(nn.Module):
             noise = torch.randn_like(x).to(x)
             x = x + noise * self.noise_level
 
-        x = x.permute(1, 0, 2).contiguous()  # the first dim need to be sequence
+        x = x.permute(1, 0, 2).contiguous()  # 第一个维度需要是序列
         x = self.pe(x)
 
         x = self.input_proj(x)
@@ -473,17 +473,17 @@ class Transformer(nn.Module):
 
 
 class TRA(nn.Module):
-    """Temporal Routing Adaptor (TRA)
+    """时序路由适配器 (TRA)
 
-    TRA takes historical prediction errors & latent representation as inputs,
-    then routes the input sample to a specific predictor for training & inference.
+    TRA将历史预测误差和潜在表示作为输入，
+    然后将输入样本路由到特定的预测器进行训练和推理。
 
-    Args:
-        input_size (int): input size (RNN/Transformer's hidden size)
-        num_states (int): number of latent states (i.e., trading patterns)
-            If `num_states=1`, then TRA falls back to traditional methods
-        hidden_size (int): hidden size of the router
-        tau (float): gumbel softmax temperature
+    参数:
+        input_size (int): 输入大小（RNN/Transformer的隐藏层大小）
+        num_states (int): 潜在状态数量（即交易模式）
+            如果`num_states=1`，则TRA退化为传统方法
+        hidden_size (int): 路由器的隐藏层大小
+        tau (float): gumbel softmax温度参数
     """
 
     def __init__(self, input_size, num_states=1, hidden_size=8, tau=1.0, src_info="LR_TPE"):
@@ -510,7 +510,7 @@ class TRA(nn.Module):
         if self.num_states == 1:
             return preds.squeeze(-1), preds, None
 
-        # information type
+        # 信息类型
         router_out, _ = self.router(hist_loss)
         if "LR" in self.src_info:
             latent_representation = hidden
@@ -533,7 +533,7 @@ class TRA(nn.Module):
 
 
 def evaluate(pred):
-    pred = pred.rank(pct=True)  # transform into percentiles
+    pred = pred.rank(pct=True)  # 转换为百分位数
     score = pred.score
     label = pred.label
     diff = score - label
@@ -555,7 +555,7 @@ def average_params(params_list):
             keys = params.keys()
         for k, v in params.items():
             if k not in keys:
-                raise ValueError("the %d-th model has different params" % i)
+                raise ValueError("第 %d 个模型的参数不同" % i)
             if k not in new_params:
                 new_params[k] = v / n
             else:
@@ -564,7 +564,7 @@ def average_params(params_list):
 
 
 def shoot_infs(inp_tensor):
-    """Replaces inf by maximum of tensor"""
+    """将张量中的inf替换为张量的最大值"""
     mask_inf = torch.isinf(inp_tensor)
     ind_inf = torch.nonzero(mask_inf, as_tuple=False)
     if len(ind_inf) > 0:
@@ -583,7 +583,7 @@ def shoot_infs(inp_tensor):
 
 
 def sinkhorn(Q, n_iters=3, epsilon=0.01):
-    # epsilon should be adjusted according to logits value's scale
+    # epsilon应根据logits值的尺度进行调整
     with torch.no_grad():
         Q = shoot_infs(Q)
         Q = torch.exp(Q / epsilon)

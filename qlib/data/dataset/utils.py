@@ -35,7 +35,7 @@ def get_level_index(df: pd.DataFrame, level: Union[str, int]) -> int:
     elif isinstance(level, int):
         return level
     else:
-        raise NotImplementedError(f"This type of input is not supported")
+        raise NotImplementedError(f"不支持这种输入类型")
 
 
 def fetch_df_by_index(
@@ -62,10 +62,10 @@ def fetch_df_by_index(
     pd.DataFrame:
         给定索引的数据。
     """
-    # level = None -> use selector directly
+    # level = None -> 直接使用选择器
     if level is None or isinstance(selector, pd.MultiIndex):
         return df.loc(axis=0)[selector]
-    # Try to get the right index
+    # 尝试获取正确的索引
     idx_slc = (selector, slice(None, None))
     if get_level_index(df, level) == 1:
         idx_slc = idx_slc[1], idx_slc[0]

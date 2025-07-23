@@ -19,12 +19,11 @@ def _to_tensor(x):
 
 
 def _create_ts_slices(index, seq_len):
-    """
-    create time series slices from pandas index
+    """从pandas索引创建时间序列切片
 
-    Args:
-        index (pd.MultiIndex): pandas multiindex with <instrument, datetime> order
-        seq_len (int): sequence length
+    参数:
+        index (pd.MultiIndex): 按<instrument, datetime>顺序排列的pandas多重索引
+        seq_len (int): 序列长度
     """
     assert index.is_lexsorted(), "index should be sorted"
 
@@ -49,11 +48,11 @@ def _create_ts_slices(index, seq_len):
 
 
 def _get_date_parse_fn(target):
-    """get date parse function
+    """获取日期解析函数
 
-    This method is used to parse date arguments as target type.
+    此方法用于将日期参数解析为目标类型。
 
-    Example:
+    示例:
         get_date_parse_fn('20120101')('2017-01-01') => '20170101'
         get_date_parse_fn(20120101)('2017-01-01') => 20170101
     """
@@ -69,18 +68,18 @@ def _get_date_parse_fn(target):
 
 
 class MTSDatasetH(DatasetH):
-    """Memory Augmented Time Series Dataset
+    """内存增强时间序列数据集
 
-    Args:
-        handler (DataHandler): data handler
-        segments (dict): data split segments
-        seq_len (int): time series sequence length
-        horizon (int): label horizon (to mask historical loss for TRA)
-        num_states (int): how many memory states to be added (for TRA)
-        batch_size (int): batch size (<0 means daily batch)
-        shuffle (bool): whether shuffle data
-        pin_memory (bool): whether pin data to gpu memory
-        drop_last (bool): whether drop last batch < batch_size
+    参数:
+        handler (DataHandler): 数据处理器
+        segments (dict): 数据分割段
+        seq_len (int): 时间序列序列长度
+        horizon (int): 标签视野（用于屏蔽TRA的历史损失）
+        num_states (int): 要添加的内存状态数量（用于TRA）
+        batch_size (int): 批次大小（<0表示每日批次）
+        shuffle (bool): 是否打乱数据
+        pin_memory (bool): 是否将数据固定到GPU内存
+        drop_last (bool): 是否丢弃最后一个小于batch_size的批次
     """
 
     def __init__(
@@ -193,11 +192,11 @@ class MTSDatasetH(DatasetH):
 
     # TODO: better train/eval mode design
     def train(self):
-        """enable traning mode"""
+        """启用训练模式"""
         self.batch_size, self.drop_last, self.shuffle = self.params
 
     def eval(self):
-        """enable evaluation mode"""
+        """启用评估模式"""
         self.batch_size = -1
         self.drop_last = False
         self.shuffle = False

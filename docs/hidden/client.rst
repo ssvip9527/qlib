@@ -13,21 +13,21 @@ Qlib 客户端-服务器框架
 - 减少需要生成的缓存量。
 - 支持远程访问数据。
 
-Therefore, we designed the client-server framework to solve these problems.
-We will maintain a server and provide the data.
+因此，我们设计了客户端-服务器框架来解决这些问题。
+我们将维护一个服务器并提供数据。
 
-You have to initialize you qlib with specific config for using the client-server framework.
-Here is a typical initialization process.
+您需要使用特定配置来初始化qlib以使用客户端-服务器框架。
+以下是一个典型的初始化过程。
 
-qlib ``init`` commonly used parameters; ``nfs-common`` must be installed on the server where the client is located, execute: ``sudo apt install nfs-common``:
-    - ``provider_uri``: nfs-server path; the format is ``host: data_dir``, for example: ``172.23.233.89:/data2/gaochao/sync_qlib/qlib``. If using offline, it can be a local data directory
-    - ``mount_path``: local data directory, ``provider_uri`` will be mounted to this directory
-    - ``auto_mount``: whether to automatically mount ``provider_uri`` to ``mount_path`` during qlib ``init``; You can also mount it manually: sudo mount.nfs ``provider_uri`` ``mount_path``. If on PAI, it is recommended to set ``auto_mount=True``
-    - ``flask_server``: data service host; if you are on the intranet, you can use the default host: 172.23.233.89
-    - ``flask_port``: data service port
+qlib ``init`` 常用参数；必须在客户端所在的服务器上安装 ``nfs-common``，执行：``sudo apt install nfs-common``：
+    - ``provider_uri``: nfs服务器路径；格式为 ``host: data_dir``，例如：``172.23.233.89:/data2/gaochao/sync_qlib/qlib``。如果使用离线模式，可以是本地数据目录
+    - ``mount_path``: 本地数据目录，``provider_uri`` 将被挂载到此目录
+    - ``auto_mount``: 是否在qlib ``init`` 期间自动将 ``provider_uri`` 挂载到 ``mount_path``；您也可以手动挂载：sudo mount.nfs ``provider_uri`` ``mount_path``。如果在PAI上运行，建议设置 ``auto_mount=True``
+    - ``flask_server``: 数据服务主机；如果您在内网，可以使用默认主机：172.23.233.89
+    - ``flask_port``: 数据服务端口
 
 
-If running on 10.150.144.153 or 10.150.144.154 server, it's recommended to use the following code to ``init`` qlib:
+如果在 10.150.144.153 或 10.150.144.154 服务器上运行，建议使用以下代码来 ``init`` qlib：
 
 .. code-block:: python
 
@@ -51,7 +51,7 @@ If running on 10.150.144.153 or 10.150.144.154 server, it's recommended to use t
                2008-01-08  125.395004
 
 
-If running on PAI, it's recommended to use the following code to ``init`` qlib:
+如果在PAI上运行，建议使用以下代码来 ``init`` qlib：
 
 .. code-block:: python
 
@@ -75,18 +75,18 @@ If running on PAI, it's recommended to use the following code to ``init`` qlib:
                2008-01-08  125.395004
 
 
-If running on Windows, open **NFS** features and write correct **mount_path**, it's recommended to use the following code to ``init`` qlib:
+如果在Windows上运行，打开 **NFS** 功能并写入正确的 **mount_path**，建议使用以下代码来 ``init`` qlib：
 
-1.windows System open NFS Features
-    * Open ``Programs and Features``.
-    * Click ``Turn Windows features on or off``.
-    * Scroll down and check the option ``Services for NFS``, then click OK
+1.Windows系统开启NFS功能
+    * 打开 ``程序和功能``
+    * 点击 ``启用或关闭Windows功能``
+    * 向下滚动并勾选 ``NFS服务`` 选项，然后点击确定
 
-    Reference address: https://graspingtech.com/mount-nfs-share-windows-10/
-2.config correct mount_path
-    * In windows, mount path must be not exist path and root path,
-        * correct format path eg: `H`, `i`...
-        * error format path eg: `C`, `C:/user/name`, `qlib_data`...
+    参考地址：https://graspingtech.com/mount-nfs-share-windows-10/
+2.配置正确的mount_path
+    * 在Windows中，挂载路径必须是不存在的路径且为根路径
+        * 正确的路径格式例如：`H`、`i`...
+        * 错误的路径格式例如：`C`、`C:/user/name`、`qlib_data`...
 
 .. code-block:: python
 
@@ -113,12 +113,12 @@ If running on Windows, open **NFS** features and write correct **mount_path**, i
 
 
 
-The client will mount the data in `provider_uri` on `mount_path`. Then the server and client will communicate with flask and transporting data with this NFS.
+客户端将把 `provider_uri` 中的数据挂载到 `mount_path`。然后服务器和客户端将通过flask通信，并使用这个NFS传输数据。
 
 
-If you have a local qlib data files and want to use the qlib data offline instead of online with client server framework.
-It is also possible with  specific config.
-You can created such a config. `client_config_local.yml`
+如果您有本地qlib数据文件，并且想要使用离线数据而不是通过客户端服务器框架在线使用数据。
+这也可以通过特定配置实现。
+您可以创建这样一个配置文件 `client_config_local.yml`
 
 .. code-block:: YAML
 
@@ -132,7 +132,7 @@ You can created such a config. `client_config_local.yml`
     dataset_cache: 'SimpleDatasetCache'
     local_cache_path: '~/.cache/qlib/'
 
-`provider_uri` is the directory of your local data.
+`provider_uri` 是您本地数据的目录。
 
 .. code-block:: python
 

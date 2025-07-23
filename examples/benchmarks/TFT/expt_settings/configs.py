@@ -48,7 +48,7 @@ class ExperimentConfig:
         """
 
         if experiment not in self.default_experiments:
-            raise ValueError("Unrecognised experiment={}".format(experiment))
+            raise ValueError("无法识别的实验={}".format(experiment))
 
         # Defines all relevant paths
         if root_folder is None:

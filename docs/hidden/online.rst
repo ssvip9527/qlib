@@ -10,25 +10,25 @@ Online
 
 欢迎使用在线服务模块，该模块模拟了使用我们的模型和策略进行实际交易的场景。
 
-Just like Estimator and other modules in Qlib, you need to determine parameters through the configuration file,
-and in this module, you need to add an account in a folder to do the simulation. Then in each coming day,
-this module will use the newest information to do the trade for your account,
-the performance can be viewed at any time using the API we defined.
+就像Qlib中的Estimator和其他模块一样，您需要通过配置文件来确定参数，
+在这个模块中，您需要在文件夹中添加一个账户来进行模拟。然后在每个交易日，
+该模块将使用最新的信息为您的账户进行交易，
+您可以随时使用我们定义的API查看性能。
 
-Each account will experience the following processes, the ‘pred_date’ represents the date you predict the target
-positions after trading, also, the ‘trade_date’ is the date you do the trading.
+每个账户都将经历以下过程，'pred_date'表示您预测交易后目标
+仓位的日期，而'trade_date'是您进行交易的日期。
 
-- Generate the order list (pre_date)
-- Execute the order list (trade_date)
-- Update account (trade_date)
+- 生成订单列表（预测日期）
+- 执行订单列表（交易日期）
+- 更新账户（交易日期）
 
-In the meantime, you can just create an account and use this module to test its performance in a period.
+同时，您可以创建一个账户并使用此模块来测试其在一段时期内的表现。
 
-- Simulate (start_date, end_date)
+- 模拟（开始日期，结束日期）
 
-This module need to save your account in a folder, the model and strategy will be saved as pickle files,
-and the position and report will be saved as excel.
-The file structure can be viewed at fileStruct_.
+此模块需要将您的账户保存在一个文件夹中，模型和策略将保存为pickle文件，
+仓位和报告将保存为excel文件。
+文件结构可以在fileStruct_中查看。
 
 
 示例
@@ -38,9 +38,9 @@ The file structure can be viewed at fileStruct_.
 
 .. note:: 请确保您已安装最新版本的 `qlib`。
 
-If you want to use the models and data provided by `qlib`, you only need to do as follows.
+如果您想使用 `qlib` 提供的模型和数据，您只需要按照以下步骤操作。
 
-Firstly, write a simple configuration file as following,
+首先，编写一个简单的配置文件，如下所示：
 
 .. code-block:: YAML
 
@@ -60,17 +60,17 @@ Firstly, write a simple configuration file as following,
 
     init_cash: 1000000000
 
-We then can use this command to create a folder and do trading from 2017-01-01 to 2018-08-01.
+然后我们可以使用以下命令创建一个文件夹，并在2017-01-01到2018-08-01期间进行交易。
 
 .. code-block:: bash
 
     online simulate -id v-test -config ./config/config.yaml -exchange_config ./config/exchange.yaml -start 2017-01-01 -end 2018-08-01 -path ./user_data/
 
-The start date (2017-01-01) is the add date of the user, which also is the first predict date,
-and the end date (2018-08-01) is the last trade date. You can use "`online generate -date 2018-08-02...`"
-command to continue generate the order_list at next trading date.
+开始日期（2017-01-01）是用户的添加日期，也是第一个预测日期，
+结束日期（2018-08-01）是最后的交易日期。您可以使用 "`online generate -date 2018-08-02...`"
+命令在下一个交易日继续生成订单列表。
 
-If Your account was saved in "./user_data/", you can see the performance of your account compared to a benchmark by
+如果您的账户保存在 "./user_data/"，您可以通过以下命令将您的账户性能与基准进行比较
 
 .. code-block:: bash
 
@@ -91,7 +91,7 @@ If Your account was saved in "./user_data/", you can see the performance of your
                                max_drawdown      -0.075024
 
 
-Here 'SH000905' represents csi500 and 'SH000300' represents csi300
+这里 'SH000905' 代表中证500，'SH000300' 代表沪深300
 
 账户管理
 -------------------
@@ -120,29 +120,29 @@ Here 'SH000905' represents csi500 and 'SH000300' represents csi300
         >> online show -id {user_id} -path {folder_path} -bench {benchmark}
         >> online show -id v-test -path ./user_data/ -bench SH000905
 
-The default value of all the parameter 'date' below is trade date
-(will be today if today is trading date and information has been updated in `qlib`).
+所有参数'date'的默认值都是交易日期
+（如果今天是交易日期且信息已在`qlib`中更新，则为今天）。
 
-The 'generate' and 'update' will check whether input date is valid, the following 3 processes should
-be called at each trading date.
+'generate'和'update'将检查输入日期是否有效，以下3个过程应
+在每个交易日调用。
 
-- generate the order list
-    generate the order list at trade date, and save them in {folder_path}/{user_id}/temp/ as a json file.
+- 生成订单列表
+    在交易日期生成订单列表，并将其保存在{folder_path}/{user_id}/temp/中作为json文件。
 
     .. code-block:: bash
 
         >> online generate -date {date} -path {folder_path}
         >> online generate -date 2019-10-16 -path ./user_data/
 
-- execute the order list
-    execute the order list and generate the transactions result in {folder_path}/{user_id}/temp/ at trade date
+- 执行订单列表
+    在交易日期执行订单列表并在{folder_path}/{user_id}/temp/中生成交易结果
 
     .. code-block:: bash
 
         >> online execute -date {date} -exchange_config {exchange_config_path} -path {folder_path}
         >> online execute -date 2019-10-16 -exchange_config ./config/exchange.yaml -path ./user_data/
 
-    A simple exchange config file can be as
+    一个简单的交易所配置文件可以是
 
     .. code-block:: yaml
 
@@ -152,8 +152,8 @@ be called at each trading date.
         deal_price: vwap
 
 
-- update accounts
-    update accounts in "{folder_path}/" at trade date
+- 更新账户
+    在交易日期更新"{folder_path}/"中的账户
 
     .. code-block:: bash
 
@@ -208,18 +208,18 @@ API
     ....
 
 
-Configuration file
+配置文件
 ------------------
 
-The configure file used in `online` should contain the model and strategy information.
+在`online`中使用的配置文件应包含模型和策略信息。
 
-About the model
+关于模型
 ~~~~~~~~~~~~~~~
 
-First, your configuration file needs to have a field about the model,
-this field and its contents determine the model we used when generating score at predict date.
+首先，您的配置文件需要有一个关于模型的字段，
+这个字段及其内容决定了我们在预测日期生成分数时使用的模型。
 
-Followings are two examples for ScoreFileModel and a model that read a score file and return score at trade date.
+以下是ScoreFileModel的两个示例，一个模型读取分数文件并在交易日期返回分数。
 
 .. code-block:: YAML
 
@@ -237,17 +237,17 @@ Followings are two examples for ScoreFileModel and a model that read a score fil
         args:
             score_path: <your score path>
 
-If your model doesn't belong to above models, you need to coding your model manually.
-Your model should be a subclass of models defined in 'qlib.contfib.model'. And it must
-contains 2 methods used in `online` module.
+如果您的模型不属于上述模型，您需要手动编写您的模型。
+您的模型应该是'qlib.contfib.model'中定义的模型的子类。并且必须
+包含在`online`模块中使用的2个方法。
 
 
-About the strategy
+关于策略
 ~~~~~~~~~~~~~~~~~~
 
-Your need define the strategy used to generate the order list at predict date.
+您需要定义用于在预测日期生成订单列表的策略。
 
-Followings are two examples for a TopkAmountStrategy
+以下是TopkAmountStrategy的两个示例
 
 .. code-block:: YAML
 
@@ -258,13 +258,13 @@ Followings are two examples for a TopkAmountStrategy
             topk: 100
             n_drop: 10
 
-Generated files
+生成的文件
 ---------------
 
-The 'online_generate' command will create the order list at {folder_path}/{user_id}/temp/,
-the name of that is orderlist_{YYYY-MM-DD}.json, YYYY-MM-DD is the date that those orders to be executed.
+'online_generate'命令将在{folder_path}/{user_id}/temp/创建订单列表，
+文件名为orderlist_{YYYY-MM-DD}.json，YYYY-MM-DD是这些订单将被执行的日期。
 
-The format of json file is like
+json文件的格式如下
 
 .. code-block:: python
 
@@ -279,5 +279,5 @@ The format of json file is like
                 }
     }
 
-Then after executing the order list (either by 'online_execute' or other executors), a transaction file
-will be created also at {folder_path}/{user_id}/temp/.
+然后在执行订单列表后（无论是通过'online_execute'还是其他执行器），
+一个交易文件也将在{folder_path}/{user_id}/temp/中创建。

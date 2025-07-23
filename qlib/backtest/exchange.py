@@ -132,7 +132,7 @@ class Exchange:
         if deal_price is None:
             deal_price = C.deal_price
 
-        # we have some verbose information here. So logging is enabled
+        # 这里有一些详细的信息，所以启用了日志记录
         self.logger = get_module_logger("online operator")
 
         # TODO: quote、trade_dates和codes不是必需的
@@ -353,12 +353,12 @@ class Exchange:
         True: 股票交易受限（可能达到最高价/最低价），因此股票不可交易
         False: 股票交易不受限，因此股票可交易
         """
-        # NOTE:
-        # **all** is used when checking limitation.
-        # For example, the stock trading is limited in a day if every minute is limited in a day if every minute is limited.
+        # 注意：
+        # 检查限制时使用 **all**。
+        # 例如，如果每分钟都受限，那么这一天的股票交易就受限。
         if direction is None:
-            # The trading limitation is related to the trading direction
-            # if the direction is not provided, then any limitation from buy or sell will result in trading limitation
+            # 交易限制与交易方向相关
+            # 如果未提供方向，那么来自买入或卖出的任何限制都会导致交易限制
             buy_limit = self.quote.get_data(stock_id, start_time, end_time, field="limit_buy", method="all")
             sell_limit = self.quote.get_data(stock_id, start_time, end_time, field="limit_sell", method="all")
             return bool(buy_limit or sell_limit)
@@ -378,21 +378,21 @@ class Exchange:
         """如果股票停牌（因此不可交易），返回True"""
         # is suspended
         if stock_id in self.quote.get_all_stock():
-            # suspended stocks are represented by None $close stock
-            # The $close may contain NaN,
+            # 停牌的股票由 None $close 表示
+            # $close 可能包含 NaN
             close = self.quote.get_data(stock_id, start_time, end_time, "$close")
             if close is None:
-                # if no close record exists
+                # 如果不存在收盘价记录
                 return True
             elif isinstance(close, IndexData):
-                # **any** non-NaN $close represents trading opportunity may exist
-                #  if all returned is nan, then the stock is suspended
+                # **任何**非 NaN 的 $close 表示可能存在交易机会
+                # 如果返回的全是 nan，则该股票处于停牌状态
                 return cast(bool, cast(IndexData, close).isna().all())
             else:
-                # it is single value, make sure is not None
+                # 这是单个值，确保不是 None
                 return np.isnan(close)
         else:
-            # if the stock is not in the stock list, then it is not tradable and regarded as suspended
+            # 如果股票不在股票列表中，则它不可交易且被视为停牌
             return True
 
     def is_stock_tradable(
@@ -402,14 +402,14 @@ class Exchange:
         end_time: pd.Timestamp,
         direction: int | None = None,
     ) -> bool:
-        # check if stock can be traded
+        # 检查股票是否可以交易
         return not (
             self.check_stock_suspended(stock_id, start_time, end_time)
             or self.check_stock_limit(stock_id, start_time, end_time, direction)
         )
 
     def check_order(self, order: Order) -> bool:
-        # check limit and suspended
+        # 检查限制和停牌
         return self.is_stock_tradable(order.stock_id, order.start_time, order.end_time, order.direction)
 
     def deal_order(
@@ -644,7 +644,7 @@ class Exchange:
             if deal_amount == 0:
                 continue
             if deal_amount > 0:
-                # buy stock
+                # 买入 stock
                 buy_order_list.append(
                     Order(
                         stock_id=stock_id,
@@ -871,37 +871,37 @@ class Exchange:
         total_trade_val = cast(float, self.get_volume(order.stock_id, order.start_time, order.end_time)) * trade_price
         order.factor = self.get_factor(order.stock_id, order.start_time, order.end_time)
         order.deal_amount = order.amount  # set to full amount and clip it step by step
-        # Clipping amount first
-        # - It simulates that the order is rejected directly by the exchange due to large order
-        # Another choice is placing it after rounding the order
-        # - It simulates that the large order is submitted, but partial is dealt regardless of rounding by trading unit.
+        # 首先裁剪数量
+        # - 这模拟了由于订单过大而被交易所直接拒绝的情况
+        # 另一种选择是在对订单进行舍入后再进行裁剪
+        # - 这模拟了大订单被提交，但部分成交而不考虑交易单位舍入的情况
         self._clip_amount_by_volume(order, dealt_order_amount)
 
-        # TODO: the adjusted cost ratio can be overestimated as deal_amount will be clipped in the next steps
+        # TODO: 由于 deal_amount 将在后续步骤中被裁剪，调整后的成本比率可能被高估
         trade_val = order.deal_amount * trade_price
         if not total_trade_val or np.isnan(total_trade_val):
-            # TODO: assert trade_val == 0, f"trade_val != 0, total_trade_val: {total_trade_val}; order info: {order}"
+            # TODO: 断言 trade_val == 0, f"trade_val != 0, total_trade_val: {total_trade_val}; order info: {order}"
             adj_cost_ratio = self.impact_cost
         else:
             adj_cost_ratio = self.impact_cost * (trade_val / total_trade_val) ** 2
 
         if order.direction == Order.SELL:
             cost_ratio = self.close_cost + adj_cost_ratio
-            # sell
-            # if we don't know current position, we choose to sell all
-            # Otherwise, we clip the amount based on current position
+            # 卖出
+            # 如果我们不知道当前持仓，我们选择全部卖出
+            # 否则，我们根据当前持仓裁剪数量
             if position is not None:
                 current_amount = (
                     position.get_stock_amount(order.stock_id) if position.check_stock(order.stock_id) else 0
                 )
                 if not np.isclose(order.deal_amount, current_amount):
-                    # when not selling last stock. rounding is necessary
+                    # 当不是卖出最后的股票时，需要进行舍入
                     order.deal_amount = self.round_amount_by_trade_unit(
                         min(current_amount, order.deal_amount),
                         order.factor,
                     )
 
-                # in case of negative value of cash
+                # 防止现金出现负值
                 if position.get_cash() + order.deal_amount * trade_price < max(
                     order.deal_amount * trade_price * cost_ratio,
                     self.min_cost,
@@ -916,11 +916,11 @@ class Exchange:
                 cash = position.get_cash()
                 trade_val = order.deal_amount * trade_price
                 if cash < max(trade_val * cost_ratio, self.min_cost):
-                    # cash cannot cover cost
+                    # 现金不足以支付成本
                     order.deal_amount = 0
                     self.logger.debug(f"Order clipped due to cost higher than cash: {order}")
                 elif cash < trade_val + max(trade_val * cost_ratio, self.min_cost):
-                    # The money is not enough
+                    # 资金不足
                     max_buy_amount = self._get_buy_amount_by_cash_limit(trade_price, cash, cost_ratio)
                     order.deal_amount = self.round_amount_by_trade_unit(
                         min(max_buy_amount, order.deal_amount),
@@ -928,10 +928,10 @@ class Exchange:
                     )
                     self.logger.debug(f"Order clipped due to cash limitation: {order}")
                 else:
-                    # The money is enough
+                    # 资金充足
                     order.deal_amount = self.round_amount_by_trade_unit(order.deal_amount, order.factor)
             else:
-                # Unknown amount of money. Just round the amount
+                # 未知金额。仅对数量进行舍入
                 order.deal_amount = self.round_amount_by_trade_unit(order.deal_amount, order.factor)
 
         else:
@@ -940,12 +940,12 @@ class Exchange:
         trade_val = order.deal_amount * trade_price
         trade_cost = max(trade_val * cost_ratio, self.min_cost)
         if trade_val <= 1e-5:
-            # if dealing is not successful, the trade_cost should be zero.
+            # 如果交易不成功，交易成本应为零
             trade_cost = 0
         return trade_price, trade_val, trade_cost
 
     def get_order_helper(self) -> OrderHelper:
         if not hasattr(self, "_order_helper"):
-            # cache to avoid recreate the same instance
+            # 缓存以避免重新创建相同的实例
             self._order_helper = OrderHelper(self)
         return self._order_helper

@@ -141,7 +141,7 @@ def _get_figure_with_position(
         mean_value = cum_return_df["{}_value".format(_t_name)].mean()
         layout = dict(
             height=500,
-            title=f"{_t_name}(the red line in the histogram on the right represents the average)",
+            title=f"{_t_name}(右侧直方图中的红线表示平均值)",
             shapes=[
                 {
                     "type": "line",
@@ -189,9 +189,9 @@ def cumulative_return_graph(
     start_date=None,
     end_date=None,
 ) -> Iterable[go.Figure]:
-    """Backtest buy, sell, and holding cumulative return graph
+    """回测买入、卖出和持有的累积收益图表
 
-        Example:
+        示例：
 
 
             .. code-block:: python
@@ -200,7 +200,7 @@ def cumulative_return_graph(
                 from qlib.contrib.evaluate import risk_analysis, backtest, long_short_backtest
                 from qlib.contrib.strategy import TopkDropoutStrategy
 
-                # backtest parameters
+                # 回测参数
                 bparas = {}
                 bparas['limit_threshold'] = 0.095
                 bparas['account'] = 1000000000
@@ -219,18 +219,18 @@ def cumulative_return_graph(
                 qcr.analysis_position.cumulative_return_graph(positions, report_normal_df, features_df)
 
 
-        Graph desc:
+        图表说明：
 
-            - Axis X: Trading day.
-            - Axis Y:
-            - Above axis Y: `(((Ref($close, -1)/$close - 1) * weight).sum() / weight.sum()).cumsum()`.
-            - Below axis Y: Daily weight sum.
-            - In the **sell** graph, `y < 0` stands for profit; in other cases, `y > 0` stands for profit.
-            - In the **buy_minus_sell** graph, the **y** value of the **weight** graph at the bottom is `buy_weight + sell_weight`.
-            - In each graph, the **red line** in the histogram on the right represents the average.
+            - X轴：交易日。
+            - Y轴：
+            - Y轴上方：`(((Ref($close, -1)/$close - 1) * weight).sum() / weight.sum()).cumsum()`。
+            - Y轴下方：每日权重总和。
+            - 在**卖出**图表中，`y < 0`表示盈利；在其他情况下，`y > 0`表示盈利。
+            - 在**买入减去卖出**图表中，底部**权重**图表的**y**值是`买入权重 + 卖出权重`。
+            - 在每个图表中，右侧直方图中的**红线**表示平均值。
 
-    :param position: position data
-    :param report_normal:
+    :param position: 持仓数据
+    :param report_normal: 常规报告数据框
 
 
             .. code-block:: python
@@ -244,9 +244,9 @@ def cumulative_return_graph(
                 2017-01-10  -0.000416   0.000440    -0.003350   0.208396
 
 
-    :param label_data: `D.features` result; index is `pd.MultiIndex`, index name is [`instrument`, `datetime`]; columns names is [`label`].
+    :param label_data: `D.features`的结果；索引是`pd.MultiIndex`，索引名称是[`instrument`, `datetime`]；列名是[`label`]。
 
-        **The label T is the change from T to T+1**, it is recommended to use ``close``, example: `D.features(D.instruments('csi500'), ['Ref($close, -1)/$close-1'])`
+        **标签T表示从T到T+1的变化**，建议使用``close``，例如：`D.features(D.instruments('csi500'), ['Ref($close, -1)/$close-1'])`
 
 
             .. code-block:: python
@@ -260,10 +260,10 @@ def cumulative_return_graph(
                                 2017-12-15  -0.102778
 
 
-    :param show_notebook: True or False. If True, show graph in notebook, else return figures
-    :param start_date: start date
-    :param end_date: end date
-    :return:
+    :param show_notebook: True或False。如果为True，则在notebook中显示图表，否则返回图表对象
+    :param start_date: 起始日期
+    :param end_date: 结束日期
+    :return: 图表对象
     """
     position = copy.deepcopy(position)
     report_normal = report_normal.copy()

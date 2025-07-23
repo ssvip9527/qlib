@@ -35,13 +35,13 @@ def only_allow_defined_args(function_to_decorate):
             valid_names.remove("self")
         for arg_name in kwargs:
             if arg_name not in valid_names:
-                raise ValueError("Unknown argument seen '%s', expected: [%s]" % (arg_name, ", ".join(valid_names)))
+                raise ValueError("发现未知参数 '%s'，预期参数为：[%s]" % (arg_name, ", ".join(valid_names)))
         return function_to_decorate(*args, **kwargs)
 
     return _return_wrapped
 
 
-# function to handle ctrl z and ctrl c
+# 处理 ctrl z 和 ctrl c 的函数
 def handler(signum, frame):
     os.system("kill -9 %d" % os.getpid())
 
@@ -49,7 +49,7 @@ def handler(signum, frame):
 signal.signal(signal.SIGINT, handler)
 
 
-# function to calculate the mean and std of a list in the results dictionary
+# 计算结果字典中列表的平均值和标准差的函数
 def cal_mean_std(results) -> dict:
     mean_std = dict()
     for fn in results:
@@ -61,7 +61,7 @@ def cal_mean_std(results) -> dict:
     return mean_std
 
 
-# function to create the environment ofr an anaconda environment
+# 创建 anaconda 环境的函数
 def create_env():
     # create env
     temp_dir = tempfile.mkdtemp()
@@ -75,7 +75,7 @@ def create_env():
     return temp_dir, env_path, python_path, conda_activate
 
 
-# function to execute the cmd
+# 执行命令的函数
 def execute(cmd, wait_when_err=False, raise_err=True):
     print("Running CMD:", cmd)
     with subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=1, universal_newlines=True, shell=True) as p:
@@ -90,13 +90,13 @@ def execute(cmd, wait_when_err=False, raise_err=True):
         if wait_when_err:
             input("Press Enter to Continue")
         if raise_err:
-            raise RuntimeError(f"Error when executing command: {cmd}")
+            raise RuntimeError(f"执行命令时出错: {cmd}")
         return p.stderr
     else:
         return None
 
 
-# function to get all the folders benchmark folder
+# 获取所有基准文件夹的函数
 def get_all_folders(models, exclude) -> dict:
     folders = dict()
     if isinstance(models, str):
@@ -107,7 +107,7 @@ def get_all_folders(models, exclude) -> dict:
     elif models is None:
         models = [f.name.lower() for f in os.scandir("benchmarks")]
     else:
-        raise ValueError("Input models type is not supported. Please provide str or list without space.")
+        raise ValueError("不支持的输入模型类型。请提供不含空格的字符串或列表。")
     for f in os.scandir("benchmarks"):
         add = xor(bool(f.name.lower() in models), bool(exclude))
         if add:
@@ -166,7 +166,7 @@ def get_all_results(folders) -> dict:
     return results
 
 
-# function to generate and save markdown table
+# 生成并保存 markdown 表格的函数
 def gen_and_save_md_table(metrics, dataset):
     table = "| Model Name | Dataset | IC | ICIR | Rank IC | Rank ICIR | Annualized Return | Information Ratio | Max Drawdown |\n"
     table += "|---|---|---|---|---|---|---|---|---|\n"
@@ -235,55 +235,55 @@ class ModelRunner:
         wait_when_err: bool = False,
     ):
         """
-        Please be aware that this function can only work under Linux. MacOS and Windows will be supported in the future.
-        Any PR to enhance this method is highly welcomed. Besides, this script doesn't support parallel running the same model
-        for multiple times, and this will be fixed in the future development.
+        请注意，此函数目前仅支持Linux系统。未来将支持MacOS和Windows系统。
+        欢迎提交PR来改进此方法。此外，此脚本目前不支持同一模型的并行多次运行，
+        这个问题将在未来的开发中修复。
 
-        Parameters:
+        参数:
         -----------
         times : int
-            determines how many times the model should be running.
+            决定模型应运行的次数。
         models : str or list
-            determines the specific model or list of models to run or exclude.
+            决定要运行或排除的特定模型或模型列表。
         exclude : boolean
-            determines whether the model being used is excluded or included.
+            决定是排除还是包含指定的模型。
         dataset : str
-            determines the dataset to be used for each model.
+            决定每个模型使用的数据集。
         universe  : str
-            the stock universe of the dataset.
-            default "" indicates that
+            数据集的股票范围。
+            默认值""表示不指定范围
         qlib_uri : str
-            the uri to install qlib with pip
-            it could be URI on the remote or local path (NOTE: the local path must be an absolute path)
+            使用pip安装qlib的URI
+            可以是远程URI或本地路径（注意：本地路径必须是绝对路径）
         exp_folder_name: str
-            the name of the experiment folder
+            实验文件夹的名称
         wait_before_rm_env : bool
-            wait before remove environment.
+            在删除环境前等待。
         wait_when_err : bool
-            wait when errors raised when executing commands
+            执行命令出错时等待
 
-        Usage:
+        用法:
         -------
-        Here are some use cases of the function in the bash:
+        以下是在bash中使用此函数的一些示例：
 
-        The run_all_models  will decide which config to run based no `models` `dataset`  `universe`
-        Example 1):
+        run_all_models 将根据 `models` `dataset` `universe` 决定运行哪个配置
+        示例 1):
 
-            models="lightgbm", dataset="Alpha158", universe="" will result in running the following config
+            models="lightgbm", dataset="Alpha158", universe="" 将运行以下配置
             examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
 
-            models="lightgbm", dataset="Alpha158", universe="csi500" will result in running the following config
+            models="lightgbm", dataset="Alpha158", universe="csi500" 将运行以下配置
             examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158_csi500.yaml
 
         .. code-block:: bash
 
-            # Case 1 - run all models multiple times
+            # 示例 1 - 多次运行所有模型
             python run_all_model.py run 3
 
-            # Case 2 - run specific models multiple times
+            # 示例 2 - 多次运行特定模型
             python run_all_model.py run 3 mlp
 
-            # Case 3 - run specific models multiple times with specific dataset
+            # 示例 3 - 使用特定数据集多次运行特定模型
             python run_all_model.py run 3 mlp Alpha158
 
             # Case 4 - run other models except those are given as arguments for multiple times

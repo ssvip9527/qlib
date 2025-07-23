@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Lint as: python3
-"""Generic helper functions used across codebase."""
+"""整个代码库中使用的通用辅助函数。"""
 
 import os
 import pathlib
@@ -24,7 +24,7 @@ import tensorflow as tf
 from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
 
 
-# Generic.
+# 通用函数
 def get_single_col_by_input_type(input_type, column_definition):
     """返回单个列的名称。
 
@@ -36,7 +36,7 @@ def get_single_col_by_input_type(input_type, column_definition):
     l = [tup[0] for tup in column_definition if tup[2] == input_type]
 
     if len(l) != 1:
-        raise ValueError("Invalid number of columns for {}".format(input_type))
+        raise ValueError("{}的列数无效".format(input_type))
 
     return l[0]
 
@@ -55,7 +55,7 @@ def extract_cols_from_data_type(data_type, column_definition, excluded_input_typ
     return [tup[0] for tup in column_definition if tup[1] == data_type and tup[2] not in excluded_input_types]
 
 
-# Loss functions.
+# 损失函数
 def tensorflow_quantile_loss(y, y_pred, quantile):
     """为TensorFlow计算分位数损失。
 
@@ -70,9 +70,9 @@ def tensorflow_quantile_loss(y, y_pred, quantile):
       分位数损失的张量。
     """
 
-    # Checks quantile
+    # 检查分位数
     if quantile < 0 or quantile > 1:
-        raise ValueError("Illegal quantile value={}! Values should be between 0 and 1.".format(quantile))
+        raise ValueError("分位数值={}无效！值应该在0和1之间。".format(quantile))
 
     prediction_underflow = y - y_pred
     q_loss = quantile * tf.maximum(prediction_underflow, 0.0) + (1.0 - quantile) * tf.maximum(
@@ -106,30 +106,29 @@ def numpy_normalised_quantile_loss(y, y_pred, quantile):
     return 2 * quantile_loss / normaliser
 
 
-# OS related functions.
+# 操作系统相关函数
 def create_folder_if_not_exist(directory):
-    """Creates folder if it doesn't exist.
+    """如果文件夹不存在则创建。
 
-    Args:
-      directory: Folder path to create.
+    参数:
+      directory: 要创建的文件夹路径。
     """
     # Also creates directories recursively
     pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
 
 
-# Tensorflow related functions.
+# TensorFlow相关函数
 def get_default_tensorflow_config(tf_device="gpu", gpu_id=0):
-    """Creates tensorflow config for graphs to run on CPU or GPU.
+    """创建用于在CPU或GPU上运行图的TensorFlow配置。
 
-    Specifies whether to run graph on gpu or cpu and which GPU ID to use for multi
-    GPU machines.
+    指定是在gpu还是cpu上运行图，以及在多GPU机器上使用哪个GPU ID。
 
-    Args:
-      tf_device: 'cpu' or 'gpu'
-      gpu_id: GPU ID to use if relevant
+    参数:
+      tf_device: 'cpu'或'gpu'
+      gpu_id: 要使用的GPU ID（如果相关）
 
-    Returns:
-      Tensorflow config.
+    返回:
+      TensorFlow配置。
     """
 
     if tf_device == "cpu":
@@ -149,15 +148,15 @@ def get_default_tensorflow_config(tf_device="gpu", gpu_id=0):
 
 
 def save(tf_session, model_folder, cp_name, scope=None):
-    """Saves Tensorflow graph to checkpoint.
+    """将TensorFlow图保存到检查点。
 
-    Saves all trainiable variables under a given variable scope to checkpoint.
+    将给定变量作用域下的所有可训练变量保存到检查点。
 
-    Args:
-      tf_session: Session containing graph
-      model_folder: Folder to save models
-      cp_name: Name of Tensorflow checkpoint
-      scope: Variable scope containing variables to save
+    参数:
+      tf_session: 包含图的会话
+      model_folder: 保存模型的文件夹
+      cp_name: TensorFlow检查点的名称
+      scope: 包含要保存变量的变量作用域
     """
     # Save model
     if scope is None:
@@ -171,14 +170,14 @@ def save(tf_session, model_folder, cp_name, scope=None):
 
 
 def load(tf_session, model_folder, cp_name, scope=None, verbose=False):
-    """Loads Tensorflow graph from checkpoint.
+    """从检查点加载TensorFlow图。
 
-    Args:
-      tf_session: Session to load graph into
-      model_folder: Folder containing serialised model
-      cp_name: Name of Tensorflow checkpoint
-      scope: Variable scope to use.
-      verbose: Whether to print additional debugging information.
+    参数:
+      tf_session: 要加载图的会话
+      model_folder: 包含序列化模型的文件夹
+      cp_name: TensorFlow检查点的名称
+      scope: 要使用的变量作用域
+      verbose: 是否打印额外的调试信息
     """
     # Load model proper
     load_path = os.path.join(model_folder, "{0}.ckpt".format(cp_name))

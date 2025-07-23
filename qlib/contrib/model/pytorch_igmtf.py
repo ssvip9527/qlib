@@ -326,7 +326,7 @@ class IGMTF(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未拟合！")
         x_train = dataset.prepare("train", col_set="feature", data_key=DataHandlerLP.DK_L)
         train_hidden, train_hidden_day = self.get_train_hidden(x_train)
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)

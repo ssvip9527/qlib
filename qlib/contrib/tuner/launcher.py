@@ -29,9 +29,9 @@ TUNER_CONFIG_MANAGER = TunerConfigManager(args.config_path)
 
 
 def run():
-    # 1. Get pipeline class.
+    # 1. 获取流水线类
     tuner_pipeline_class = getattr(importlib.import_module(".pipeline", package="qlib.contrib.tuner"), "Pipeline")
-    # 2. Init tuner pipeline.
+    # 2. 初始化调优流水线
     tuner_pipeline = tuner_pipeline_class(TUNER_CONFIG_MANAGER)
-    # 3. Begin to tune
+    # 3. 开始调优
     tuner_pipeline.run()

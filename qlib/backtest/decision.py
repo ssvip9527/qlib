@@ -84,7 +84,7 @@ class Order:
 
     def __post_init__(self) -> None:
         if self.direction not in {Order.SELL, Order.BUY}:
-            raise NotImplementedError("direction not supported, `Order.SELL` for sell, `Order.BUY` for buy")
+            raise NotImplementedError("不支持的交易方向，使用 `Order.SELL` 表示卖出，`Order.BUY` 表示买入")
         self.deal_amount = 0.0
         self.factor = None
 
@@ -128,14 +128,14 @@ class Order:
             elif dl == "buy":
                 return OrderDir.BUY
             else:
-                raise NotImplementedError(f"This type of input is not supported")
+                raise NotImplementedError(f"不支持此类型的输入")
         elif isinstance(direction, np.ndarray):
             direction_array = direction.copy()
             direction_array[direction_array > 0] = Order.BUY
             direction_array[direction_array <= 0] = Order.SELL
             return direction_array
         else:
-            raise NotImplementedError(f"This type of input is not supported")
+            raise NotImplementedError(f"不支持此类型的输入")
 
     @property
     def key_by_day(self) -> tuple:
@@ -195,7 +195,7 @@ class OrderHelper:
         Order:
             创建的订单对象
         """
-        # NOTE: factor is a value belongs to the results section. User don't have to care about it when creating orders
+        # 注意：factor 是属于结果部分的值。用户在创建订单时无需关心它
         return Order(
             stock_id=code,
             amount=amount,
@@ -231,7 +231,7 @@ class TradeRange:
         NotImplementedError:
             当没有范围限制时引发异常
         """
-        raise NotImplementedError(f"Please implement the `__call__` method")
+        raise NotImplementedError(f"请实现 `__call__` 方法")
 
     @abstractmethod
     def clip_time_range(self, start_time: pd.Timestamp, end_time: pd.Timestamp) -> Tuple[pd.Timestamp, pd.Timestamp]:
@@ -249,7 +249,7 @@ class TradeRange:
             可交易的时间范围。
             - 即[start_time, end_time]与TradeRange自身规则的交集
         """
-        raise NotImplementedError(f"Please implement the `clip_time_range` method")
+        raise NotImplementedError(f"请实现 `clip_time_range` 方法")
 
 
 class IdxTradeRange(TradeRange):

@@ -27,9 +27,9 @@ class RollingOnlineExample:
         self,
         provider_uri="~/.qlib/qlib_data/cn_data",
         region="cn",
-        trainer=DelayTrainerRM(),  # you can choose from TrainerR, TrainerRM, DelayTrainerR, DelayTrainerRM
-        task_url="mongodb://10.0.0.4:27017/",  # not necessary when using TrainerR or DelayTrainerR
-        task_db_name="rolling_db",  # not necessary when using TrainerR or DelayTrainerR
+        trainer=DelayTrainerRM(),  # 你可以从 TrainerR、TrainerRM、DelayTrainerR、DelayTrainerRM 中选择
+        task_url="mongodb://10.0.0.4:27017/",  # 使用 TrainerR 或 DelayTrainerR 时不需要
+        task_db_name="rolling_db",  # 使用 TrainerR 或 DelayTrainerR 时不需要
         rolling_step=550,
         tasks=None,
         add_tasks=None,
@@ -39,8 +39,8 @@ class RollingOnlineExample:
         if tasks is None:
             tasks = [CSI100_RECORD_XGBOOST_TASK_CONFIG_ROLLING]
         mongo_conf = {
-            "task_url": task_url,  # your MongoDB url
-            "task_db_name": task_db_name,  # database name
+            "task_url": task_url,  # 你的 MongoDB url
+            "task_db_name": task_db_name,  # 数据库名称
         }
         qlib.init(provider_uri=provider_uri, region=region, mongo=mongo_conf)
         self.tasks = tasks
@@ -48,7 +48,7 @@ class RollingOnlineExample:
         self.rolling_step = rolling_step
         strategies = []
         for task in tasks:
-            name_id = task["model"]["class"]  # NOTE: Assumption: The model class can specify only one strategy
+            name_id = task["model"]["class"]  # 注意：假设：模型类只能指定一个策略
             strategies.append(
                 RollingStrategy(
                     name_id,
@@ -60,7 +60,7 @@ class RollingOnlineExample:
         self.rolling_online_manager = OnlineManager(strategies, trainer=self.trainer)
 
     _ROLLING_MANAGER_PATH = (
-        ".RollingOnlineExample"  # the OnlineManager will dump to this file, for it can be loaded when calling routine.
+        ".RollingOnlineExample"  # OnlineManager 会将数据转储到此文件，以便在调用例程时加载。
     )
 
     def worker(self):

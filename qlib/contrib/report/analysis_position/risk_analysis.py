@@ -112,10 +112,10 @@ def _get_monthly_analysis_with_feature(monthly_df: pd.DataFrame, feature: str = 
 
 
 def _get_risk_analysis_figure(analysis_df: pd.DataFrame) -> Iterable[py.Figure]:
-    """Get analysis graph figure
+    """获取分析图表
 
-    :param analysis_df:
-    :return:
+    :param analysis_df: 分析数据框
+    :return: 图表对象
     """
     if analysis_df is None:
         return []
@@ -129,11 +129,11 @@ def _get_risk_analysis_figure(analysis_df: pd.DataFrame) -> Iterable[py.Figure]:
 
 
 def _get_monthly_risk_analysis_figure(report_normal_df: pd.DataFrame) -> Iterable[py.Figure]:
-    """Get analysis monthly graph figure
+    """获取月度分析图表
 
-    :param report_normal_df:
-    :param report_long_short_df:
-    :return:
+    :param report_normal_df: 常规报告数据框
+    :param report_long_short_df: 多空报告数据框
+    :return: 图表对象
     """
 
     # if report_normal_df is None and report_long_short_df is None:

@@ -166,9 +166,9 @@ def _report_figure(df: pd.DataFrame) -> [list, tuple]:
 
 
 def report_graph(report_df: pd.DataFrame, show_notebook: bool = True) -> [list, tuple]:
-    """display backtest report
+    """显示回测报告
 
-        Example:
+        示例：
 
 
             .. code-block:: python
@@ -181,7 +181,7 @@ def report_graph(report_df: pd.DataFrame, show_notebook: bool = True) -> [list, 
                 from qlib.contrib.evaluate import risk_analysis
                 from qlib.contrib.strategy import TopkDropoutStrategy
 
-                # init qlib
+                # 初始化 qlib
                 qlib.init(provider_uri=<qlib data dir>)
 
                 CSI300_BENCH = "SH000300"
@@ -189,7 +189,7 @@ def report_graph(report_df: pd.DataFrame, show_notebook: bool = True) -> [list, 
                 STRATEGY_CONFIG = {
                     "topk": 50,
                     "n_drop": 5,
-                    # pred_score, pd.Series
+                    # 预测分数，pd.Series
                     "signal": pred_score,
                 }
 
@@ -213,19 +213,19 @@ def report_graph(report_df: pd.DataFrame, show_notebook: bool = True) -> [list, 
                     },
                 }
 
-                # strategy object
+                # 策略对象
                 strategy_obj = TopkDropoutStrategy(**STRATEGY_CONFIG)
-                # executor object
+                # 执行器对象
                 executor_obj = executor.SimulatorExecutor(**EXECUTOR_CONFIG)
-                # backtest
+                # 回测
                 portfolio_metric_dict, indicator_dict = backtest(executor=executor_obj, strategy=strategy_obj, **backtest_config)
                 analysis_freq = "{0}{1}".format(*Freq.parse(FREQ))
-                # backtest info
+                # 回测信息
                 report_normal_df, positions_normal = portfolio_metric_dict.get(analysis_freq)
 
                 qcr.analysis_position.report_graph(report_normal_df)
 
-    :param report_df: **df.index.name** must be **date**, **df.columns** must contain **return**, **turnover**, **cost**, **bench**.
+    :param report_df: **df.index.name** 必须是 **date**，**df.columns** 必须包含 **return**（收益率）、**turnover**（换手率）、**cost**（成本）、**bench**（基准）。
 
 
             .. code-block:: python
@@ -239,8 +239,8 @@ def report_graph(report_df: pd.DataFrame, show_notebook: bool = True) -> [list, 
                 2017-01-10  -0.000416   0.000440    -0.003350   0.208396
 
 
-    :param show_notebook: whether to display graphics in notebook, the default is **True**.
-    :return: if show_notebook is True, display in notebook; else return **plotly.graph_objs.Figure** list.
+    :param show_notebook: 是否在 notebook 中显示图表，默认为 **True**。
+    :return: 如果 show_notebook 为 True，则在 notebook 中显示；否则返回 **plotly.graph_objs.Figure** 列表。
     """
     report_df = report_df.copy()
     fig_list = _report_figure(report_df)

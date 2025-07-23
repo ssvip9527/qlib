@@ -115,15 +115,15 @@ class Operator:
         um, pred_date, trade_date = self.init(self.client, path, date)
         for user_id, user in um.users.items():
             dates, trade_exchange = prepare(um, pred_date, user_id)
-            # get and save the score at predict date
+            # 获取并保存预测日期的分数
             input_data = user.model.get_data_with_date(pred_date)
             score_series = user.model.predict(input_data)
             save_score_series(score_series, (pathlib.Path(path) / user_id), trade_date)
 
-            # update strategy (and model)
+            # 更新策略（和模型）
             user.strategy.update(score_series, pred_date, trade_date)
 
-            # generate and save order list
+            # 生成并保存订单列表
             order_list = user.strategy.generate_trade_decision(
                 score_series=score_series,
                 current=user.account.current_position,
@@ -161,8 +161,8 @@ class Operator:
                     )
                 )
 
-            # load and execute the order list
-            # will not modify the trade_account after executing
+            # 加载并执行订单列表
+            # 执行后不会修改交易账户
             order_list = load_order_list(user_path=(pathlib.Path(path) / user_id), trade_date=trade_date)
             trade_info = executor.execute(order_list=order_list, trade_account=user.account, trade_date=trade_date)
             executor.save_executed_file_from_trade_info(
@@ -252,15 +252,15 @@ class Operator:
         for pred_date, trade_date in zip(dates[:-2], dates[1:-1]):
             user_path = pathlib.Path(path) / id
 
-            # 1. load and save score_series
+            # 1. 加载并保存分数序列
             input_data = user.model.get_data_with_date(pred_date)
             score_series = user.model.predict(input_data)
             save_score_series(score_series, (pathlib.Path(path) / id), trade_date)
 
-            # 2. update strategy (and model)
+            # 2. 更新策略（和模型）
             user.strategy.update(score_series, pred_date, trade_date)
 
-            # 3. generate and save order list
+            # 3. 生成并保存订单列表
             order_list = user.strategy.generate_trade_decision(
                 score_series=score_series,
                 current=user.account.current_position,
@@ -269,13 +269,13 @@ class Operator:
             )
             save_order_list(order_list=order_list, user_path=user_path, trade_date=trade_date)
 
-            # 4. auto execute order list
+            # 4. 自动执行订单列表
             order_list = load_order_list(user_path=user_path, trade_date=trade_date)
             trade_info = executor.execute(trade_account=user.account, order_list=order_list, trade_date=trade_date)
             executor.save_executed_file_from_trade_info(
                 trade_info=trade_info, user_path=user_path, trade_date=trade_date
             )
-            # 5. update account state
+            # 5. 更新账户状态
             trade_info = executor.load_trade_info_from_executed_file(user_path=user_path, trade_date=trade_date)
             update_account(user.account, trade_info, trade_exchange, trade_date)
         portfolio_metrics = user.account.portfolio_metrics.generate_portfolio_metrics_dataframe()

@@ -28,8 +28,8 @@ class QlibLogger(metaclass=MetaLogger):
 
     def __init__(self, module_name):
         self.module_name = module_name
-        # this feature name conflicts with the attribute with Logger
-        # rename it to avoid some corner cases that result in comparing `str` and `int`
+        # 此特性名称与Logger的属性冲突
+        # 重命名它以避免在比较`str`和`int`时出现一些边界情况
         self.__level = 0
 
     @property
@@ -42,7 +42,7 @@ class QlibLogger(metaclass=MetaLogger):
         self.__level = level
 
     def __getattr__(self, name):
-        # During unpickling, python will call __getattr__. Use this line to avoid maximum recursion error.
+        # 在反序列化过程中，python会调用__getattr__。使用此行代码避免最大递归错误。
         if name in {"__setstate__"}:
             raise AttributeError
         return self.logger.__getattribute__(name)
@@ -196,7 +196,7 @@ def set_global_logger_level(level: int, return_orig_handler_level: bool = False)
     return_orig_handler_level: bool
         return origin handler level map
 
-    Examples
+    示例
     ---------
 
         .. code-block:: python
@@ -207,14 +207,14 @@ def set_global_logger_level(level: int, return_orig_handler_level: bool = False)
             qlib.init()
 
             tmp_logger_01 = get_module_logger("tmp_logger_01", level=logging.INFO)
-            tmp_logger_01.info("1. tmp_logger_01 info show")
+            tmp_logger_01.info("1. tmp_logger_01 信息显示")
 
             global_level = logging.WARNING + 1
             set_global_logger_level(global_level)
             tmp_logger_02 = get_module_logger("tmp_logger_02", level=logging.INFO)
-            tmp_logger_02.log(msg="2. tmp_logger_02 log show", level=global_level)
+            tmp_logger_02.log(msg="2. tmp_logger_02 日志显示", level=global_level)
 
-            tmp_logger_01.info("3. tmp_logger_01 info do not show")
+            tmp_logger_01.info("3. tmp_logger_01 信息不显示")
 
     """
     _handler_level_map = {}
@@ -235,7 +235,7 @@ def set_global_logger_level_cm(level: int):
     level: int
         logger level
 
-    Examples
+    示例
     ---------
 
         .. code-block:: python
@@ -246,15 +246,15 @@ def set_global_logger_level_cm(level: int):
             qlib.init()
 
             tmp_logger_01 = get_module_logger("tmp_logger_01", level=logging.INFO)
-            tmp_logger_01.info("1. tmp_logger_01 info show")
+            tmp_logger_01.info("1. tmp_logger_01 信息显示")
 
             global_level = logging.WARNING + 1
             with set_global_logger_level_cm(global_level):
                 tmp_logger_02 = get_module_logger("tmp_logger_02", level=logging.INFO)
-                tmp_logger_02.log(msg="2. tmp_logger_02 log show", level=global_level)
-                tmp_logger_01.info("3. tmp_logger_01 info do not show")
+                tmp_logger_02.log(msg="2. tmp_logger_02 日志显示", level=global_level)
+                tmp_logger_01.info("3. tmp_logger_01 信息不显示")
 
-            tmp_logger_01.info("4. tmp_logger_01 info show")
+            tmp_logger_01.info("4. tmp_logger_01 信息显示")
 
     """
     _handler_level_map = set_global_logger_level(level, return_orig_handler_level=True)

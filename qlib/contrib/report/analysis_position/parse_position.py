@@ -84,11 +84,11 @@ def parse_position(position: dict = None) -> pd.DataFrame:
 
 
 def _add_label_to_position(position_df: pd.DataFrame, label_data: pd.DataFrame) -> pd.DataFrame:
-    """Concat position with custom label
+    """将持仓数据与自定义标签连接
 
-    :param position_df: position DataFrame
-    :param label_data:
-    :return: concat result
+    :param position_df: 持仓数据框
+    :param label_data: 标签数据
+    :return: 连接结果
     """
 
     _start_time = position_df.index.get_level_values(level="datetime").min()
@@ -100,11 +100,11 @@ def _add_label_to_position(position_df: pd.DataFrame, label_data: pd.DataFrame) 
 
 
 def _add_bench_to_position(position_df: pd.DataFrame = None, bench: pd.Series = None) -> pd.DataFrame:
-    """Concat position with bench
+    """将持仓数据与基准数据连接
 
-    :param position_df: position DataFrame
-    :param bench: report normal data
-    :return: concat result
+    :param position_df: 持仓数据框
+    :param bench: 报告常规数据
+    :return: 连接结果
     """
     _temp_df = position_df.reset_index(level="instrument")
     # FIXME: After the stock is bought and sold, the rise and fall of the next trading day are calculated.
@@ -114,10 +114,10 @@ def _add_bench_to_position(position_df: pd.DataFrame = None, bench: pd.Series = 
 
 
 def _calculate_label_rank(df: pd.DataFrame) -> pd.DataFrame:
-    """calculate label rank
+    """计算标签排名
 
-    :param df:
-    :return:
+    :param df: 数据框
+    :return: 计算结果
     """
     _label_name = "label"
 
@@ -143,18 +143,18 @@ def get_position_data(
     start_date=None,
     end_date=None,
 ) -> pd.DataFrame:
-    """Concat position data with pred/report_normal
+    """将持仓数据与预测/报告常规数据连接
 
-    :param position: position data
-    :param report_normal: report normal, must be container 'bench' column
-    :param label_data:
-    :param calculate_label_rank:
-    :param start_date: start date
-    :param end_date: end date
-    :return: concat result,
-        columns: ['amount', 'cash', 'count', 'price', 'status', 'weight', 'label',
+    :param position: 持仓数据
+    :param report_normal: 报告常规数据，必须包含 'bench' 列
+    :param label_data: 标签数据
+    :param calculate_label_rank: 是否计算标签排名
+    :param start_date: 开始日期
+    :param end_date: 结束日期
+    :return: 连接结果,
+        列: ['amount', 'cash', 'count', 'price', 'status', 'weight', 'label',
                     'rank_ratio', 'rank_label_mean', 'excess_return', 'score', 'bench']
-        index: ['instrument', 'date']
+        索引: ['instrument', 'date']
     """
     _position_df = parse_position(position)
 

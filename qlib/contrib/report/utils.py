@@ -48,20 +48,20 @@ def sub_fig_generator(sub_figsize=(3, 3), col_n=10, row_n=1, wspace=None, hspace
 
 def guess_plotly_rangebreaks(dt_index: pd.DatetimeIndex):
     """
-    This function `guesses` the rangebreaks required to remove gaps in datetime index.
-    It basically calculates the difference between a `continuous` datetime index and index given.
+    此函数`猜测`移除日期时间索引中间隔所需的范围断点。
+    它基本上计算`连续`日期时间索引与给定索引之间的差异。
 
-    For more details on `rangebreaks` params in plotly, see
+    有关plotly中`rangebreaks`参数的更多详细信息，请参见
     https://plotly.com/python/reference/layout/xaxis/#layout-xaxis-rangebreaks
 
-    Parameters
+    参数
     ----------
     dt_index: pd.DatetimeIndex
-    The datetimes of the data.
+    数据的日期时间。
 
-    Returns
+    返回值
     -------
-    the `rangebreaks` to be passed into plotly axis.
+    要传递给plotly轴的`rangebreaks`。
 
     """
     dt_idx = dt_index.sort_values()

@@ -69,13 +69,13 @@ class PortfolioOptimizer(BaseOptimizer):
         w0: Optional[Union[np.ndarray, pd.Series]] = None,
     ) -> Union[np.ndarray, pd.Series]:
         """
-        Args:
-            S (np.ndarray or pd.DataFrame): covariance matrix
-            r (np.ndarray or pd.Series): expected return
-            w0 (np.ndarray or pd.Series): initial weights (for turnover control)
+        参数:
+            S (np.ndarray or pd.DataFrame): 协方差矩阵
+            r (np.ndarray or pd.Series): 预期收益
+            w0 (np.ndarray or pd.Series): 初始权重（用于换手率控制）
 
-        Returns:
-            np.ndarray or pd.Series: optimized portfolio allocation
+        返回:
+            np.ndarray or pd.Series: 优化后的投资组合配置
         """
         # transform dataframe into array
         index = None
@@ -146,10 +146,10 @@ class PortfolioOptimizer(BaseOptimizer):
     def _optimize_gmv(self, S: np.ndarray, w0: Optional[np.ndarray] = None) -> np.ndarray:
         """optimize global minimum variance portfolio
 
-        This method solves the following optimization problem
+        此方法求解以下优化问题
             min_w w' S w
             s.t. w >= 0, sum(w) == 1
-        where `S` is the covariance matrix.
+        其中 `S` 是协方差矩阵。
         """
         return self._solve(len(S), self._get_objective_gmv(S), *self._get_constrains(w0))
 
@@ -158,28 +158,28 @@ class PortfolioOptimizer(BaseOptimizer):
     ) -> np.ndarray:
         """optimize mean-variance portfolio
 
-        This method solves the following optimization problem
+        此方法求解以下优化问题
             min_w   - w' r + lamb * w' S w
             s.t.   w >= 0, sum(w) == 1
-        where `S` is the covariance matrix, `u` is the expected returns,
-        and `lamb` is the risk aversion parameter.
+        其中 `S` 是协方差矩阵，`u` 是预期收益，
+        `lamb` 是风险厌恶参数。
         """
         return self._solve(len(S), self._get_objective_mvo(S, r), *self._get_constrains(w0))
 
     def _optimize_rp(self, S: np.ndarray, w0: Optional[np.ndarray] = None) -> np.ndarray:
         """optimize risk parity portfolio
 
-        This method solves the following optimization problem
+        此方法求解以下优化问题
             min_w sum_i [w_i - (w' S w) / ((S w)_i * N)]**2
             s.t. w >= 0, sum(w) == 1
-        where `S` is the covariance matrix and `N` is the number of stocks.
+        其中 `S` 是协方差矩阵，`N` 是股票数量。
         """
         return self._solve(len(S), self._get_objective_rp(S), *self._get_constrains(w0))
 
     def _get_objective_gmv(self, S: np.ndarray) -> Callable:
         """global minimum variance optimization objective
 
-        Optimization objective
+        优化目标
             min_w w' S w
         """
 
@@ -191,7 +191,7 @@ class PortfolioOptimizer(BaseOptimizer):
     def _get_objective_mvo(self, S: np.ndarray, r: np.ndarray = None) -> Callable:
         """mean-variance optimization objective
 
-        Optimization objective
+        优化目标
             min_w - w' r + lamb * w' S w
         """
 
@@ -205,7 +205,7 @@ class PortfolioOptimizer(BaseOptimizer):
     def _get_objective_rp(self, S: np.ndarray) -> Callable:
         """risk-parity optimization objective
 
-        Optimization objective
+        优化目标
             min_w sum_i [w_i - (w' S w) / ((S w)_i * N)]**2
         """
 
@@ -220,10 +220,10 @@ class PortfolioOptimizer(BaseOptimizer):
     def _get_constrains(self, w0: Optional[np.ndarray] = None):
         """optimization constraints
 
-        Defines the following constraints:
-            - no shorting and leverage: 0 <= w <= 1
-            - full investment: sum(w) == 1
-            - turnover constraint: |w - w0| <= delta
+        定义以下约束条件:
+            - 禁止卖空和杠杆: 0 <= w <= 1
+            - 全额投资: sum(w) == 1
+            - 换手率约束: |w - w0| <= delta
         """
 
         # no shorting and leverage
@@ -239,13 +239,13 @@ class PortfolioOptimizer(BaseOptimizer):
         return bounds, cons
 
     def _solve(self, n: int, obj: Callable, bounds: so.Bounds, cons: List) -> np.ndarray:
-        """solve optimization
+        """求解优化问题
 
-        Args:
-            n (int): number of parameters
-            obj (callable): optimization objective
-            bounds (Bounds): bounds of parameters
-            cons (list): optimization constraints
+        参数:
+            n (int): 参数数量
+            obj (callable): 优化目标
+            bounds (Bounds): 参数边界
+            cons (list): 优化约束
         """
         # add l2 regularization
         wrapped_obj = obj

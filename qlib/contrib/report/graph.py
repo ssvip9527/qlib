@@ -59,10 +59,10 @@ class BaseGraph:
         :param kwargs
         """
 
-        # Instantiate graphics parameters
+        # 实例化图形参数
         self._graph_type = self._name.lower().capitalize()
 
-        # Displayed column name
+        # 显示的列名
         if self._name_dict is None:
             self._name_dict = {_item: _item for _item in self._df.columns}
 
@@ -70,9 +70,9 @@ class BaseGraph:
     def get_instance_with_graph_parameters(graph_type: str = None, **kwargs):
         """
 
-        :param graph_type:
-        :param kwargs:
-        :return:
+        :param graph_type: 图表类型
+        :param kwargs: 关键字参数
+        :return: 图表实例
         """
         try:
             _graph_module = importlib.import_module("plotly.graph_objs")
@@ -86,17 +86,17 @@ class BaseGraph:
     def show_graph_in_notebook(figure_list: Iterable[go.Figure] = None):
         """
 
-        :param figure_list:
-        :return:
+        :param figure_list: 图表列表
+        :return: 无
         """
         py.init_notebook_mode()
         for _fig in figure_list:
-            # NOTE: displays figures: https://plotly.com/python/renderers/
-            # default: plotly_mimetype+notebook
-            # support renderers: import plotly.io as pio; print(pio.renderers)
+            # 注意：显示图表：https://plotly.com/python/renderers/
+            # 默认：plotly_mimetype+notebook
+            # 支持的渲染器：import plotly.io as pio; print(pio.renderers)
             renderer = None
             try:
-                # in notebook
+                # 在 notebook 中
                 _ipykernel = str(type(get_ipython()))
                 if "google.colab" in _ipykernel:
                     renderer = "colab"
@@ -133,7 +133,7 @@ class BaseGraph:
         :return:
         """
         _figure = go.Figure(data=self.data, layout=self._get_layout())
-        # NOTE: Use the default theme from plotly version 3.x, template=None
+        # 注意：使用 plotly 3.x 版本的默认主题，template=None
         _figure["layout"].update(template=None)
         return _figure
 

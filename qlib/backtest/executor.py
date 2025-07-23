@@ -369,12 +369,12 @@ class NestedExecutor(BaseExecutor):
         重置交易基础设施
             - 重置内部策略和内部执行器的公共基础设施
         """
-        # NOTE: please refer to the docs of BaseExecutor.reset_common_infra for the meaning of `copy_trade_account`
+        # 注意：请参考 BaseExecutor.reset_common_infra 的文档了解 `copy_trade_account` 的含义
 
-        # The first level follow the `copy_trade_account` from the upper level
+        # 第一层遵循上层的 `copy_trade_account` 设置
         super(NestedExecutor, self).reset_common_infra(common_infra, copy_trade_account=copy_trade_account)
 
-        # The lower level have to copy the trade_account
+        # 下层必须复制 trade_account
         self.inner_executor.reset_common_infra(common_infra, copy_trade_account=True)
         self.inner_strategy.reset_common_infra(common_infra)
 
@@ -386,12 +386,12 @@ class NestedExecutor(BaseExecutor):
         self.inner_strategy.reset(level_infra=sub_level_infra, outer_trade_decision=trade_decision)
 
     def _update_trade_decision(self, trade_decision: BaseTradeDecision) -> BaseTradeDecision:
-        # outer strategy have chance to update decision each iterator
+        # 外部策略在每次迭代时都有机会更新决策
         updated_trade_decision = trade_decision.update(self.inner_executor.trade_calendar)
-        if updated_trade_decision is not None:  # TODO: always is None for now?
+        if updated_trade_decision is not None:  # TODO: 目前总是为 None？
             trade_decision = updated_trade_decision
-            # NEW UPDATE
-            # create a hook for inner strategy to update outer decision
+            # 新更新
+            # 为内部策略创建一个钩子来更新外部决策
             trade_decision = self.inner_strategy.alter_outer_trade_decision(trade_decision)
         return trade_decision
 
@@ -563,7 +563,7 @@ class SimulatorExecutor(BaseExecutor):
         orders = _retrieve_orders_from_decision(trade_decision)
 
         if self.trade_type == self.TT_SERIAL:
-            # Orders will be traded in a parallel way
+            # 订单将以并行方式进行交易
             order_it = orders
         elif self.trade_type == self.TT_PARAL:
             # NOTE: !!!!!!!

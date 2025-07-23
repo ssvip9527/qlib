@@ -130,15 +130,15 @@ class SBBStrategyBase(BaseStrategy):
     TREND_LONG = 2
 
     # TODO:
-    # 1. Supporting leverage the get_range_limit result from the decision
-    # 2. Supporting alter_outer_trade_decision
-    # 3. Supporting checking the availability of trade decision
+    # 1. 支持从决策中获取range_limit结果
+    # 2. 支持修改外部交易决策
+    # 3. 支持检查交易决策的可用性
 
     def reset(self, outer_trade_decision: BaseTradeDecision = None, **kwargs):
         """
-        Parameters
+        参数
         ----------
-        outer_trade_decision : BaseTradeDecision, optional
+        outer_trade_decision : BaseTradeDecision, 可选
         """
         super(SBBStrategyBase, self).reset(outer_trade_decision=outer_trade_decision, **kwargs)
         if outer_trade_decision is not None:
@@ -150,7 +150,7 @@ class SBBStrategyBase(BaseStrategy):
                 self.trade_amount[order.stock_id] = order.amount
 
     def _pred_price_trend(self, stock_id, pred_start_time=None, pred_end_time=None):
-        raise NotImplementedError("pred_price_trend method is not implemented!")
+        raise NotImplementedError("预测价格趋势方法尚未实现！")
 
     def generate_trade_decision(self, execute_result=None):
         # get the number of trading step finished, trade_step can be [0, 1, 2, ..., trade_len - 1]
@@ -293,8 +293,7 @@ class SBBStrategyBase(BaseStrategy):
 
 
 class SBBStrategyEMA(SBBStrategyBase):
-    """
-    (S)elect the (B)etter one among every two adjacent trading (B)ars to sell or buy with (EMA) signal.
+    """使用EMA信号在每两个相邻的交易时段中选择更好的一个进行买卖。
     """
 
     # TODO:
@@ -313,13 +312,13 @@ class SBBStrategyEMA(SBBStrategyBase):
         **kwargs,
     ):
         """
-        Parameters
+        参数
         ----------
-        instruments : Union[List, str], optional
-            instruments of EMA signal, by default "csi300"
-        freq : str, optional
-            freq of EMA signal, by default "day"
-            Note: `freq` may be different from `time_per_step`
+        instruments : Union[List, str], 可选
+            EMA信号的股票列表，默认为"csi300"
+        freq : str, 可选
+            EMA信号的频率，默认为"day"
+            注意：`freq`可能与`time_per_step`不同
         """
         if instruments is None:
             warnings.warn("`instruments` is not set, will load all stocks")

@@ -198,14 +198,14 @@ def get_turnover_rate():
 
 
 def get_beta(r, b):
-    """Risk Analysis  beta
+    """风险分析 beta
 
-    Parameters
+    参数
     ----------
     r : pandas.Series
-        daily return series of strategy
+        策略的日收益率序列
     b : pandas.Series
-        daily return series of baseline
+        基准的日收益率序列
     """
     cov_r_b = np.cov(r, b)
     var_b = np.var(b)
@@ -227,14 +227,14 @@ def get_volatility_from_series(r):
 
 
 def get_rank_ic(a, b):
-    """Rank IC
+    """排名信息系数
 
-    Parameters
+    参数
     ----------
     r : pandas.Series
-        daily score series of feature
+        特征的每日分数序列
     b : pandas.Series
-        daily return series
+        每日收益率序列
 
     """
     return spearmanr(a, b).correlation

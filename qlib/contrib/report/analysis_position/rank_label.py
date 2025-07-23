@@ -67,10 +67,10 @@ def rank_label_graph(
     end_date=None,
     show_notebook=True,
 ) -> Iterable[go.Figure]:
-    """Ranking percentage of stocks buy, sell, and holding on the trading day.
-    Average rank-ratio(similar to **sell_df['label'].rank(ascending=False) / len(sell_df)**) of daily trading
+    """交易日股票买入、卖出和持有的排名百分比。
+    每日交易的平均排名比率（类似于 **sell_df['label'].rank(ascending=False) / len(sell_df)**）
 
-        Example:
+        示例：
 
 
             .. code-block:: python
@@ -79,7 +79,7 @@ def rank_label_graph(
                 from qlib.contrib.evaluate import backtest
                 from qlib.contrib.strategy import TopkDropoutStrategy
 
-                # backtest parameters
+                # 回测参数
                 bparas = {}
                 bparas['limit_threshold'] = 0.095
                 bparas['account'] = 1000000000
@@ -98,10 +98,10 @@ def rank_label_graph(
                 qcr.analysis_position.rank_label_graph(positions, features_df, pred_df_dates.min(), pred_df_dates.max())
 
 
-    :param position: position data; **qlib.backtest.backtest** result.
-    :param label_data: **D.features** result; index is **pd.MultiIndex**, index name is **[instrument, datetime]**; columns names is **[label]**.
+    :param position: 持仓数据；**qlib.backtest.backtest** 的结果。
+    :param label_data: **D.features** 的结果；索引是 **pd.MultiIndex**，索引名称是 **[instrument, datetime]**；列名是 **[label]**。
 
-        **The label T is the change from T to T+1**, it is recommended to use ``close``, example: `D.features(D.instruments('csi500'), ['Ref($close, -1)/$close-1'])`.
+        **标签 T 是从 T 到 T+1 的变化**，建议使用 ``close``，例如：`D.features(D.instruments('csi500'), ['Ref($close, -1)/$close-1'])`。
 
 
             .. code-block:: python
@@ -115,10 +115,10 @@ def rank_label_graph(
                                 2017-12-15  -0.102778
 
 
-    :param start_date: start date
-    :param end_date: end_date
-    :param show_notebook: **True** or **False**. If True, show graph in notebook, else return figures.
-    :return:
+    :param start_date: 开始日期
+    :param end_date: 结束日期
+    :param show_notebook: **True** 或 **False**。如果为 True，则在 notebook 中显示图表，否则返回图表。
+    :return: 图表对象
     """
     position = copy.deepcopy(position)
     label_data.columns = ["label"]

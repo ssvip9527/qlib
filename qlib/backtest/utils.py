@@ -157,7 +157,7 @@ class TradeCalendarManager:
         elif rtype == "step":
             _, _, start_idx, end_index = Cal.locate_index(*self.get_step_time(), freq=freq)
         else:
-            raise ValueError(f"This type of input {rtype} is not supported")
+            raise ValueError(f"不支持此类型的输入 {rtype}")
 
         return start_idx - day_start_idx, end_index - day_start_idx
 
@@ -214,13 +214,13 @@ class BaseInfrastructure:
             if k in support_infra:
                 setattr(self, k, v)
             else:
-                warnings.warn(f"{k} is ignored in `reset_infra`!")
+                warnings.warn(f"{k} 在 `reset_infra` 中被忽略！")
 
     def get(self, infra_name: str) -> Any:
         if hasattr(self, infra_name):
             return getattr(self, infra_name)
         else:
-            warnings.warn(f"infra {infra_name} is not found!")
+            warnings.warn(f"未找到基础设施 {infra_name}！")
 
     def has(self, infra_name: str) -> bool:
         return infra_name in self.get_support_infra() and hasattr(self, infra_name)

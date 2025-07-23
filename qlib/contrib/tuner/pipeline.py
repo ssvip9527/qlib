@@ -52,7 +52,7 @@ class Pipeline:
         实现此方法以通过配置构建调优器
         return: 调优器实例
         """
-        # 1. Add experiment config in tuner_config
+        # 1. 在tuner_config中添加实验配置
         tuner_config["experiment"] = {
             "name": "estimator_experiment_{}".format(tuner_index),
             "id": tuner_index,
@@ -60,17 +60,17 @@ class Pipeline:
             "observer_type": "file_storage",
         }
         tuner_config["qlib_client"] = self.qlib_client_config
-        # 2. Add data config in tuner_config
+        # 2. 在tuner_config中添加数据配置
         tuner_config["data"] = self.data_config
-        # 3. Add backtest config in tuner_config
+        # 3. 在tuner_config中添加回测配置
         tuner_config["backtest"] = self.backtest_config
-        # 4. Update trainer in tuner_config
+        # 4. 更新tuner_config中的训练器
         tuner_config["trainer"].update({"args": self.time_config})
 
-        # 5. Import Tuner class
+        # 5. 导入调优器类
         tuner_module = get_module_by_module_path(self.pipeline_ex_config.tuner_module_path)
         tuner_class = getattr(tuner_module, self.pipeline_ex_config.tuner_class)
-        # 6. Return the specific tuner
+        # 6. 返回特定的调优器
         return tuner_class(tuner_config, self.optim_config)
 
     def save_tuner_exp_info(self):

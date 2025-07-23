@@ -442,17 +442,17 @@ class TemporalFusionTransformer:
 
         time_steps = self.time_steps
 
-        # Sanity checks
+        # 完整性检查
         for i in self._known_regular_input_idx:
             if i in self._input_obs_loc:
-                raise ValueError("Observation cannot be known a priori!")
+                raise ValueError("观测值不能是先验已知的！")
         for i in self._input_obs_loc:
             if i in self._static_input_loc:
-                raise ValueError("Observation cannot be static!")
+                raise ValueError("观测值不能是静态的！")
 
         if all_inputs.get_shape().as_list()[-1] != self.input_size:
             raise ValueError(
-                "Illegal number of inputs! Inputs observed={}, expected={}".format(
+                "输入数量无效！观测到的输入数量={}，预期数量={}".format(
                     all_inputs.get_shape().as_list()[-1], self.input_size
                 )
             )
@@ -578,7 +578,7 @@ class TemporalFusionTransformer:
         """
 
         if max_samples < 1:
-            raise ValueError("Illegal number of samples specified! samples={}".format(max_samples))
+            raise ValueError("指定的样本数量无效！样本数量={}".format(max_samples))
 
         id_col = self._get_single_col_by_type(InputTypes.ID)
         time_col = self._get_single_col_by_type(InputTypes.TIME)
@@ -1120,7 +1120,7 @@ class TemporalFusionTransformer:
 
         # Format output_csv
         if self.output_size != 1:
-            raise NotImplementedError("Current version only supports 1D targets!")
+            raise NotImplementedError("当前版本仅支持一维目标！")
 
         def format_outputs(prediction):
             """返回格式化的预测结果数据框。"""

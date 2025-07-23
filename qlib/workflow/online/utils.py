@@ -21,9 +21,9 @@ class OnlineTool:
     OnlineTool将管理包含模型记录器的实验中的`online`模型。
     """
 
-    ONLINE_KEY = "online_status"  # the online status key in recorder
-    ONLINE_TAG = "online"  # the 'online' model
-    OFFLINE_TAG = "offline"  # the 'offline' model, not for online serving
+    ONLINE_KEY = "online_status"  # 记录器中的在线状态键
+    ONLINE_TAG = "online"  # '在线'模型
+    OFFLINE_TAG = "offline"  # '离线'模型，不用于在线服务
 
     def __init__(self):
         """

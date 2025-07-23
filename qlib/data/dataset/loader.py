@@ -94,17 +94,17 @@ class DLWParser(DataLoader):
 
     def _parse_fields_info(self, fields_info: Union[list, tuple]) -> Tuple[list, list]:
         if len(fields_info) == 0:
-            raise ValueError("The size of fields must be greater than 0")
+            raise ValueError("字段大小必须大于0")
 
         if not isinstance(fields_info, (list, tuple)):
-            raise TypeError("Unsupported type")
+            raise TypeError("不支持的类型")
 
         if isinstance(fields_info[0], str):
             exprs = names = fields_info
         elif isinstance(fields_info[0], (list, tuple)):
             exprs, names = fields_info
         else:
-            raise NotImplementedError(f"This type of input is not supported")
+            raise NotImplementedError(f"不支持这种输入类型")
         return exprs, names
 
     @abc.abstractmethod
@@ -117,22 +117,21 @@ class DLWParser(DataLoader):
         end_time: Union[str, pd.Timestamp] = None,
         gp_name: str = None,
     ) -> pd.DataFrame:
-        """
-        load the dataframe for specific group
+        """加载特定组的数据框
 
-        Parameters
+        参数
         ----------
         instruments :
-            the instruments.
+            标的。
         exprs : list
-            the expressions to describe the content of the data.
+            描述数据内容的表达式。
         names : list
-            the name of the data.
+            数据的名称。
 
-        Returns
+        返回
         -------
         pd.DataFrame:
-            the queried dataframe.
+            查询到的数据框。
         """
 
     def load(self, instruments=None, start_time=None, end_time=None) -> pd.DataFrame:
@@ -211,12 +210,12 @@ class QlibDataLoader(DLWParser):
         gp_name: str = None,
     ) -> pd.DataFrame:
         if instruments is None:
-            warnings.warn("`instruments` is not set, will load all stocks")
+            warnings.warn("`instruments` 未设置，将加载所有股票")
             instruments = "all"
         if isinstance(instruments, str):
             instruments = D.instruments(instruments, filter_pipe=self.filter_pipe)
         elif self.filter_pipe is not None:
-            warnings.warn("`filter_pipe` is not None, but it will not be used with `instruments` as list")
+            warnings.warn("`filter_pipe` 不为空，但当 `instruments` 为列表时不会使用它")
 
         freq = self.freq[gp_name] if isinstance(self.freq, dict) else self.freq
         inst_processors = (
@@ -225,32 +224,30 @@ class QlibDataLoader(DLWParser):
         df = D.features(instruments, exprs, start_time, end_time, freq=freq, inst_processors=inst_processors)
         df.columns = names
         if self.swap_level:
-            df = df.swaplevel().sort_index()  # NOTE: if swaplevel, return <datetime, instrument>
+            df = df.swaplevel().sort_index()  # 注意：如果交换级别，返回 <datetime, instrument>
         return df
 
 
 class StaticDataLoader(DataLoader, Serializable):
-    """
-    DataLoader that supports loading data from file or as provided.
+    """支持从文件加载数据或直接提供数据的数据加载器。
     """
 
     include_attr = ["_config"]
 
     def __init__(self, config: Union[dict, str, pd.DataFrame], join="outer"):
-        """
-        Parameters
+        """参数
         ----------
         config : dict
-            {fields_group: <path or object>}
+            {字段组: <路径或对象>}
         join : str
-            How to align different dataframes
+            如何对齐不同的数据框
         """
         self._config = config  # using "_" to avoid confliction with the method `config` of Serializable
         self.join = join
         self._data = None
 
     def __getstate__(self) -> dict:
-        # avoid pickling `self._data`
+        # 避免序列化 `self._data`
         return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
 
     def load(self, instruments=None, start_time=None, end_time=None) -> pd.DataFrame:
@@ -264,8 +261,8 @@ class StaticDataLoader(DataLoader, Serializable):
 
         # 2) Filter by Datetime
         if start_time is None and end_time is None:
-            return df  # NOTE: avoid copy by loc
-        # pd.Timestamp(None) == NaT, use NaT as index can not fetch correct thing, so do not change None.
+            return df  # 注意：避免通过loc复制
+        # pd.Timestamp(None) == NaT，使用NaT作为索引无法获取正确的内容，所以不要改变None。
         start_time = time_to_slc_point(start_time)
         end_time = time_to_slc_point(end_time)
         return df.loc[start_time:end_time]
@@ -291,17 +288,14 @@ class StaticDataLoader(DataLoader, Serializable):
 
 
 class NestedDataLoader(DataLoader):
-    """
-    We have multiple DataLoader, we can use this class to combine them.
+    """我们有多个数据加载器，可以使用此类来组合它们。
     """
 
     def __init__(self, dataloader_l: List[Dict], join="left") -> None:
-        """
-
-        Parameters
+        """参数
         ----------
         dataloader_l : list[dict]
-            A list of dataloader, for exmaple
+            数据加载器列表，例如
 
             .. code-block:: python
 
@@ -320,7 +314,7 @@ class NestedDataLoader(DataLoader):
                     ]
                 )
         join :
-            it will pass to pd.concat when merging it.
+            在合并时将传递给 pd.concat。
         """
         super().__init__()
         self.data_loader_l = [
@@ -335,7 +329,7 @@ class NestedDataLoader(DataLoader):
                 df_current = dl.load(instruments, start_time, end_time)
             except KeyError:
                 warnings.warn(
-                    "If the value of `instruments` cannot be processed, it will set instruments to None to get all the data."
+                    "如果无法处理 `instruments` 的值，将把 instruments 设为 None 以获取所有数据。"
                 )
                 df_current = dl.load(instruments=None, start_time=start_time, end_time=end_time)
             if df_full is None:
@@ -351,23 +345,22 @@ class NestedDataLoader(DataLoader):
 
 class DataLoaderDH(DataLoader):
     """DataLoaderDH
-    DataLoader based on (D)ata (H)andler
-    It is designed to load multiple data from data handler
-    - If you just want to load data from single datahandler, you can write them in single data handler
+    基于数据处理器（Data Handler）的数据加载器
+    它被设计用于从数据处理器加载多个数据
+    - 如果你只想从单个数据处理器加载数据，可以在单个数据处理器中编写
 
-    TODO: What make this module not that easy to use.
+    待办：是什么让这个模块不那么容易使用。
 
-    - For online scenario
+    - 对于在线场景
 
-        - The underlayer data handler should be configured. But data loader doesn't provide such interface & hook.
+        - 底层数据处理器应该被配置。但数据加载器没有提供这样的接口和钩子。
     """
 
     def __init__(self, handler_config: dict, fetch_kwargs: dict = {}, is_group=False):
-        """
-        Parameters
+        """参数
         ----------
         handler_config : dict
-            handler_config will be used to describe the handlers
+            handler_config 将用于描述处理器
 
             .. code-block::
 
@@ -375,15 +368,15 @@ class DataLoaderDH(DataLoader):
                     "group_name1": <handler>
                     "group_name2": <handler>
                 }
-                or
+                或
                 <handler_config> := <handler>
-                <handler> := DataHandler Instance | DataHandler Config
+                <handler> := 数据处理器实例 | 数据处理器配置
 
         fetch_kwargs : dict
-            fetch_kwargs will be used to describe the different arguments of fetch method, such as col_set, squeeze, data_key, etc.
+            fetch_kwargs 将用于描述获取方法的不同参数，如 col_set、squeeze、data_key 等。
 
         is_group: bool
-            is_group will be used to describe whether the key of handler_config is group
+            is_group 将用于描述 handler_config 的键是否为组
 
         """
         from qlib.data.dataset.handler import DataHandler  # pylint: disable=C0415

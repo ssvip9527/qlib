@@ -24,4 +24,4 @@ class Reweighter:
         object:
             数据的权重信息
         """
-        raise NotImplementedError(f"This type of input is not supported")
+        raise NotImplementedError(f"不支持这种输入类型")

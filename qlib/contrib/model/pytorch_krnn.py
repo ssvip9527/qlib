@@ -223,18 +223,18 @@ class KRNNModel(nn.Module):
 
 
 class KRNN(Model):
-    """KRNN Model
+    """KRNN模型
 
-    Parameters
+    参数
     ----------
     d_feat : int
-        input dimension for each time step
+        每个时间步的输入维度
     metric: str
-        the evaluation metric used in early stop
+        早停时使用的评估指标
     optimizer : str
-        optimizer name
+        优化器名称
     GPU : str
-        the GPU ID(s) used for training
+        用于训练的GPU ID
     """
 
     def __init__(
@@ -337,7 +337,7 @@ class KRNN(Model):
         elif optimizer.lower() == "gd":
             self.train_optimizer = optim.SGD(self.krnn_model.parameters(), lr=self.lr)
         else:
-            raise NotImplementedError("optimizer {} is not supported!".format(optimizer))
+            raise NotImplementedError("不支持优化器 {}！".format(optimizer))
 
         self.fitted = False
         self.krnn_model.to(self.device)
@@ -356,7 +356,7 @@ class KRNN(Model):
         if self.loss == "mse":
             return self.mse(pred[mask], label[mask])
 
-        raise ValueError("unknown loss `%s`" % self.loss)
+        raise ValueError("未知的损失函数 `%s`" % self.loss)
 
     def metric_fn(self, pred, label):
         mask = torch.isfinite(label)
@@ -364,7 +364,7 @@ class KRNN(Model):
         if self.metric in ("", "loss"):
             return -self.loss_fn(pred[mask], label[mask])
 
-        raise ValueError("unknown metric `%s`" % self.metric)
+        raise ValueError("未知的评估指标 `%s`" % self.metric)
 
     def get_daily_inter(self, df, shuffle=False):
         # organize the train data into daily batches
@@ -489,7 +489,7 @@ class KRNN(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
 
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         index = x_test.index

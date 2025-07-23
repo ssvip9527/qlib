@@ -380,7 +380,7 @@ class DNNModelPytorch(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未拟合！")
         x_test_pd = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         preds = self._nn_predict(x_test_pd)
         return pd.Series(preds.reshape(-1), index=x_test_pd.index)

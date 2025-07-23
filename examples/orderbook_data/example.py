@@ -85,8 +85,8 @@ class TestClass(unittest.TestCase):
         )
         print(df)
 
-    # Here are some popular expressions for high-frequency
-    # 1) some shared expression
+    # 这里是一些常用的高频表达式
+    # 1) 一些共享表达式
     expr_sum_buy_ask_1 = "(TResample($ask1, '1min', 'last') + TResample($bid1, '1min', 'last'))"
     total_volume = (
         "TResample("
@@ -109,7 +109,7 @@ class TestClass(unittest.TestCase):
         df.columns = names
         print(df)
 
-    # 2) some often used papers;
+    # 2) 一些常用的论文中的表达式;
     def test_exp_02(self):
         spread_func = (
             lambda index: f"2 * TResample($ask{index} - $bid{index}, '1min', 'last') / {self.expr_sum_buy_ask_1}"
@@ -187,8 +187,8 @@ class TestClass(unittest.TestCase):
         df.columns = names
         print(df)
 
-    # TODOs:
-    # Following expressions may be implemented in the future
+    # 待办事项：
+    # 以下表达式可能在未来实现
     # expr7_2 = lambda funccode, bsflag, time_interval: \
     #     "TResample(TRolling(TEq(@transaction.function_code,  {}) & TEq(@transaction.bs_flag ,{}), '{}s', 'sum') / \
     #     TRolling(@transaction.function_code, '{}s', 'count') , '1min', 'mean')".format(ord(funccode), bsflag,time_interval,time_interval)
@@ -197,7 +197,7 @@ class TestClass(unittest.TestCase):
 
     @staticmethod
     def expr7_init(funccode, ordercode, time_interval):
-        # NOTE: based on on order frequency (i.e. freq="order")
+        # 注意：基于订单频率（即 freq="order"）
         return f"Rolling(Eq($function_code,  {ord(funccode)}) & Eq($order_kind ,{ord(ordercode)}), '{time_interval}s', 'sum') / Rolling($function_code, '{time_interval}s', 'count')"
 
     # (la|lb|ma|mb|ca|cb)_intensity_(time_interval)

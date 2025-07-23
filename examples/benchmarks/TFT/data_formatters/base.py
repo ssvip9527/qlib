@@ -112,25 +112,24 @@ class GenericDataFormatter(abc.ABC):
     # Shared functions across data-formatters
     @property
     def num_classes_per_cat_input(self):
-        """Returns number of categories per relevant input.
+        """返回每个相关输入的类别数量。
 
-        This is seqeuently required for keras embedding layers.
+        这是Keras嵌入层所需要的。
         """
         return self._num_classes_per_cat_input
 
     def get_num_samples_for_calibration(self):
-        """Gets the default number of training and validation samples.
+        """获取训练和验证样本的默认数量。
 
-        Use to sub-sample the data for network calibration and a value of -1 uses
-        all available samples.
+        用于对网络校准进行数据子采样，值为-1时使用所有可用样本。
 
-        Returns:
-          Tuple of (training samples, validation samples)
+        返回：
+          (训练样本数, 验证样本数)的元组
         """
         return -1, -1
 
     def get_column_definition(self):
-        """Returns formatted column definition in order expected by the TFT."""
+        """返回TFT期望顺序的格式化列定义。"""
 
         column_definition = self._column_definition
 
@@ -140,7 +139,7 @@ class GenericDataFormatter(abc.ABC):
             length = len([tup for tup in column_definition if tup[2] == input_type])
 
             if length != 1:
-                raise ValueError("Illegal number of inputs ({}) of type {}".format(length, input_type))
+                raise ValueError("类型 {} 的输入数量 ({}) 无效".format(input_type, length))
 
         _check_single_column(InputTypes.ID)
         _check_single_column(InputTypes.TIME)
@@ -161,11 +160,11 @@ class GenericDataFormatter(abc.ABC):
         return identifier + time + real_inputs + categorical_inputs
 
     def _get_input_columns(self):
-        """Returns names of all input columns."""
+        """返回所有输入列的名称。"""
         return [tup[0] for tup in self.get_column_definition() if tup[2] not in {InputTypes.ID, InputTypes.TIME}]
 
     def _get_tft_input_indices(self):
-        """Returns the relevant indexes and input sizes required by TFT."""
+        """返回TFT所需的相关索引和输入大小。"""
 
         # Functions
         def _extract_tuples_from_data_type(data_type, defn):
@@ -197,7 +196,7 @@ class GenericDataFormatter(abc.ABC):
         return locations
 
     def get_experiment_params(self):
-        """Returns fixed model parameters for experiments."""
+        """返回实验的固定模型参数。"""
 
         required_keys = [
             "total_time_steps",
@@ -211,7 +210,7 @@ class GenericDataFormatter(abc.ABC):
 
         for k in required_keys:
             if k not in fixed_params:
-                raise ValueError("Field {}".format(k) + " missing from fixed parameter definitions!")
+                raise ValueError("字段 {} 在固定参数定义中缺失！".format(k))
 
         fixed_params["column_definition"] = self.get_column_definition()
 

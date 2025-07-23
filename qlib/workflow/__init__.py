@@ -464,15 +464,14 @@ class QlibRecorder:
 
     def save_objects(self, local_path=None, artifact_path=None, **kwargs: Dict[Text, Any]):
         """
-        Method for saving objects as artifacts in the experiment to the uri. It supports either saving
-        from a local file/directory, or directly saving objects. User can use valid python's keywords arguments
-        to specify the object to be saved as well as its name (name: value).
+        将对象作为工件保存到实验URI的方法。支持从本地文件/目录保存，或直接保存对象。
+        用户可以使用有效的Python关键字参数来指定要保存的对象及其名称(名称: 值)。
 
-        In summary, this API is designs for saving **objects** to **the experiments management backend path**,
-        1. Qlib provide two methods to specify **objects**
-        - Passing in the object directly by passing with `**kwargs` (e.g. R.save_objects(trained_model=model))
-        - Passing in the local path to the object, i.e. `local_path` parameter.
-        2. `artifact_path` represents the  **the experiments management backend path**
+        总的来说，这个API设计用于将**对象**保存到**实验管理后端路径**，
+        1. Qlib提供两种方法来指定**对象**
+        - 通过`**kwargs`直接传入对象(例如 R.save_objects(trained_model=model))
+        - 通过`local_path`参数传入对象的本地路径
+        2. `artifact_path`表示**实验管理后端路径**
 
         - If `active recorder` exists: it will save the objects through the active recorder.
         - If `active recorder` not exists: the system will create a default experiment, and a new recorder and save objects under it.
@@ -591,23 +590,20 @@ class QlibRecorder:
 
     def download_artifact(self, path: str, dst_path: Optional[str] = None) -> str:
         """
-        Download an artifact file or directory from a run to a local directory if applicable,
-        and return a local path for it.
+        从运行中下载工件文件或目录到本地目录(如果可用)，并返回其本地路径。
 
-        Parameters
+        参数
         ----------
         path : str
-            Relative source path to the desired artifact.
+            目标工件的相对源路径。
         dst_path : Optional[str]
-            Absolute path of the local filesystem destination directory to which to
-            download the specified artifacts. This directory must already exist.
-            If unspecified, the artifacts will either be downloaded to a new
-            uniquely-named directory on the local filesystem.
+            用于下载指定工件的本地文件系统目标目录的绝对路径。此目录必须已存在。
+            如果未指定，工件将被下载到本地文件系统上一个新的唯一命名目录中。
 
-        Returns
+        返回
         -------
         str
-            Local path of desired artifact.
+            目标工件的本地路径。
         """
         self.get_exp(start=True).get_recorder(start=True).download_artifact(path, dst_path)
 
@@ -647,7 +643,7 @@ class RecorderWrapper(Wrapper):
             expm = getattr(self._provider, "exp_manager")
             if expm.active_experiment is not None:
                 raise RecorderInitializationError(
-                    "Please don't reinitialize Qlib if QlibRecorder is already activated. Otherwise, the experiment stored location will be modified."
+                    "如果QlibRecorder已经激活，请不要重新初始化Qlib。否则，实验存储位置将被修改。"
                 )
         self._provider = provider
 

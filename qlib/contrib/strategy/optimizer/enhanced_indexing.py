@@ -55,14 +55,14 @@ class EnhancedIndexingOptimizer(BaseOptimizer):
         solver_kwargs: Optional[Dict[str, Any]] = {},
     ):
         """
-        Args:
-            lamb (float): risk aversion parameter (larger `lamb` means more focus on risk)
-            delta (float): total turnover limit
-            b_dev (float): benchmark deviation limit
-            f_dev (list): factor deviation limit
-            scale_return (bool): whether scale return to match estimated volatility
-            epsilon (float): minimum weight
-            solver_kwargs (dict): kwargs for cvxpy solver
+        参数:
+            lamb (float): 风险厌恶参数（较大的 `lamb` 表示更关注风险）
+            delta (float): 总换手率限制
+            b_dev (float): 基准偏离度限制
+            f_dev (list): 因子偏离度限制
+            scale_return (bool): 是否缩放收益以匹配估计的波动率
+            epsilon (float): 最小权重
+            solver_kwargs (dict): cvxpy 求解器的关键字参数
         """
 
         assert lamb >= 0, "risk aversion parameter `lamb` should be positive"
@@ -97,18 +97,18 @@ class EnhancedIndexingOptimizer(BaseOptimizer):
         mfs: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
-        Args:
-            r (np.ndarray): expected returns
-            F (np.ndarray): factor exposure
-            cov_b (np.ndarray): factor covariance
-            var_u (np.ndarray): residual variance
-            w0 (np.ndarray): current holding weights
-            wb (np.ndarray): benchmark weights
-            mfh (np.ndarray): mask force holding
-            mfs (np.ndarray): mask force selling
+        参数:
+            r (np.ndarray): 预期收益
+            F (np.ndarray): 因子暴露度
+            cov_b (np.ndarray): 因子协方差
+            var_u (np.ndarray): 残差方差
+            w0 (np.ndarray): 当前持仓权重
+            wb (np.ndarray): 基准权重
+            mfh (np.ndarray): 强制持有掩码
+            mfs (np.ndarray): 强制卖出掩码
 
-        Returns:
-            np.ndarray: optimized portfolio allocation
+        返回:
+            np.ndarray: 优化后的投资组合配置
         """
         # scale return to match volatility
         if self.scale_return:

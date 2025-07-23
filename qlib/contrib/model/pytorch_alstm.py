@@ -266,7 +266,7 @@ class ALSTM(Model):
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if not self.fitted:
-            raise ValueError("model is not fitted yet!")
+            raise ValueError("模型尚未训练！")
 
         x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         index = x_test.index
@@ -320,7 +320,7 @@ class ALSTMModel(nn.Module):
         try:
             klass = getattr(nn, self.rnn_type.upper())
         except Exception as e:
-            raise ValueError("未知的rnn_type `%s`" % self.rnn_type) from e
+            raise ValueError("未知的RNN类型 `%s`" % self.rnn_type) from e
         self.net = nn.Sequential()
         self.net.add_module("fc_in", nn.Linear(in_features=self.input_size, out_features=self.hid_size))
         self.net.add_module("act", nn.Tanh())

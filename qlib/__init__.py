@@ -66,7 +66,7 @@ def init(default_conf="client", **kwargs):
         elif uri_type == C.NFS_URI:
             _mount_nfs_uri(provider_uri, C.dpm.get_data_uri(_freq), C["auto_mount"])
         else:
-            raise NotImplementedError(f"This type of URI is not supported")
+            raise NotImplementedError(f"不支持此类型的URI")
 
     C.register()
 
@@ -86,8 +86,8 @@ def _mount_nfs_uri(provider_uri, mount_path, auto_mount: bool = False):
     # FIXME: C["provider_uri"]在此函数中被修改
     # 如果不修改，我们只需传递provider_uri或mount_path而不是C
     mount_command = ["sudo", "mount.nfs", provider_uri, mount_path]
-    # If the provider uri looks like this 172.23.233.89//data/csdesign'
-    # It will be a nfs path. The client provider will be used
+    # 如果provider uri的格式类似于 172.23.233.89//data/csdesign'
+    # 这将被视为nfs路径，将使用客户端提供程序
     if not auto_mount:  # pylint: disable=R1702
         if not Path(mount_path).exists():
             raise FileNotFoundError(
@@ -198,21 +198,21 @@ def get_project_path(config_name="config.yaml", cur_path: Union[Path, str, None]
     - Qlib是项目路径中的子文件夹
     - qlib文件夹中有一个名为`config.yaml`的文件。
 
-    For example:
-        If your project file system structure follows such a pattern
+    例如：
+        如果你的项目文件系统结构遵循这样的模式
 
             <project_path>/
               - config.yaml
-              - ...some folders...
+              - ...一些文件夹...
                 - qlib/
 
-        This folder will return <project_path>
+        这个函数将返回 <project_path>
 
-        NOTE: link is not supported here.
+        注意：这里不支持软链接。
 
 
-    This method is often used when
-    - user want to use a relative config path instead of hard-coding qlib config path in code
+    此方法通常用于：
+    - 用户想使用相对配置路径而不是硬编码qlib配置路径
 
     Raises
     ------
@@ -226,31 +226,31 @@ def get_project_path(config_name="config.yaml", cur_path: Union[Path, str, None]
         if (cur_path / config_name).exists():
             return cur_path
         if cur_path == cur_path.parent:
-            raise FileNotFoundError("We can't find the project path")
+            raise FileNotFoundError("无法找到项目路径")
         cur_path = cur_path.parent
 
 
 def auto_init(**kwargs):
     """
-    This function will init qlib automatically with following priority
-    - Find the project configuration and init qlib
-        - The parsing process will be affected by the `conf_type` of the configuration file
-    - Init qlib with default config
-    - Skip initialization if already initialized
+    此函数将按以下优先级自动初始化qlib：
+    - 查找项目配置并初始化qlib
+        - 解析过程将受配置文件的 `conf_type` 影响
+    - 使用默认配置初始化qlib
+    - 如果已经初始化则跳过
 
-    :**kwargs: it may contain following parameters
-                cur_path: the start path to find the project path
+    :**kwargs: 可能包含以下参数
+                cur_path: 查找项目路径的起始路径
 
     Here are two examples of the configuration
 
-    Example 1)
-    If you want to create a new project-specific config based on a shared configure, you can use  `conf_type: ref`
+    示例 1)
+    如果你想基于共享配置创建一个新的项目特定配置，你可以使用 `conf_type: ref`
 
     .. code-block:: yaml
 
         conf_type: ref
-        qlib_cfg: '<shared_yaml_config_path>'    # this could be null reference no config from other files
-        # following configs in `qlib_cfg_update` is project=specific
+        qlib_cfg: '<shared_yaml_config_path>'    # 这可以为空，表示不从其他文件引用配置
+        # 以下在 `qlib_cfg_update` 中的配置是项目特定的
         qlib_cfg_update:
             exp_manager:
                 class: "MLflowExpManager"
@@ -259,8 +259,8 @@ def auto_init(**kwargs):
                     uri: "file://<your mlflow experiment path>"
                     default_exp_name: "Experiment"
 
-    Example 2)
-    If you want to create simple a standalone config, you can use following config(a.k.a. `conf_type: origin`)
+    示例 2)
+    如果你想创建一个简单的独立配置，你可以使用以下配置（即 `conf_type: origin`）
 
     .. code-block:: python
 
@@ -287,20 +287,20 @@ def auto_init(**kwargs):
 
         conf_type = conf.get("conf_type", "origin")
         if conf_type == "origin":
-            # The type of config is just like original qlib config
+            # 配置类型与原始qlib配置相同
             init_from_yaml_conf(conf_pp, **kwargs)
         elif conf_type == "ref":
-            # This config type will be more convenient in following scenario
-            # - There is a shared configure file, and you don't want to edit it inplace.
-            # - The shared configure may be updated later, and you don't want to copy it.
-            # - You have some customized config.
+            # 这种配置类型在以下场景更方便：
+            # - 有一个共享配置文件，你不想直接编辑它
+            # - 共享配置可能稍后会更新，你不想复制它
+            # - 你有一些自定义配置
             qlib_conf_path = conf.get("qlib_cfg", None)
 
-            # merge the arguments
+            # 合并参数
             qlib_conf_update = conf.get("qlib_cfg_update", {})
             for k, v in kwargs.items():
                 if k in qlib_conf_update:
-                    logger.warning(f"`qlib_conf_update` from conf_pp is override by `kwargs` on key '{k}'")
+                    logger.warning(f"`qlib_conf_update` 中的配置被 `kwargs` 中的键 '{k}' 覆盖")
             qlib_conf_update.update(kwargs)
 
             init_from_yaml_conf(qlib_conf_path, **qlib_conf_update)

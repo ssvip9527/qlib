@@ -89,30 +89,30 @@ class QLibTuner(Tuner):
     LOCAL_BEST_PARAMS_NAME = "local_best_params.json"
 
     def objective(self, params):
-        # 1. Setup an config for a specific estimator process
+        # 1. 为特定的评估器进程设置配置
         estimator_path = self.setup_estimator_config(params)
-        self.logger.info("Searching params: {} ".format(params))
+        self.logger.info("搜索参数: {} ".format(params))
 
-        # 2. Use subprocess to do the estimator program, this process will wait until subprocess finish
+        # 2. 使用子进程执行评估器程序，此进程将等待直到子进程完成
         sub_fails = subprocess.call("estimator -c {}".format(estimator_path), shell=True)
         if sub_fails:
-            # If this subprocess failed, ignore this evaluation step
-            self.logger.info("Estimator experiment failed when using this searching parameters")
+            # 如果子进程失败，忽略此评估步骤
+            self.logger.info("使用这些搜索参数时评估器实验失败")
             return {"loss": np.nan, "status": STATUS_FAIL}
 
-        # 3. Fetch the result of subprocess, and check whether the result is Nan
+        # 3. 获取子进程的结果，并检查结果是否为Nan
         res = self.fetch_result()
         if np.isnan(res):
             status = STATUS_FAIL
         else:
             status = STATUS_OK
 
-        # 4. Save the best score and params
+        # 4. 保存最佳分数和参数
         if self.best_res is None or self.best_res > res:
             self.best_res = res
             self.best_params = params
 
-        # 5. Return the result as optim objective
+        # 5. 返回结果作为优化目标
         return {"loss": res, "status": status}
 
     def fetch_result(self):

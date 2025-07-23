@@ -14,7 +14,19 @@ from qlib.workflow import R
 
 
 class LGBModel(ModelFT, LightGBMFInt):
-    """LightGBM模型"""
+    """LightGBM模型
+
+    参数
+    ----------
+    loss : str
+        损失函数。更多信息请参考 https://lightgbm.readthedocs.io/en/latest/Parameters.html#objective
+    early_stopping_rounds : int
+        如果验证数据的某个指标在最后的 early_stopping_round 轮中没有改善，将停止训练
+    num_boost_round : int
+        提升迭代次数
+    kwargs : dict
+        其他参数。更多信息请参考 https://lightgbm.readthedocs.io/en/latest/Parameters.html#parameters
+    """
 
     def __init__(self, loss="mse", early_stopping_rounds=50, num_boost_round=1000, **kwargs):
         if loss not in {"mse", "binary"}:  # 仅支持mse和binary损失函数

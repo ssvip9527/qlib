@@ -63,30 +63,30 @@ class Rolling:
         rolling_exp: Optional[str] = None,
     ) -> None:
         """
-        Parameters
+        参数
         ----------
         conf_path : str
-            Path to the config for rolling.
+            滚动配置的路径。
         exp_name : Optional[str]
-            The exp name of the outputs (Output is a record which contains the concatenated predictions of rolling records).
+            输出的实验名称（输出是一个包含连接的滚动记录预测的记录）。
         horizon: Optional[int] = 20,
-            The horizon of the prediction target.
-            This is used to override the prediction horizon of the file.
+            预测目标的时间跨度。
+            用于覆盖文件中的预测时间跨度。
         h_path : Optional[str]
-            It is other data source that is dumped as a handler. It will override the data handler section in the config.
-            If it is not given, it will create a customized cache for the handler when `enable_handler_cache=True`
+            这是作为处理器导出的其他数据源。它将覆盖配置中的数据处理器部分。
+            如果未提供，当 `enable_handler_cache=True` 时将为处理器创建自定义缓存。
         test_end : Optional[str]
-            the test end for the data. It is typically used together with the handler
-            You can do the same thing with task_ext_conf in a more complicated way
+            数据的测试结束时间。通常与处理器一起使用。
+            你也可以通过 task_ext_conf 以更复杂的方式实现相同的功能。
         train_start : Optional[str]
-            the train start for the data.  It is typically used together with the handler.
-            You can do the same thing with task_ext_conf in a more complicated way
+            数据的训练开始时间。通常与处理器一起使用。
+            你也可以通过 task_ext_conf 以更复杂的方式实现相同的功能。
         task_ext_conf : Optional[dict]
-            some option to update the task config.
+            用于更新任务配置的选项。
         rolling_exp : Optional[str]
-            The name for the experiments for rolling.
-            It will contains a lot of record in an experiment. Each record corresponds to a specific rolling.
-            Please note that it is different from the final experiments
+            滚动实验的名称。
+            它将在一个实验中包含许多记录。每个记录对应一个特定的滚动。
+            请注意，这与最终实验不同。
         """
         self.logger = get_module_logger("Rolling")
         self.conf_path = Path(conf_path)
@@ -122,8 +122,8 @@ class Rolling:
 
     def _replace_handler_with_cache(self, task: dict):
         """
-        Due to the data processing part in original rolling is slow. So we have to
-        This class tries to add more feature
+        由于原始滚动中的数据处理部分较慢。所以我们必须
+        这个类尝试添加更多功能
         """
         if self.h_path is not None:
             h_path = Path(self.h_path)
@@ -144,9 +144,9 @@ class Rolling:
 
     def basic_task(self, enable_handler_cache: Optional[bool] = True):
         """
-        The basic task may not be the exactly same as the config from `conf_path` from __init__ due to
-        - some parameters could be overriding by some parameters from __init__
-        - user could implementing sublcass to change it for higher performance
+        基本任务可能与 __init__ 中的 `conf_path` 配置不完全相同，原因如下：
+        - 一些参数可能被 __init__ 中的参数覆盖
+        - 用户可以实现子类来提高性能
         """
         task: dict = self._raw_conf()["task"]
         task = deepcopy(task)
@@ -183,8 +183,8 @@ class Rolling:
 
     def run_basic_task(self):
         """
-        Run the basic task without rolling.
-        This is for fast testing for model tunning.
+        运行不带滚动的基本任务。
+        这用于快速测试模型调优。
         """
         task = self.basic_task()
         print(task)
@@ -192,14 +192,14 @@ class Rolling:
         trainer([task])
 
     def get_task_list(self) -> List[dict]:
-        """return a batch of tasks for rolling."""
+        """返回一批用于滚动的任务。"""
         task = self.basic_task()
         task_l = task_generator(
             task, RollingGen(step=self.step, trunc_days=self.horizon + 1)
         )  # the last two days should be truncated to avoid information leakage
         for t in task_l:
-            # when we rolling tasks. No further analyis is needed.
-            # analyis are postponed to the final ensemble.
+            # 当我们滚动任务时，不需要进一步分析。
+            # 分析推迟到最终集成。
             t["record"] = ["qlib.workflow.record_temp.SignalRecord"]
         return task_l
 
@@ -207,8 +207,8 @@ class Rolling:
         task_l = self.get_task_list()
         self.logger.info("Deleting previous Rolling results")
         try:
-            # TODO: mlflow does not support permanently delete experiment
-            # it will  be moved to .trash and prevents creating the experiments with the same name
+            # TODO: mlflow 不支持永久删除实验
+            # 它将被移动到 .trash 并阻止创建同名实验
             R.delete_exp(experiment_name=self.rolling_exp)  # We should remove the rolling experiments.
         except ValueError:
             self.logger.info("No previous rolling results")
@@ -231,7 +231,7 @@ class Rolling:
 
     def _update_rolling_rec(self):
         """
-        Evaluate the combined rolling results
+        评估组合的滚动结果
         """
         rec = R.get_recorder(experiment_name=self.exp_name, recorder_id=self._rid)
         # Follow the original analyser
@@ -240,7 +240,7 @@ class Rolling:
             records = [records]
         for record in records:
             if issubclass(get_cls_kwargs(record)[0], SignalRecord):
-                # skip the signal record.
+                # 跳过信号记录。
                 continue
             r = init_instance_by_config(
                 record,
@@ -251,10 +251,9 @@ class Rolling:
         print(f"Your evaluation results can be found in the experiment named `{self.exp_name}`.")
 
     def run(self):
-        # the results will be  save in mlruns.
-        # 1) each rolling task is saved in rolling_models
-        self._train_rolling_tasks()
-        # 2) combined rolling tasks and evaluation results are saved in rolling
+        # # 结果将保存在 mlruns 中。
+        # 1) 每个滚动任务保存在 rolling_models 中
+        # 2) 组合的滚动任务和评估结果保存在 rolling 中
         self._ens_rolling()
         self._update_rolling_rec()
 

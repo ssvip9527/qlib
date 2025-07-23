@@ -153,21 +153,21 @@ class RollingGen(TaskGen):
         task_copy_func: Callable = copy.deepcopy,
     ):
         """
-        Generate tasks for rolling
+        生成滚动任务
 
-        Parameters
+        参数
         ----------
         step : int
-            step to rolling
+            滚动步长
         rtype : str
-            rolling type (expanding, sliding)
+            滚动类型（扩展、滑动）
         ds_extra_mod_func: Callable
-            A method like: handler_mod(task: dict, rg: RollingGen)
-            Do some extra action after generating a task. For example, use ``handler_mod`` to modify the end time of the handler of a dataset.
+            一个类似于 handler_mod(task: dict, rg: RollingGen) 的方法
+            在生成任务后执行一些额外操作。例如，使用 ``handler_mod`` 修改数据集处理器的结束时间。
         trunc_days: int
-            trunc some data to avoid future information leakage
+            截断一些数据以避免未来信息泄露
         task_copy_func: Callable
-            the function to copy entire task. This is very useful when user want to share something between tasks
+            复制整个任务的函数。当用户想在任务之间共享内容时非常有用
         """
         self.step = step
         self.rtype = rtype
@@ -187,19 +187,19 @@ class RollingGen(TaskGen):
 
     def gen_following_tasks(self, task: dict, test_end: pd.Timestamp) -> List[dict]:
         """
-        generating following rolling tasks for `task` until test_end
+        为 `task` 生成后续滚动任务，直到 test_end
 
-        Parameters
+        参数
         ----------
         task : dict
-            Qlib task format
+            Qlib 任务格式
         test_end : pd.Timestamp
-            the latest rolling task includes `test_end`
+            最后一个滚动任务包含 `test_end`
 
-        Returns
+        返回
         -------
         List[dict]:
-            the following tasks of `task`(`task` itself is excluded)
+            `task` 的后续任务（不包括 `task` 本身）
         """
         prev_seg = task["dataset"]["kwargs"]["segments"]
         while True:
@@ -228,12 +228,12 @@ class RollingGen(TaskGen):
 
     def generate(self, task: dict) -> List[dict]:
         """
-        Converting the task into a rolling task.
+        将任务转换为滚动任务。
 
-        Parameters
+        参数
         ----------
         task: dict
-            A dict describing a task. For example.
+            描述任务的字典。例如：
 
             .. code-block:: python
 
@@ -259,7 +259,7 @@ class RollingGen(TaskGen):
                             },
                             "segments": {
                                 "train": ("2008-01-01", "2014-12-31"),
-                                "valid": ("2015-01-01", "2016-12-20"),  # Please avoid leaking the future test data into validation
+                                "valid": ("2015-01-01", "2016-12-20"),  # 请避免将未来的测试数据泄露到验证集中
                                 "test": ("2017-01-01", "2020-08-01"),
                             },
                         },
@@ -272,9 +272,9 @@ class RollingGen(TaskGen):
                     ]
                 }
 
-        Returns
+        返回
         ----------
-        List[dict]: a list of tasks
+        List[dict]: 任务列表
         """
         res = []
 

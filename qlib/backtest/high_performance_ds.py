@@ -166,16 +166,16 @@ class NumpyQuote(BaseQuote):
         if stock_id not in self.get_all_stock():
             return None
 
-        # single data
-        # If it don't consider the classification of single data, it will consume a lot of time.
+        # 单个数据
+        # 如果不考虑单个数据的分类，将会消耗大量时间
         if is_single_value(start_time, end_time, self.freq, self.region):
-            # this is a very special case.
-            # skip aggregating function to speed-up the query calculation
+            # 这是一个非常特殊的情况
+            # 跳过聚合函数以加快查询计算速度
 
-            # FIXME:
-            # it will go to the else logic when it comes to the
-            # 1) the day before holiday when daily trading
-            # 2) the last minute of the day when intraday trading
+            # 待修复：
+            # 在以下情况下会进入 else 逻辑：
+            # 1) 日线交易时的假期前一天
+            # 2) 日内交易时的每天最后一分钟
             try:
                 return self.data[stock_id].loc[start_time, field]
             except KeyError:
@@ -214,8 +214,8 @@ class NumpyQuote(BaseQuote):
         elif method == "mean":
             return np.nanmean(data)
         elif method == "last":
-            # FIXME: I've never seen that this method was called.
-            # Please merge it with "ts_data_last"
+            # 待修复：我从未见过这个方法被调用
+            # 请将其与 "ts_data_last" 合并
             return data[-1]
         elif method == "all":
             return data.all()
@@ -236,13 +236,13 @@ class BaseSingleMetric:
     """
 
     def __init__(self, metric: Union[dict, pd.Series]):
-        """Single data structure for each metric.
+        """每个指标的单个数据结构。
 
-        Parameters
+        参数
         ----------
         metric : Union[dict, pd.Series]
-            keys/index is stock_id, value is the metric value.
-            for example:
+            键/索引是股票代码，值是指标值。
+            例如：
                 SH600068    NaN
                 SH600079    1.0
                 SH600266    NaN
@@ -289,7 +289,7 @@ class BaseSingleMetric:
         raise NotImplementedError(f"Please implement the `mean` method")
 
     def count(self) -> int:
-        """Return the count of the single metric, NaN is not included."""
+        """返回单个指标的计数，不包括 NaN 值。"""
 
         raise NotImplementedError(f"Please implement the `count` method")
 
@@ -298,23 +298,23 @@ class BaseSingleMetric:
 
     @property
     def empty(self) -> bool:
-        """If metric is empty, return True."""
+        """如果指标为空，返回 True。"""
 
         raise NotImplementedError(f"Please implement the `empty` method")
 
     def add(self, other: BaseSingleMetric, fill_value: float = None) -> BaseSingleMetric:
-        """Replace np.nan with fill_value in two metrics and add them."""
+        """用 fill_value 替换两个指标中的 np.nan 并将它们相加。"""
 
         raise NotImplementedError(f"Please implement the `add` method")
 
     def replace(self, replace_dict: dict) -> BaseSingleMetric:
-        """Replace the value of metric according to replace_dict."""
+        """根据 replace_dict 替换指标的值。"""
 
         raise NotImplementedError(f"Please implement the `replace` method")
 
     def apply(self, func: Callable) -> BaseSingleMetric:
-        """Replace the value of metric with func (metric).
-        Currently, the func is only qlib/backtest/order/Order.parse_dir.
+        """用 func(metric) 替换指标的值。
+        目前，func 仅限于 qlib/backtest/order/Order.parse_dir。
         """
 
         raise NotImplementedError(f"Please implement the 'apply' method")
@@ -337,15 +337,15 @@ class BaseOrderIndicator:
         self.logger = get_module_logger("online operator")
 
     def assign(self, col: str, metric: Union[dict, pd.Series]) -> None:
-        """assign one metric.
+        """分配一个指标。
 
-        Parameters
+        参数
         ----------
         col : str
-            the metric name of one metric.
+            指标的名称。
         metric : Union[dict, pd.Series]
-            one metric with stock_id index, such as deal_amount, ffr, etc.
-            for example:
+            带有股票代码索引的指标，如成交金额、ffr等。
+            例如：
                 SH600068    NaN
                 SH600079    1.0
                 SH600266    NaN
@@ -357,23 +357,23 @@ class BaseOrderIndicator:
         raise NotImplementedError(f"Please implement the 'assign' method")
 
     def transfer(self, func: Callable, new_col: str = None) -> Optional[BaseSingleMetric]:
-        """compute new metric with existing metrics.
+        """使用现有指标计算新指标。
 
-        Parameters
+        参数
         ----------
         func : Callable
-            the func of computing new metric.
-            the kwargs of func will be replaced with metric data by name in this function.
-            e.g.
+            计算新指标的函数。
+            函数的 kwargs 将在此函数中按名称替换为指标数据。
+            例如：
                 def func(pa):
                     return (pa > 0).sum() / pa.count()
         new_col : str, optional
-            New metric will be assigned in the data if new_col is not None, by default None.
+            如果 new_col 不为 None，新指标将被分配到数据中，默认为 None。
 
-        Return
+        返回值
         ----------
         BaseSingleMetric
-            new metric.
+            新指标。
         """
         func_sig = inspect.signature(func).parameters.keys()
         func_kwargs = {sig: self.data[sig] for sig in func_sig}
@@ -385,34 +385,34 @@ class BaseOrderIndicator:
             return tmp_metric
 
     def get_metric_series(self, metric: str) -> pd.Series:
-        """return the single metric with pd.Series format.
+        """以 pd.Series 格式返回单个指标。
 
-        Parameters
+        参数
         ----------
         metric : str
-            the metric name.
+            指标名称。
 
-        Return
+        返回值
         ----------
         pd.Series
-            the single metric.
-            If there is no metric name in the data, return pd.Series().
+            单个指标。
+            如果数据中没有该指标名称，返回 pd.Series()。
         """
 
         raise NotImplementedError(f"Please implement the 'get_metric_series' method")
 
     def get_index_data(self, metric: str) -> SingleData:
-        """get one metric with the format of SingleData
+        """获取 SingleData 格式的单个指标
 
-        Parameters
+        参数
         ----------
         metric : str
-            the metric name.
+            指标名称。
 
-        Return
+        返回值
         ------
         IndexData.Series
-            one metric with the format of SingleData
+            SingleData 格式的单个指标
         """
 
         raise NotImplementedError(f"Please implement the 'get_index_data' method")
@@ -424,28 +424,28 @@ class BaseOrderIndicator:
         metrics: Union[str, List[str]],
         fill_value: float = 0,
     ) -> None:
-        """sum indicators with the same metrics.
-        and assign to the order_indicator(BaseOrderIndicator).
-        NOTE: indicators could be a empty list when orders in lower level all fail.
+        """对具有相同指标的指标进行求和。
+        并分配给订单指标(BaseOrderIndicator)。
+        注意：当下层所有订单都失败时，indicators 可能是一个空列表。
 
-        Parameters
+        参数
         ----------
         order_indicator : BaseOrderIndicator
-            the order indicator to assign.
+            要分配的订单指标。
         indicators : List[BaseOrderIndicator]
-            the list of all inner indicators.
+            所有内部指标的列表。
         metrics : Union[str, List[str]]
-            all metrics needs to be sumed.
+            需要求和的所有指标。
         fill_value : float, optional
-            fill np.nan with value. By default None.
+            用该值填充 np.nan。默认为 None。
         """
 
         raise NotImplementedError(f"Please implement the 'sum_all_indicators' method")
 
     def to_series(self) -> Dict[Text, pd.Series]:
-        """return the metrics as pandas series
+        """将指标以 pandas series 格式返回
 
-        for example: { "ffr":
+        例如：{ "ffr":
                 SH600068    NaN
                 SH600079    1.0
                 SH600266    NaN

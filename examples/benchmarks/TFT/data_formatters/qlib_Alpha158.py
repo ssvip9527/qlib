@@ -158,7 +158,7 @@ class Alpha158Formatter(GenericDataFormatter):
         output = df.copy()
 
         if self._real_scalers is None and self._cat_scalers is None:
-            raise ValueError("Scalers have not been set!")
+            raise ValueError("尚未设置缩放器！")
 
         column_definitions = self.get_column_definition()
 

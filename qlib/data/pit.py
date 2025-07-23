@@ -51,11 +51,11 @@ class P(ElemOperator):
         return self.feature.load(instrument, start_index, end_index, cur_time)
 
     def get_longest_back_rolling(self):
-        # The period data will collapse as a normal feature. So no extending and looking back
+        # 周期数据将作为普通特征合并。因此不需要扩展和回溯
         return 0
 
     def get_extended_window_size(self):
-        # The period data will collapse as a normal feature. So no extending and looking back
+        # 周期数据将作为普通特征合并。因此不需要扩展和回溯
         return 0, 0
 
 

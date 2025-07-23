@@ -79,7 +79,7 @@ class OnlineSimulationExample:
         )
         self.tasks = tasks
 
-    # Reset all things to the first status, be careful to save important data
+    # 将所有内容重置为初始状态，保存重要数据时需谨慎
     def reset(self):
         if isinstance(self.trainer, TrainerRM):
             TaskManager(self.task_pool).remove()
@@ -87,7 +87,7 @@ class OnlineSimulationExample:
         for rid in exp.list_recorders():
             exp.delete_recorder(rid)
 
-    # Run this to run all workflow automatically
+    # 运行此命令以自动运行所有工作流程
     def main(self):
         print("========== reset ==========")
         self.reset()
@@ -122,8 +122,8 @@ class OnlineSimulationExample:
         pprint(analysis_df)
 
     def worker(self):
-        # train tasks by other progress or machines for multiprocessing
-        # FIXME: only can call after finishing simulation when using DelayTrainerRM, or there will be some exception.
+        # 通过其他进程或机器训练任务以实现多进程处理
+        # 修复：使用DelayTrainerRM时只能在完成模拟后调用，否则会出现异常。
         print("========== worker ==========")
         if isinstance(self.trainer, TrainerRM):
             self.trainer.worker()
@@ -132,6 +132,6 @@ class OnlineSimulationExample:
 
 
 if __name__ == "__main__":
-    ## to run all workflow automatically with your own parameters, use the command below
+    ## 要使用自己的参数自动运行所有工作流程，请使用以下命令
     # python online_management_simulate.py main --experiment_name="your_exp_name" --rolling_step=60
     fire.Fire(OnlineSimulationExample)

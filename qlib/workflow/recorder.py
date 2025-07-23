@@ -27,10 +27,10 @@ mlflow.utils.validation.MAX_PARAM_VAL_LENGTH = 1000
 
 class Recorder:
     """
-    This is the `Recorder` class for experiment recording, with API design similar to mlflow.
-    (Link: https://mlflow.org/docs/latest/python_api/mlflow.html)
+    这是用于实验记录的 `Recorder` 类，其API设计类似于mlflow。
+    (链接: https://mlflow.org/docs/latest/python_api/mlflow.html)
 
-    The recorder's status can be SCHEDULED, RUNNING, FINISHED or FAILED.
+    记录器的状态可以是 SCHEDULED（已计划）、RUNNING（运行中）、FINISHED（已完成）或 FAILED（失败）。
     """
 
     # status type

@@ -84,23 +84,23 @@ def add_one_stock_daily_data(filepath, type, exchange_place, arc, date):
                 "-".join([day[0:4], day[4:6], day[6:8]]) + " " + ":".join([hms[:1], hms[1:3], hms[3:5] + "." + hms[5:]])
             )
 
-    ## Discard the entire row if wrong data timestamp encoutered.
+    ## 如果遇到错误的时间戳，丢弃整行数据
     timestamp = list(zip(list(df["date"]), list(df["time"])))
     error_index_list = []
     for index, t in enumerate(timestamp):
         try:
             pd.Timestamp(format_time(t[0], t[1]))
         except Exception:
-            error_index_list.append(index)  ## The row number of the error line
+            error_index_list.append(index)  ## 错误行的行号
 
-    # to-do: writting to logs
+    # 待办：写入日志
 
     if len(error_index_list) > 0:
         print("error: {}, {}".format(filepath, len(error_index_list)))
 
     df = df.drop(error_index_list)
-    timestamp = list(zip(list(df["date"]), list(df["time"])))  ## The cleaned timestamp
-    # generate timestamp
+    timestamp = list(zip(list(df["date"]), list(df["time"])))  ## 清理后的时间戳
+    # 生成时间戳
     pd_timestamp = pd.DatetimeIndex(
         [pd.Timestamp(format_time(timestamp[i][0], timestamp[i][1])) for i in range(len(df["date"]))]
     )
@@ -211,7 +211,7 @@ def add_data(tick_date, doc_type, stock_name_dict):
         f.close()
 
         if sh_file_nums > 0:
-            # write is not thread-safe, update may be thread-safe
+            # 写入操作不是线程安全的，更新操作可能是线程安全的
             Parallel(n_jobs=N_JOBS)(
                 delayed(add_one_stock_daily_data_wrapper)(
                     os.path.join(temp_data_path_sh, name + ".csv"), doc_type, "SH", index, tick_date
@@ -243,7 +243,7 @@ def add_data(tick_date, doc_type, stock_name_dict):
 
 
 class DSCreator:
-    """Dataset creator"""
+    """数据集创建器"""
 
     def clear(self):
         client = MongoClient(ARCTIC_SRV)
@@ -295,9 +295,9 @@ class DSCreator:
             for stock_name in stock_name_list:
                 if stock_name not in stock_name_exist:
                     initialize_count += 1
-                    # A placeholder for stocks
+                    # 股票的占位符
                     pdf = pd.DataFrame(index=[pd.Timestamp("1900-01-01")])
-                    pdf.index.name = "date"  # an col named date is necessary
+                    pdf.index.name = "date"  # 必须有一个名为date的列
                     lib.write(stock_name, pdf)
             print("initialize count: {}".format(initialize_count))
             print("tasks: {}".format(date_list))
