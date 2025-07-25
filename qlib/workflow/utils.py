@@ -38,7 +38,7 @@ def experiment_exception_hook(exc_type, value, tb):
     value: 异常值
     tb: 异常回溯
     """
-    logger.error(f"An exception has been raised[{exc_type.__name__}: {value}].")
+    logger.error(f"引发异常[{exc_type.__name__}: {value}].")
 
     # Same as original format
     traceback.print_tb(tb)

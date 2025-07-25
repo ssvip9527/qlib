@@ -54,7 +54,7 @@ RD-Agent 现在已在 [GitHub](https://github.com/microsoft/RD-Agent) 上可用�
 | Qlib [notebook 教程](https://github.com/ssvip9527/qlib/tree/main/examples/tutorial) | 📖 [已发布](https://github.com/microsoft/qlib/pull/1037) 于2022年4月7日 | 
 | Ibovespa 指数数据 | :rice: [已发布](https://github.com/microsoft/qlib/pull/990) 于2022年4月6日 |
 | Point-in-Time 数据库 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/343) 于2022年3月10日 |
-| Arctic Provider Backend & Orderbook 数据示例 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/744) 于2022年1月17日 |
+| ArcticDB Provider Backend & Orderbook 数据示例 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/744) 于2022年1月17日，[升级到 ArcticDB](https://github.com/ssvip9527/qlib/tree/main/examples/orderbook_data) |
 | 基于元学习的框架 & DDG-DA  | :chart_with_upwards_trend:  :hammer: [已发布](https://github.com/microsoft/qlib/pull/743) 于2022年1月10日 | 
 | 基于规划的投资组合优化 | :hammer: [已发布](https://github.com/microsoft/qlib/pull/754) 于2021年12月28日 | 
 | 发布 Qlib v0.8.0 | :octocat: [已发布](https://github.com/ssvip9527/qlib/releases/tag/v0.8.0) 于2021年12月8日 |

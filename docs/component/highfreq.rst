@@ -36,5 +36,5 @@
 此外，除了上述示例，这里还有一些Qlib中关于高频交易的其他相关工作。
 
 - `Prediction with high-frequency data <https://github.com/ssvip9527/qlib/tree/main/examples/highfreq#benchmarks-performance-predicting-the-price-trend-in-high-frequency-data>`_
-- `Examples <https://github.com/ssvip9527/qlib/blob/main-cn/examples/orderbook_data/>`_ to extract features from high-frequency data without fixed frequency.
+- `Examples <https://github.com/ssvip9527/qlib/blob/main-cn/examples/orderbook_data/>`_ to extract features from high-frequency data without fixed frequency using ArcticDB.
 - `A paper <https://github.com/ssvip9527/qlib/tree/high-freq-execution#high-frequency-execution>`_ for high-frequency trading.

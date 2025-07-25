@@ -62,7 +62,7 @@ task:
             gamma_clip: 0.2
             optimizer: adam
             mu: 0.2
-            GPU: 0
+            GPU: -1
     dataset:
         class: DatasetH
         module_path: qlib.data.dataset
